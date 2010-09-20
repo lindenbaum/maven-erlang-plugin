@@ -12,11 +12,13 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
 
 public class ErlUtilsTest {
+  private static final String DIR_COMMAND = "dir";
+  private static final String LS_COMMAND = "ls";
   private static final Log log = new SystemStreamLog();
 
   @Test
   public void testExec() throws Exception {
-    List<String> command = Arrays.asList(new String[]{ "dir" });
+    List<String> command = Arrays.asList(new String[]{ getListCommand() });
     assertEquals("ok", ErlUtils.exec(command, log, null, new ProcessListener() {
       @Override
       public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
@@ -25,6 +27,15 @@ public class ErlUtilsTest {
         return "ok";
       }
     }));
+  }
+
+  private String getListCommand() {
+    if ("Mac OS X".equals(System.getProperty("os.name"))) {
+      return LS_COMMAND;
+    }
+    else {
+      return DIR_COMMAND;
+    }
   }
 
   @Test
