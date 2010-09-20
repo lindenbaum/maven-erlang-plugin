@@ -10,6 +10,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.MavenPlexusLogger;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -74,8 +75,10 @@ public final class UnpackDependenciesMojo extends AbstractMojo {
           File file = artifact.getFile();
           ZipFile zip = new ZipFile(file);
           Enumeration<? extends ZipEntry> entries = zip.entries();
+
+          String artifactStr = artifact.getGroupId() + ":" + artifact.getId();
           if (!entries.hasMoreElements()) {
-            log.warn("Artifact " + artifact.getGroupId() + ":" + artifact.getId() + " is empty!");
+            log.warn("Artifact " + artifactStr + " is empty!");
           }
           else {
             ZipEntry entry = entries.nextElement();
@@ -92,13 +95,12 @@ public final class UnpackDependenciesMojo extends AbstractMojo {
 
             long modificationDate = entry.getTime();
             if (modificationDate != cachedModificationDate) {
-              logDebug(log, "Extracting artifact " + artifact.getGroupId() + ":" + artifact.getId());
+              logDebug(log, "Extracting artifact " + artifactStr);
               this.zipUnArchiver.setSourceFile(file);
               this.zipUnArchiver.extract();
             }
             else {
-              logDebug(log, "Skipping artifact " + artifact.getGroupId() + ":" + artifact.getId()
-                            + " since it is not new.");
+              logDebug(log, "Skipping artifact " + artifactStr + " since it is not new.");
             }
           }
         }

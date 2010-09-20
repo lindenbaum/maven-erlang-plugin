@@ -1,4 +1,4 @@
-package eu.lindenbaum.maven;
+package eu.lindenbaum.maven.util;
 
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.logging.Logger;

@@ -23,6 +23,12 @@
       <email>olle.toernstroem@lindenbaum.eu</email>
       <url>http://www.linkedin.com/in/olletornstrom</url>
     </developer>
+    <developer>
+      <id>schlagert</id>
+      <name>Tobias Schlager</name>
+      <email>tobias.schlager@lindenbaum.eu</email>
+      <url>http://www.0xbeef.net</url>
+    </developer>
   </developers>
   <licenses>
     <license>
