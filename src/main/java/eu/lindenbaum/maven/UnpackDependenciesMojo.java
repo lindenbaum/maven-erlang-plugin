@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.ErlConstants;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -47,7 +47,7 @@ public final class UnpackDependenciesMojo extends AbstractErlMojo {
 
     final Set<Artifact> theArtifacts = getProject().getArtifacts();
     for (Artifact theArtifact : theArtifacts) {
-      if (theArtifact.getType().equals(ErlUtils.ARTIFACT_TYPE_OTP)) {
+      if (theArtifact.getType().equals(ErlConstants.ARTIFACT_TYPE_OTP)) {
         try {
           final File theArtifactFile = theArtifact.getFile();
           final ZipFile theArtifactZip = new ZipFile(theArtifactFile);

@@ -3,7 +3,7 @@ package eu.lindenbaum.maven;
 import java.io.File;
 import java.util.Locale;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.ErlConstants;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -96,12 +96,12 @@ public final class EdocReportMojo extends AbstractEdocReportMojo {
   protected void generateEdocDocumentation() throws MojoExecutionException {
     this.outputDirectory.mkdirs();
 
-    final String theApplicationName = ErlUtils.getApplicationName(this.applicationResourceFile,
+    final String theApplicationName = ErlConstants.getApplicationName(this.applicationResourceFile,
                                                                   getProject().getArtifactId());
     final File theApplicationResourceFile = new File(this.sourceDirectory.getPath(), theApplicationName
                                                                                      + ".app");
     if (theApplicationResourceFile.exists()) {
-      ErlUtils.generateEdocAppDocumentation(getLog(),
+      ErlConstants.generateEdocAppDocumentation(getLog(),
                                             getErlPath(),
                                             this.edocOptions,
                                             theApplicationName,
@@ -110,7 +110,7 @@ public final class EdocReportMojo extends AbstractEdocReportMojo {
                                             this.outputDirectory);
     }
     else {
-      ErlUtils.generateEdocFilesDocumentation(getLog(),
+      ErlConstants.generateEdocFilesDocumentation(getLog(),
                                               getErlPath(),
                                               this.edocOptions,
                                               this.sourceDirectory,

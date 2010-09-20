@@ -15,7 +15,7 @@ import javax.xml.transform.TransformerException;
 
 import eu.lindenbaum.maven.cover.CoverData;
 import eu.lindenbaum.maven.cover.ModuleCoverData;
-import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.ErlConstants;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -239,7 +239,7 @@ public class CoverReportMojo extends AbstractMavenReport {
    */
   @Override
   public boolean canGenerateReport() {
-    final File theCoverageDataFile = new File(this.testBeamDirectory, ErlUtils.COVERDATA_BIN);
+    final File theCoverageDataFile = new File(this.testBeamDirectory, ErlConstants.COVERDATA_BIN);
     if (!theCoverageDataFile.exists()) {
       getLog().debug("Cover data file (" + theCoverageDataFile + ") doesn't exist");
       return false;
@@ -261,7 +261,7 @@ public class CoverReportMojo extends AbstractMavenReport {
 
     final List<File> theResult = new LinkedList<File>();
 
-    final String theCoverageDump = ErlUtils.eval(getLog(), this.erlPath, "cover:import(\""
+    final String theCoverageDump = ErlConstants.eval(getLog(), this.erlPath, "cover:import(\""
                                                                          + inCoverageDataFile.getPath()
                                                                          + "\"), " + DUMP_COVERDATA);
     final CoverData theCoverData = new CoverData(theCoverageDump);
@@ -307,9 +307,9 @@ public class CoverReportMojo extends AbstractMavenReport {
   private File generateModuleXMLReport(File inModuleXMLDirectory, ModuleCoverData inModule) throws IOException {
     // Write the cover.xml file.
     final String theModuleName = inModule.getModuleName();
-    File theSourceFile = new File(this.sourceDirectory, theModuleName + ErlUtils.ERL_SUFFIX);
+    File theSourceFile = new File(this.sourceDirectory, theModuleName + ErlConstants.ERL_SUFFIX);
     if (!theSourceFile.exists()) {
-      theSourceFile = new File(this.testSourceDirectory, theModuleName + ErlUtils.ERL_SUFFIX);
+      theSourceFile = new File(this.testSourceDirectory, theModuleName + ErlConstants.ERL_SUFFIX);
       if (!theSourceFile.exists()) {
         getLog().info("Could not find source for module " + theModuleName);
         theSourceFile = null;

@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.ErlConstants;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -197,7 +197,7 @@ public final class PackageMojo extends AbstractErlMojo {
         if (!src.exists()) {
           src.mkdirs();
         }
-        copyDirectoryStructure(this.inputDirectory, src, ErlUtils.SOURCE_FILENAME_FILTER);
+        copyDirectoryStructure(this.inputDirectory, src, ErlConstants.SOURCE_FILENAME_FILTER);
         if (src.listFiles().length == 0) {
           src.delete();
         }
@@ -227,7 +227,7 @@ public final class PackageMojo extends AbstractErlMojo {
         copyDirectoryStructure(this.mibsDirectory, mibs);
       }
 
-      final String theApplicationName = ErlUtils.getApplicationName(this.applicationResourceFile,
+      final String theApplicationName = ErlConstants.getApplicationName(this.applicationResourceFile,
                                                                     getProject().getArtifactId());
       final File theApplicationResourceFile = new File(this.beamDirectory.getPath(), theApplicationName
                                                                                      + ".app");
@@ -256,14 +256,14 @@ public final class PackageMojo extends AbstractErlMojo {
         final Set<String> theModulesSet = new HashSet<String>(Arrays.asList(theModules.split("\\n")));
         final File[] beamFiles = ebin.listFiles(new FilenameFilter() {
           public boolean accept(File dir, String name) {
-            return name.endsWith(ErlUtils.BEAM_SUFFIX);
+            return name.endsWith(ErlConstants.BEAM_SUFFIX);
           }
         });
         boolean listMismatch = false;
         for (File beamFile : beamFiles) {
           final String theCompiledModule = beamFile.getName();
           final String theCompiledModuleName = theCompiledModule.substring(0, theCompiledModule.length()
-                                                                              - ErlUtils.BEAM_SUFFIX.length());
+                                                                              - ErlConstants.BEAM_SUFFIX.length());
           if (!theModulesSet.remove(theCompiledModuleName)) {
             final String theErrorString = "Module " + theCompiledModuleName + " is not listed in .app file";
             if (this.failOnUndeclaredModules) {
@@ -285,7 +285,7 @@ public final class PackageMojo extends AbstractErlMojo {
 
         // Check the .appup.
         final File theApplicationUpgradeFile = new File(this.beamDirectory.getPath(), theApplicationName
-                                                                                      + ErlUtils.APPUP_SUFFIX);
+                                                                                      + ErlConstants.APPUP_SUFFIX);
         if (theApplicationUpgradeFile.exists()) {
           final String theCheckAppupExpr = String.format(CHECK_APPUP,
                                                          theApplicationUpgradeFile.getPath(),
@@ -308,7 +308,7 @@ public final class PackageMojo extends AbstractErlMojo {
         getLog().info("Generating documentation with Edoc");
 
         if (theApplicationResourceFile.exists()) {
-          ErlUtils.generateEdocAppDocumentation(getLog(),
+          ErlConstants.generateEdocAppDocumentation(getLog(),
                                                 getErlPath(),
                                                 this.edocOptions,
                                                 theApplicationName,
@@ -317,7 +317,7 @@ public final class PackageMojo extends AbstractErlMojo {
                                                 this.docDirectory);
         }
         else {
-          ErlUtils.generateEdocFilesDocumentation(getLog(),
+          ErlConstants.generateEdocFilesDocumentation(getLog(),
                                                   getErlPath(),
                                                   this.edocOptions,
                                                   src,

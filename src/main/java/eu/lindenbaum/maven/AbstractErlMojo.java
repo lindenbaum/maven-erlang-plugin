@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.ErlConstants;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -97,7 +97,7 @@ abstract class AbstractErlMojo extends AbstractMojo {
    * @throws MojoExecutionException if there was a problem with the erlang runtime.
    */
   protected String eval(String inExpression) throws MojoExecutionException {
-    return ErlUtils.eval(getLog(), this.erlPath, getLibPaths(), inExpression);
+    return ErlConstants.eval(getLog(), this.erlPath, getLibPaths(), inExpression);
   }
 
   /**
@@ -125,7 +125,7 @@ abstract class AbstractErlMojo extends AbstractMojo {
    *         configured property) or <code>erlPath/bin/inCommandName</code>.
    */
   protected String getErlCommand(String inCommandName) {
-    return ErlUtils.getErlCommand(this.erlPath, inCommandName);
+    return ErlConstants.getErlCommand(this.erlPath, inCommandName);
   }
 
   /**
@@ -139,11 +139,11 @@ abstract class AbstractErlMojo extends AbstractMojo {
   protected int copyMibFiles(final File inInputDirectory, final File inOutputDirectory) throws MojoExecutionException {
     final int nbMib = copyTextFilesWithSubstitutions(inInputDirectory,
                                                      inOutputDirectory,
-                                                     ErlUtils.MIB_SUFFIX,
+                                                     ErlConstants.MIB_SUFFIX,
                                                      null);
     final int nbFuncs = copyTextFilesWithSubstitutions(inInputDirectory,
                                                        inOutputDirectory,
-                                                       ErlUtils.FUNCS_SUFFIX,
+                                                       ErlConstants.FUNCS_SUFFIX,
                                                        null);
     return nbMib + nbFuncs;
   }
@@ -161,11 +161,11 @@ abstract class AbstractErlMojo extends AbstractMojo {
     theAppSubstitutions.put("\\?APP_VERSION", "\"" + this.project.getVersion() + "\"");
     final int nbAppFiles = copyTextFilesWithSubstitutions(inInputDirectory,
                                                           inOutputDirectory,
-                                                          ErlUtils.APP_SUFFIX,
+                                                          ErlConstants.APP_SUFFIX,
                                                           theAppSubstitutions);
     final int nbAppUpFiles = copyTextFilesWithSubstitutions(inInputDirectory,
                                                             inOutputDirectory,
-                                                            ErlUtils.APPUP_SUFFIX,
+                                                            ErlConstants.APPUP_SUFFIX,
                                                             theAppSubstitutions);
     return nbAppFiles + nbAppUpFiles;
   }
@@ -268,7 +268,7 @@ abstract class AbstractErlMojo extends AbstractMojo {
         final Map<String, String> theModuleVersions = new HashMap<String, String>();
         for (File theDirectory : this.libDirectory.listFiles()) {
           if (theDirectory.isDirectory()) {
-            final File theEbinDirectory = new File(theDirectory, ErlUtils.EBIN_DIRECTORY);
+            final File theEbinDirectory = new File(theDirectory, ErlConstants.EBIN_DIRECTORY);
             if (theEbinDirectory.exists() && theEbinDirectory.isDirectory()) {
               final String theName = theDirectory.getName();
               final Matcher theMatcher = OTP_DIRECTORY_REGEX.matcher(theName);
@@ -308,7 +308,7 @@ abstract class AbstractErlMojo extends AbstractMojo {
             theModuleDir = theModuleName + "-" + theModuleVersion;
           }
           final File theModuleDirFile = new File(this.libDirectory, theModuleDir);
-          final File theEbinDirFile = new File(theModuleDirFile, ErlUtils.EBIN_DIRECTORY);
+          final File theEbinDirFile = new File(theModuleDirFile, ErlConstants.EBIN_DIRECTORY);
           this.libPaths.add(theEbinDirFile.getPath());
         }
       }

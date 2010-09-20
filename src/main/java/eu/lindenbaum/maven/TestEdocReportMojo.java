@@ -3,7 +3,7 @@ package eu.lindenbaum.maven;
 import java.io.File;
 import java.util.Locale;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.ErlConstants;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -89,7 +89,7 @@ public final class TestEdocReportMojo extends AbstractEdocReportMojo {
   protected void generateEdocDocumentation() throws MojoExecutionException {
     this.outputDirectory.mkdirs();
 
-    ErlUtils.generateEdocFilesDocumentation(getLog(),
+    ErlConstants.generateEdocFilesDocumentation(getLog(),
                                             getErlPath(),
                                             this.testEdocOptions,
                                             this.testSourceDirectory,

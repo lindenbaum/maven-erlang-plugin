@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.ProcessListener;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -107,7 +107,7 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
 
   @Override
   public boolean accept(File dir, String name) {
-    String testSuffix = this.testSuffix + ErlUtils.BEAM_SUFFIX;
+    String testSuffix = this.testSuffix + ErlConstants.BEAM_SUFFIX;
     if (this.test == null) {
       return name != null && name.endsWith(testSuffix);
     }
@@ -129,14 +129,14 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
 
     String[] testFiles = this.testBeamDirectory.list(this);
     if (this.codeCoverage) {
-      File theCoverageDataFile = new File(this.testBeamDirectory, ErlUtils.COVERDATA_BIN);
+      File theCoverageDataFile = new File(this.testBeamDirectory, ErlConstants.COVERDATA_BIN);
       if (theCoverageDataFile.exists()) {
         theCoverageDataFile.delete();
       }
     }
 
     final List<String> commandLine = new LinkedList<String>();
-    commandLine.add(getErlCommand(ErlUtils.ERL));
+    commandLine.add(getErlCommand(ErlConstants.ERL));
     for (String libPath : getLibPaths()) {
       commandLine.add("-pa");
       commandLine.add(libPath);
@@ -148,7 +148,7 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
       commandLine.add("-run");
       commandLine.add("cover");
       commandLine.add("import");
-      commandLine.add(ErlUtils.COVERDATA_BIN);
+      commandLine.add(ErlConstants.COVERDATA_BIN);
     }
     final int placeholderIndex;
     if (this.surefireReports) {
@@ -166,7 +166,7 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
       commandLine.add("-run");
       commandLine.add("cover");
       commandLine.add("export");
-      commandLine.add(ErlUtils.COVERDATA_BIN);
+      commandLine.add(ErlConstants.COVERDATA_BIN);
     }
     commandLine.add("-noshell");
     commandLine.add("-s");
@@ -198,7 +198,7 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
       final List<String> failedTests = new LinkedList<String>();
       String[] command = commandLine.toArray(new String[0]);
       for (String testFile : testFiles) {
-        final String module = testFile.replace(ErlUtils.BEAM_SUFFIX, "");
+        final String module = testFile.replace(ErlConstants.BEAM_SUFFIX, "");
         log.info("Test case: " + module);
         if (this.surefireReports) {
           command[placeholderIndex] = "eunit:test(" + module
@@ -208,7 +208,7 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
         else {
           command[placeholderIndex] = module;
         }
-        ErlUtils.exec(command, log, this.testBeamDirectory, new ProcessListener() {
+        ErlConstants.exec(command, log, this.testBeamDirectory, new ProcessListener() {
           @Override
           public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
             if (exitValue != 0) {

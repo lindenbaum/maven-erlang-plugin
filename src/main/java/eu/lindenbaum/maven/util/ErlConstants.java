@@ -11,9 +11,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Erlang related utilities.
+ * Defines Erlang related constants.
  */
-public final class ErlUtils {
+public final class ErlConstants {
   /**
    * Name of the erlang interpreter binary.
    */
@@ -109,18 +109,6 @@ public final class ErlUtils {
   };
 
   /**
-   * Logs a message using {@link Log#debug(CharSequence)} in case debug logging is enabled.
-   * 
-   * @param log logger to use
-   * @param message message to log
-   */
-  public static void logDebug(Log log, String message) {
-    if (log.isDebugEnabled()) {
-      log.debug(message);
-    }
-  }
-
-  /**
    * Evaluate an erlang expression and return the result.
    * 
    * @param log logger.
@@ -163,7 +151,7 @@ public final class ErlUtils {
                             List<String> libPaths,
                             File workingDir,
                             String expression) throws MojoExecutionException {
-    logDebug(log, "Evaluating <<" + expression + ">>");
+    LoggingUtils.logDebug(log, "Evaluating <<" + expression + ">>");
     List<String> commandLine = new LinkedList<String>();
     commandLine.add(getErlCommand(erlPath, ERL));
     if (libPaths != null) {
@@ -208,12 +196,12 @@ public final class ErlUtils {
    */
   public static String exec(String[] command, Log log, File workingDir, ProcessListener listener) throws MojoExecutionException {
     Runtime runtime = Runtime.getRuntime();
-    logDebug(log, "Executing " + Arrays.asList(command).toString());
+    LoggingUtils.logDebug(log, "Executing " + Arrays.asList(command).toString());
 
     try {
       final Process process;
       if (workingDir != null) {
-        logDebug(log, "working directory for process is " + workingDir.getAbsolutePath());
+        LoggingUtils.logDebug(log, "working directory for process is " + workingDir.getAbsolutePath());
         process = runtime.exec(command, null, workingDir);
       }
       else {

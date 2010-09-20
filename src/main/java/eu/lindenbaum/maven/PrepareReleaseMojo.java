@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.ErlConstants;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -148,7 +148,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
    * Copy the release file and perform substitutions.
    */
   private void copyReleaseFile() throws MojoExecutionException {
-    final String theReleaseFileName = getReleaseName() + ErlUtils.REL_SUFFIX;
+    final String theReleaseFileName = getReleaseName() + ErlConstants.REL_SUFFIX;
     final File theSourceRelFile = new File(this.inputDirectory, theReleaseFileName);
     final Map<String, String> theRelSubstitutions = new HashMap<String, String>();
     theRelSubstitutions.put("\\?REL_VERSION", "\"" + getProject().getVersion() + "\"");
@@ -325,7 +325,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
   private File getRelFile(File inRelDir) {
     final File[] theReleaseFiles = inRelDir.listFiles(new FilenameFilter() {
       public boolean accept(File inDir, String inName) {
-        return inName != null && inName.endsWith(ErlUtils.REL_SUFFIX);
+        return inName != null && inName.endsWith(ErlConstants.REL_SUFFIX);
       }
     });
     if (theReleaseFiles.length != 1) {
@@ -333,7 +333,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
     }
     final String theSingleRelFileName = theReleaseFiles[0].getName();
     final String theReleaseName = theSingleRelFileName.substring(0, theSingleRelFileName.length()
-                                                                    - ErlUtils.REL_SUFFIX.length());
+                                                                    - ErlConstants.REL_SUFFIX.length());
     return new File(inRelDir, theReleaseName);
   }
 
@@ -364,7 +364,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
    * Check the version of the release file, it must match the pom's version.
    */
   private void checkVersion() throws MojoExecutionException, MojoFailureException {
-    final File theRelFile = new File(this.outputDirectory, getReleaseName() + ErlUtils.REL_SUFFIX);
+    final File theRelFile = new File(this.outputDirectory, getReleaseName() + ErlConstants.REL_SUFFIX);
 
     // Check the version.
     final String theCheckVersionExpr = String.format(EXTRACT_VERSION, theRelFile.getPath());
@@ -381,7 +381,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
    */
   private void checkApplicationVersions(Map<String, String> inApplications) throws MojoExecutionException,
                                                                            MojoFailureException {
-    final File theRelFile = new File(this.outputDirectory, getReleaseName() + ErlUtils.REL_SUFFIX);
+    final File theRelFile = new File(this.outputDirectory, getReleaseName() + ErlConstants.REL_SUFFIX);
 
     // Extract the application versions
     final String theCheckVersionExpr = String.format(EXTRACT_APPLICATIONS, theRelFile.getPath());
@@ -408,7 +408,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
     final Map<String, String> theResult = new HashMap<String, String>();
     final Set<Artifact> theArtifacts = getProject().getArtifacts();
     for (Artifact theArtifact : theArtifacts) {
-      if (theArtifact.getType().equals(ErlUtils.ARTIFACT_TYPE_OTP)) {
+      if (theArtifact.getType().equals(ErlConstants.ARTIFACT_TYPE_OTP)) {
         theResult.put(theArtifact.getArtifactId(), theArtifact.getVersion());
       }
     }

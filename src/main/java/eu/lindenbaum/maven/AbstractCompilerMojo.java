@@ -10,7 +10,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.LoggingUtils;
 import eu.lindenbaum.maven.util.ProcessListener;
 
 import org.apache.maven.plugin.Mojo;
@@ -63,13 +64,13 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
    */
   protected final int compileSources(File inputDir, File outputDir, File include, String[] options) throws MojoExecutionException {
     Log log = getLog();
-    List<File> sources = getFilesRecursive(log, inputDir, ErlUtils.ERL_SUFFIX);
-    prepare(log, outputDir, sources, ErlUtils.ERL_SUFFIX, ErlUtils.BEAM_SUFFIX);
+    List<File> sources = getFilesRecursive(log, inputDir, ErlConstants.ERL_SUFFIX);
+    prepare(log, outputDir, sources, ErlConstants.ERL_SUFFIX, ErlConstants.BEAM_SUFFIX);
 
     int numSources = sources.size();
     if (numSources > 0) {
-      log.info("Compiling " + numSources + " " + ErlUtils.ERL_SUFFIX + "-files into " + ErlUtils.BEAM_SUFFIX
-               + " (" + outputDir.getAbsolutePath() + ")");
+      log.info("Compiling " + numSources + " " + ErlConstants.ERL_SUFFIX + "-files into "
+               + ErlConstants.BEAM_SUFFIX + " (" + outputDir.getAbsolutePath() + ")");
 
       String[] command = getCommandLine(outputDir, include, options, false);
 
@@ -93,13 +94,13 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
    */
   protected final int compileMibBin(File inputDir, File outputDir) throws MojoExecutionException {
     Log log = getLog();
-    List<File> sources = getFilesRecursive(log, inputDir, ErlUtils.MIB_SUFFIX);
-    prepare(log, outputDir, sources, ErlUtils.MIB_SUFFIX, ErlUtils.BIN_SUFFIX);
+    List<File> sources = getFilesRecursive(log, inputDir, ErlConstants.MIB_SUFFIX);
+    prepare(log, outputDir, sources, ErlConstants.MIB_SUFFIX, ErlConstants.BIN_SUFFIX);
 
     int numSources = sources.size();
     if (numSources > 0) {
-      log.info("Compiling " + numSources + " " + ErlUtils.MIB_SUFFIX + "-files into " + ErlUtils.BIN_SUFFIX
-               + " (" + outputDir.getAbsolutePath() + ")");
+      log.info("Compiling " + numSources + " " + ErlConstants.MIB_SUFFIX + "-files into "
+               + ErlConstants.BIN_SUFFIX + " (" + outputDir.getAbsolutePath() + ")");
 
       String[] command = getCommandLine(outputDir, null, null, true);
 
@@ -123,13 +124,13 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
    */
   protected final int compileMibHrl(File inputDir, File outputDir) throws MojoExecutionException {
     Log log = getLog();
-    List<File> sources = getFilesRecursive(log, inputDir, ErlUtils.BIN_SUFFIX);
-    prepare(log, outputDir, sources, ErlUtils.BIN_SUFFIX, ErlUtils.HRL_SUFFIX);
+    List<File> sources = getFilesRecursive(log, inputDir, ErlConstants.BIN_SUFFIX);
+    prepare(log, outputDir, sources, ErlConstants.BIN_SUFFIX, ErlConstants.HRL_SUFFIX);
 
     int numSources = sources.size();
     if (numSources > 0) {
-      log.info("Compiling " + numSources + " " + ErlUtils.BIN_SUFFIX + "-files into " + ErlUtils.HRL_SUFFIX
-               + " (" + outputDir.getAbsolutePath() + ")");
+      log.info("Compiling " + numSources + " " + ErlConstants.BIN_SUFFIX + "-files into "
+               + ErlConstants.HRL_SUFFIX + " (" + outputDir.getAbsolutePath() + ")");
 
       String[] command = getCommandLine(outputDir, null, null, true);
 
@@ -186,7 +187,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
       public void run() {
         thisCommand[thisCommand.length - 1] = source.getAbsolutePath();
         try {
-          ErlUtils.exec(thisCommand, log, null, new ProcessListener() {
+          ErlConstants.exec(thisCommand, log, null, new ProcessListener() {
             @Override
             public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
               for (String line : processOutput) {
@@ -218,7 +219,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
    */
   protected String[] getCommandLine(File outputDir, File include, String[] options, boolean omitDebug) {
     List<String> commandLine = new ArrayList<String>();
-    commandLine.add(getErlCommand(ErlUtils.ERLC));
+    commandLine.add(getErlCommand(ErlConstants.ERLC));
     commandLine.add("-I");
     commandLine.add(this.includeDirectory.getPath());
     commandLine.add("-I");
@@ -264,7 +265,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
         @Override
         public boolean accept(File child) {
           if (child.isDirectory()) {
-            ErlUtils.logDebug(log, "descending into directory " + child.getAbsolutePath());
+            LoggingUtils.logDebug(log, "descending into directory " + child.getAbsolutePath());
             files.addAll(getFilesRecursive(log, child, suffix));
             return false;
           }
@@ -292,14 +293,14 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
                                 List<File> sources,
                                 String sourceSuffix,
                                 String destSuffix) {
-    ErlUtils.logDebug(log, "preparing output directory " + directory.getAbsolutePath());
+    LoggingUtils.logDebug(log, "preparing output directory " + directory.getAbsolutePath());
     if (directory.exists()) {
       for (File source : sources) {
         File beam = new File(directory, source.getName().replace(sourceSuffix, destSuffix));
         if (beam.exists()) {
-          ErlUtils.logDebug(log, "deleting " + beam.getAbsolutePath());
+          LoggingUtils.logDebug(log, "deleting " + beam.getAbsolutePath());
           if (!beam.delete()) {
-            ErlUtils.logDebug(log, "failed to delete " + beam);
+            LoggingUtils.logDebug(log, "failed to delete " + beam);
           }
         }
       }
