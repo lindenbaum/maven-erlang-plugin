@@ -1,6 +1,6 @@
 package eu.lindenbaum.maven;
 
-import static eu.lindenbaum.maven.util.FileUtils.getLibPaths;
+import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -176,7 +176,7 @@ public final class TestMojo extends AbstractMojo implements FilenameFilter {
 
     List<String> command = new ArrayList<String>();
     command.add(ErlConstants.ERL);
-    for (File lib : getLibPaths(this.libDirectory)) {
+    for (File lib : getDependencies(this.libDirectory)) {
       command.add("-pa");
       command.add(lib.getAbsolutePath());
     }

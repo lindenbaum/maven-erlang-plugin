@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Containing utilities related to file handling.
@@ -13,6 +14,9 @@ import java.util.List;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class FileUtils {
+  static final String APP_REGEX = ".*" + File.separator + "(\\w+)-([\\d\\.]+)" + File.separator + "ebin$";
+  static final Pattern APP_PATTERN = Pattern.compile(APP_REGEX);
+
   /**
    * Get a {@link List} of files matching the given file extension (excluding directories).
    * 
@@ -71,12 +75,12 @@ public final class FileUtils {
    * @param root directory to start the scan from
    * @return a list of matching {@link File}s
    */
-  public static List<File> getLibPaths(File root) {
+  public static List<File> getDependencies(File root) {
     if (root != null && root.exists()) {
       FileFilter filter = new FileFilter() {
         @Override
         public boolean accept(File dir) {
-          return ErlConstants.OTP_DIRECTORY_REGEX.matcher(dir.getAbsolutePath()).matches();
+          return APP_PATTERN.matcher(dir.getAbsolutePath()).matches();
         }
       };
 

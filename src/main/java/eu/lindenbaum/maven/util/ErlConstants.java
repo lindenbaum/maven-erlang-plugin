@@ -2,7 +2,6 @@ package eu.lindenbaum.maven.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.regex.Pattern;
 
 /**
  * Defines Erlang related constants.
@@ -102,11 +101,6 @@ public interface ErlConstants {
    * Name of the directory that contains the include files.
    */
   public static final String INCLUDE_DIRECTORY = "include";
-
-  /**
-   * Regex for the OTP application module directories.
-   */
-  public static final Pattern OTP_DIRECTORY_REGEX = Pattern.compile("([^-]+)-([^-]+)");
 
   /**
    * Filename filter to filter source files (.erl & .hrl). Return true if the given file is a source file (and

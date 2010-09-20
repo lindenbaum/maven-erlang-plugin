@@ -2,7 +2,7 @@ package eu.lindenbaum.maven;
 
 import static eu.lindenbaum.maven.util.DialyzerUtils.dialyze;
 import static eu.lindenbaum.maven.util.DialyzerUtils.needDialyzerBuild;
-import static eu.lindenbaum.maven.util.FileUtils.getLibPaths;
+import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
 
 import java.io.File;
 import java.util.Collections;
@@ -88,7 +88,7 @@ public final class DialyzerMojo extends AbstractMojo {
         if (this.forceDialyzer || needDialyzerBuild(this.beamDirectory)) {
           final List<File> libPaths;
           if (this.dialyzerWithDependencies) {
-            libPaths = getLibPaths(this.libDirectory);
+            libPaths = getDependencies(this.libDirectory);
           }
           else {
             libPaths = Collections.emptyList();
