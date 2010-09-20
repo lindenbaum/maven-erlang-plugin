@@ -219,8 +219,8 @@ public final class ErlUtils {
       else {
         process = runtime.exec(command);
       }
-      StreamGobbler error = new StreamGobbler(process.getErrorStream());
-      StreamGobbler output = new StreamGobbler(process.getInputStream());
+      StreamGobbler error = new StreamGobbler(process.getErrorStream(), log);
+      StreamGobbler output = new StreamGobbler(process.getInputStream(), log);
 
       new Thread(error).start();
       new Thread(output).start();

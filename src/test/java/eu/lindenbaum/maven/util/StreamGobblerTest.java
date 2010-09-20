@@ -1,6 +1,7 @@
 package eu.lindenbaum.maven.util;
 
 import static org.easymock.EasyMock.createStrictControl;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -20,14 +21,30 @@ public class StreamGobblerTest {
   public void setUp() throws Exception {
     this.control = createStrictControl();
     this.log = this.control.createMock("log", Log.class);
+
+    expect(this.log.isDebugEnabled()).andStubReturn(true);
+  }
+
+  @Test
+  public void testEmpty() throws Exception {
+    InputStream inputStream = getClass().getClassLoader().getResourceAsStream("stream-gobbler/empty.txt");
+
+    this.control.replay();
+
+    StreamGobbler gobbler = new StreamGobbler(inputStream, this.log);
+    assertTrue(gobbler.getLines().isEmpty());
+    gobbler.run();
+    assertTrue(gobbler.getLines().isEmpty());
+
+    this.control.verify();
   }
 
   @Test
   public void testNonEmpty() throws Exception {
-    InputStream inputStream = getClass().getClassLoader().getResourceAsStream("stream-gobbler-test.txt");
+    InputStream inputStream = getClass().getClassLoader().getResourceAsStream("stream-gobbler/non-empty.txt");
 
-    this.log.info("line1");
-    this.log.info("line2");
+    this.log.debug("line1");
+    this.log.debug("line2");
 
     this.control.replay();
 

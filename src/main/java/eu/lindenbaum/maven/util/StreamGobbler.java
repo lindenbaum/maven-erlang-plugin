@@ -18,10 +18,6 @@ public final class StreamGobbler implements Runnable {
 
   private final List<String> lineBuffer = new ArrayList<String>();
 
-  public StreamGobbler(InputStream inputStream) {
-    this(inputStream, null);
-  }
-
   public StreamGobbler(InputStream inputStream, Log log) {
     this.inputStream = inputStream;
     this.log = log;
@@ -39,21 +35,20 @@ public final class StreamGobbler implements Runnable {
   @Override
   public void run() {
     try {
-      final InputStreamReader isr = new InputStreamReader(this.inputStream);
-      final BufferedReader br = new BufferedReader(isr);
+      InputStreamReader streamReader = new InputStreamReader(this.inputStream);
+      BufferedReader reader = new BufferedReader(streamReader);
       String line;
-      while ((line = br.readLine()) != null) {
+      while ((line = reader.readLine()) != null) {
         if (!"".equals(line)) {
           this.lineBuffer.add(line);
-
-          if (this.log != null) {
-            this.log.info(line);
+          if (this.log.isDebugEnabled()) {
+            this.log.debug(line);
           }
         }
       }
     }
     catch (IOException e) {
-      e.printStackTrace();
+      this.log.debug("failed to read from stream " + this.inputStream, e);
     }
   }
 }
