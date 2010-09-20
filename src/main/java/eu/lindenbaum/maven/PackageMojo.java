@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import eu.lindenbaum.maven.util.EDocUtils;
 import eu.lindenbaum.maven.util.ErlConstants;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -227,8 +228,7 @@ public final class PackageMojo extends AbstractErlMojo {
         copyDirectoryStructure(this.mibsDirectory, mibs);
       }
 
-      final String theApplicationName = ErlConstants.getApplicationName(this.applicationResourceFile,
-                                                                        getProject().getArtifactId());
+      String theApplicationName = getProject().getArtifactId();
       final File theApplicationResourceFile = new File(this.beamDirectory.getPath(), theApplicationName
                                                                                      + ".app");
 
@@ -309,15 +309,10 @@ public final class PackageMojo extends AbstractErlMojo {
         getLog().info("Generating documentation with Edoc");
 
         if (theApplicationResourceFile.exists()) {
-          ErlConstants.generateEdocAppDocumentation(getLog(),
-                                                    this.edocOptions,
-                                                    theApplicationName,
-                                                    src,
-                                                    ebin,
-                                                    this.docDirectory);
+          EDocUtils.generateAppEDoc(getLog(), theApplicationName, src, this.docDirectory, this.edocOptions);
         }
         else {
-          ErlConstants.generateEdocFilesDocumentation(getLog(), this.edocOptions, src, this.docDirectory);
+          EDocUtils.generateEDoc(getLog(), src, this.docDirectory, this.edocOptions);
         }
       }
 

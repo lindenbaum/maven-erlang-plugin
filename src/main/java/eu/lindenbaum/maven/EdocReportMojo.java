@@ -1,11 +1,19 @@
 package eu.lindenbaum.maven;
 
+import static eu.lindenbaum.maven.util.EDocUtils.generateAppEDoc;
+import static eu.lindenbaum.maven.util.EDocUtils.generateEDoc;
+
 import java.io.File;
 import java.util.Locale;
 
 import eu.lindenbaum.maven.util.ErlConstants;
 
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
 
 /**
  * Generate the edoc report.
@@ -13,7 +21,25 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @goal edoc
  * @phase generate-sources
  */
-public final class EdocReportMojo extends AbstractEdocReportMojo {
+public final class EdocReportMojo extends AbstractMavenReport {
+  /**
+   * Project to interact with.
+   * 
+   * @parameter expression="${project}"
+   * @required
+   * @readonly
+   */
+  private MavenProject project;
+
+  /**
+   * Doxia Site Renderer.
+   * 
+   * @parameter expression="${component.org.codehaus.doxia.site.renderer.DefaultSiteRenderer}"
+   * @required
+   * @readonly
+   */
+  private Renderer siteRenderer;
+
   /**
    * Directory with module source code.
    * 
@@ -30,89 +56,103 @@ public final class EdocReportMojo extends AbstractEdocReportMojo {
   private File outputDirectory;
 
   /**
-   * Name of the destination directory.
-   * 
-   * @parameter expression="${edocDestDir}" default-value="edoc"
-   */
-  private String edocDestDir;
-
-  /**
-   * Application resource file (in src/ directory).
+   * EDoc options.
    * 
    * @parameter
    */
-  private String applicationResourceFile;
+  private String[] eDocOptions;
 
   /**
-   * Edoc options.
-   * 
-   * @parameter
+   * @see AbstractMavenReport#getName(Locale)
    */
-  private String[] edocOptions;
-
-  /*
-   * MavenReport interface.
-   */
+  @Override
   public String getName(Locale locale) {
-    return "Edoc";
+    return "EDoc";
   }
 
-  /*
-   * MavenReport interface.
+  /**
+   * @see AbstractMavenReport#getDescription(Locale)
    */
-  public String getDescription(Locale inLocale) {
-    return "Edoc documentation";
+  @Override
+  public String getDescription(Locale locale) {
+    return "EDoc Documentation";
   }
 
-  /*
-   * MavenReport interface.
+  /**
+   * @see AbstractMavenReport#getProject()
+   */
+  @Override
+  protected MavenProject getProject() {
+    return this.project;
+  }
+
+  /**
+   * @see AbstractMavenReport#getSiteRenderer()
+   */
+  @Override
+  protected Renderer getSiteRenderer() {
+    return this.siteRenderer;
+  }
+
+  /**
+   * @see AbstractMavenReport#isExternalReport()
+   */
+  @Override
+  public boolean isExternalReport() {
+    return true;
+  }
+
+  /**
+   * @see AbstractMavenReport#getOutputDirectory()
    */
   @Override
   protected String getOutputDirectory() {
-    return this.outputDirectory.getAbsoluteFile().toString();
-  }
-
-  /*
-   * MavenReport Interface.
-   */
-  public String getOutputName() {
-    return this.edocDestDir + "/index";
-  }
-
-  /*
-   * MavenReport interface.
-   */
-  @Override
-  public boolean canGenerateReport() {
-    return this.sourceDirectory.isDirectory() && this.sourceDirectory.list().length > 0;
+    return this.outputDirectory.getAbsolutePath();
   }
 
   /**
-   * Actually generate the documentation.
-   * 
-   * @throws MojoExecutionException if a problem occurred with edoc.
+   * @see AbstractMavenReport#getOutputName()
    */
   @Override
-  protected void generateEdocDocumentation() throws MojoExecutionException {
-    this.outputDirectory.mkdirs();
+  public String getOutputName() {
+    return this.outputDirectory.getName() + File.separator + "index";
+  }
 
-    final String theApplicationName = ErlConstants.getApplicationName(this.applicationResourceFile,
-                                                                      getProject().getArtifactId());
-    final File theApplicationResourceFile = new File(this.sourceDirectory.getPath(), theApplicationName
-                                                                                     + ".app");
-    if (theApplicationResourceFile.exists()) {
-      ErlConstants.generateEdocAppDocumentation(getLog(),
-                                                this.edocOptions,
-                                                theApplicationName,
-                                                this.sourceDirectory,
-                                                this.sourceDirectory,
-                                                this.outputDirectory);
+  /**
+   * @see AbstractMavenReport#canGenerateReport()
+   */
+  @Override
+  public boolean canGenerateReport() {
+    String[] list = this.sourceDirectory.list();
+    return list != null && list.length > 0;
+  }
+
+  /**
+   * @see AbstractMavenReport#executeReport(Locale)
+   */
+  @Override
+  protected void executeReport(Locale locale) throws MavenReportException {
+    Log log = getLog();
+    String description = getDescription(Locale.ENGLISH);
+    if (canGenerateReport()) {
+      log.debug("Generating " + description);
+      this.outputDirectory.mkdirs();
+      String artifactId = getProject().getArtifactId();
+      File appFile = new File(this.sourceDirectory, artifactId + ErlConstants.APP_SUFFIX);
+      try {
+        if (appFile.exists()) {
+          generateAppEDoc(getLog(), artifactId, this.sourceDirectory, this.outputDirectory, this.eDocOptions);
+        }
+        else {
+          generateEDoc(getLog(), this.sourceDirectory, this.outputDirectory, this.eDocOptions);
+        }
+      }
+      catch (MojoExecutionException e) {
+        throw new MavenReportException(e.getMessage(), e);
+      }
     }
     else {
-      ErlConstants.generateEdocFilesDocumentation(getLog(),
-                                                  this.edocOptions,
-                                                  this.sourceDirectory,
-                                                  this.outputDirectory);
+      log.info("No resources to process, skipping " + description);
     }
   }
 }

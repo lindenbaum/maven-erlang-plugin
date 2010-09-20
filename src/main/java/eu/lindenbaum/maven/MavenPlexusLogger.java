@@ -4,61 +4,61 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.logging.Logger;
 
 public final class MavenPlexusLogger implements Logger {
-  private final Log mLog;
-  private final String mName;
+  private final Log log;
+  private final String name;
 
-  public MavenPlexusLogger(Log inLog) {
-    this(inLog, "maven:logger");
+  public MavenPlexusLogger(Log log) {
+    this(log, "maven:logger");
   }
 
-  public MavenPlexusLogger(Log inLog, String inName) {
-    this.mLog = inLog;
-    this.mName = inName;
+  public MavenPlexusLogger(Log log, String name) {
+    this.log = log;
+    this.name = name;
   }
 
   public void debug(String message) {
-    this.mLog.debug(message);
+    this.log.debug(message);
   }
 
   public void debug(String message, Throwable throwable) {
-    this.mLog.debug(message, throwable);
+    this.log.debug(message, throwable);
   }
 
   public void error(String message) {
-    this.mLog.error(message);
+    this.log.error(message);
   }
 
   public void error(String message, Throwable throwable) {
-    this.mLog.error(message, throwable);
+    this.log.error(message, throwable);
   }
 
   public void fatalError(String message) {
-    this.mLog.error(message);
+    this.log.error(message);
   }
 
   public void fatalError(String message, Throwable throwable) {
-    this.mLog.error(message, throwable);
+    this.log.error(message, throwable);
   }
 
-  public Logger getChildLogger(String inName) {
-    return new MavenPlexusLogger(this.mLog, this.mName + "." + inName);
+  public Logger getChildLogger(String name) {
+    return new MavenPlexusLogger(this.log, this.name + "." + name);
   }
 
   public String getName() {
-    return this.mName;
+    return this.name;
   }
 
   public int getThreshold() {
-    if (this.mLog.isDebugEnabled()) {
+    if (this.log.isDebugEnabled()) {
       return Logger.LEVEL_DEBUG;
     }
-    else if (this.mLog.isInfoEnabled()) {
+    else if (this.log.isInfoEnabled()) {
       return Logger.LEVEL_INFO;
     }
-    else if (this.mLog.isWarnEnabled()) {
+    else if (this.log.isWarnEnabled()) {
       return Logger.LEVEL_WARN;
     }
-    else if (this.mLog.isErrorEnabled()) {
+    else if (this.log.isErrorEnabled()) {
       return Logger.LEVEL_ERROR;
     }
 
@@ -66,38 +66,38 @@ public final class MavenPlexusLogger implements Logger {
   }
 
   public void info(String message) {
-    this.mLog.info(message);
+    this.log.info(message);
   }
 
   public void info(String message, Throwable throwable) {
-    this.mLog.info(message, throwable);
+    this.log.info(message, throwable);
   }
 
   public boolean isDebugEnabled() {
-    return this.mLog.isDebugEnabled();
+    return this.log.isDebugEnabled();
   }
 
   public boolean isErrorEnabled() {
-    return this.mLog.isErrorEnabled();
+    return this.log.isErrorEnabled();
   }
 
   public boolean isFatalErrorEnabled() {
-    return this.mLog.isErrorEnabled();
+    return this.log.isErrorEnabled();
   }
 
   public boolean isInfoEnabled() {
-    return this.mLog.isInfoEnabled();
+    return this.log.isInfoEnabled();
   }
 
   public boolean isWarnEnabled() {
-    return this.mLog.isWarnEnabled();
+    return this.log.isWarnEnabled();
   }
 
   public void warn(String message) {
-    this.mLog.warn(message);
+    this.log.warn(message);
   }
 
   public void warn(String message, Throwable throwable) {
-    this.mLog.warn(message, throwable);
+    this.log.warn(message, throwable);
   }
 }

@@ -2,14 +2,12 @@ package eu.lindenbaum.maven.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
+import java.util.regex.Pattern;
 
 /**
  * Defines Erlang related constants.
  */
-public final class ErlConstants {
+public interface ErlConstants {
   /**
    * Name of the erlang interpreter binary.
    */
@@ -71,9 +69,19 @@ public final class ErlConstants {
   public static final String REL_SUFFIX = ".rel";
 
   /**
+   * Suffix for eunit tests.
+   */
+  public static final String TEST_SUFFIX = "_test" + BEAM_SUFFIX;
+
+  /**
    * Name of the coverdata binary (coverdata) file.
    */
   public static final String COVERDATA_BIN = "coverdata.coverdata";
+
+  /**
+   * Name of the dialyzer ok file.
+   */
+  public static final String DIALYZER_OK = ".dialyzer.ok";
 
   /**
    * Type of artifacts for applications, i.e. zip archive containing an erlang-otp application.
@@ -96,135 +104,17 @@ public final class ErlConstants {
   public static final String INCLUDE_DIRECTORY = "include";
 
   /**
-   * Filename filter to filter source files (.erl & .hrl).
+   * Regex for the OTP application module directories.
+   */
+  public static final Pattern OTP_DIRECTORY_REGEX = Pattern.compile("([^-]+)-([^-]+)");
+
+  /**
+   * Filename filter to filter source files (.erl & .hrl). Return true if the given file is a source file (and
+   * therefore should be included in the src/ directory in the package). Uses the file suffix.
    */
   public static final FilenameFilter SOURCE_FILENAME_FILTER = new FilenameFilter() {
-    public boolean accept(File inDir, String inName) {
-      return isSourceFile(inName);
+    public boolean accept(File dir, String name) {
+      return name != null && (name.endsWith(HRL_SUFFIX) || name.endsWith(ERL_SUFFIX));
     }
   };
-
-  /**
-   * Return true if the given file is a source file (and therefore should be included in the src/ directory in
-   * the package). Uses the file suffix.
-   * 
-   * @param filename name of the considered file.
-   * @return <code>true</code> if the file is a source file.
-   */
-  public static boolean isSourceFile(String filename) {
-    return filename != null && (filename.endsWith(HRL_SUFFIX) || filename.endsWith(ERL_SUFFIX));
-  }
-
-  /**
-   * Generate the documentation with edoc for an OTP application.
-   * 
-   * @param log Reference on the Maven log object.
-   * @param edocOptions Additional edoc options, or <code>null</code>
-   * @param appName name of the OTP application.
-   * @param sourcePath path to the source directory.
-   * @param appDirectory directory where the .app file can be found.
-   * @param outputPath path to the output directory.
-   * @throws MojoExecutionException If a problem occurs with the erl runtime.
-   */
-  public static void generateEdocAppDocumentation(Log log,
-                                                  String[] edocOptions,
-                                                  String appName,
-                                                  File sourcePath,
-                                                  File appDirectory,
-                                                  File outputPath) throws MojoExecutionException {
-    generateEdocDocumentation(log, edocOptions, appName, sourcePath, appDirectory, outputPath);
-  }
-
-  /**
-   * Generate the documentation with edoc for a set of files.
-   * 
-   * @param log Reference on the Maven log object.
-   * @param edocOptions Additional edoc options, or <code>null</code>
-   * @param sourcePath path to the source directory.
-   * @param outputPath path to the output directory.
-   * @throws MojoExecutionException If a problem occurs with the erl runtime.
-   */
-  public static void generateEdocFilesDocumentation(Log log,
-                                                    String[] edocOptions,
-                                                    File sourcePath,
-                                                    File outputPath) throws MojoExecutionException {
-    generateEdocDocumentation(log, edocOptions, null, sourcePath, null, outputPath);
-  }
-
-  /**
-   * Generate the documentation with edoc for a set of files.
-   * 
-   * @param log Reference on the Maven log object.
-   * @param edocOptions Additional edoc options, or <code>null</code>
-   * @param appName name of the OTP application or <code>null</code> to generate the documentation from files.
-   * @param sourcePath path to the source directory.
-   * @param appDirectory directory where the .app file can be found.
-   * @param outputPath path to the output directory.
-   * @throws MojoExecutionException If a problem occurs with the erl runtime.
-   */
-  private static void generateEdocDocumentation(Log log,
-                                                String[] edocOptions,
-                                                String appName,
-                                                File sourcePath,
-                                                File appDirectory,
-                                                File outputPath) throws MojoExecutionException {
-    final StringBuilder theEdocLineBuffer = new StringBuilder();
-    if (appName != null) {
-      theEdocLineBuffer.append("edoc:application(").append(appName).append(",\"");
-      theEdocLineBuffer.append(appDirectory.getPath()).append("\",");
-    }
-    else {
-      theEdocLineBuffer.append("edoc:files([");
-      // all source files.
-      final File[] theSourceFiles = sourcePath.listFiles(SOURCE_FILENAME_FILTER);
-      boolean first = true;
-      for (final File theSourceFile : theSourceFiles) {
-        if (!first) {
-          theEdocLineBuffer.append(", ");
-        }
-        first = false;
-        theEdocLineBuffer.append("\"").append(theSourceFile.getPath()).append("\"");
-      }
-      theEdocLineBuffer.append("],");
-    }
-    theEdocLineBuffer.append("[{dir, \"")
-                     .append(outputPath.getPath())
-                     .append("\"},")
-                     .append(" {source_path, [\"")
-                     .append(sourcePath.getPath())
-                     .append("\"]}");
-    // options
-    if (edocOptions != null) {
-      for (final String theOption : edocOptions) {
-        theEdocLineBuffer.append(",").append(theOption);
-      }
-    }
-    theEdocLineBuffer.append("]).");
-
-    ErlUtils.eval(log, theEdocLineBuffer.toString());
-  }
-
-  /**
-   * Get the OTP application name from the applicationResourceFile option (if present) or the artifactId
-   * (replacing dashes with underscores).
-   * 
-   * @param applicationResourceFile application resource file option (can be <code>null</code>).
-   * @param artifactId project artifact Id.
-   * @return the OTP application name.
-   * @throws MojoExecutionException if the applicationResourceFile option is invalid.
-   */
-  public static String getApplicationName(String applicationResourceFile, String artifactId) throws MojoExecutionException {
-    final String theApplicationName;
-    if (applicationResourceFile == null) {
-      // Try to guess the application resource file.
-      theApplicationName = artifactId.replace('-', '_');
-    }
-    else {
-      if (!applicationResourceFile.endsWith(".app")) {
-        throw new MojoExecutionException("Illegal applicationResourceFile parameter. It must end with .app");
-      }
-      theApplicationName = applicationResourceFile.substring(0, applicationResourceFile.length() - 4);
-    }
-    return theApplicationName;
-  }
 }

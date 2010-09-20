@@ -18,11 +18,11 @@ import eu.lindenbaum.maven.cover.ModuleCoverData;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.ErlUtils;
 
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
 
 /**
  * Generate the cover report.
@@ -83,10 +83,11 @@ public class CoverReportMojo extends AbstractMavenReport {
   /**
    * Doxia Site Renderer.
    * 
-   * @parameter expression="${component.org.codehaus.doxia.site.renderer.SiteRenderer}"
-   * @required @readonly
+   * @parameter expression="${component.org.codehaus.doxia.site.renderer.DefaultSiteRenderer}"
+   * @required
+   * @readonly
    */
-  private SiteRenderer siteRenderer;
+  private Renderer siteRenderer;
 
   /**
    * Project to interact with.
@@ -140,7 +141,7 @@ public class CoverReportMojo extends AbstractMavenReport {
    * MavenReport interface.
    */
   @Override
-  protected SiteRenderer getSiteRenderer() {
+  protected Renderer getSiteRenderer() {
     return this.siteRenderer;
   }
 
