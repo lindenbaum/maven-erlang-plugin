@@ -60,6 +60,7 @@ public final class TestMojo extends AbstractMojo implements FilenameFilter {
    * directories, with include and ebin sub directories).
    * 
    * @parameter expression="${project.build.directory}/lib/"
+   * @required
    */
   private File libDirectory;
 

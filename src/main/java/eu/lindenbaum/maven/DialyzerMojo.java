@@ -31,6 +31,7 @@ public final class DialyzerMojo extends AbstractMojo {
    * directories, with include and ebin sub directories).
    * 
    * @parameter expression="${project.build.directory}/lib/"
+   * @required
    */
   private File libDirectory;
 
@@ -66,6 +67,7 @@ public final class DialyzerMojo extends AbstractMojo {
    * Directory where the beam files are created.
    * 
    * @parameter expression="${project.build.directory}/ebin/"
+   * @required
    */
   private File beamDirectory;
 
