@@ -7,7 +7,9 @@
     </menu>
     <menu name="Reports">
       <item name="Releasenotes" href="changes-report.html" />
-      <item name="Tests" href="surefire-report.html" />
+      <item name="Java API" href="apidocs/index.html" />
+      <item name="Unit tests" href="surefire-report.html" />
+      <item name="Integration tests" href="invoker-report.html" />
     </menu>
     <menu name="Development">
       <item name="Overview" href="development.html" />

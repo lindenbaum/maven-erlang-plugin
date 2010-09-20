@@ -4,12 +4,12 @@ Maven Erlang Plug-In
  The Maven Erlang Plug-In manages Erlang projects under Maven2, enabling 
  building, testing and deployment - as expected by Maven users.
  
- This project is based on <<<maven-erlang>>>, created by Paul Guyot and 
- Olivier Sambourg {{http://maven-erlang.sourceforge.net/erlang-plugin/}}, but
- is maintained under this new regime in order to improve and extend it. This 
- incarnation also provides a little bit more definition for 
- {{{development.html}development}} - be sure to check it out if you are
- interested in contributing.
+ This project is based on 
+ {{{http://maven-erlang.sourceforge.net/erlang-plugin/}maven-erlang}}, created 
+ by Paul Guyot and Olivier Sambourg, but is maintained under this new regime in 
+ order to improve and extend it. This incarnation also provides a little bit 
+ more definition for {{{development.html}development}} - be sure to check it 
+ out if you are interested in contributing.
  
 * Getting started
 
