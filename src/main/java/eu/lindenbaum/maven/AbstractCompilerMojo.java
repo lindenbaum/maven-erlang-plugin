@@ -23,7 +23,8 @@ import org.apache.maven.plugin.logging.Log;
 /**
  * Abstract base class for {@link Mojo}s compiling erlang code.
  * 
- * @author Tobias Schlager tobias.schlager@lindenbaum.eu
+ * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 abstract class AbstractCompilerMojo extends AbstractErlMojo {
   /**
@@ -71,11 +72,10 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
 
     int numSources = sources.size();
     if (numSources > 0) {
-      log.info("Compiling " + numSources + " " + ErlConstants.ERL_SUFFIX + "-files into "
-               + ErlConstants.BEAM_SUFFIX + " (" + outputDir.getAbsolutePath() + ")");
-
+      log.info("Compiling " + numSources + " " + ErlConstants.ERL_SUFFIX + "-file"
+               + (numSources > 1 ? "s" : "") + " into " + ErlConstants.BEAM_SUFFIX + " ("
+               + outputDir.getAbsolutePath() + ")");
       List<String> command = getCommandLine(outputDir, include, options, false);
-
       AtomicBoolean failure = new AtomicBoolean(false);
       List<Runnable> jobList = new ArrayList<Runnable>();
       for (File source : sources) {
@@ -101,8 +101,9 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
 
     int numSources = sources.size();
     if (numSources > 0) {
-      log.info("Compiling " + numSources + " " + ErlConstants.MIB_SUFFIX + "-files into "
-               + ErlConstants.BIN_SUFFIX + " (" + outputDir.getAbsolutePath() + ")");
+      log.info("Compiling " + numSources + " " + ErlConstants.MIB_SUFFIX + "-file"
+               + (numSources > 1 ? "s" : "") + " into " + ErlConstants.BIN_SUFFIX + " ("
+               + outputDir.getAbsolutePath() + ")");
 
       List<String> command = getCommandLine(outputDir, null, null, true);
 
@@ -131,8 +132,9 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
 
     int numSources = sources.size();
     if (numSources > 0) {
-      log.info("Compiling " + numSources + " " + ErlConstants.BIN_SUFFIX + "-files into "
-               + ErlConstants.HRL_SUFFIX + " (" + outputDir.getAbsolutePath() + ")");
+      log.info("Compiling " + numSources + " " + ErlConstants.BIN_SUFFIX + "-file"
+               + (numSources > 1 ? "s" : "") + " into " + ErlConstants.HRL_SUFFIX + " ("
+               + outputDir.getAbsolutePath() + ")");
 
       List<String> command = getCommandLine(outputDir, null, null, true);
 
