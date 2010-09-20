@@ -90,9 +90,8 @@ public final class TestEdocReportMojo extends AbstractEdocReportMojo {
     this.outputDirectory.mkdirs();
 
     ErlConstants.generateEdocFilesDocumentation(getLog(),
-                                            getErlPath(),
-                                            this.testEdocOptions,
-                                            this.testSourceDirectory,
-                                            this.outputDirectory);
+                                                this.testEdocOptions,
+                                                this.testSourceDirectory,
+                                                this.outputDirectory);
   }
 }

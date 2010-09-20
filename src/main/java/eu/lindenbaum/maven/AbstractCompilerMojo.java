@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.LoggingUtils;
 import eu.lindenbaum.maven.util.ProcessListener;
 
@@ -187,7 +188,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
       public void run() {
         thisCommand[thisCommand.length - 1] = source.getAbsolutePath();
         try {
-          ErlConstants.exec(thisCommand, log, null, new ProcessListener() {
+          ErlUtils.exec(thisCommand, log, null, new ProcessListener() {
             @Override
             public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
               for (String line : processOutput) {
@@ -219,7 +220,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
    */
   protected String[] getCommandLine(File outputDir, File include, String[] options, boolean omitDebug) {
     List<String> commandLine = new ArrayList<String>();
-    commandLine.add(getErlCommand(ErlConstants.ERLC));
+    commandLine.add(ErlConstants.ERLC);
     commandLine.add("-I");
     commandLine.add(this.includeDirectory.getPath());
     commandLine.add("-I");

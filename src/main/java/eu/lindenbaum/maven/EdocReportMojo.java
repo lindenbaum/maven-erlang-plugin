@@ -97,24 +97,22 @@ public final class EdocReportMojo extends AbstractEdocReportMojo {
     this.outputDirectory.mkdirs();
 
     final String theApplicationName = ErlConstants.getApplicationName(this.applicationResourceFile,
-                                                                  getProject().getArtifactId());
+                                                                      getProject().getArtifactId());
     final File theApplicationResourceFile = new File(this.sourceDirectory.getPath(), theApplicationName
                                                                                      + ".app");
     if (theApplicationResourceFile.exists()) {
       ErlConstants.generateEdocAppDocumentation(getLog(),
-                                            getErlPath(),
-                                            this.edocOptions,
-                                            theApplicationName,
-                                            this.sourceDirectory,
-                                            this.sourceDirectory,
-                                            this.outputDirectory);
+                                                this.edocOptions,
+                                                theApplicationName,
+                                                this.sourceDirectory,
+                                                this.sourceDirectory,
+                                                this.outputDirectory);
     }
     else {
       ErlConstants.generateEdocFilesDocumentation(getLog(),
-                                              getErlPath(),
-                                              this.edocOptions,
-                                              this.sourceDirectory,
-                                              this.outputDirectory);
+                                                  this.edocOptions,
+                                                  this.sourceDirectory,
+                                                  this.outputDirectory);
     }
   }
 }

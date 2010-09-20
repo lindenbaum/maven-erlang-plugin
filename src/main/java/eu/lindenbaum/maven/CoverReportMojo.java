@@ -16,6 +16,7 @@ import javax.xml.transform.TransformerException;
 import eu.lindenbaum.maven.cover.CoverData;
 import eu.lindenbaum.maven.cover.ModuleCoverData;
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.ErlUtils;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -95,13 +96,6 @@ public class CoverReportMojo extends AbstractMavenReport {
    * @readonly
    */
   private MavenProject project;
-
-  /**
-   * Path to the erlang installation directory.
-   * 
-   * @parameter
-   */
-  private String erlPath;
 
   /**
    * Directory where the beam files are created.
@@ -261,9 +255,8 @@ public class CoverReportMojo extends AbstractMavenReport {
 
     final List<File> theResult = new LinkedList<File>();
 
-    final String theCoverageDump = ErlConstants.eval(getLog(), this.erlPath, "cover:import(\""
-                                                                         + inCoverageDataFile.getPath()
-                                                                         + "\"), " + DUMP_COVERDATA);
+    final String theCoverageDump = ErlUtils.eval(getLog(), "cover:import(\"" + inCoverageDataFile.getPath()
+                                                           + "\"), " + DUMP_COVERDATA);
     final CoverData theCoverData = new CoverData(theCoverageDump);
 
     theResult.add(generateMainXMLReport(theCoverData));

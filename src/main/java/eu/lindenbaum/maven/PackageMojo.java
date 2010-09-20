@@ -228,7 +228,7 @@ public final class PackageMojo extends AbstractErlMojo {
       }
 
       final String theApplicationName = ErlConstants.getApplicationName(this.applicationResourceFile,
-                                                                    getProject().getArtifactId());
+                                                                        getProject().getArtifactId());
       final File theApplicationResourceFile = new File(this.beamDirectory.getPath(), theApplicationName
                                                                                      + ".app");
 
@@ -262,8 +262,9 @@ public final class PackageMojo extends AbstractErlMojo {
         boolean listMismatch = false;
         for (File beamFile : beamFiles) {
           final String theCompiledModule = beamFile.getName();
-          final String theCompiledModuleName = theCompiledModule.substring(0, theCompiledModule.length()
-                                                                              - ErlConstants.BEAM_SUFFIX.length());
+          final String theCompiledModuleName = theCompiledModule.substring(0,
+                                                                           theCompiledModule.length()
+                                                                               - ErlConstants.BEAM_SUFFIX.length());
           if (!theModulesSet.remove(theCompiledModuleName)) {
             final String theErrorString = "Module " + theCompiledModuleName + " is not listed in .app file";
             if (this.failOnUndeclaredModules) {
@@ -284,8 +285,8 @@ public final class PackageMojo extends AbstractErlMojo {
         }
 
         // Check the .appup.
-        final File theApplicationUpgradeFile = new File(this.beamDirectory.getPath(), theApplicationName
-                                                                                      + ErlConstants.APPUP_SUFFIX);
+        final File theApplicationUpgradeFile = new File(this.beamDirectory.getPath(),
+                                                        theApplicationName + ErlConstants.APPUP_SUFFIX);
         if (theApplicationUpgradeFile.exists()) {
           final String theCheckAppupExpr = String.format(CHECK_APPUP,
                                                          theApplicationUpgradeFile.getPath(),
@@ -309,19 +310,14 @@ public final class PackageMojo extends AbstractErlMojo {
 
         if (theApplicationResourceFile.exists()) {
           ErlConstants.generateEdocAppDocumentation(getLog(),
-                                                getErlPath(),
-                                                this.edocOptions,
-                                                theApplicationName,
-                                                src,
-                                                ebin,
-                                                this.docDirectory);
+                                                    this.edocOptions,
+                                                    theApplicationName,
+                                                    src,
+                                                    ebin,
+                                                    this.docDirectory);
         }
         else {
-          ErlConstants.generateEdocFilesDocumentation(getLog(),
-                                                  getErlPath(),
-                                                  this.edocOptions,
-                                                  src,
-                                                  this.docDirectory);
+          ErlConstants.generateEdocFilesDocumentation(getLog(), this.edocOptions, src, this.docDirectory);
         }
       }
 

@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.ErlUtils;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -46,13 +47,6 @@ abstract class AbstractErlMojo extends AbstractMojo {
   private File libDirectory;
 
   /**
-   * Path to the erlang installation directory.
-   * 
-   * @parameter
-   */
-  private String erlPath;
-
-  /**
    * Cache of the application paths.
    */
   private final Map<String, String> applicationPathCache = new HashMap<String, String>();
@@ -61,15 +55,6 @@ abstract class AbstractErlMojo extends AbstractMojo {
    * Cache of the lib paths.
    */
   private List<String> libPaths;
-
-  /**
-   * Get the erlPath option.
-   * 
-   * @return the value of the erlPath option.
-   */
-  protected final String getErlPath() {
-    return this.erlPath;
-  }
 
   /**
    * Get the project.
@@ -97,7 +82,7 @@ abstract class AbstractErlMojo extends AbstractMojo {
    * @throws MojoExecutionException if there was a problem with the erlang runtime.
    */
   protected String eval(String inExpression) throws MojoExecutionException {
-    return ErlConstants.eval(getLog(), this.erlPath, getLibPaths(), inExpression);
+    return ErlUtils.eval(getLog(), inExpression, getLibPaths());
   }
 
   /**
@@ -115,17 +100,6 @@ abstract class AbstractErlMojo extends AbstractMojo {
       this.applicationPathCache.put(inModule, theModulePath);
     }
     return new File(theModulePath, inPath);
-  }
-
-  /**
-   * Accessor on the path to an erlang command such as erlc, erl, dialyzer.
-   * 
-   * @param inCommandName name of the command.
-   * @return <code>inCommandName</code> if the erlpath option wasn't specified (works if <code>$PATH</code> is
-   *         configured property) or <code>erlPath/bin/inCommandName</code>.
-   */
-  protected String getErlCommand(String inCommandName) {
-    return ErlConstants.getErlCommand(this.erlPath, inCommandName);
   }
 
   /**

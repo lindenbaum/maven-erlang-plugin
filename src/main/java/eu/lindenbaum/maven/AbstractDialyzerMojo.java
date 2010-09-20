@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.ProcessListener;
 
 import org.apache.maven.plugin.Mojo;
@@ -112,7 +113,7 @@ abstract class AbstractDialyzerMojo extends AbstractErlMojo {
 
       // Generate the command line.
       List<String> commandLine = new LinkedList<String>();
-      commandLine.add(getErlCommand(ErlConstants.DIALYZER));
+      commandLine.add(ErlConstants.DIALYZER);
       commandLine.add("-r");
       commandLine.add(outputDirectory.getPath());
       if (this.dialyzerWithDependencies) {
@@ -123,7 +124,7 @@ abstract class AbstractDialyzerMojo extends AbstractErlMojo {
       }
       final String[] command = commandLine.toArray(new String[0]);
       final boolean dialyzerWarningsAreErrors = this.dialyzerWarningsAreErrors;
-      ErlConstants.exec(command, log, outputDirectory, new ProcessListener() {
+      ErlUtils.exec(command, log, outputDirectory, new ProcessListener() {
         @Override
         public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
           for (String line : processOutput) {

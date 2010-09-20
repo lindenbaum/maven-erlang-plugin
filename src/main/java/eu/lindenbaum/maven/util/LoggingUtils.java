@@ -3,7 +3,7 @@ package eu.lindenbaum.maven.util;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Containing utilities for related to logging.
+ * Containing utilities related to logging.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */

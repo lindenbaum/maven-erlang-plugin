@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.ProcessListener;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -98,13 +99,6 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
    */
   private boolean codeCoverage;
 
-  /**
-   * If we should generate surefire-compatible reports.
-   * 
-   * @parameter
-   */
-  private boolean surefireReports;
-
   @Override
   public boolean accept(File dir, String name) {
     String testSuffix = this.testSuffix + ErlConstants.BEAM_SUFFIX;
@@ -136,7 +130,7 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
     }
 
     final List<String> commandLine = new LinkedList<String>();
-    commandLine.add(getErlCommand(ErlConstants.ERL));
+    commandLine.add(ErlConstants.ERL);
     for (String libPath : getLibPaths()) {
       commandLine.add("-pa");
       commandLine.add(libPath);
@@ -150,18 +144,10 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
       commandLine.add("import");
       commandLine.add(ErlConstants.COVERDATA_BIN);
     }
-    final int placeholderIndex;
-    if (this.surefireReports) {
-      commandLine.add("-eval");
-      placeholderIndex = commandLine.size();
-      commandLine.add(null); // command line.
-    }
-    else {
-      commandLine.add("-run");
-      placeholderIndex = commandLine.size();
-      commandLine.add(null); // test file.
-      commandLine.add("test");
-    }
+    int placeholderIndex;
+    commandLine.add("-eval");
+    placeholderIndex = commandLine.size();
+    commandLine.add(null); // command line.
     if (this.codeCoverage) {
       commandLine.add("-run");
       commandLine.add("cover");
@@ -173,10 +159,8 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
     commandLine.add("init");
     commandLine.add("stop");
 
-    if (this.surefireReports) {
-      if (!this.surefireReportsDirectory.exists()) {
-        this.surefireReportsDirectory.mkdir();
-      }
+    if (!this.surefireReportsDirectory.exists()) {
+      this.surefireReportsDirectory.mkdir();
     }
 
     if (testFiles == null || testFiles.length == 0) {
@@ -200,15 +184,10 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
       for (String testFile : testFiles) {
         final String module = testFile.replace(ErlConstants.BEAM_SUFFIX, "");
         log.info("Test case: " + module);
-        if (this.surefireReports) {
-          command[placeholderIndex] = "eunit:test(" + module
-                                      + ", [{order, inorder}, {report,{eunit_surefire,[{dir,\""
-                                      + this.surefireReportsDirectory.getPath() + "\"}]}}]).";
-        }
-        else {
-          command[placeholderIndex] = module;
-        }
-        ErlConstants.exec(command, log, this.testBeamDirectory, new ProcessListener() {
+        command[placeholderIndex] = "eunit:test(" + module
+                                    + ", [{order, inorder}, {report,{eunit_surefire,[{dir,\""
+                                    + this.surefireReportsDirectory.getPath() + "\"}]}}]).";
+        ErlUtils.exec(command, log, this.testBeamDirectory, new ProcessListener() {
           @Override
           public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
             if (exitValue != 0) {

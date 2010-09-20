@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Reads all input from an {@link InputStream} saving it into a buffer.
+ * Reads all input from an {@link InputStream} saving it into a (line based) buffer.
  */
 public final class StreamGobbler implements Runnable {
   private final InputStream inputStream;
