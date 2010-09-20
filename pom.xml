@@ -4,11 +4,26 @@
   <artifactId>maven-erlang-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <version>1.0.0-SNAPSHOT</version>
-
-  <name>maven-erlang-plugin</name>
-  <description>Maven2 plugin to manage erlang projects</description>
-
-  <url>http://todo</url>
+  <name>Maven Erlang Plug-In</name>
+  <description>Maven2 Plug-In to manage Erlang projects.</description>
+  <url>http://erlang-plugin.sourceforge.net</url>
+  <scm>
+    <connection>scm:svn:https://erlang-plugin.svn.sourceforge.net/svnroot/erlang-plugin/trunk/maven-erlang-plugin</connection>
+    <developerConnection>scm:svn:https://erlang-plugin.svn.sourceforge.net/svnroot/erlang-plugin/trunk/maven-erlang-plugin</developerConnection>
+    <url>http://erlang-plugin.svn.sourceforge.net/viewvc/erlang-plugin/trunk/maven-erlang-plugin</url>
+  </scm>
+  <issueManagement>
+    <system>sourceforge</system>
+    <url>http://sourceforge.net/tracker/?group_id=353837</url>
+  </issueManagement>
+  <developers>
+    <developer>
+      <id>olle-t</id>
+      <name>Olle Törnström</name>
+      <email>olle.toernstroem@lindenbaum.eu</email>
+      <url>http://www.linkedin.com/in/olletornstrom</url>
+    </developer>
+  </developers>
   <licenses>
     <license>
       <name>LGPL (GNU Lesser General Public License)</name>
@@ -17,15 +32,21 @@
   </licenses>
   <distributionManagement>
     <site>
-      <id>TODO</id>
-      <url>TODO</url>
+      <!-- 1) Enable a shell account (SSH/SCP) -->
+      <!--    SEE: http://maven.apache.org/plugins/maven-site-plugin/examples/site-deploy-to-sourceforge.net.html -->
+      <!-- 2) Append info to your settings.xml file -->
+      <!--    SEE: http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
+      <id>erlang-plugin.sourceforge.net</id>
+      <url>scp://shell.sourceforge.net/home/groups/e/er/erlang-plugin/htdocs</url>
     </site>
   </distributionManagement>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
+  <organization>
+    <name>Lindenbaum GmbH</name>
+    <url>http://www.lindenbaum.eu/</url>
+  </organization>
   <build>
     <plugins>
       <plugin>
@@ -40,7 +61,6 @@
       </plugin>
     </plugins>
   </build>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -90,4 +110,23 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>2.5.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+      <plugin>
+      	<groupId>org.codehaus.mojo</groupId>
+      	<artifactId>surefire-report-maven-plugin</artifactId>
+      	<version>2.0-beta-1</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
