@@ -4,7 +4,7 @@ import static eu.lindenbaum.maven.util.LoggingUtils.logDebug;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,22 +54,21 @@ public final class ErlUtils {
    */
   public static String eval(final Log log, String expression, List<String> libPaths, File workingDir) throws MojoExecutionException {
     logDebug(log, "Evaluating <<" + expression + ">>");
-    List<String> commandLine = new LinkedList<String>();
-    commandLine.add(ErlConstants.ERL);
+    final List<String> command = new LinkedList<String>();
+    command.add(ErlConstants.ERL);
     if (libPaths != null) {
       for (String theLibPath : libPaths) {
-        commandLine.add("-pa");
-        commandLine.add(theLibPath);
+        command.add("-pa");
+        command.add(theLibPath);
       }
     }
-    commandLine.add("-eval");
-    commandLine.add(expression);
-    commandLine.add("-noshell");
-    commandLine.add("-s");
-    commandLine.add("init");
-    commandLine.add("stop");
+    command.add("-eval");
+    command.add(expression);
+    command.add("-noshell");
+    command.add("-s");
+    command.add("init");
+    command.add("stop");
 
-    final String[] command = commandLine.toArray(new String[0]);
     return exec(command, log, workingDir, new ProcessListener() {
       @Override
       public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
@@ -96,31 +95,32 @@ public final class ErlUtils {
    * @param listener to be notified on process completion
    * @throws MojoExecutionException in case of process failure
    */
-  public static String exec(String[] command, Log log, File workingDir, ProcessListener listener) throws MojoExecutionException {
-    Runtime runtime = Runtime.getRuntime();
-    logDebug(log, "Executing " + Arrays.asList(command).toString());
-
+  public static String exec(List<String> commands, final Log log, File workingDir, ProcessListener listener) throws MojoExecutionException {
+    logDebug(log, "Executing " + commands.toString());
     try {
-      final Process process;
-      if (workingDir != null) {
-        logDebug(log, "Working directory " + workingDir.getAbsolutePath());
-        process = runtime.exec(command, null, workingDir);
-      }
-      else {
-        process = runtime.exec(command);
-      }
-      StreamGobbler error = new StreamGobbler(process.getErrorStream(), log);
-      StreamGobbler output = new StreamGobbler(process.getInputStream(), log);
-
-      new Thread(error).start();
-      new Thread(output).start();
-
+      ProcessBuilder processBuilder = new ProcessBuilder(commands);
+      processBuilder.directory(workingDir);
+      logDebug(log, "Working directory " + processBuilder.directory());
+      Process process = processBuilder.start();
+      final List<String> output = new ArrayList<String>();
+      Thread gobbler1 = new Thread(new StreamGobbler(process.getInputStream(), new VoidProcedure<String>() {
+        @Override
+        public void apply(String line) {
+          output.add(line);
+        }
+      }));
+      Thread gobbler2 = new Thread(new StreamGobbler(process.getErrorStream(), new VoidProcedure<String>() {
+        @Override
+        public void apply(String line) {
+          log.error(line);
+        }
+      }));
+      gobbler1.start();
+      gobbler2.start();
       process.waitFor();
-
-      for (String line : error.getLines()) {
-        log.error(line);
-      }
-      return listener.processCompleted(process.exitValue(), output.getLines());
+      gobbler1.join();
+      gobbler2.join();
+      return listener.processCompleted(process.exitValue(), output);
     }
     catch (IOException e) {
       throw new MojoExecutionException(e.getMessage(), e);

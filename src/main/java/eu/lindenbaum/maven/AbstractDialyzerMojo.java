@@ -112,17 +112,16 @@ abstract class AbstractDialyzerMojo extends AbstractErlMojo {
       log.info("Running dialyzer in " + outputDirectory.getPath());
 
       // Generate the command line.
-      List<String> commandLine = new LinkedList<String>();
-      commandLine.add(ErlConstants.DIALYZER);
-      commandLine.add("-r");
-      commandLine.add(outputDirectory.getPath());
+      List<String> command = new LinkedList<String>();
+      command.add(ErlConstants.DIALYZER);
+      command.add("-r");
+      command.add(outputDirectory.getPath());
       if (this.dialyzerWithDependencies) {
-        commandLine.addAll(getLibPaths());
+        command.addAll(getLibPaths());
       }
       if (this.dialyzerOptions != null) {
-        commandLine.addAll(Arrays.asList(this.dialyzerOptions));
+        command.addAll(Arrays.asList(this.dialyzerOptions));
       }
-      final String[] command = commandLine.toArray(new String[0]);
       final boolean dialyzerWarningsAreErrors = this.dialyzerWarningsAreErrors;
       ErlUtils.exec(command, log, outputDirectory, new ProcessListener() {
         @Override

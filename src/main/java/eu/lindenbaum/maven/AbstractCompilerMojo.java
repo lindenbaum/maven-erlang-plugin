@@ -1,7 +1,8 @@
 package eu.lindenbaum.maven;
 
+import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
+
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Abstract base class for compiling {@link Mojo}s.
+ * Abstract base class for {@link Mojo}s compiling erlang code.
  * 
  * @author Tobias Schlager tobias.schlager@lindenbaum.eu
  */
@@ -65,7 +66,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
    */
   protected final int compileSources(File inputDir, File outputDir, File include, String[] options) throws MojoExecutionException {
     Log log = getLog();
-    List<File> sources = getFilesRecursive(log, inputDir, ErlConstants.ERL_SUFFIX);
+    List<File> sources = getFilesRecursive(inputDir, ErlConstants.ERL_SUFFIX);
     prepare(log, outputDir, sources, ErlConstants.ERL_SUFFIX, ErlConstants.BEAM_SUFFIX);
 
     int numSources = sources.size();
@@ -73,7 +74,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
       log.info("Compiling " + numSources + " " + ErlConstants.ERL_SUFFIX + "-files into "
                + ErlConstants.BEAM_SUFFIX + " (" + outputDir.getAbsolutePath() + ")");
 
-      String[] command = getCommandLine(outputDir, include, options, false);
+      List<String> command = getCommandLine(outputDir, include, options, false);
 
       AtomicBoolean failure = new AtomicBoolean(false);
       List<Runnable> jobList = new ArrayList<Runnable>();
@@ -95,7 +96,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
    */
   protected final int compileMibBin(File inputDir, File outputDir) throws MojoExecutionException {
     Log log = getLog();
-    List<File> sources = getFilesRecursive(log, inputDir, ErlConstants.MIB_SUFFIX);
+    List<File> sources = getFilesRecursive(inputDir, ErlConstants.MIB_SUFFIX);
     prepare(log, outputDir, sources, ErlConstants.MIB_SUFFIX, ErlConstants.BIN_SUFFIX);
 
     int numSources = sources.size();
@@ -103,7 +104,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
       log.info("Compiling " + numSources + " " + ErlConstants.MIB_SUFFIX + "-files into "
                + ErlConstants.BIN_SUFFIX + " (" + outputDir.getAbsolutePath() + ")");
 
-      String[] command = getCommandLine(outputDir, null, null, true);
+      List<String> command = getCommandLine(outputDir, null, null, true);
 
       AtomicBoolean failure = new AtomicBoolean(false);
       List<Runnable> jobList = new ArrayList<Runnable>();
@@ -125,7 +126,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
    */
   protected final int compileMibHrl(File inputDir, File outputDir) throws MojoExecutionException {
     Log log = getLog();
-    List<File> sources = getFilesRecursive(log, inputDir, ErlConstants.BIN_SUFFIX);
+    List<File> sources = getFilesRecursive(inputDir, ErlConstants.BIN_SUFFIX);
     prepare(log, outputDir, sources, ErlConstants.BIN_SUFFIX, ErlConstants.HRL_SUFFIX);
 
     int numSources = sources.size();
@@ -133,7 +134,7 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
       log.info("Compiling " + numSources + " " + ErlConstants.BIN_SUFFIX + "-files into "
                + ErlConstants.HRL_SUFFIX + " (" + outputDir.getAbsolutePath() + ")");
 
-      String[] command = getCommandLine(outputDir, null, null, true);
+      List<String> command = getCommandLine(outputDir, null, null, true);
 
       AtomicBoolean failure = new AtomicBoolean(false);
       List<Runnable> jobList = new ArrayList<Runnable>();
@@ -180,13 +181,13 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
    * @param failure set to true in case of execution errors
    * @return the executable compile job
    */
-  protected Runnable getCompileJob(String[] command, final File source, final AtomicBoolean failure) {
+  protected Runnable getCompileJob(List<String> command, final File source, final AtomicBoolean failure) {
     final Log log = getLog();
-    final String[] thisCommand = command.clone();
+    final List<String> thisCommand = new ArrayList<String>(command);
     return new Runnable() {
       @Override
       public void run() {
-        thisCommand[thisCommand.length - 1] = source.getAbsolutePath();
+        thisCommand.add(source.getAbsolutePath());
         try {
           ErlUtils.exec(thisCommand, log, null, new ProcessListener() {
             @Override
@@ -218,65 +219,37 @@ abstract class AbstractCompilerMojo extends AbstractErlMojo {
    * @param omitDebug omits the explicit debug options when enabled
    * @return the constructed command line array
    */
-  protected String[] getCommandLine(File outputDir, File include, String[] options, boolean omitDebug) {
-    List<String> commandLine = new ArrayList<String>();
-    commandLine.add(ErlConstants.ERLC);
-    commandLine.add("-I");
-    commandLine.add(this.includeDirectory.getPath());
-    commandLine.add("-I");
-    commandLine.add(this.outputIncludeDirectory.getPath());
+  protected List<String> getCommandLine(File outputDir, File include, String[] options, boolean omitDebug) {
+    List<String> command = new ArrayList<String>();
+    command.add(ErlConstants.ERLC);
+    command.add("-I");
+    command.add(this.includeDirectory.getPath());
+    command.add("-I");
+    command.add(this.outputIncludeDirectory.getPath());
     if (include != null) {
-      commandLine.add("-I");
-      commandLine.add(include.getPath());
+      command.add("-I");
+      command.add(include.getPath());
     }
     for (String theLibPath : getLibPaths()) {
-      commandLine.add("-pa");
-      commandLine.add(theLibPath);
+      command.add("-pa");
+      command.add(theLibPath);
     }
-    commandLine.add("-o");
-    commandLine.add(outputDir.getPath());
+    command.add("-o");
+    command.add(outputDir.getPath());
     if (omitDebug) {
-      commandLine.add("+report_errors");
-      commandLine.add("+report_warnings");
+      command.add("+report_errors");
+      command.add("+report_warnings");
       if (this.debugInfo) {
-        commandLine.add("+debug_info");
+        command.add("+debug_info");
       }
     }
     if (this.erlcOptions != null) {
-      commandLine.addAll(Arrays.asList(this.erlcOptions));
+      command.addAll(Arrays.asList(this.erlcOptions));
     }
     if (options != null) {
-      commandLine.addAll(Arrays.asList(options));
+      command.addAll(Arrays.asList(options));
     }
-    commandLine.add("placeholder");
-    return commandLine.toArray(new String[0]);
-  }
-
-  /**
-   * Get a {@link List} of files matching the given file extension (excluding directories).
-   * 
-   * @param root directory to start recursion from
-   * @param suffix file extension to match, can be e.g. eiter {@code ".erl"} or {@code "erl"}
-   * @return a {@link List} of found files
-   */
-  protected static List<File> getFilesRecursive(final Log log, File root, final String suffix) {
-    final List<File> files = new ArrayList<File>();
-    if (root.isDirectory()) {
-      files.addAll(Arrays.asList(root.listFiles(new FileFilter() {
-        @Override
-        public boolean accept(File child) {
-          if (child.isDirectory()) {
-            LoggingUtils.logDebug(log, "descending into directory " + child.getAbsolutePath());
-            files.addAll(getFilesRecursive(log, child, suffix));
-            return false;
-          }
-          else {
-            return child.getName().endsWith(suffix);
-          }
-        }
-      })));
-    }
-    return files;
+    return command;
   }
 
   /**

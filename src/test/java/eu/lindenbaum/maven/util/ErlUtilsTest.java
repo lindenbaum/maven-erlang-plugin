@@ -1,39 +1,23 @@
 package eu.lindenbaum.maven.util;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.createStrictControl;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.easymock.IMocksControl;
-import org.junit.Before;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
 
 public class ErlUtilsTest {
-  private IMocksControl control;
-  private Log log;
-
-  @Before
-  public void setUp() throws Exception {
-    this.control = createStrictControl();
-    this.log = this.control.createMock("log", Log.class);
-
-    expect(this.log.isDebugEnabled()).andStubReturn(true);
-    this.log.debug((CharSequence) anyObject());
-    expectLastCall().asStub();
-  }
+  private static final Log log = new SystemStreamLog();
 
   @Test
   public void testExec() throws Exception {
-    this.control.replay();
-
-    assertEquals("ok", ErlUtils.exec(new String[]{ "dir" }, this.log, null, new ProcessListener() {
+    List<String> command = Arrays.asList(new String[]{ "dir" });
+    assertEquals("ok", ErlUtils.exec(command, log, null, new ProcessListener() {
       @Override
       public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
         assertEquals(exitValue, 0);
@@ -41,34 +25,20 @@ public class ErlUtilsTest {
         return "ok";
       }
     }));
-
-    this.control.verify();
   }
 
   @Test
   public void testEval2() throws Exception {
-    this.control.replay();
-
-    assertEquals("ok", ErlUtils.eval(this.log, "io:format(\"ok~n\")"));
-
-    this.control.verify();
+    assertEquals("ok", ErlUtils.eval(log, "io:format(\"ok~n\")"));
   }
 
   @Test
   public void testEval3() throws Exception {
-    this.control.replay();
-
-    assertEquals("ok", ErlUtils.eval(this.log, "io:format(\"ok~n\")", null));
-
-    this.control.verify();
+    assertEquals("ok", ErlUtils.eval(log, "io:format(\"ok~n\")", null));
   }
 
   @Test
   public void testEval4() throws Exception {
-    this.control.replay();
-
-    assertEquals("ok", ErlUtils.eval(this.log, "io:format(\"ok~n\")", null, null));
-
-    this.control.verify();
+    assertEquals("ok", ErlUtils.eval(log, "io:format(\"ok~n\")", null, null));
   }
 }

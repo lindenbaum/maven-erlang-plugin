@@ -1,60 +1,50 @@
 package eu.lindenbaum.maven.util;
 
 import static org.easymock.EasyMock.createStrictControl;
-import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.InputStream;
-import java.util.List;
 
-import org.apache.maven.plugin.logging.Log;
 import org.easymock.IMocksControl;
 import org.junit.Before;
 import org.junit.Test;
 
 public class StreamGobblerTest {
   private IMocksControl control;
-  private Log log;
+  private VoidProcedure<String> processor;
 
+  @SuppressWarnings("unchecked")
   @Before
   public void setUp() throws Exception {
     this.control = createStrictControl();
-    this.log = this.control.createMock("log", Log.class);
-
-    expect(this.log.isDebugEnabled()).andStubReturn(true);
+    this.processor = this.control.createMock("outputProcessor", VoidProcedure.class);
   }
 
   @Test
   public void testEmpty() throws Exception {
-    InputStream inputStream = getClass().getClassLoader().getResourceAsStream("stream-gobbler/empty.txt");
+    String file = "stream-gobbler" + File.separator + "empty.txt";
+    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(file);
 
     this.control.replay();
 
-    StreamGobbler gobbler = new StreamGobbler(inputStream, this.log);
-    assertTrue(gobbler.getLines().isEmpty());
+    StreamGobbler gobbler = new StreamGobbler(inputStream, this.processor);
     gobbler.run();
-    assertTrue(gobbler.getLines().isEmpty());
 
     this.control.verify();
   }
 
   @Test
   public void testNonEmpty() throws Exception {
-    InputStream inputStream = getClass().getClassLoader().getResourceAsStream("stream-gobbler/non-empty.txt");
+    String file = "stream-gobbler" + File.separator + "non-empty.txt";
+    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(file);
 
-    this.log.debug("line1");
-    this.log.debug("line2");
+    this.processor.apply("line1");
+    this.processor.apply("line2");
 
     this.control.replay();
 
-    StreamGobbler gobbler = new StreamGobbler(inputStream, this.log);
-    assertTrue(gobbler.getLines().isEmpty());
+    StreamGobbler gobbler = new StreamGobbler(inputStream, this.processor);
     gobbler.run();
-    List<String> lines = gobbler.getLines();
-    assertEquals(2, lines.size());
-    assertEquals("line1", lines.get(0));
-    assertEquals("line2", lines.get(1));
 
     this.control.verify();
   }

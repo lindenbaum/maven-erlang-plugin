@@ -2,6 +2,7 @@ package eu.lindenbaum.maven;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -129,35 +130,34 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
       }
     }
 
-    final List<String> commandLine = new LinkedList<String>();
-    commandLine.add(ErlConstants.ERL);
+    final List<String> command = new LinkedList<String>();
+    command.add(ErlConstants.ERL);
     for (String libPath : getLibPaths()) {
-      commandLine.add("-pa");
-      commandLine.add(libPath);
+      command.add("-pa");
+      command.add(libPath);
     }
     if (this.codeCoverage) {
-      commandLine.add("-eval");
-      commandLine.add("cover:compile_directory(\"" + this.inputDirectory.getAbsolutePath()
-                      + "\", [export_all]).");
-      commandLine.add("-run");
-      commandLine.add("cover");
-      commandLine.add("import");
-      commandLine.add(ErlConstants.COVERDATA_BIN);
+      command.add("-eval");
+      command.add("cover:compile_directory(\"" + this.inputDirectory.getAbsolutePath() + "\", [export_all]).");
+      command.add("-run");
+      command.add("cover");
+      command.add("import");
+      command.add(ErlConstants.COVERDATA_BIN);
     }
     int placeholderIndex;
-    commandLine.add("-eval");
-    placeholderIndex = commandLine.size();
-    commandLine.add(null); // command line.
+    command.add("-eval");
+    placeholderIndex = command.size();
+    command.add(null); // command line.
     if (this.codeCoverage) {
-      commandLine.add("-run");
-      commandLine.add("cover");
-      commandLine.add("export");
-      commandLine.add(ErlConstants.COVERDATA_BIN);
+      command.add("-run");
+      command.add("cover");
+      command.add("export");
+      command.add(ErlConstants.COVERDATA_BIN);
     }
-    commandLine.add("-noshell");
-    commandLine.add("-s");
-    commandLine.add("init");
-    commandLine.add("stop");
+    command.add("-noshell");
+    command.add("-s");
+    command.add("init");
+    command.add("stop");
 
     if (!this.surefireReportsDirectory.exists()) {
       this.surefireReportsDirectory.mkdir();
@@ -180,14 +180,14 @@ public final class TestMojo extends AbstractErlMojo implements FilenameFilter {
     }
     else {
       final List<String> failedTests = new LinkedList<String>();
-      String[] command = commandLine.toArray(new String[0]);
       for (String testFile : testFiles) {
         final String module = testFile.replace(ErlConstants.BEAM_SUFFIX, "");
+        final List<String> thisCommand = new ArrayList<String>(command);
         log.info("Test case: " + module);
-        command[placeholderIndex] = "eunit:test(" + module
-                                    + ", [{order, inorder}, {report,{eunit_surefire,[{dir,\""
-                                    + this.surefireReportsDirectory.getPath() + "\"}]}}]).";
-        ErlUtils.exec(command, log, this.testBeamDirectory, new ProcessListener() {
+        thisCommand.set(placeholderIndex, "eunit:test(" + module
+                                          + ", [{order, inorder}, {report,{eunit_surefire,[{dir,\""
+                                          + this.surefireReportsDirectory.getPath() + "\"}]}}]).");
+        ErlUtils.exec(thisCommand, log, this.testBeamDirectory, new ProcessListener() {
           @Override
           public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
             if (exitValue != 0) {
