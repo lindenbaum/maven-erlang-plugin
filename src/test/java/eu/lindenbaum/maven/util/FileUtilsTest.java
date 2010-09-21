@@ -9,7 +9,6 @@ import java.io.FileFilter;
 import java.net.URL;
 import java.util.List;
 
-import org.codehaus.plexus.util.SelectorUtils;
 import org.junit.Test;
 
 public class FileUtilsTest {
@@ -40,18 +39,7 @@ public class FileUtilsTest {
   public void testGetFilesAndDirectoriesRecursive() throws Exception {
     URL resource = getClass().getClassLoader().getResource("file-utils");
     File root = new File(resource.getFile());
-    final String[] excludes = org.codehaus.plexus.util.FileUtils.getDefaultExcludes();
-    List<File> files = FileUtils.getFilesAndDirectoriesRecursive(root, new FileFilter() {
-      @Override
-      public boolean accept(File pathname) {
-        for (String exclude : excludes) {
-          if (SelectorUtils.match(exclude, pathname.getAbsolutePath())) {
-            return false;
-          }
-        }
-        return true;
-      }
-    });
+    List<File> files = FileUtils.getFilesAndDirectoriesRecursive(root, FileUtils.NULL_FILTER);
     assertEquals(12, files.size());
   }
 

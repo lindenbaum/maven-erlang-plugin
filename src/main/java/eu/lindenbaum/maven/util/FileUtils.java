@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.codehaus.plexus.util.SelectorUtils;
@@ -100,7 +102,8 @@ public final class FileUtils {
 
   /**
    * Returns a list of all found filterend (sub) files and directories. In case a sub directory is excluded
-   * all of its sub files are also excluded.
+   * all of its sub files are also excluded. By default patterns from
+   * {@link org.codehaus.plexus.util.FileUtils#getDefaultExcludes()} will always be excluded.
    * 
    * @param root directory to start recursion from
    * @param filter used to filter the found files and directories
@@ -109,10 +112,17 @@ public final class FileUtils {
   public static List<File> getFilesAndDirectoriesRecursive(File root, final FileFilter filter) {
     final List<File> files = new ArrayList<File>();
     if (root.isDirectory()) {
+      final String[] excludes = org.codehaus.plexus.util.FileUtils.getDefaultExcludes();
       files.addAll(Arrays.asList(root.listFiles(new FileFilter() {
         @Override
         public boolean accept(File child) {
           boolean accept = filter.accept(child);
+          for (String exclude : excludes) {
+            if (SelectorUtils.match(exclude, child.getAbsolutePath())) {
+              accept = false;
+              break;
+            }
+          }
           if (accept && child.isDirectory()) {
             files.addAll(getFilesAndDirectoriesRecursive(child, filter));
           }
@@ -145,31 +155,19 @@ public final class FileUtils {
   /**
    * Copies the contents of the source directory recursively into the destination directory. The source
    * directory must exist. All missing directories in including the destination folder will be created if
-   * necessary, already existing files will be overwritten. By default patterns from
-   * {@link org.codehaus.plexus.util.FileUtils#getDefaultExcludes()} will be excluded.
+   * necessary, already existing files will be overwritten.
    * 
    * @param from the source directory to copy from
    * @param to the destination directory to copy to
    * @param filter additional filter to apply before copying
+   * @return the number of copied <b>files</b>
+   * @see #getFilesAndDirectoriesRecursive(File, FileFilter)
    * @throws IOException
    */
-  public static void copyDirectory(File from, File to, final FileFilter filter) throws IOException {
+  public static int copyDirectory(File from, File to, FileFilter filter) throws IOException {
+    int copied = 0;
     if (from.exists() && from.isDirectory()) {
-      final String[] excludes = org.codehaus.plexus.util.FileUtils.getDefaultExcludes();
-      FileFilter excludeFilter = new FileFilter() {
-        @Override
-        public boolean accept(File child) {
-          if (filter.accept(child)) {
-            for (String exclude : excludes) {
-              if (SelectorUtils.match(exclude, child.getAbsolutePath())) {
-                return false;
-              }
-            }
-          }
-          return true;
-        }
-      };
-      List<File> toCopy = getFilesAndDirectoriesRecursive(from, excludeFilter);
+      List<File> toCopy = getFilesAndDirectoriesRecursive(from, filter);
       for (File src : toCopy) {
         File dest = new File(to, src.getAbsolutePath().replace(from.getAbsolutePath(), ""));
         if (src.isDirectory()) {
@@ -177,8 +175,46 @@ public final class FileUtils {
         }
         else {
           org.codehaus.plexus.util.FileUtils.copyFile(src, dest);
+          copied++;
         }
       }
     }
+    return copied;
+  }
+
+  /**
+   * Copies the contents of the source directory recursively into the destination directory. The source
+   * directory must exist. All missing directories in including the destination folder will be created if
+   * necessary, already existing files will be overwritten. The given replacements will be applied to all
+   * found files. It is assumed that all files are {@code UTF-8} encoded.
+   * 
+   * @param from the source directory to copy from
+   * @param to the destination directory to copy to
+   * @param filter additional filter to apply before copying
+   * @param replacements a {@link Map} of {@link String} patterns to be replaced
+   * @return the number of copied <b>files</b>
+   * @see #getFilesAndDirectoriesRecursive(File, FileFilter)
+   * @throws IOException
+   */
+  public static int copyDirectory(File from, File to, FileFilter filter, Map<String, String> replacements) throws IOException {
+    int copied = 0;
+    if (from.exists() && from.isDirectory()) {
+      List<File> toCopy = getFilesAndDirectoriesRecursive(from, filter);
+      for (File src : toCopy) {
+        File dest = new File(to, src.getAbsolutePath().replace(from.getAbsolutePath(), ""));
+        if (src.isDirectory()) {
+          dest.mkdirs();
+        }
+        else {
+          String content = org.codehaus.plexus.util.FileUtils.fileRead(src, "UTF-8");
+          for (Entry<String, String> replacement : replacements.entrySet()) {
+            content = content.replace(replacement.getKey(), replacement.getValue());
+          }
+          org.codehaus.plexus.util.FileUtils.fileWrite(dest.getAbsolutePath(), "UTF-8", content);
+          copied++;
+        }
+      }
+    }
+    return copied;
   }
 }

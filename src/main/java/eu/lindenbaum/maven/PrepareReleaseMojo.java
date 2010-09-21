@@ -4,7 +4,9 @@ import static eu.lindenbaum.maven.util.ErlUtils.eval;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,13 +14,16 @@ import java.util.Map;
 import java.util.Set;
 
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.FileUtils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Prepare the release.
@@ -27,7 +32,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @phase compile
  * @requiresDependencyResolution compile
  */
-public final class PrepareReleaseMojo extends AbstractErlMojo {
+public final class PrepareReleaseMojo extends AbstractMojo {
   /**
    * Command to extract the version from the .rel file.
    */
@@ -39,6 +44,15 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
    */
   private static final String EXTRACT_APPLICATIONS = "{ok, [{release, {_ReleaseName, _ReleaseVersion}, {erts, _ErtsVersion}, Applications}]} = file:consult(\"%s\"), "
                                                      + "lists:foreach(fun(Tuple) when is_tuple(Tuple) -> AppName = element(1, Tuple), AppVersion = element(2, Tuple), io:format(\"~p ~s~n\", [AppName, AppVersion]) end, Applications).";
+
+  /**
+   * Project to interact with.
+   * 
+   * @parameter expression="${project}"
+   * @required
+   * @readonly
+   */
+  private MavenProject project;
 
   /**
    * Directory where the boot and script files are created.
@@ -160,12 +174,21 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
    * Copy the release file and perform substitutions.
    */
   private void copyReleaseFile() throws MojoExecutionException {
-    final String theReleaseFileName = getReleaseName() + ErlConstants.REL_SUFFIX;
-    final File theSourceRelFile = new File(this.inputDirectory, theReleaseFileName);
-    final Map<String, String> theRelSubstitutions = new HashMap<String, String>();
-    theRelSubstitutions.put("\\?REL_VERSION", "\"" + getProject().getVersion() + "\"");
+    Map<String, String> replacements = new HashMap<String, String>();
+    replacements.put("\\?REL_VERSION", "\"" + this.project.getVersion() + "\"");
 
-    copyTextFileWithSubstitutions(theSourceRelFile, this.outputDirectory, theRelSubstitutions);
+    final String name = getReleaseName() + ErlConstants.REL_SUFFIX;
+    try {
+      FileUtils.copyDirectory(this.inputDirectory, this.outputDirectory, new FileFilter() {
+        @Override
+        public boolean accept(File pathname) {
+          return pathname.getName().equals(name);
+        }
+      }, replacements);
+    }
+    catch (IOException e) {
+      throw new MojoExecutionException(e.getMessage(), e);
+    }
   }
 
   /**
@@ -186,7 +209,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
     }
 
     @SuppressWarnings("unused")
-    final String theArtifactId = getProject().getArtifactId();
+    final String theArtifactId = this.project.getArtifactId();
     final File theRelFile = getReleaseFile();
 
     final StringBuilder theMakeRelupLineBuffer = new StringBuilder();
@@ -247,7 +270,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
     @SuppressWarnings("unused")
     final String theReleaseName;
     if (this.releaseName == null) {
-      theReleaseName = getProject().getArtifactId();
+      theReleaseName = this.project.getArtifactId();
     }
     else {
       theReleaseName = this.releaseName;
@@ -288,7 +311,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
       this.releasesDirectory.mkdirs();
     }
 
-    final Artifact theArtifact = getProject().getArtifact();
+    final Artifact theArtifact = this.project.getArtifact();
     final String theArtifactId = theArtifact.getArtifactId();
     final List<File> thePaths = new LinkedList<File>();
 
@@ -355,7 +378,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
   private String getReleaseName() {
     final String theReleaseName;
     if (this.releaseName == null) {
-      theReleaseName = getProject().getArtifactId();
+      theReleaseName = this.project.getArtifactId();
     }
     else {
       theReleaseName = this.releaseName;
@@ -418,7 +441,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
   @SuppressWarnings("unchecked")
   private Map<String, String> getApplicationDependencies() {
     final Map<String, String> theResult = new HashMap<String, String>();
-    final Set<Artifact> theArtifacts = getProject().getArtifacts();
+    final Set<Artifact> theArtifacts = this.project.getArtifacts();
     for (Artifact theArtifact : theArtifacts) {
       if (theArtifact.getType().equals(ErlConstants.ARTIFACT_TYPE_OTP)) {
         theResult.put(theArtifact.getArtifactId(), theArtifact.getVersion());

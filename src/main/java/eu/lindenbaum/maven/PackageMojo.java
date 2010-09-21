@@ -16,8 +16,10 @@ import java.util.Set;
 import eu.lindenbaum.maven.util.EDocUtils;
 import eu.lindenbaum.maven.util.ErlConstants;
 
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
@@ -28,7 +30,7 @@ import org.codehaus.plexus.archiver.zip.ZipArchiver;
  * @phase package
  * @author Olivier Sambourg
  */
-public final class PackageMojo extends AbstractErlMojo {
+public final class PackageMojo extends AbstractMojo {
   /**
    * Command to extract the version from the .app file.
    */
@@ -53,6 +55,15 @@ public final class PackageMojo extends AbstractErlMojo {
                                             + "lists:foreach(fun({Version, ProcList}) -> "
                                             + "  lists:foreach(fun(ProcElement) -> true = is_tuple(ProcElement) end, ProcList) "
                                             + "end, UpFrom ++ DownTo)," + "io:format(\"ok\"), io:nl().";
+
+  /**
+   * Project to interact with.
+   * 
+   * @parameter expression="${project}"
+   * @required
+   * @readonly
+   */
+  private MavenProject project;
 
   /**
    * Build directory.
@@ -243,7 +254,7 @@ public final class PackageMojo extends AbstractErlMojo {
         copyDirectory(this.mibsDirectory, mibs, NULL_FILTER);
       }
 
-      String theApplicationName = getProject().getArtifactId();
+      String theApplicationName = this.project.getArtifactId();
       final File theApplicationResourceFile = new File(this.beamDirectory.getPath(), theApplicationName
                                                                                      + ".app");
 
@@ -344,7 +355,7 @@ public final class PackageMojo extends AbstractErlMojo {
       this.zipArchiver.addDirectory(f, theApplicationName + "-" + theVersion + File.separator);
       this.zipArchiver.setDestFile(toFile);
       this.zipArchiver.createArchive();
-      getProject().getArtifact().setFile(toFile);
+      this.project.getArtifact().setFile(toFile);
 
     }
     catch (IOException e) {

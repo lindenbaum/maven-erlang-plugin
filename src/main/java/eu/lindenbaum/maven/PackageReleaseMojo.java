@@ -5,8 +5,10 @@ import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
 
 import java.io.File;
 
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Package the Erlang project.
@@ -15,7 +17,16 @@ import org.apache.maven.plugin.MojoFailureException;
  * @phase package
  * @author Paul Guyot
  */
-public final class PackageReleaseMojo extends AbstractErlMojo {
+public final class PackageReleaseMojo extends AbstractMojo {
+  /**
+   * Project to interact with.
+   * 
+   * @parameter expression="${project}"
+   * @required
+   * @readonly
+   */
+  private MavenProject project;
+
   /**
    * Build directory.
    * 
@@ -66,7 +77,7 @@ public final class PackageReleaseMojo extends AbstractErlMojo {
   public void execute() throws MojoExecutionException, MojoFailureException {
     final String theReleaseName;
     if (this.releaseName == null) {
-      theReleaseName = getProject().getArtifactId().replace('-', '_');
+      theReleaseName = this.project.getArtifactId().replace('-', '_');
     }
     else {
       theReleaseName = this.releaseName;
@@ -100,6 +111,6 @@ public final class PackageReleaseMojo extends AbstractErlMojo {
     // separate packages for applications in a variable directory.
     // (see systools(3)).
     final File theOutputFile = new File(this.buildDirectory, theReleaseName + ".tar.gz");
-    getProject().getArtifact().setFile(theOutputFile);
+    this.project.getArtifact().setFile(theOutputFile);
   }
 }

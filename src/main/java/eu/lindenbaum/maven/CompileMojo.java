@@ -1,6 +1,13 @@
 package eu.lindenbaum.maven;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.FileUtils;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -43,8 +50,34 @@ public final class CompileMojo extends AbstractCompilerMojo {
   private File inputDirectory;
 
   public void execute() throws MojoExecutionException, MojoFailureException {
-    copyAppFiles(this.inputDirectory, this.outputDirectory);
-    copyMibFiles(this.inputDirectory, this.mibsDirectory);
+    Map<String, String> replacements = new HashMap<String, String>();
+    replacements.put("\\?APP_VERSION", "\"" + this.project.getVersion() + "\"");
+
+    try {
+      FileUtils.copyDirectory(this.inputDirectory, this.outputDirectory, new FileFilter() {
+        @Override
+        public boolean accept(File pathname) {
+          if (pathname.isFile()) {
+            String name = pathname.getName();
+            return name.endsWith(ErlConstants.APP_SUFFIX) || name.endsWith(ErlConstants.APPUP_SUFFIX);
+          }
+          return true;
+        }
+      }, replacements);
+      FileUtils.copyDirectory(this.inputDirectory, this.mibsDirectory, new FileFilter() {
+        @Override
+        public boolean accept(File pathname) {
+          if (pathname.isFile()) {
+            String name = pathname.getName();
+            return name.endsWith(ErlConstants.MIB_SUFFIX) || name.endsWith(ErlConstants.FUNCS_SUFFIX);
+          }
+          return true;
+        }
+      });
+    }
+    catch (IOException e) {
+      throw new MojoExecutionException(e.getMessage(), e);
+    }
 
     int numFiles = 0;
     if (this.mibsDirectory.exists()) {

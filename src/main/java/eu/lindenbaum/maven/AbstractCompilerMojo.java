@@ -17,9 +17,11 @@ import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.LoggingUtils;
 import eu.lindenbaum.maven.util.ProcessListener;
 
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Abstract base class for {@link Mojo}s compiling erlang code.
@@ -27,7 +29,16 @@ import org.apache.maven.plugin.logging.Log;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
-abstract class AbstractCompilerMojo extends AbstractErlMojo {
+abstract class AbstractCompilerMojo extends AbstractMojo {
+  /**
+   * Project to interact with.
+   * 
+   * @parameter expression="${project}"
+   * @required
+   * @readonly
+   */
+  protected MavenProject project;
+
   /**
    * If debugging information should be included.
    * 

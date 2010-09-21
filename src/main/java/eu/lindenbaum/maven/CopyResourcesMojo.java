@@ -6,6 +6,7 @@ import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -15,7 +16,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal copy-resources
  * @phase generate-resources
  */
-public final class CopyResourcesMojo extends AbstractErlMojo {
+public final class CopyResourcesMojo extends AbstractMojo {
   /**
    * Directory where the private files were created.
    * 

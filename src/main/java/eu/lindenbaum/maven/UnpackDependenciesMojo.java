@@ -1,9 +1,6 @@
 package eu.lindenbaum.maven;
 
-import static eu.lindenbaum.maven.util.LoggingUtils.logDebug;
-
 import java.io.File;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -17,7 +14,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 
 /**
@@ -53,64 +49,42 @@ public final class UnpackDependenciesMojo extends AbstractMojo {
    */
   private ZipUnArchiver zipUnArchiver;
 
-  /**
-   * Unpack dependencies (if required) inside the lib directory.
-   * 
-   * @throws MojoExecutionException if there was a problem with unpacking the dependencies.
-   */
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
-    Log log = getLog();
-    if (!this.libDirectory.exists()) {
-      this.libDirectory.mkdirs();
-    }
+    this.libDirectory.mkdirs();
     this.zipUnArchiver.setDestDirectory(this.libDirectory);
     this.zipUnArchiver.setOverwrite(true);
-    this.zipUnArchiver.enableLogging(new MavenPlexusLogger(log));
+    this.zipUnArchiver.enableLogging(new MavenPlexusLogger(getLog()));
 
-    Set<Artifact> artifacts = this.project.getArtifacts();
-    for (Artifact artifact : artifacts) {
+    for (Artifact artifact : (Set<Artifact>) this.project.getArtifacts()) {
       if (artifact.getType().equals(ErlConstants.ARTIFACT_TYPE_OTP)) {
-        try {
-          File file = artifact.getFile();
-          ZipFile zip = new ZipFile(file);
-          Enumeration<? extends ZipEntry> entries = zip.entries();
+        extractArtifact(artifact, this.zipUnArchiver, this.libDirectory);
+      }
+    }
+  }
 
-          String artifactStr = artifact.getGroupId() + ":" + artifact.getId();
-          if (!entries.hasMoreElements()) {
-            log.warn("Artifact " + artifactStr + " is empty!");
-          }
-          else {
-            ZipEntry entry = entries.nextElement();
-            String name = entry.getName();
-
-            File cachedArtifact = new File(this.libDirectory, name);
-            long cachedModificationDate;
-            if (cachedArtifact.exists()) {
-              cachedModificationDate = cachedArtifact.lastModified();
-            }
-            else {
-              cachedModificationDate = 0;
-            }
-
-            long modificationDate = entry.getTime();
-            if (modificationDate != cachedModificationDate) {
-              logDebug(log, "Extracting artifact " + artifactStr);
-              this.zipUnArchiver.setSourceFile(file);
-              this.zipUnArchiver.extract();
-            }
-            else {
-              logDebug(log, "Skipping artifact " + artifactStr + " since it is not new.");
-            }
-          }
+  private void extractArtifact(Artifact artifact, ZipUnArchiver unArchiver, File dest) throws MojoExecutionException {
+    Log log = getLog();
+    try {
+      Enumeration<? extends ZipEntry> entries = new ZipFile(artifact.getFile()).entries();
+      if (entries.hasMoreElements()) {
+        ZipEntry firstElement = entries.nextElement();
+        File cachedElement = new File(dest, firstElement.getName());
+        if (!cachedElement.exists() || firstElement.getTime() != cachedElement.lastModified()) {
+          log.info("Extracting artifact " + artifact.getGroupId() + ":" + artifact.getId());
+          unArchiver.setSourceFile(artifact.getFile());
+          unArchiver.extract();
         }
-        catch (IOException anException) {
-          throw new MojoExecutionException(anException.getMessage(), anException);
-        }
-        catch (ArchiverException anException) {
-          throw new MojoExecutionException(anException.getMessage(), anException);
+        else {
+          log.debug("Skipping artifact " + artifact.getGroupId() + ":" + artifact.getId());
         }
       }
+      else {
+        log.warn("Artifact " + artifact.getGroupId() + ":" + artifact.getId() + " is empty");
+      }
+    }
+    catch (Exception e) {
+      throw new MojoExecutionException(e.getMessage(), e);
     }
   }
 }
