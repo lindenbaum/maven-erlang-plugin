@@ -1,5 +1,8 @@
 package eu.lindenbaum.maven;
 
+import static eu.lindenbaum.maven.util.ErlUtils.eval;
+import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.HashMap;
@@ -50,6 +53,15 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
    * @parameter expression="${basedir}/src/main/erlang/"
    */
   private File inputDirectory;
+
+  /**
+   * Directories where dependencies are unpacked. This directory contains OTP applications (name-version
+   * directories, with include and ebin sub directories).
+   * 
+   * @parameter expression="${project.build.directory}/lib/"
+   * @required
+   */
+  private File libDirectory;
 
   /**
    * Name of the release. Defaults to the artifact id.
@@ -221,7 +233,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
     theMakeRelupLineBuffer.append("]");
 
     theMakeRelupLineBuffer.append("), StatusCode = case Status of ok -> 0; _ -> 1 end, erlang:halt(StatusCode).");
-    String theResult = eval(theMakeRelupLineBuffer.toString());
+    String theResult = eval(getLog(), theMakeRelupLineBuffer.toString(), getDependencies(this.libDirectory));
     // Print any warning.
     if (!"".equals(theResult)) {
       getLog().info(theResult);
@@ -259,7 +271,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
     theMakeScriptLineBuffer.append("]");
 
     theMakeScriptLineBuffer.append("), StatusCode = case Status of ok -> 0; _ -> 1 end, erlang:halt(StatusCode).");
-    String theResult = eval(theMakeScriptLineBuffer.toString());
+    String theResult = eval(getLog(), theMakeScriptLineBuffer.toString(), getDependencies(this.libDirectory));
     // Print any warning.
     if (!"".equals(theResult)) {
       getLog().info(theResult);
@@ -308,7 +320,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
       theUntarLineBuffer.append(theReleaseExtractDir.getPath());
       theUntarLineBuffer.append("\"}, compressed]");
       theUntarLineBuffer.append("), StatusCode = case Status of ok -> 0; _ -> 1 end, erlang:halt(StatusCode).");
-      String theResult = eval(theUntarLineBuffer.toString());
+      String theResult = eval(getLog(), theUntarLineBuffer.toString(), getDependencies(this.libDirectory));
       // Print any warning.
       if (!"".equals(theResult)) {
         getLog().info(theResult);
@@ -368,7 +380,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
 
     // Check the version.
     final String theCheckVersionExpr = String.format(EXTRACT_VERSION, theRelFile.getPath());
-    final String theRelVersion = eval(theCheckVersionExpr);
+    final String theRelVersion = eval(getLog(), theCheckVersionExpr, getDependencies(this.libDirectory));
     if (!this.version.equals(theRelVersion)) {
       getLog().error("Version mismatch. Project version is " + this.version + " while .rel version is "
                      + theRelVersion);
@@ -385,7 +397,7 @@ public final class PrepareReleaseMojo extends AbstractErlMojo {
 
     // Extract the application versions
     final String theCheckVersionExpr = String.format(EXTRACT_APPLICATIONS, theRelFile.getPath());
-    final String[] theAppVersions = eval(theCheckVersionExpr).split("\\n");
+    final String[] theAppVersions = eval(getLog(), theCheckVersionExpr, getDependencies(this.libDirectory)).split("\\n");
     for (String theAppVersion : theAppVersions) {
       final String[] theApp = theAppVersion.split(" ");
       if (theApp.length != 2) {

@@ -38,7 +38,7 @@ public final class ErlUtils {
    * @return the output of the erl interpreter.
    * @throws MojoExecutionException if there was a problem with the erlang runtime.
    */
-  public static String eval(Log log, String expression, List<String> libPaths) throws MojoExecutionException {
+  public static String eval(Log log, String expression, List<File> libPaths) throws MojoExecutionException {
     return eval(log, expression, libPaths, null);
   }
 
@@ -52,14 +52,14 @@ public final class ErlUtils {
    * @return the output of the erl interpreter.
    * @throws MojoExecutionException if there was a problem with the erlang runtime.
    */
-  public static String eval(final Log log, String expression, List<String> libPaths, File workingDir) throws MojoExecutionException {
+  public static String eval(final Log log, String expression, List<File> libPaths, File workingDir) throws MojoExecutionException {
     logDebug(log, "Evaluating <<" + expression + ">>");
     final List<String> command = new LinkedList<String>();
     command.add(ErlConstants.ERL);
     if (libPaths != null) {
-      for (String theLibPath : libPaths) {
+      for (File lib : libPaths) {
         command.add("-pa");
-        command.add(theLibPath);
+        command.add(lib.getAbsolutePath());
       }
     }
     command.add("-eval");

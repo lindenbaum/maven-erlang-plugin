@@ -1,5 +1,8 @@
 package eu.lindenbaum.maven;
 
+import static eu.lindenbaum.maven.util.ErlUtils.eval;
+import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
+
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -15,19 +18,31 @@ import org.apache.maven.plugin.MojoFailureException;
 public final class PackageReleaseMojo extends AbstractErlMojo {
   /**
    * Build directory.
+   * 
    * @parameter expression="${project.build.directory}"
    * @readonly
    */
   private File buildDirectory;
 
   /**
+   * Directories where dependencies are unpacked. This directory contains OTP applications (name-version
+   * directories, with include and ebin sub directories).
+   * 
+   * @parameter expression="${project.build.directory}/lib/"
+   * @required
+   */
+  private File libDirectory;
+
+  /**
    * Bin directory, where binaries were created.
+   * 
    * @parameter expression="${project.build.directory}/ebin"
    */
   private File binDirectory;
 
   /**
    * Project version.
+   * 
    * @parameter expression="${project.version}"
    * @readonly
    */
@@ -36,12 +51,14 @@ public final class PackageReleaseMojo extends AbstractErlMojo {
 
   /**
    * Name of the release. Defaults to the artifact id.
+   * 
    * @parameter
    */
   private String releaseName;
 
   /**
    * Options for make_tar.
+   * 
    * @parameter
    */
   private String[] makeTarOptions;
@@ -73,7 +90,7 @@ public final class PackageReleaseMojo extends AbstractErlMojo {
     theMakeTarLineBuffer.append("]");
 
     theMakeTarLineBuffer.append("), StatusCode = case Status of ok -> 0; _ -> 1 end, erlang:halt(StatusCode).");
-    String theResult = eval(theMakeTarLineBuffer.toString());
+    String theResult = eval(getLog(), theMakeTarLineBuffer.toString(), getDependencies(this.libDirectory));
     // Print any warning.
     if (!"".equals(theResult)) {
       getLog().info(theResult);

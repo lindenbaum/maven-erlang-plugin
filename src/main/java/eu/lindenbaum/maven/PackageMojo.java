@@ -1,5 +1,11 @@
 package eu.lindenbaum.maven;
 
+import static eu.lindenbaum.maven.util.ErlUtils.eval;
+import static eu.lindenbaum.maven.util.FileUtils.NULL_FILTER;
+import static eu.lindenbaum.maven.util.FileUtils.SOURCE_FILTER;
+import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
+import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -55,6 +61,15 @@ public final class PackageMojo extends AbstractErlMojo {
    * @readonly
    */
   private File buildDirectory;
+
+  /**
+   * Directories where dependencies are unpacked. This directory contains OTP applications (name-version
+   * directories, with include and ebin sub directories).
+   * 
+   * @parameter expression="${project.build.directory}/lib/"
+   * @required
+   */
+  private File libDirectory;
 
   /**
    * Directory where the beam files were created.
@@ -192,13 +207,13 @@ public final class PackageMojo extends AbstractErlMojo {
         if (!ebin.exists()) {
           ebin.mkdirs();
         }
-        copyDirectoryStructure(this.beamDirectory, ebin);
+        copyDirectory(this.beamDirectory, ebin, NULL_FILTER);
       }
       if (this.inputDirectory.exists()) {
         if (!src.exists()) {
           src.mkdirs();
         }
-        copyDirectoryStructure(this.inputDirectory, src, ErlConstants.SOURCE_FILENAME_FILTER);
+        copyDirectory(this.inputDirectory, src, SOURCE_FILTER);
         if (src.listFiles().length == 0) {
           src.delete();
         }
@@ -208,24 +223,24 @@ public final class PackageMojo extends AbstractErlMojo {
         if (!include.exists()) {
           include.mkdirs();
         }
-        copyDirectoryStructure(this.includeDirectory, include);
+        copyDirectory(this.includeDirectory, include, NULL_FILTER);
       }
       if (this.resourcesDirectory.exists()) {
-        copyDirectoryStructure(this.resourcesDirectory, f);
+        copyDirectory(this.resourcesDirectory, f, NULL_FILTER);
       }
       if (this.privDirectory.exists() && this.privDirectory.listFiles().length > 0) {
         final File priv = new File(f, "priv");
         if (!priv.exists()) {
           priv.mkdirs();
         }
-        copyDirectoryStructure(this.privDirectory, priv);
+        copyDirectory(this.privDirectory, priv, NULL_FILTER);
       }
       if (this.mibsDirectory.exists() && this.mibsDirectory.listFiles().length > 0) {
         final File mibs = new File(f, "mibs");
         if (!mibs.exists()) {
           mibs.mkdirs();
         }
-        copyDirectoryStructure(this.mibsDirectory, mibs);
+        copyDirectory(this.mibsDirectory, mibs, NULL_FILTER);
       }
 
       String theApplicationName = getProject().getArtifactId();
@@ -239,7 +254,7 @@ public final class PackageMojo extends AbstractErlMojo {
                                                          theApplicationResourceFile.getPath(),
                                                          theApplicationName,
                                                          theApplicationName);
-        final String theAppVersion = eval(theCheckVersionExpr);
+        final String theAppVersion = eval(getLog(), theCheckVersionExpr, getDependencies(this.libDirectory));
         if (!this.version.equals(theAppVersion)) {
           getLog().error("Version mismatch. Project version is " + this.version + " while .app version is "
                          + theAppVersion);
@@ -252,7 +267,7 @@ public final class PackageMojo extends AbstractErlMojo {
                                                     theApplicationResourceFile.getPath(),
                                                     theApplicationName,
                                                     theApplicationName);
-        final String theModules = eval(theModulesExpr);
+        final String theModules = eval(getLog(), theModulesExpr, getDependencies(this.libDirectory));
         final Set<String> theModulesSet = new HashSet<String>(Arrays.asList(theModules.split("\\n")));
         final File[] beamFiles = ebin.listFiles(new FilenameFilter() {
           public boolean accept(File dir, String name) {
@@ -292,7 +307,7 @@ public final class PackageMojo extends AbstractErlMojo {
                                                          theApplicationUpgradeFile.getPath(),
                                                          theVersion,
                                                          theVersion);
-          final String result = eval(theCheckAppupExpr);
+          final String result = eval(getLog(), theCheckAppupExpr, getDependencies(this.libDirectory));
           if (!"ok".equals(result)) {
             getLog().error("Issue with .appup file : " + result);
             throw new MojoFailureException("Invalid .appup file.");
@@ -318,8 +333,7 @@ public final class PackageMojo extends AbstractErlMojo {
 
       // Copy documentation.
       if (this.docDirectory.exists()) {
-        copyDirectoryStructure(this.docDirectory, doc);
-
+        copyDirectory(this.docDirectory, doc, NULL_FILTER);
         if (doc.listFiles().length == 0) {
           doc.delete();
         }

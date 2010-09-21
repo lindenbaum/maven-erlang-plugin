@@ -5,9 +5,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.net.URL;
 import java.util.List;
 
+import org.codehaus.plexus.util.SelectorUtils;
 import org.junit.Test;
 
 public class FileUtilsTest {
@@ -25,8 +27,32 @@ public class FileUtilsTest {
   public void testGetDirectoriesRecursive() throws Exception {
     URL resource = getClass().getClassLoader().getResource("file-utils");
     File root = new File(resource.getFile());
-    List<File> files = FileUtils.getDirectoriesRecursive(root, "ebin");
+    List<File> files = FileUtils.getDirectoriesRecursive(root, new FileFilter() {
+      @Override
+      public boolean accept(File pathname) {
+        return "ebin".equals(pathname.getName());
+      }
+    });
     assertEquals(3, files.size());
+  }
+
+  @Test
+  public void testGetFilesAndDirectoriesRecursive() throws Exception {
+    URL resource = getClass().getClassLoader().getResource("file-utils");
+    File root = new File(resource.getFile());
+    final String[] excludes = org.codehaus.plexus.util.FileUtils.getDefaultExcludes();
+    List<File> files = FileUtils.getFilesAndDirectoriesRecursive(root, new FileFilter() {
+      @Override
+      public boolean accept(File pathname) {
+        for (String exclude : excludes) {
+          if (SelectorUtils.match(exclude, pathname.getAbsolutePath())) {
+            return false;
+          }
+        }
+        return true;
+      }
+    });
+    assertEquals(12, files.size());
   }
 
   @Test

@@ -1,5 +1,8 @@
 package eu.lindenbaum.maven;
 
+import static eu.lindenbaum.maven.util.FileUtils.NULL_FILTER;
+import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -15,27 +18,26 @@ import org.apache.maven.plugin.MojoFailureException;
 public final class CopyResourcesMojo extends AbstractErlMojo {
   /**
    * Directory where the private files were created.
+   * 
    * @parameter expression="${project.build.directory}/priv"
    */
   private File privDirectory;
 
   /**
    * Resources/priv directory.
+   * 
    * @parameter expression="${basedir}/src/main/resources/priv"
    */
   private File resourcesPrivDirectory;
 
   public void execute() throws MojoExecutionException, MojoFailureException {
-    try {
-      if (this.resourcesPrivDirectory.exists()) {
-        if (!this.privDirectory.exists()) {
-          this.privDirectory.mkdirs();
-        }
-        copyDirectoryStructure(this.resourcesPrivDirectory, this.privDirectory);
+    if (this.resourcesPrivDirectory.exists()) {
+      try {
+        copyDirectory(this.resourcesPrivDirectory, this.privDirectory, NULL_FILTER);
       }
-    }
-    catch (IOException e) {
-      throw new MojoExecutionException("Could not copy the resource files", e);
+      catch (IOException e) {
+        throw new MojoExecutionException("failed to copy resources " + e.getMessage(), e);
+      }
     }
   }
 }

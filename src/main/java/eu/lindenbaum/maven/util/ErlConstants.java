@@ -1,7 +1,5 @@
 package eu.lindenbaum.maven.util;
 
-import java.io.File;
-import java.io.FilenameFilter;
 
 /**
  * Defines Erlang related constants.
@@ -101,14 +99,4 @@ public interface ErlConstants {
    * Name of the directory that contains the include files.
    */
   public static final String INCLUDE_DIRECTORY = "include";
-
-  /**
-   * Filename filter to filter source files (.erl & .hrl). Return true if the given file is a source file (and
-   * therefore should be included in the src/ directory in the package). Uses the file suffix.
-   */
-  public static final FilenameFilter SOURCE_FILENAME_FILTER = new FilenameFilter() {
-    public boolean accept(File dir, String name) {
-      return name != null && (name.endsWith(HRL_SUFFIX) || name.endsWith(ERL_SUFFIX));
-    }
-  };
 }

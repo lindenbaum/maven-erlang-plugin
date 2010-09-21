@@ -1,5 +1,8 @@
 package eu.lindenbaum.maven.util;
 
+import static eu.lindenbaum.maven.util.ErlUtils.eval;
+import static eu.lindenbaum.maven.util.FileUtils.SOURCE_FILTER;
+
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -24,7 +27,7 @@ public final class EDocUtils {
   public static void generateEDoc(Log log, File srcDir, File outDir, String[] options) throws MojoExecutionException {
     StringBuilder eDocExpr = new StringBuilder();
     eDocExpr.append("edoc:files([");
-    File[] sources = srcDir.listFiles(ErlConstants.SOURCE_FILENAME_FILTER);
+    File[] sources = srcDir.listFiles(SOURCE_FILTER);
     for (int i = 0; i < sources.length; ++i) {
       if (i != 0) {
         eDocExpr.append(", ");
@@ -47,7 +50,7 @@ public final class EDocUtils {
       }
     }
     eDocExpr.append("]).");
-    ErlUtils.eval(log, eDocExpr.toString());
+    eval(log, eDocExpr.toString());
   }
 
   /**
@@ -80,6 +83,6 @@ public final class EDocUtils {
       }
     }
     eDocExpr.append("]).");
-    ErlUtils.eval(log, eDocExpr.toString());
+    eval(log, eDocExpr.toString());
   }
 }
