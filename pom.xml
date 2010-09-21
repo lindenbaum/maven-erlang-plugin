@@ -166,7 +166,6 @@
           <encoding>utf8</encoding>
           <additionalargs>-use -version -author -keywords</additionalargs>
           <docfilessubdirs>true</docfilessubdirs>
-          <show>private</show>
         </configuration>
         <reportSets>
           <reportSet>
