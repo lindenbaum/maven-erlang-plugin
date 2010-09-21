@@ -1,30 +1,58 @@
-package eu.lindenbaum.maven.util;
+package eu.lindenbaum.maven;
 
 import static eu.lindenbaum.maven.util.ErlUtils.eval;
 import static eu.lindenbaum.maven.util.FileUtils.SOURCE_FILTER;
 
 import java.io.File;
 
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
 
-/**
- * Containing utilities related to erlang documentation generation.
- * 
- * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
- * @author Timo Koepke <timo.koepke@lindenbaum.eu>
- */
-public final class EDocUtils {
+abstract class AbstractErlangReport extends AbstractMavenReport {
+  /**
+   * {@link MavenProject} to process.
+   * 
+   * @parameter expression="${project}"
+   * @required
+   * @readonly
+   */
+  private MavenProject project;
+
+  /**
+   * Doxia Site Renderer.
+   * 
+   * @parameter expression="${component.org.codehaus.doxia.site.renderer.DefaultSiteRenderer}"
+   * @required
+   * @readonly
+   */
+  private Renderer renderer;
+
+  @Override
+  protected MavenProject getProject() {
+    return this.project;
+  }
+
+  @Override
+  protected Renderer getSiteRenderer() {
+    return this.renderer;
+  }
+
+  @Override
+  public boolean isExternalReport() {
+    return true;
+  }
+
   /**
    * Generate the documentation with edoc for a set of files.
    * 
-   * @param log logger to use
    * @param srcDir directory where sources reside
    * @param outDir directory to put edoc in
    * @param options optional edoc parameters, maybe {@code null}
    * @throws MojoExecutionException
    */
-  public static void generateEDoc(Log log, File srcDir, File outDir, String[] options) throws MojoExecutionException {
+  protected void generateEDoc(File srcDir, File outDir, String[] options) throws MojoExecutionException {
     StringBuilder eDocExpr = new StringBuilder();
     eDocExpr.append("edoc:files([");
     File[] sources = srcDir.listFiles(SOURCE_FILTER);
@@ -50,20 +78,19 @@ public final class EDocUtils {
       }
     }
     eDocExpr.append("]).");
-    eval(log, eDocExpr.toString());
+    eval(getLog(), eDocExpr.toString());
   }
 
   /**
    * Generate the documentation with edoc for an OTP application.
    * 
-   * @param log logger to use
    * @param app application name
    * @param srcDir directory where sources and .app file reside
    * @param outDir directory to put edoc in
    * @param options optional edoc parameters, maybe {@code null}
    * @throws MojoExecutionException
    */
-  public static void generateAppEDoc(Log log, String app, File srcDir, File outDir, String[] options) throws MojoExecutionException {
+  protected void generateAppEDoc(String app, File srcDir, File outDir, String[] options) throws MojoExecutionException {
     StringBuilder eDocExpr = new StringBuilder();
     eDocExpr.append("edoc:application(\'");
     eDocExpr.append(app);
@@ -83,6 +110,6 @@ public final class EDocUtils {
       }
     }
     eDocExpr.append("]).");
-    eval(log, eDocExpr.toString());
+    eval(getLog(), eDocExpr.toString());
   }
 }

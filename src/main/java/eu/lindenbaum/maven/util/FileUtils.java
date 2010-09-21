@@ -154,7 +154,7 @@ public final class FileUtils {
 
   /**
    * Copies the contents of the source directory recursively into the destination directory. The source
-   * directory must exist. All missing directories in including the destination folder will be created if
+   * directory must exist. All missing directories including the destination folder will be created if
    * necessary, already existing files will be overwritten.
    * 
    * @param from the source directory to copy from
@@ -184,7 +184,7 @@ public final class FileUtils {
 
   /**
    * Copies the contents of the source directory recursively into the destination directory. The source
-   * directory must exist. All missing directories in including the destination folder will be created if
+   * directory must exist. All missing directories including the destination folder will be created if
    * necessary, already existing files will be overwritten. The given replacements will be applied to all
    * found files. It is assumed that all files are {@code UTF-8} encoded.
    * 

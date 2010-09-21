@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import eu.lindenbaum.maven.util.EDocUtils;
 import eu.lindenbaum.maven.util.ErlConstants;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -162,13 +161,6 @@ public final class PackageMojo extends AbstractMojo {
   private boolean failOnUndeclaredModules;
 
   /**
-   * Generate edoc documentation.
-   * 
-   * @parameter default-value="false"
-   */
-  private boolean useEdoc;
-
-  /**
    * Application resource file (in src/ directory).
    * 
    * @parameter
@@ -199,7 +191,7 @@ public final class PackageMojo extends AbstractMojo {
       f.mkdirs();
     }
 
-    if (!this.docDirectory.exists() && this.useEdoc) {
+    if (!this.docDirectory.exists()) {
       this.docDirectory.mkdirs();
     }
 
@@ -328,18 +320,6 @@ public final class PackageMojo extends AbstractMojo {
       else {
         getLog().warn("No .app file was found");
         theVersion = this.version;
-      }
-
-      // Generate documentation
-      if (this.useEdoc) {
-        getLog().info("Generating documentation with Edoc");
-
-        if (theApplicationResourceFile.exists()) {
-          EDocUtils.generateAppEDoc(getLog(), theApplicationName, src, this.docDirectory, this.edocOptions);
-        }
-        else {
-          EDocUtils.generateEDoc(getLog(), src, this.docDirectory, this.edocOptions);
-        }
       }
 
       // Copy documentation.
