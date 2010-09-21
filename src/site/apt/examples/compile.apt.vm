@@ -1,0 +1,55 @@
+
+Compile Erlang Sources
+
+ To enable this feature, you have to add and configure the plugin in the 
+ <<<build>>> section of your POM.
+
+  By default the compilation goal is bound to the <<<compile>>> phase, so
+  it is possible to omit the <<<phase>>> configuration.
+  
+  For more information about configuration options see the goal
+  {{{../compile-mojo.html}reference documentation}}. 
+ 
+ The following example configuration shows a simple setup:
+  
+---
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>compile-erlang-sources</id>
+            <phase>compile</compile>
+            <goals>
+              <goal>compile</compile>	
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
+---
+
+ This will compile the Erlang source files found in <<<src/main/erlang>>>.
+ 
+---
++- src/
+  +- main/
+    +- erlang/
+      +- sample_module.erl
+---
+
+ The output <<<beam>>> files will be put into <<<target/ebin>>>.
+ 
+---
++- target/
+  +- ebin/
+    +- sample_module.beam
+---

@@ -5,6 +5,9 @@
       <item name="Introduction" href="index.html" />
       <item name="Goals" href="plugin-info.html" />
     </menu>
+    <menu name="Examples">
+      <item name="Compile" href="examples/compile.html" />
+    </menu>
     <menu name="Reports">
       <item name="Releasenotes" href="changes-report.html" />
       <item name="Java API" href="apidocs/index.html" />

@@ -40,7 +40,7 @@
     <site>
       <!-- 1) Enable a shell account (SSH/SCP) -->
       <!--    SEE: http://maven.apache.org/plugins/maven-site-plugin/examples/site-deploy-to-sourceforge.net.html -->
-      <!-- 2) Append info to your settings.xml file -->
+      <!-- 2) Append account info to your settings.xml file -->
       <!--    SEE: http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
       <id>erlang-plugin.sourceforge.net</id>
       <url>scp://shell.sourceforge.net/home/groups/e/er/erlang-plugin/htdocs</url>
