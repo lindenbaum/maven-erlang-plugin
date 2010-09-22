@@ -4,11 +4,11 @@ import static eu.lindenbaum.maven.util.LoggingUtils.logDebug;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -23,9 +23,8 @@ public final class ErlUtils {
    * @param log logger.
    * @param expression the expression to evaluate.
    * @return the output of the erl interpreter.
-   * @throws MojoExecutionException if there was a problem with the erlang runtime.
    */
-  public static String eval(Log log, String expression) throws MojoExecutionException {
+  public static String eval(Log log, String expression) throws MojoExecutionException, MojoFailureException {
     return eval(log, expression, null);
   }
 
@@ -36,9 +35,9 @@ public final class ErlUtils {
    * @param expression the expression to evaluate.
    * @param libPaths list of paths to add to the path, maybe {@code null}
    * @return the output of the erl interpreter.
-   * @throws MojoExecutionException if there was a problem with the erlang runtime.
    */
-  public static String eval(Log log, String expression, List<File> libPaths) throws MojoExecutionException {
+  public static String eval(Log log, String expression, List<File> libPaths) throws MojoExecutionException,
+                                                                            MojoFailureException {
     return eval(log, expression, libPaths, null);
   }
 
@@ -50,9 +49,9 @@ public final class ErlUtils {
    * @param libPaths list of paths to add to the path, maybe {@code null}
    * @param workingDir the working directory for the spawned process, maybe {@code null}
    * @return the output of the erl interpreter.
-   * @throws MojoExecutionException if there was a problem with the erlang runtime.
    */
-  public static String eval(final Log log, String expression, List<File> libPaths, File workingDir) throws MojoExecutionException {
+  public static String eval(final Log log, String expression, List<File> libPaths, File workingDir) throws MojoExecutionException,
+                                                                                                   MojoFailureException {
     logDebug(log, "Evaluating <<" + expression + ">>");
     final List<String> command = new LinkedList<String>();
     command.add(ErlConstants.ERL);
@@ -69,13 +68,9 @@ public final class ErlUtils {
     command.add("init");
     command.add("stop");
 
-    return exec(command, log, workingDir, new ProcessListener() {
+    return exec(command, log, workingDir, new Observer() {
       @Override
-      public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
-        String result = "";
-        if (!processOutput.isEmpty()) {
-          result = processOutput.get(processOutput.size() - 1);
-        }
+      public String handle(int exitValue, String result) throws MojoExecutionException {
         if (exitValue != 0) {
           log.error("Process returned: " + exitValue + " result is: " + result);
           throw new MojoExecutionException("Error evaluating expression " + command);
@@ -87,26 +82,27 @@ public final class ErlUtils {
 
   /**
    * Executes the given command array in the given working directory. After process completion the given
-   * {@link ProcessListener} is notfied to process the result.
+   * {@link Observer} is notfied to process the result.
    * 
    * @param command to execute
    * @param log used to log errors
    * @param workingDir the working directory for the spawned process, maybe {@code null}
-   * @param listener to be notified on process completion
-   * @throws MojoExecutionException in case of process failure
+   * @param observer to be notified on process completion
    */
-  public static String exec(List<String> commands, final Log log, File workingDir, ProcessListener listener) throws MojoExecutionException {
+  public static String exec(List<String> commands, final Log log, File workingDir, Observer observer) throws MojoExecutionException,
+                                                                                                     MojoFailureException {
     logDebug(log, "Executing " + commands.toString());
     try {
       ProcessBuilder processBuilder = new ProcessBuilder(commands);
       processBuilder.directory(workingDir);
       logDebug(log, "Working directory " + processBuilder.directory());
       Process process = processBuilder.start();
-      final List<String> output = new ArrayList<String>();
+      final LinkedList<String> output = new LinkedList<String>();
       Thread gobbler1 = new Thread(new StreamGobbler(process.getInputStream(), new VoidProcedure<String>() {
         @Override
         public void apply(String line) {
-          output.add(line);
+          log.info(line);
+          output.addLast(line);
         }
       }));
       Thread gobbler2 = new Thread(new StreamGobbler(process.getErrorStream(), new VoidProcedure<String>() {
@@ -120,7 +116,7 @@ public final class ErlUtils {
       process.waitFor();
       gobbler1.join();
       gobbler2.join();
-      return listener.processCompleted(process.exitValue(), output);
+      return observer.handle(process.exitValue(), output.isEmpty() ? null : output.getLast());
     }
     catch (IOException e) {
       throw new MojoExecutionException(e.getMessage(), e);

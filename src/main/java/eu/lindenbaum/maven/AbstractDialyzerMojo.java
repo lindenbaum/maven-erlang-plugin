@@ -14,11 +14,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import eu.lindenbaum.maven.util.ProcessListener;
+import eu.lindenbaum.maven.util.Observer;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -27,7 +28,7 @@ import org.apache.maven.plugin.logging.Log;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Timo Koepke <timo.koepke@lindenbaum.eu>
  */
-abstract class AbstractDialyzerMojo extends AbstractMojo implements ProcessListener {
+abstract class AbstractDialyzerMojo extends AbstractMojo {
   /**
    * Directory where dependencies are unpacked.
    * 
@@ -53,13 +54,6 @@ abstract class AbstractDialyzerMojo extends AbstractMojo implements ProcessListe
   private boolean skipDialyzer;
 
   /**
-   * Setting this to {@code true} will break the build when a {@code dialyzer} run returns warnings.
-   * 
-   * @parameter default-value=false
-   */
-  private boolean dialyzerWarningsAreErrors;
-
-  /**
    * Additional {@code dialyzer} options.
    * 
    * @parameter
@@ -68,14 +62,23 @@ abstract class AbstractDialyzerMojo extends AbstractMojo implements ProcessListe
   private String[] dialyzerOptions;
 
   /**
+   * Setting this to {@code true} will break the build when a {@code dialyzer} run returns warnings.
+   * 
+   * @parameter default-value=false
+   */
+  boolean dialyzerWarningsAreErrors;
+
+  /**
    * Starts a {@code dialyzer} run according to the project configuration on the given directory with or
    * without dependencies.
    * 
    * @param inputDirectory to run {@code dialyzer} on
    * @param withDependencies whether to include the project dependencies
+   * @throws MojoFailureException
    * @throws MojoExecutionException
    */
-  protected void execute(File inputDirectory, boolean withDependencies) throws MojoExecutionException {
+  protected void execute(File inputDirectory, boolean withDependencies) throws MojoExecutionException,
+                                                                       MojoFailureException {
     Log log = getLog();
     if (this.skipDialyzer) {
       log.info("Skipping dialyzer run.");
@@ -92,35 +95,6 @@ abstract class AbstractDialyzerMojo extends AbstractMojo implements ProcessListe
         log.info("Last dialyzer run is still up to date.");
       }
     }
-  }
-
-  /**
-   * Called when the {@code dialyzer} process completed. In case of errors the appropriate {@link Exception}s
-   * are thrown.
-   * 
-   * @return {@code null}
-   */
-  @Override
-  public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
-    Log log = getLog();
-    for (String line : processOutput) {
-      if (this.dialyzerWarningsAreErrors) {
-        log.error(line);
-      }
-      else {
-        log.warn(line);
-      }
-    }
-    if (exitValue == 2 && this.dialyzerWarningsAreErrors) {
-      throw new MojoExecutionException("Dialyzer emitted warnings.");
-    }
-    else if (exitValue == 1) {
-      throw new MojoExecutionException("Dialyzer found errors.");
-    }
-    else if (exitValue != 0) {
-      throw new MojoExecutionException("Dialyzer returned with " + exitValue);
-    }
-    return null;
   }
 
   /**
@@ -149,9 +123,8 @@ abstract class AbstractDialyzerMojo extends AbstractMojo implements ProcessListe
    * 
    * @param dir to dialyze
    * @param dependencies to dialyze
-   * @throws MojoExecutionException
    */
-  private void dialyze(File dir, List<File> dependencies) throws MojoExecutionException {
+  private void dialyze(File dir, List<File> dependencies) throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
     log.info("Running dialyzer on " + dir.getAbsolutePath());
     File lastBuildIndicator = new File(dir, DIALYZER_OK);
@@ -167,7 +140,21 @@ abstract class AbstractDialyzerMojo extends AbstractMojo implements ProcessListe
     if (this.dialyzerOptions != null) {
       command.addAll(Arrays.asList(this.dialyzerOptions));
     }
-    exec(command, log, dir, this);
+    exec(command, log, dir, new Observer() {
+      @Override
+      public String handle(int exitValue, String result) throws MojoExecutionException, MojoFailureException {
+        if (exitValue == 2 && AbstractDialyzerMojo.this.dialyzerWarningsAreErrors) {
+          throw new MojoFailureException("Dialyzer emitted warnings.");
+        }
+        else if (exitValue == 1) {
+          throw new MojoFailureException("Dialyzer found errors.");
+        }
+        else if (exitValue != 0) {
+          throw new MojoExecutionException("Dialyzer returned with " + exitValue);
+        }
+        return null;
+      }
+    });
     try {
       lastBuildIndicator.createNewFile();
     }

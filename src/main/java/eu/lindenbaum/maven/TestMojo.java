@@ -1,18 +1,21 @@
 package eu.lindenbaum.maven;
 
+import static eu.lindenbaum.maven.util.ErlConstants.BEAM_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.COVERDATA_BIN;
+import static eu.lindenbaum.maven.util.ErlConstants.ERL;
+import static eu.lindenbaum.maven.util.ErlConstants.TEST_SUFFIX;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
+import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.ErlUtils;
-import eu.lindenbaum.maven.util.ProcessListener;
+import eu.lindenbaum.maven.util.Observer;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -20,59 +23,18 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Run the test cases.
+ * Runs the specified test cases.
  * 
  * @goal test
  * @phase test
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class TestMojo extends AbstractMojo implements FilenameFilter {
-  /**
-   * Regex to distinguish an eunit failure from a success.
-   */
+public final class TestMojo extends AbstractMojo {
   static final Pattern SUCCESS_REGEX = Pattern.compile(".*(?:All\\s+([0-9]+)\\s+tests|Test)\\s+(successful|passed).*");
 
   /**
-   * Set this to 'true' to skip running tests.
-   * 
-   * @parameter expression="${skipTests}"
-   */
-  private boolean skipTests;
-
-  /**
-   * Set this to the name of a single test case to run. Defaults to run all test cases.
-   * 
-   * @parameter expression="${test}"
-   */
-  private String test;
-
-  /**
-   * Set this to "true" to cause a failure if there are no tests to run. Defaults to false.
-   * 
-   * @parameter expression="${failIfNoTests}"
-   */
-  private boolean failIfNoTests;
-
-  /**
-   * Directories where dependencies are unpacked. This directory contains OTP applications (name-version
-   * directories, with include and ebin sub directories).
-   * 
-   * @parameter expression="${project.build.directory}/lib/"
-   * @required
-   */
-  private File lib;
-
-  /**
-   * Directory where the beam files are created.
-   * 
-   * @parameter expression="${project.build.directory}/test"
-   * @required
-   */
-  private File testOutput;
-
-  /**
-   * Source directory.
+   * Directory where the erlang source files reside.
    * 
    * @parameter expression="${basedir}/src/main/erlang/"
    * @required
@@ -80,117 +42,157 @@ public final class TestMojo extends AbstractMojo implements FilenameFilter {
   private File srcMainErlang;
 
   /**
+   * Directories where dependencies are unpacked.
+   * 
+   * @parameter expression="${project.build.directory}/lib/"
+   * @required
+   */
+  private File libOutput;
+
+  /**
+   * Directory where the compiled test sources and the recompiled sources reside.
+   * 
+   * @parameter expression="${project.build.directory}/test"
+   * @required
+   */
+  private File testOutput;
+
+  /**
    * Directory where the reports should be created.
    * 
    * @parameter expression="${project.build.directory}/surefire-reports"
    * @required
    */
-  private File surefireReports;
+  private File surefireReportsOutput;
 
-  @Override
-  public boolean accept(File dir, String name) {
-    if (this.test == null) {
-      return name != null && name.endsWith(ErlConstants.TEST_SUFFIX);
-    }
-    else {
-      return name != null && (name.equals(this.test) || name.equals(this.test + ErlConstants.TEST_SUFFIX));
-    }
-  }
+  /**
+   * Setting this to a module name, will only run this test case.
+   * 
+   * @parameter expression="${test}"
+   */
+  private String test;
+
+  /**
+   * Setting this to {@code true will} skip the test runs.
+   * 
+   * @parameter expression="${skipTests}"
+   */
+  private boolean skipTests;
+
+  /**
+   * Setting this to {@code true} will break the build if there are no tests to run.
+   * 
+   * @parameter expression="${failIfNoTests}"
+   */
+  private boolean failIfNoTests;
 
   public void execute() throws MojoExecutionException, MojoFailureException {
-    Log log = getLog();
+    final Log log = getLog();
     log.info("------------------------------------------------------------------------");
     log.info(" T E S T S");
     log.info("------------------------------------------------------------------------");
 
     if (this.skipTests) {
       log.info("Tests are skipped.");
-      return;
-    }
-
-    String[] testFiles = this.testOutput.list(this);
-    File coverageDataFile = new File(this.testOutput, ErlConstants.COVERDATA_BIN);
-    if (coverageDataFile.exists()) {
-      coverageDataFile.delete();
-    }
-
-    if (!this.surefireReports.exists()) {
-      this.surefireReports.mkdir();
-    }
-
-    if (testFiles == null || testFiles.length == 0) {
-      final String noTestMessage;
-      if (this.test == null) {
-        noTestMessage = "No tests to run";
-      }
-      else {
-        noTestMessage = "Test case " + this.test + " not found";
-      }
-      if (this.failIfNoTests) {
-        throw new MojoFailureException(noTestMessage + "!");
-      }
-      else {
-        log.info(noTestMessage + ".");
-      }
     }
     else {
-      final List<String> failedTests = new LinkedList<String>();
-      for (String testFile : testFiles) {
-        final String module = testFile.replace(ErlConstants.BEAM_SUFFIX, "");
-        log.info("Test case: " + module);
-        ErlUtils.exec(getCommandLine(module), log, this.testOutput, new ProcessListener() {
-          @Override
-          public String processCompleted(int exitValue, List<String> processOutput) throws MojoExecutionException {
-            if (exitValue != 0) {
-              throw new MojoExecutionException("Error running test cases: " + exitValue);
-            }
 
-            boolean testPassed = false;
-            for (String line : processOutput) {
-              testPassed |= SUCCESS_REGEX.matcher(line).find();
+      this.surefireReportsOutput.mkdirs();
+      File coverageDataFile = new File(this.testOutput, COVERDATA_BIN);
+      coverageDataFile.delete();
+
+      List<String> modules = getTestCases(this.testOutput, this.test);
+      if (modules.size() > 0) {
+        log.info("Test cases: " + modules.toString());
+        List<String> command = getCommandLine(modules);
+        ErlUtils.exec(command, log, this.testOutput, new Observer() {
+          @Override
+          public String handle(int exitValue, String result) throws MojoExecutionException,
+                                                            MojoFailureException {
+            if (exitValue != 0) {
+              throw new MojoExecutionException("Unit test run returned with " + exitValue);
             }
-            if (!testPassed) {
-              failedTests.add(module);
+            if (!SUCCESS_REGEX.matcher(result).find()) {
+              log.info("------------------------------------------------------------------------");
+              log.error("Tests failed.");
+              throw new MojoFailureException("There are test failures.");
             }
             return null;
           }
         });
       }
-      log.info("------------------------------------------------------------------------");
-      if (!failedTests.isEmpty()) {
-        log.error("The following tests failed:");
-        for (String failedTest : failedTests) {
-          log.error(failedTest);
+      else {
+        log.info("No tests to run.");
+        if (this.failIfNoTests) {
+          throw new MojoFailureException("build failure due to missing tests");
         }
-        throw new MojoFailureException("There are test failures.");
       }
     }
   }
 
-  private List<String> getCommandLine(String testModule) {
-    String eunitExpr = "eunit:test(" + testModule + ", [{order, inorder}, {report,{eunit_surefire,[{dir,\""
-                       + this.surefireReports.getPath() + "\"}]}}]).";
-    String coverExpr = "cover:compile_directory(\"" + this.srcMainErlang.getAbsolutePath()
-                       + "\", [export_all]).";
+  /**
+   * TODO
+   * 
+   * @param directory
+   * @param singleTest
+   * @return
+   */
+  private static List<String> getTestCases(File directory, String singleTest) {
+    final List<File> tests;
+    if (singleTest == null) {
+      tests = getFilesRecursive(directory, TEST_SUFFIX);
+    }
+    else {
+      File test = new File(directory, singleTest + TEST_SUFFIX);
+      if (test.exists()) {
+        tests = Arrays.asList(new File[]{ test });
+      }
+      else {
+        test = new File(directory, singleTest);
+        if (test.exists()) {
+          tests = Arrays.asList(new File[]{ test });
+        }
+        else {
+          tests = Collections.emptyList();
+        }
+      }
+    }
+    List<String> modules = new ArrayList<String>();
+    for (File test : tests) {
+      modules.add(test.getName().replace(BEAM_SUFFIX, ""));
+    }
+    return modules;
+  }
 
+  /**
+   * TODO
+   * 
+   * @param modules
+   * @return
+   */
+  private List<String> getCommandLine(List<String> modules) {
+    String eunitExpr = "eunit:test(" // 
+                       + modules.toString() //
+                       + ", [{order, inorder}, "//
+                       + "{report,{eunit_surefire,[{dir,\"" //
+                       + this.surefireReportsOutput.getPath()//
+                       + "\"}]}}]).";
+
+    String coverExpr = "cover:compile_directory(\"" + this.srcMainErlang.getPath() + "\", [export_all]).";
     List<String> command = new ArrayList<String>();
-    command.add(ErlConstants.ERL);
-    for (File lib : getDependencies(this.lib)) {
+    command.add(ERL);
+    for (File lib : getDependencies(this.libOutput)) {
       command.add("-pa");
       command.add(lib.getAbsolutePath());
     }
     command.add("-eval");
     command.add(coverExpr);
-    command.add("-run");
-    command.add("cover");
-    command.add("import");
-    command.add(ErlConstants.COVERDATA_BIN);
     command.add("-eval");
     command.add(eunitExpr);
     command.add("-run");
     command.add("cover");
     command.add("export");
-    command.add(ErlConstants.COVERDATA_BIN);
+    command.add(COVERDATA_BIN);
     command.add("-noshell");
     command.add("-s");
     command.add("init");

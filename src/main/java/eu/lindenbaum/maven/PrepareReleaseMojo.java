@@ -187,7 +187,7 @@ public final class PrepareReleaseMojo extends AbstractMojo {
   /**
    * Invoke make_relup.
    */
-  private void makeRelup() throws MojoExecutionException {
+  private void makeRelup() throws MojoExecutionException, MojoFailureException {
     if (!this.outputDirectory.exists()) {
       this.outputDirectory.mkdirs();
     }
@@ -259,7 +259,7 @@ public final class PrepareReleaseMojo extends AbstractMojo {
   /**
    * Invoke make_script.
    */
-  private void makeScript() throws MojoExecutionException {
+  private void makeScript() throws MojoExecutionException, MojoFailureException {
     @SuppressWarnings("unused")
     final String theReleaseName;
     if (this.releaseName == null) {
@@ -299,7 +299,7 @@ public final class PrepareReleaseMojo extends AbstractMojo {
    * 
    * @throws MojoExecutionException if there was a problem with unpacking the dependencies.
    */
-  private File[] unpackReleases(String[] inReleases) throws MojoExecutionException {
+  private File[] unpackReleases(String[] inReleases) throws MojoExecutionException, MojoFailureException {
     if (!this.releasesDirectory.exists()) {
       this.releasesDirectory.mkdirs();
     }

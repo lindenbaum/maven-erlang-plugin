@@ -16,7 +16,6 @@ import javax.xml.transform.TransformerException;
 import eu.lindenbaum.maven.cover.CoverData;
 import eu.lindenbaum.maven.cover.ModuleCoverData;
 import eu.lindenbaum.maven.util.ErlConstants;
-import eu.lindenbaum.maven.util.ErlUtils;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -256,8 +255,8 @@ public class CoverReportMojo extends AbstractMavenReport {
 
     final List<File> theResult = new LinkedList<File>();
 
-    final String theCoverageDump = ErlUtils.eval(getLog(), "cover:import(\"" + inCoverageDataFile.getPath()
-                                                           + "\"), " + DUMP_COVERDATA);
+    final String theCoverageDump = null;/*ErlUtils.eval(getLog(), "cover:import(\"" + inCoverageDataFile.getPath()
+                                                           + "\"), " + DUMP_COVERDATA);*/
     final CoverData theCoverData = new CoverData(theCoverageDump);
 
     theResult.add(generateMainXMLReport(theCoverData));

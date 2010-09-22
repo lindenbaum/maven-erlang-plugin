@@ -1,7 +1,7 @@
 package eu.lindenbaum.maven.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,11 +20,11 @@ public class ErlUtilsTest {
   public void testExec() throws Exception {
     String dir = getSystemSpecificListCommand();
     List<String> command = Arrays.asList(new String[]{ dir });
-    assertEquals("ok", ErlUtils.exec(command, log, null, new ProcessListener() {
+    assertEquals("ok", ErlUtils.exec(command, log, null, new Observer() {
       @Override
-      public String processCompleted(int exitValue, List<String> processOutput) {
+      public String handle(int exitValue, String result) {
         assertEquals(exitValue, 0);
-        assertFalse(processOutput.isEmpty());
+        assertNotNull(result);
         return "ok";
       }
     }));

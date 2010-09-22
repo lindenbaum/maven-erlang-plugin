@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import eu.lindenbaum.maven.util.ErlConstants;
 
+import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
 
@@ -67,7 +68,7 @@ public final class EdocReportMojo extends AbstractErlangReport {
         }
         copyDirectory(this.docOutput1, this.docOutput2, NULL_FILTER);
       }
-      catch (Exception e) {
+      catch (AbstractMojoExecutionException e) {
         throw new MavenReportException(e.getMessage(), e);
       }
     }

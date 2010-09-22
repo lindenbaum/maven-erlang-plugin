@@ -3,7 +3,7 @@ package eu.lindenbaum.maven;
 import java.io.File;
 import java.util.Locale;
 
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
 
@@ -47,7 +47,7 @@ public final class TestEdocReportMojo extends AbstractErlangReport {
       try {
         generateEDoc(this.srcTestErlang, this.testDocOutput, this.eDocOptions);
       }
-      catch (MojoExecutionException e) {
+      catch (AbstractMojoExecutionException e) {
         throw new MavenReportException(e.getMessage(), e);
       }
     }

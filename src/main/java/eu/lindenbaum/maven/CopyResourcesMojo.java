@@ -85,7 +85,7 @@ public final class CopyResourcesMojo extends AbstractMojo {
   @Override
   public void execute() throws MojoExecutionException {
     Map<String, String> replacements = new HashMap<String, String>();
-    replacements.put("\\?APP_VERSION", "\"" + this.project.getVersion() + "\"");
+    replacements.put("?APP_VERSION", "\"" + this.project.getVersion() + "\"");
 
     int copiedFiles = 0;
     copiedFiles += copyDirectory(this.srcMain, this.privOutput, new FileFilter() {

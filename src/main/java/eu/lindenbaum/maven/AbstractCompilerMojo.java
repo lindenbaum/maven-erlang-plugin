@@ -9,11 +9,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.lindenbaum.maven.util.ProcessListener;
+import eu.lindenbaum.maven.util.Observer;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -22,7 +23,7 @@ import org.apache.maven.plugin.logging.Log;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
-abstract class AbstractCompilerMojo extends AbstractMojo implements ProcessListener {
+abstract class AbstractCompilerMojo extends AbstractMojo {
   /**
    * Directory where the header files reside.
    * 
@@ -57,6 +58,7 @@ abstract class AbstractCompilerMojo extends AbstractMojo implements ProcessListe
    * @param outputSuffix suffix of comiled artifacts
    * @param options optional compiler options to be passed to the compiler, maybe {@code null}
    * @return number of compiled files
+   * @throws MojoFailureException
    * @throws MojoExecutionException
    */
   protected final int compile(File inputDir,
@@ -64,7 +66,7 @@ abstract class AbstractCompilerMojo extends AbstractMojo implements ProcessListe
                               File includeDir,
                               String inputSuffix,
                               String outputSuffix,
-                              List<String> options) throws MojoExecutionException {
+                              List<String> options) throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
     List<File> sources = getFilesRecursive(inputDir, inputSuffix);
     int numSources = sources.size();
@@ -72,29 +74,17 @@ abstract class AbstractCompilerMojo extends AbstractMojo implements ProcessListe
       log.info("Compiling " + numSources + " " + inputSuffix + "-file" + (numSources > 1 ? "s" : "")
                + " into " + outputSuffix + " (" + outputDir.getAbsolutePath() + ")");
       List<String> command = getCommandLine(outputDir, includeDir, options, sources);
-      exec(command, log, null, this);
+      exec(command, log, null, new Observer() {
+        @Override
+        public String handle(int exitValue, String result) throws MojoExecutionException {
+          if (exitValue != 0) {
+            throw new MojoExecutionException("Compiler returned with " + exitValue);
+          }
+          return null;
+        }
+      });
     }
     return numSources;
-  }
-
-  /**
-   * Processes the output of a compile job. In case the compilation exited abnormally a
-   * {@link MojoExecutionException} is thrown.
-   * 
-   * @param exitValue the exit value of the compiler process
-   * @param output the captured output of the compiler process
-   * @return {@code null}
-   */
-  @Override
-  public String processCompleted(int exitValue, List<String> output) throws MojoExecutionException {
-    Log log = getLog();
-    for (String line : output) {
-      log.warn(line);
-    }
-    if (exitValue != 0) {
-      throw new MojoExecutionException("Compiler returned with " + exitValue);
-    }
-    return null;
   }
 
   /**

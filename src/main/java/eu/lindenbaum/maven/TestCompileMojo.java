@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -59,7 +60,7 @@ public final class TestCompileMojo extends AbstractCompilerMojo {
    */
   private String[] erlcTestOptions;
 
-  public void execute() throws MojoExecutionException {
+  public void execute() throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
 
     List<String> options = new ArrayList<String>();

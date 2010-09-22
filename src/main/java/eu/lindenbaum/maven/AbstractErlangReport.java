@@ -8,6 +8,7 @@ import java.io.File;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 
@@ -56,9 +57,11 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
    * @param srcDir directory where sources reside
    * @param outDir directory to put edoc in
    * @param options optional edoc parameters, maybe {@code null}
+   * @throws MojoFailureException
    * @throws MojoExecutionException
    */
-  protected void generateEDoc(File srcDir, File outDir, String[] options) throws MojoExecutionException {
+  protected void generateEDoc(File srcDir, File outDir, String[] options) throws MojoExecutionException,
+                                                                         MojoFailureException {
     StringBuilder eDocExpr = new StringBuilder();
     eDocExpr.append("edoc:files([");
     File[] sources = srcDir.listFiles(SOURCE_FILTER);
@@ -94,9 +97,11 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
    * @param srcDir directory where sources and .app file reside
    * @param outDir directory to put edoc in
    * @param options optional edoc parameters, maybe {@code null}
+   * @throws MojoFailureException
    * @throws MojoExecutionException
    */
-  protected void generateAppEDoc(String app, File srcDir, File outDir, String[] options) throws MojoExecutionException {
+  protected void generateAppEDoc(String app, File srcDir, File outDir, String[] options) throws MojoExecutionException,
+                                                                                        MojoFailureException {
     StringBuilder eDocExpr = new StringBuilder();
     eDocExpr.append("edoc:application(\'");
     eDocExpr.append(app);

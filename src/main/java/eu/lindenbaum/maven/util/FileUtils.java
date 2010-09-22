@@ -265,11 +265,14 @@ public final class FileUtils {
           dest.mkdirs();
         }
         else {
-          String content;
           try {
-            content = fileRead(src, "UTF-8");
+            String content = fileRead(src, "UTF-8");
             for (Entry<String, String> replacement : replacements.entrySet()) {
               content = content.replace(replacement.getKey(), replacement.getValue());
+            }
+            File parent = dest.getParentFile();
+            if (parent != null) {
+              parent.mkdirs();
             }
             fileWrite(dest.getAbsolutePath(), "UTF-8", content);
             copied++;
