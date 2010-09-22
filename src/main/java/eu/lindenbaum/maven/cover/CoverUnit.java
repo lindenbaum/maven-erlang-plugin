@@ -5,15 +5,9 @@ package eu.lindenbaum.maven.cover;
  * number of lines that were not covered.
  */
 public final class CoverUnit {
-  /**
-   * Number of lines that were covered.
-   */
-  private final int mCoveredLines;
-
-  /**
-   * Number of lines that were not covered.
-   */
-  private final int mNotCoveredLines;
+  private final int coveredLines;
+  private final int notCoveredLines;
+  private final boolean isCovered;
 
   /**
    * Constructor from a number of lines that were covered and a number of
@@ -23,8 +17,9 @@ public final class CoverUnit {
    * @param inNotCoveredLines number of lines not covered.
    */
   public CoverUnit(int inCoveredLines, int inNotCoveredLines) {
-    this.mCoveredLines = inCoveredLines;
-    this.mNotCoveredLines = inNotCoveredLines;
+    this.coveredLines = inCoveredLines;
+    this.notCoveredLines = inNotCoveredLines;
+    this.isCovered = (this.notCoveredLines == 0);
   }
 
   /**
@@ -33,7 +28,7 @@ public final class CoverUnit {
    * @return the number of lines that were covered.
    */
   public int getCoveredLines() {
-    return this.mCoveredLines;
+    return this.coveredLines;
   }
 
   /**
@@ -42,6 +37,10 @@ public final class CoverUnit {
    * @return the number of lines that were not covered.
    */
   public int getNotCoveredLines() {
-    return this.mNotCoveredLines;
+    return this.notCoveredLines;
+  }
+
+  public boolean isCovered() {
+    return this.isCovered;
   }
 }

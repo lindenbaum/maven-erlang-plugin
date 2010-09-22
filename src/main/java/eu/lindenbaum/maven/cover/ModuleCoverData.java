@@ -14,33 +14,42 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class for a module's cover data.
+ * Represents the test coverage information for a single module.
+ * 
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public final class ModuleCoverData {
-  /**
-   * Name of the module.
-   */
-  private final String mModuleName;
+  private final String moduleName;
+  private final Map<String, FunctionCoverData> functionCoverData;
+  private final Map<Integer, List<CoverUnit>> lineCoverData;
 
-  /**
-   * Reference on the function cover data.
-   */
-  private final Map<String, FunctionCoverData> mFunctionCoverData;
-
-  /**
-   * Reference on the line cover data.
-   */
-  private final Map<Integer, List<CoverUnit>> mLineCoverData;
+  private int numberOfClauses;
+  private int numberOfLInes;
+  private boolean isCovered;
+  private int numberOfCoveredLines;
+  private int numberOfNotCoveredLines;
 
   /**
    * Constructor from a name.
    *
-   * @param inModuleName  name of the module.
+   * @param moduleName  name of the module.
    */
-  public ModuleCoverData(String inModuleName) {
-    this.mModuleName = inModuleName;
-    this.mFunctionCoverData = new HashMap<String, FunctionCoverData>();
-    this.mLineCoverData = new HashMap<Integer, List<CoverUnit>>();
+  public ModuleCoverData(String moduleName) {
+    this.moduleName = moduleName;
+    this.functionCoverData = new HashMap<String, FunctionCoverData>();
+    this.lineCoverData = new HashMap<Integer, List<CoverUnit>>();
+  }
+
+  public void calculateStatistics() {
+    for (FunctionCoverData function : this.functionCoverData.values()) {
+      this.numberOfClauses += function.getNumberOfClauses();
+      this.isCovered &= function.isCovered();
+      this.numberOfCoveredLines += function.getCoveredLines();
+      this.numberOfNotCoveredLines += function.getNotCoveredLines();
+    }
+    for (List<CoverUnit> lines : this.lineCoverData.values()) {
+      this.numberOfLInes += lines.size();
+    }
   }
 
   /**
@@ -50,7 +59,7 @@ public final class ModuleCoverData {
    * @param inUnit        cover data for the function.
    */
   public void putFunctionCoverData(String inFunction, CoverUnit inUnit) {
-    this.mFunctionCoverData.put(inFunction, new FunctionCoverData(inFunction, inUnit));
+    this.functionCoverData.put(inFunction, new FunctionCoverData(inFunction, inUnit));
   }
 
   /**
@@ -60,7 +69,7 @@ public final class ModuleCoverData {
    * @param inCoverData   cover data for the function.
    */
   public void putFunctionCoverData(String inFunction, FunctionCoverData inCoverData) {
-    this.mFunctionCoverData.put(inFunction, inCoverData);
+    this.functionCoverData.put(inFunction, inCoverData);
   }
 
   /**
@@ -70,7 +79,7 @@ public final class ModuleCoverData {
    * @return the cover data for the function.
    */
   public FunctionCoverData getFunctionCoverData(String inFunction) {
-    return this.mFunctionCoverData.get(inFunction);
+    return this.functionCoverData.get(inFunction);
   }
 
   /**
@@ -79,7 +88,7 @@ public final class ModuleCoverData {
    * @return the set of the cover data for all functions.
    */
   public Collection<FunctionCoverData> getFunctionCoverData() {
-    return this.mFunctionCoverData.values();
+    return this.functionCoverData.values();
   }
 
   /**
@@ -89,7 +98,7 @@ public final class ModuleCoverData {
    * @param inCoverData   cover data for the line.
    */
   public void putLineCoverData(Integer inLine, List<CoverUnit> inCoverData) {
-    this.mLineCoverData.put(inLine, inCoverData);
+    this.lineCoverData.put(inLine, inCoverData);
   }
 
   /**
@@ -99,7 +108,7 @@ public final class ModuleCoverData {
    * @return the list of cover data units for this line.
    */
   public List<CoverUnit> getLineCoverData(Integer inLine) {
-    return this.mLineCoverData.get(inLine);
+    return this.lineCoverData.get(inLine);
   }
 
   /**
@@ -108,7 +117,7 @@ public final class ModuleCoverData {
    * @return a map with line numbers as keys and list of cover data as values.
    */
   public Map<Integer, List<CoverUnit>> getLineCoverData() {
-    return this.mLineCoverData;
+    return this.lineCoverData;
   }
 
   /**
@@ -117,7 +126,7 @@ public final class ModuleCoverData {
    * @return the name of the module.
    */
   public String getModuleName() {
-    return this.mModuleName;
+    return this.moduleName;
   }
 
   /**
@@ -167,17 +176,17 @@ public final class ModuleCoverData {
    */
   public void writeToXMLFile(Writer inXMLFile, File inSourceFile, String inIndent) throws IOException {
     inXMLFile.write(inIndent + "<module name=\"");
-    inXMLFile.write(CoverData.escapeXml(this.mModuleName));
+    inXMLFile.write(CoverData.escapeXml(this.moduleName));
     inXMLFile.write("\">\n");
 
-    if (!this.mFunctionCoverData.isEmpty()) {
+    if (!this.functionCoverData.isEmpty()) {
       inXMLFile.write(inIndent + "  <functions>\n");
-      for (FunctionCoverData theFunction : this.mFunctionCoverData.values()) {
+      for (FunctionCoverData theFunction : this.functionCoverData.values()) {
         theFunction.writeToXMLFile(inXMLFile, inIndent + "    ");
       }
       inXMLFile.write(inIndent + "  </functions>\n");
     }
-    if (inSourceFile != null || !this.mLineCoverData.isEmpty()) {
+    if (inSourceFile != null || !this.lineCoverData.isEmpty()) {
       final String theLineIndent = inIndent + "    ";
       inXMLFile.write(inIndent + "  <lines>\n");
       if (inSourceFile != null) {
@@ -192,7 +201,7 @@ public final class ModuleCoverData {
         }
       }
       else {
-        final List<Integer> theLines = new ArrayList<Integer>(this.mLineCoverData.keySet());
+        final List<Integer> theLines = new ArrayList<Integer>(this.lineCoverData.keySet());
         Collections.sort(theLines);
         for (Integer theLineIx : theLines) {
           writeLineToXMLFile(inXMLFile, null, theLineIx, theLineIndent);
@@ -205,7 +214,7 @@ public final class ModuleCoverData {
   }
 
   public void writeLineToXMLFile(Writer inXMLFile, String inLine, int inLineIx, String inIndent) throws IOException {
-    final List<CoverUnit> theCoverDataList = this.mLineCoverData.get(inLineIx);
+    final List<CoverUnit> theCoverDataList = this.lineCoverData.get(inLineIx);
     int nbCovered = 0;
     int nbNotCovered = 0;
     if (theCoverDataList != null) {
@@ -231,5 +240,29 @@ public final class ModuleCoverData {
         inXMLFile.write("\" />\n");
       }
     }
+  }
+
+  public int getNumberOfFunctions() {
+    return this.functionCoverData.size();
+  }
+
+  public int getNumberOfClauses() {
+    return this.numberOfClauses;
+  }
+
+  public int getNumberOfLines() {
+    return this.numberOfLInes;
+  }
+
+  public boolean isCovered() {
+    return this.isCovered;
+  }
+
+  public int getNumberOfCoveredLines() {
+    return this.numberOfCoveredLines;
+  }
+
+  public int getNumberOfNotCoveredLines() {
+    return this.numberOfNotCoveredLines;
   }
 }

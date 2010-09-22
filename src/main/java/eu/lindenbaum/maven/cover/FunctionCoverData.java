@@ -9,46 +9,39 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class for a function's cover data.
+ * Represents the test coverage information for some function.
+ * 
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public final class FunctionCoverData {
-  /**
-   * Name of the function.
-   */
-  private final String mFunctionName;
-
-  /**
-   * Total data for the function.
-   */
-  private CoverUnit mTotalCoverData;
-
-  /**
-   * Data for each clause.
-   */
-  private final Map<Integer, CoverUnit> mClauseCoverData;
+  private final String functionName;
+  private CoverUnit totalCoverData;
+  private final Map<Integer, CoverUnit> clauseCoverData;
 
   /**
    * Constructor from a function name and a total cover unit.
    *
-   * @param inFunctionName    function identifier (name/arity).
-   * @param inTotalCoverData  coverage data for the whole function.
+   * @param functionName    function identifier (name/arity).
+   * @param totalCoverData  coverage data for the whole function.
    */
-  public FunctionCoverData(String inFunctionName, CoverUnit inTotalCoverData) {
-    this.mFunctionName = inFunctionName;
-    this.mTotalCoverData = inTotalCoverData;
-    this.mClauseCoverData = new HashMap<Integer, CoverUnit>();
+  public FunctionCoverData(String functionName, CoverUnit totalCoverData) {
+    this.functionName = functionName;
+    this.totalCoverData = totalCoverData;
+    this.clauseCoverData = new HashMap<Integer, CoverUnit>();
   }
 
   /**
    * Constructor from a function name.
    * Total cover data will be computed later.
    *
-   * @param inFunctionName    function identifier (name/arity).
+   * @param functionName    function identifier (name/arity).
    */
-  public FunctionCoverData(String inFunctionName) {
-    this.mFunctionName = inFunctionName;
-    this.mTotalCoverData = null;
-    this.mClauseCoverData = new HashMap<Integer, CoverUnit>();
+  public FunctionCoverData(String functionName) {
+    this(functionName, null);
+  }
+
+  public String getFunctionName() {
+    return this.functionName;
   }
 
   /**
@@ -58,7 +51,7 @@ public final class FunctionCoverData {
    * @param inData            coverage data for the clause.
    */
   public void putClauseData(Integer inClauseIndex, CoverUnit inData) {
-    this.mClauseCoverData.put(inClauseIndex, inData);
+    this.clauseCoverData.put(inClauseIndex, inData);
   }
 
   /**
@@ -69,7 +62,7 @@ public final class FunctionCoverData {
   private CoverUnit computeTotal() {
     int nbCoveredLines = 0;
     int nbNotCoveredLines = 0;
-    for (CoverUnit theUnit : this.mClauseCoverData.values()) {
+    for (CoverUnit theUnit : this.clauseCoverData.values()) {
       nbCoveredLines += theUnit.getCoveredLines();
       nbNotCoveredLines += theUnit.getNotCoveredLines();
     }
@@ -82,10 +75,10 @@ public final class FunctionCoverData {
    * @return the total data, i.e. the coverage for the function as a whole.
    */
   public CoverUnit getTotalCoverData() {
-    if (this.mTotalCoverData == null) {
-      this.mTotalCoverData = computeTotal();
+    if (this.totalCoverData == null) {
+      this.totalCoverData = computeTotal();
     }
-    return this.mTotalCoverData;
+    return this.totalCoverData;
   }
 
   /**
@@ -95,7 +88,7 @@ public final class FunctionCoverData {
    * the values.
    */
   public Map<Integer, CoverUnit> getClauseCoverData() {
-    return this.mClauseCoverData;
+    return this.clauseCoverData;
   }
 
   /**
@@ -108,18 +101,18 @@ public final class FunctionCoverData {
   public void writeToXMLFile(Writer inXMLFile, String inIndent) throws IOException {
     final CoverUnit theTotalCoverData = getTotalCoverData();
     inXMLFile.write(inIndent + "<function name=\"");
-    inXMLFile.write(CoverData.escapeXml(this.mFunctionName));
+    inXMLFile.write(CoverData.escapeXml(this.functionName));
     inXMLFile.write("\" covered=\"");
     inXMLFile.write(Integer.toString(theTotalCoverData.getCoveredLines()));
     inXMLFile.write("\" notcovered=\"");
     inXMLFile.write(Integer.toString(theTotalCoverData.getNotCoveredLines()));
     inXMLFile.write("\">\n");
 
-    if (!this.mClauseCoverData.isEmpty()) {
-      final List<Integer> theClauses = new ArrayList<Integer>(this.mClauseCoverData.keySet());
+    if (!this.clauseCoverData.isEmpty()) {
+      final List<Integer> theClauses = new ArrayList<Integer>(this.clauseCoverData.keySet());
       Collections.sort(theClauses);
       for (Integer theClause : theClauses) {
-        final CoverUnit theClauseCoverData = this.mClauseCoverData.get(theClause);
+        final CoverUnit theClauseCoverData = this.clauseCoverData.get(theClause);
         inXMLFile.write(inIndent + "  <clause index=\"");
         inXMLFile.write(Integer.toString(theClause));
         inXMLFile.write("\" covered=\"");
@@ -130,5 +123,21 @@ public final class FunctionCoverData {
       }
     }
     inXMLFile.write(inIndent + "</function>\n");
+  }
+
+  public int getNumberOfClauses() {
+    return this.clauseCoverData.size();
+  }
+
+  public int getCoveredLines() {
+    return this.getTotalCoverData().getCoveredLines();
+  }
+
+  public int getNotCoveredLines() {
+    return this.getTotalCoverData().getNotCoveredLines();
+  }
+
+  public boolean isCovered() {
+    return this.getTotalCoverData().isCovered();
   }
 }

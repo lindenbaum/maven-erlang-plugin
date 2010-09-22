@@ -1,6 +1,6 @@
 <lifecycles>
   <lifecycle>
-    <id>cover-report</id>
+    <id>coverage-report</id>
     <phases>
       <phase>
         <id>test</id>

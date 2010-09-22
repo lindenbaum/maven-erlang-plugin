@@ -8,6 +8,10 @@
         Added initial site documentation, generation of plugin-docs, changes
         and some development/contribution information.
       </action>
+      <action dev="olle-t" type="add">
+        New coverage report, replacing the old one. Now includes line-coverage
+        with annotated source code listings.
+      </action>
     </release>
   </body>
 </document>

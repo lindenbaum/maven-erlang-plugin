@@ -101,17 +101,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.11</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
-      <version>2.0.11</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.5</version>
+      <version>2.0.10</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -134,6 +124,16 @@
       <artifactId>easymock</artifactId>
       <version>3.0</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.maven.reporting</groupId>
+    	<artifactId>maven-reporting-impl</artifactId>
+    	<version>2.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.maven.reporting</groupId>
+    	<artifactId>maven-reporting-api</artifactId>
+    	<version>3.0</version>
     </dependency>
   </dependencies>
   <reporting>

@@ -11,87 +11,75 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class for handling cover data.
+ * Represents test coverage data for Erlang modules.
+ * 
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public final class CoverData {
-  /**
-   * Regex to scan function information from the cover data.
-   */
   private static final Pattern COVER_FUNCTION_REGEX = Pattern.compile("\\{\\{([^,}]+?),([^,}]+?),(\\d+)\\},\\{(\\d+),(\\d+)\\}\\}");
-
-  /**
-   * Regex to scan clause information from the cover data.
-   */
   private static final Pattern COVER_CLAUSE_REGEX = Pattern.compile("\\{\\{([^,}]+?),([^,}]+?),(\\d+),(\\d+)\\},\\{(\\d+),(\\d+)\\}\\}");
-
-  /**
-   * Regex to scan line information from the cover data.
-   */
   private static final Pattern COVER_LINE_REGEX = Pattern.compile("\\{\\{([^,}]+?),(\\d+)\\},\\{(\\d+),(\\d+)\\}\\}");
 
-  /**
-   * Reference on the module cover data.
-   */
-  private final Map<String, ModuleCoverData> mModuleCoverData;
+  private final Map<String, ModuleCoverData> moduleCoverData;
 
-  /**
-   * Constructor from a dumped cover data.
-   *
-   * @param inDump    output of the cover dump.
-   */
-  public CoverData(String inDump) {
-    this.mModuleCoverData = new HashMap<String, ModuleCoverData>();
-    parseFunctionData(inDump);
-    parseClauseData(inDump);
-    parseLineData(inDump);
+  private int numberOfFunctions;
+  private int numberOfClauses;
+  private int numberOfLines;
+  private int numberOfCoveredLines;
+  private int numberOfNotCoveredLines;
+  private boolean isCovered;
+
+  public CoverData(String coverageDataDump) {
+    this.moduleCoverData = new HashMap<String, ModuleCoverData>();
+    parseFunctionData(coverageDataDump);
+    parseClauseData(coverageDataDump);
+    parseLineData(coverageDataDump);
+    calculateStatistics();
   }
 
-  /**
-   * Parse the function data from the dump.
-   *
-   * @param inDump    output of the cover dump.
-   */
-  public void parseFunctionData(String inDump) {
-    final Matcher functionMatcher = COVER_FUNCTION_REGEX.matcher(inDump);
-    while (functionMatcher.find()) {
-      final String theModuleName = functionMatcher.group(1);
+  private void calculateStatistics() {
+    for (ModuleCoverData module : this.moduleCoverData.values()) {
+      module.calculateStatistics();
+      this.numberOfFunctions += module.getNumberOfFunctions();
+      this.numberOfClauses += module.getNumberOfClauses();
+      this.numberOfLines += module.getNumberOfLines();
+      this.numberOfCoveredLines += module.getNumberOfCoveredLines();
+      this.numberOfNotCoveredLines += module.getNumberOfNotCoveredLines();
+      this.isCovered &= module.isCovered();
+    }
+  }
 
-      ModuleCoverData theModuleData = this.mModuleCoverData.get(theModuleName);
+  private void parseFunctionData(String coverageDataDump) {
+    Matcher functionMatcher = COVER_FUNCTION_REGEX.matcher(coverageDataDump);
+    while (functionMatcher.find()) {
+      String theModuleName = functionMatcher.group(1);
+      ModuleCoverData theModuleData = this.moduleCoverData.get(theModuleName);
       if (theModuleData == null) {
         theModuleData = new ModuleCoverData(theModuleName);
-        this.mModuleCoverData.put(theModuleName, theModuleData);
+        this.moduleCoverData.put(theModuleName, theModuleData);
       }
-
-      final String theFunctionName = functionMatcher.group(2);
-      final int theFunctionArity = Integer.parseInt(functionMatcher.group(3));
-      final String theFunction = theFunctionName + "/" + theFunctionArity;
-      final int theCoveredLines = Integer.parseInt(functionMatcher.group(4));
-      final int theNotCoveredLines = Integer.parseInt(functionMatcher.group(5));
-      final CoverUnit theCoverUnit = new CoverUnit(theCoveredLines, theNotCoveredLines);
+      String theFunctionName = functionMatcher.group(2);
+      int theFunctionArity = Integer.parseInt(functionMatcher.group(3));
+      String theFunction = theFunctionName + "/" + theFunctionArity;
+      int theCoveredLines = Integer.parseInt(functionMatcher.group(4));
+      int theNotCoveredLines = Integer.parseInt(functionMatcher.group(5));
+      CoverUnit theCoverUnit = new CoverUnit(theCoveredLines, theNotCoveredLines);
       theModuleData.putFunctionCoverData(theFunction, theCoverUnit);
     }
   }
 
-  /**
-   * Parse the clause data from the dump.
-   *
-   * @param inDump    output of the cover dump.
-   */
-  public void parseClauseData(String inDump) {
+  private void parseClauseData(String inDump) {
     final Matcher clauseMatcher = COVER_CLAUSE_REGEX.matcher(inDump);
     while (clauseMatcher.find()) {
       final String theModuleName = clauseMatcher.group(1);
-
-      ModuleCoverData theModuleData = this.mModuleCoverData.get(theModuleName);
+      ModuleCoverData theModuleData = this.moduleCoverData.get(theModuleName);
       if (theModuleData == null) {
         theModuleData = new ModuleCoverData(theModuleName);
-        this.mModuleCoverData.put(theModuleName, theModuleData);
+        this.moduleCoverData.put(theModuleName, theModuleData);
       }
-
       final String theFunctionName = clauseMatcher.group(2);
       final int theFunctionArity = Integer.parseInt(clauseMatcher.group(3));
       final String theFunction = theFunctionName + "/" + theFunctionArity;
-
       final FunctionCoverData theOriginalFunctionData = theModuleData.getFunctionCoverData(theFunction);
       final FunctionCoverData theFunctionData;
       if (theOriginalFunctionData == null) {
@@ -105,35 +93,25 @@ public final class CoverData {
       final int theCoveredLines = Integer.parseInt(clauseMatcher.group(5));
       final int theNotCoveredLines = Integer.parseInt(clauseMatcher.group(6));
       final CoverUnit theCoverUnit = new CoverUnit(theCoveredLines, theNotCoveredLines);
-
       theFunctionData.putClauseData(theClauseIndex, theCoverUnit);
     }
   }
 
-  /**
-   * Parse the line data from the dump.
-   *
-   * @param inDump    output of the cover dump.
-   */
-  public void parseLineData(String inDump) {
+  private void parseLineData(String inDump) {
     final Matcher lineMatcher = COVER_LINE_REGEX.matcher(inDump);
     while (lineMatcher.find()) {
       final String theModuleName = lineMatcher.group(1);
-
-      ModuleCoverData theModuleData = this.mModuleCoverData.get(theModuleName);
+      ModuleCoverData theModuleData = this.moduleCoverData.get(theModuleName);
       if (theModuleData == null) {
         theModuleData = new ModuleCoverData(theModuleName);
-        this.mModuleCoverData.put(theModuleName, theModuleData);
+        this.moduleCoverData.put(theModuleName, theModuleData);
       }
-
       final int theLine = Integer.parseInt(lineMatcher.group(2));
-
       List<CoverUnit> theList = theModuleData.getLineCoverData(theLine);
       if (theList == null) {
         theList = new LinkedList<CoverUnit>();
         theModuleData.putLineCoverData(theLine, theList);
       }
-
       final int theCoveredLines = Integer.parseInt(lineMatcher.group(3));
       final int theNotCoveredLines = Integer.parseInt(lineMatcher.group(4));
       final CoverUnit theCoverUnit = new CoverUnit(theCoveredLines, theNotCoveredLines);
@@ -147,7 +125,7 @@ public final class CoverData {
      * @return the set of module data.
    */
   public Collection<ModuleCoverData> getModuleCoverData() {
-    return this.mModuleCoverData.values();
+    return this.moduleCoverData.values();
   }
 
   /**
@@ -156,13 +134,16 @@ public final class CoverData {
    *
    * @param inXMLFile     writer to write to.
    * @throws IOException if there was a problem while writing the file.
+   * 
+   * @deprecated Not to be used, will be removed.
    */
+  @Deprecated
   public void writeToXMLFile(Writer inXMLFile) throws IOException {
     inXMLFile.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     inXMLFile.write("<coverdata>\n");
-    if (!this.mModuleCoverData.isEmpty()) {
+    if (!this.moduleCoverData.isEmpty()) {
       inXMLFile.write("  <modules>\n");
-      for (ModuleCoverData theModule : this.mModuleCoverData.values()) {
+      for (ModuleCoverData theModule : this.moduleCoverData.values()) {
         theModule.writeToXMLFile(inXMLFile, "    ");
       }
       inXMLFile.write("  </modules>\n");
@@ -170,10 +151,42 @@ public final class CoverData {
     inXMLFile.write("</coverdata>\n");
   }
 
+  /**
+   * @deprecated Not to be used, will be removed.
+   */
+  @Deprecated
   static String escapeXml(String inText) {
     return inText.replaceAll("&", "&amp;")
                  .replaceAll("\"", "&quot;")
                  .replaceAll("<", "&lt;")
                  .replaceAll(">", "&gt;");
+  }
+
+  public int getNumberOfModules() {
+    return this.moduleCoverData.size();
+  }
+
+  public int getNumberOfFunctions() {
+    return this.numberOfFunctions;
+  }
+
+  public int getNumberOfClauses() {
+    return this.numberOfClauses;
+  }
+
+  public int getNumberOfLines() {
+    return this.numberOfLines;
+  }
+
+  public int getNumberOfCoveredLines() {
+    return this.numberOfCoveredLines;
+  }
+
+  public int getNumberOfNotCoveredLines() {
+    return this.numberOfNotCoveredLines;
+  }
+
+  public boolean isCovered() {
+    return this.isCovered;
   }
 }
