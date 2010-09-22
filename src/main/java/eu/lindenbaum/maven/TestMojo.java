@@ -131,11 +131,13 @@ public final class TestMojo extends AbstractMojo {
   }
 
   /**
-   * TODO
+   * Returns a {@link List} of test modules to run. In case the single test case parameter {@link #test} is
+   * specified this function tries to determine whether this test can be run. Otherwise all runnable tests are
+   * returned.
    * 
-   * @param directory
-   * @param singleTest
-   * @return
+   * @param directory where the compiled tests reside
+   * @param singleTest name of a specific single test to run
+   * @return a {@link List} of test modules to run
    */
   private static List<String> getTestCases(File directory, String singleTest) {
     final List<File> tests;
@@ -153,7 +155,7 @@ public final class TestMojo extends AbstractMojo {
           tests = Arrays.asList(new File[]{ test });
         }
         else {
-          tests = Collections.emptyList();
+          tests = getFilesRecursive(directory, TEST_SUFFIX);
         }
       }
     }
@@ -165,10 +167,10 @@ public final class TestMojo extends AbstractMojo {
   }
 
   /**
-   * TODO
+   * Returns the command line executing all unit tests.
    * 
-   * @param modules
-   * @return
+   * @param modules a list of test cases to run
+   * @return an executable command list
    */
   private List<String> getCommandLine(List<String> modules) {
     String eunitExpr = "eunit:test(" // 

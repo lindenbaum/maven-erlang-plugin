@@ -30,7 +30,7 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
   /**
    * Doxia Site Renderer.
    * 
-   * @parameter expression="${component.org.codehaus.doxia.site.renderer.DefaultSiteRenderer}"
+   * @component
    * @required
    * @readonly
    */
