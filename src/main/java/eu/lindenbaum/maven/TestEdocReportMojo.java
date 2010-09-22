@@ -10,7 +10,7 @@ import org.apache.maven.reporting.MavenReportException;
 /**
  * Generate the EDoc report for test sources.
  * 
- * @goal test-edoc
+ * @goal test-doc
  * @phase generate-test-sources
  */
 public final class TestEdocReportMojo extends AbstractErlangReport {

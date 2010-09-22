@@ -1,8 +1,5 @@
 package eu.lindenbaum.maven;
 
-import static eu.lindenbaum.maven.util.FileUtils.NULL_FILTER;
-import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
-
 import java.io.File;
 import java.util.Locale;
 
@@ -15,7 +12,7 @@ import org.apache.maven.reporting.MavenReportException;
 /**
  * Generates an EDoc report.
  * 
- * @goal edoc
+ * @goal doc
  * @phase generate-sources
  */
 public final class EdocReportMojo extends AbstractErlangReport {
@@ -34,14 +31,6 @@ public final class EdocReportMojo extends AbstractErlangReport {
    * @required
    */
   private File docOutput1;
-
-  /**
-   * Additional directory to copy the generated EDoc into.
-   * 
-   * @parameter default-value="${project.build.directory}/doc"
-   * @required
-   */
-  private File docOutput2;
 
   /**
    * Additional options for EDoc.
@@ -66,7 +55,6 @@ public final class EdocReportMojo extends AbstractErlangReport {
         else {
           generateEDoc(this.srcMainErlang, this.docOutput1, this.eDocOptions);
         }
-        copyDirectory(this.docOutput1, this.docOutput2, NULL_FILTER);
       }
       catch (AbstractMojoExecutionException e) {
         throw new MavenReportException(e.getMessage(), e);

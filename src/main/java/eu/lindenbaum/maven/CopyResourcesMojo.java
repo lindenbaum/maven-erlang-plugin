@@ -18,7 +18,7 @@ import org.apache.maven.project.MavenProject;
  * Copy resources to target/priv.
  * 
  * @goal copy-resources
- * @phase generate-resources
+ * @phase process-resources
  */
 public final class CopyResourcesMojo extends AbstractMojo {
   /**
@@ -91,7 +91,8 @@ public final class CopyResourcesMojo extends AbstractMojo {
     copiedFiles += copyDirectory(this.srcMain, this.privOutput, new FileFilter() {
       @Override
       public boolean accept(File file) {
-        return file.isDirectory() && file.getName().equals("erlang");
+        String name = file.getName();
+        return !name.equals("erlang") && !name.equals("include") && !name.equals("priv");
       }
     });
     copiedFiles += copyDirectory(this.privInput1, this.privOutput, NULL_FILTER);

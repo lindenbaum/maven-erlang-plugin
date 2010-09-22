@@ -17,7 +17,7 @@ import org.apache.maven.plugin.logging.Log;
  * Compile erlang test sources and recompile erlang sources using the {@code export_all} option.
  * 
  * @goal test-compile
- * @phase test
+ * @phase test-compile
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
