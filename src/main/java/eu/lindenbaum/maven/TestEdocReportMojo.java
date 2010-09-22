@@ -20,7 +20,7 @@ public final class TestEdocReportMojo extends AbstractErlangReport {
    * @parameter expression="${basedir}/src/test/erlang/"
    * @required
    */
-  private File inputDirectory;
+  private File srcTestErlang;
 
   /**
    * Directory to generate the EDoc report into.
@@ -28,7 +28,7 @@ public final class TestEdocReportMojo extends AbstractErlangReport {
    * @parameter default-value="${project.reporting.outputDirectory}/test-doc"
    * @required
    */
-  private File outputDirectory;
+  private File testDocOutput;
 
   /**
    * Additional options for EDoc.
@@ -43,9 +43,9 @@ public final class TestEdocReportMojo extends AbstractErlangReport {
     String description = getDescription(Locale.ENGLISH);
     if (canGenerateReport()) {
       log.debug("Generating " + description);
-      this.outputDirectory.mkdirs();
+      this.testDocOutput.mkdirs();
       try {
-        generateEDoc(this.inputDirectory, this.outputDirectory, this.eDocOptions);
+        generateEDoc(this.srcTestErlang, this.testDocOutput, this.eDocOptions);
       }
       catch (MojoExecutionException e) {
         throw new MavenReportException(e.getMessage(), e);
@@ -58,13 +58,13 @@ public final class TestEdocReportMojo extends AbstractErlangReport {
 
   @Override
   public boolean canGenerateReport() {
-    String[] files = this.inputDirectory.list();
+    String[] files = this.srcTestErlang.list();
     return files != null && files.length > 0;
   }
 
   @Override
   protected String getOutputDirectory() {
-    return this.outputDirectory.getAbsolutePath();
+    return this.testDocOutput.getAbsolutePath();
   }
 
   @Override
@@ -79,6 +79,6 @@ public final class TestEdocReportMojo extends AbstractErlangReport {
 
   @Override
   public String getOutputName() {
-    return this.outputDirectory.getName() + File.separator + "index";
+    return this.testDocOutput.getName() + "/index";
   }
 }

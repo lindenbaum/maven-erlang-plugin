@@ -34,7 +34,7 @@ abstract class AbstractDialyzerMojo extends AbstractMojo implements ProcessListe
    * @parameter expression="${project.build.directory}/lib/"
    * @required
    */
-  private File directory;
+  private File libOutput;
 
   /**
    * Setting this to {@code true} will force a {@code dialyzer} run even if this would no be necessary because
@@ -84,7 +84,7 @@ abstract class AbstractDialyzerMojo extends AbstractMojo implements ProcessListe
       if (this.forceDialyzer || needDialyzerBuild(inputDirectory)) {
         List<File> libs = Collections.emptyList();
         if (withDependencies) {
-          libs = getDependencies(this.directory);
+          libs = getDependencies(this.libOutput);
         }
         dialyze(inputDirectory, libs);
       }

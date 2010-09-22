@@ -1,5 +1,16 @@
 package eu.lindenbaum.maven.util;
 
+import static eu.lindenbaum.maven.util.ErlConstants.APPUP_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.APP_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.FUNCS_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.HRL_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.MIB_SUFFIX;
+import static org.codehaus.plexus.util.FileUtils.copyFile;
+import static org.codehaus.plexus.util.FileUtils.fileRead;
+import static org.codehaus.plexus.util.FileUtils.fileWrite;
+import static org.codehaus.plexus.util.FileUtils.getDefaultExcludes;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -11,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.SelectorUtils;
 
 /**
@@ -25,18 +37,17 @@ public final class FileUtils {
   /**
    * Filename filter to filter source files (.erl & .hrl). Directories are always accepted.
    */
-  public static final FileFilter SOURCE_FILTER = new FileFilter() {
-    @Override
-    public boolean accept(File pathname) {
-      if (pathname.isFile()) {
-        String name = pathname.getName();
-        return name.endsWith(ErlConstants.HRL_SUFFIX) || name.endsWith(ErlConstants.ERL_SUFFIX);
-      }
-      else {
-        return true;
-      }
-    }
-  };
+  public static final FileFilter SOURCE_FILTER = getSuffixFilter(new String[]{ HRL_SUFFIX, ERL_SUFFIX });
+
+  /**
+   * Filename filter to filter app files (.app & .appup). Directories are always accepted.
+   */
+  public static final FileFilter APP_FILTER = getSuffixFilter(new String[]{ APP_SUFFIX, APPUP_SUFFIX });
+
+  /**
+   * Filename filter to filter app files (.app & .appup). Directories are always accepted.
+   */
+  public static final FileFilter SNMP_FILTER = getSuffixFilter(new String[]{ MIB_SUFFIX, FUNCS_SUFFIX });
 
   /**
    * a {@link FileFilter} accepting all input
@@ -47,6 +58,31 @@ public final class FileUtils {
       return true;
     }
   };
+
+  /**
+   * Returns a {@link FileFilter} which only accepts <b>files</b> ending with one of the given suffixes. The
+   * suffixes may be of the for {@code .java} or {@code java}. Directories will always be accepted.
+   * 
+   * @param suffixes list of accepted suffixes
+   * @return a new {@link FileFilter}
+   */
+  public static FileFilter getSuffixFilter(final String[] suffixes) {
+    return new FileFilter() {
+      @Override
+      public boolean accept(File file) {
+        if (file.isFile()) {
+          for (String pattern : suffixes) {
+            String name = file.getName();
+            if (name.endsWith(pattern)) {
+              return true;
+            }
+          }
+          return false;
+        }
+        return true;
+      }
+    };
+  }
 
   /**
    * Get a {@link List} of files matching the given file extension (excluding directories).
@@ -72,6 +108,24 @@ public final class FileUtils {
       })));
     }
     return files;
+  }
+
+  /**
+   * Removes all files ending with a specific suffix recursively from a directory.
+   * 
+   * @param root directory to remove specific files from
+   * @param suffix file suffixes to remove
+   * @return the number of removed files
+   */
+  public static int removeFilesRecursive(File root, String suffix) {
+    int removed = 0;
+    List<File> files = getFilesRecursive(root, suffix);
+    for (File file : files) {
+      if (file.exists() && file.delete()) {
+        removed++;
+      }
+    }
+    return removed;
   }
 
   /**
@@ -112,7 +166,7 @@ public final class FileUtils {
   public static List<File> getFilesAndDirectoriesRecursive(File root, final FileFilter filter) {
     final List<File> files = new ArrayList<File>();
     if (root.isDirectory()) {
-      final String[] excludes = org.codehaus.plexus.util.FileUtils.getDefaultExcludes();
+      final String[] excludes = getDefaultExcludes();
       files.addAll(Arrays.asList(root.listFiles(new FileFilter() {
         @Override
         public boolean accept(File child) {
@@ -161,10 +215,10 @@ public final class FileUtils {
    * @param to the destination directory to copy to
    * @param filter additional filter to apply before copying
    * @return the number of copied <b>files</b>
+   * @throws MojoExecutionException
    * @see #getFilesAndDirectoriesRecursive(File, FileFilter)
-   * @throws IOException
    */
-  public static int copyDirectory(File from, File to, FileFilter filter) throws IOException {
+  public static int copyDirectory(File from, File to, FileFilter filter) throws MojoExecutionException {
     int copied = 0;
     if (from.exists() && from.isDirectory()) {
       List<File> toCopy = getFilesAndDirectoriesRecursive(from, filter);
@@ -174,8 +228,13 @@ public final class FileUtils {
           dest.mkdirs();
         }
         else {
-          org.codehaus.plexus.util.FileUtils.copyFile(src, dest);
-          copied++;
+          try {
+            copyFile(src, dest);
+            copied++;
+          }
+          catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+          }
         }
       }
     }
@@ -194,9 +253,9 @@ public final class FileUtils {
    * @param replacements a {@link Map} of {@link String} patterns to be replaced
    * @return the number of copied <b>files</b>
    * @see #getFilesAndDirectoriesRecursive(File, FileFilter)
-   * @throws IOException
+   * @throws MojoExecutionException
    */
-  public static int copyDirectory(File from, File to, FileFilter filter, Map<String, String> replacements) throws IOException {
+  public static int copyDirectory(File from, File to, FileFilter filter, Map<String, String> replacements) throws MojoExecutionException {
     int copied = 0;
     if (from.exists() && from.isDirectory()) {
       List<File> toCopy = getFilesAndDirectoriesRecursive(from, filter);
@@ -206,12 +265,18 @@ public final class FileUtils {
           dest.mkdirs();
         }
         else {
-          String content = org.codehaus.plexus.util.FileUtils.fileRead(src, "UTF-8");
-          for (Entry<String, String> replacement : replacements.entrySet()) {
-            content = content.replace(replacement.getKey(), replacement.getValue());
+          String content;
+          try {
+            content = fileRead(src, "UTF-8");
+            for (Entry<String, String> replacement : replacements.entrySet()) {
+              content = content.replace(replacement.getKey(), replacement.getValue());
+            }
+            fileWrite(dest.getAbsolutePath(), "UTF-8", content);
+            copied++;
           }
-          org.codehaus.plexus.util.FileUtils.fileWrite(dest.getAbsolutePath(), "UTF-8", content);
-          copied++;
+          catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+          }
         }
       }
     }

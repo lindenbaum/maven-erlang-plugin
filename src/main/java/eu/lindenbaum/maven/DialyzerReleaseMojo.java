@@ -10,7 +10,6 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal dialyzer-release
  * @phase process-classes
- * @requiresDependencyResolution compile
  */
 public final class DialyzerReleaseMojo extends AbstractDialyzerMojo {
   /**
@@ -19,7 +18,7 @@ public final class DialyzerReleaseMojo extends AbstractDialyzerMojo {
    * @parameter expression="${project.build.directory}/ebin/"
    * @required
    */
-  private File directory;
+  private File ebinOutput;
 
   /**
    * Setting this to {@code false} will disable the {@code dialyzer} analysis.
@@ -40,7 +39,7 @@ public final class DialyzerReleaseMojo extends AbstractDialyzerMojo {
   public void execute() throws MojoExecutionException {
     Log log = getLog();
     if (this.useDialyzer) {
-      execute(this.directory, this.dialyzerWithDependencies);
+      execute(this.ebinOutput, this.dialyzerWithDependencies);
     }
     else {
       log.info("Dialyzer is not activated for releases.");

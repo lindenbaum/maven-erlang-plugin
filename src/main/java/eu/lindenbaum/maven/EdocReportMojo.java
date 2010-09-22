@@ -24,7 +24,7 @@ public final class EdocReportMojo extends AbstractErlangReport {
    * @parameter expression="${basedir}/src/main/erlang/"
    * @required
    */
-  private File inputDirectory;
+  private File srcMainErlang;
 
   /**
    * Directory to generate the EDoc report into.
@@ -32,7 +32,7 @@ public final class EdocReportMojo extends AbstractErlangReport {
    * @parameter default-value="${project.reporting.outputDirectory}/doc"
    * @required
    */
-  private File reportDirectory;
+  private File docOutput1;
 
   /**
    * Additional directory to copy the generated EDoc into.
@@ -40,7 +40,7 @@ public final class EdocReportMojo extends AbstractErlangReport {
    * @parameter default-value="${project.build.directory}/doc"
    * @required
    */
-  private File outputDirectory;
+  private File docOutput2;
 
   /**
    * Additional options for EDoc.
@@ -55,17 +55,17 @@ public final class EdocReportMojo extends AbstractErlangReport {
     String description = getDescription(Locale.ENGLISH);
     if (canGenerateReport()) {
       log.debug("Generating " + description);
-      this.reportDirectory.mkdirs();
+      this.docOutput1.mkdirs();
       String artifactId = getProject().getArtifactId();
-      File appFile = new File(this.inputDirectory, artifactId + ErlConstants.APP_SUFFIX);
+      File appFile = new File(this.srcMainErlang, artifactId + ErlConstants.APP_SUFFIX);
       try {
         if (appFile.exists()) {
-          generateAppEDoc(artifactId, this.inputDirectory, this.reportDirectory, this.eDocOptions);
+          generateAppEDoc(artifactId, this.srcMainErlang, this.docOutput1, this.eDocOptions);
         }
         else {
-          generateEDoc(this.inputDirectory, this.reportDirectory, this.eDocOptions);
+          generateEDoc(this.srcMainErlang, this.docOutput1, this.eDocOptions);
         }
-        copyDirectory(this.reportDirectory, this.outputDirectory, NULL_FILTER);
+        copyDirectory(this.docOutput1, this.docOutput2, NULL_FILTER);
       }
       catch (Exception e) {
         throw new MavenReportException(e.getMessage(), e);
@@ -78,13 +78,13 @@ public final class EdocReportMojo extends AbstractErlangReport {
 
   @Override
   public boolean canGenerateReport() {
-    String[] list = this.inputDirectory.list();
+    String[] list = this.srcMainErlang.list();
     return list != null && list.length > 0;
   }
 
   @Override
   protected String getOutputDirectory() {
-    return this.reportDirectory.getAbsolutePath();
+    return this.docOutput1.getAbsolutePath();
   }
 
   @Override
@@ -99,6 +99,6 @@ public final class EdocReportMojo extends AbstractErlangReport {
 
   @Override
   public String getOutputName() {
-    return this.reportDirectory.getName() + File.separator + "index";
+    return this.docOutput1.getName() + "/index";
   }
 }

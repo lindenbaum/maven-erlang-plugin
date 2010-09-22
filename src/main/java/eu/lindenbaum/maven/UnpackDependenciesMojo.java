@@ -17,11 +17,10 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 
 /**
- * Unpack {{erlang-otp}} dependencies.
+ * Unpack {@code erlang-otp} dependencies.
  * 
  * @goal unpack-dependencies
  * @phase generate-sources
- * @requiresDependencyResolution compile
  */
 public final class UnpackDependenciesMojo extends AbstractMojo {
   /**
@@ -39,10 +38,10 @@ public final class UnpackDependenciesMojo extends AbstractMojo {
    * @parameter expression="${project.build.directory}/lib/"
    * @required
    */
-  private File directory;
+  private File libOutput;
 
   /**
-   * Used to extract {{erlang-otp}} archives.
+   * Used to extract {@code erlang-otp} archives.
    * 
    * @component role="org.codehaus.plexus.archiver.UnArchiver" roleHint="zip"
    * @required
@@ -51,14 +50,14 @@ public final class UnpackDependenciesMojo extends AbstractMojo {
 
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
-    this.directory.mkdirs();
-    this.zipUnArchiver.setDestDirectory(this.directory);
+    this.libOutput.mkdirs();
+    this.zipUnArchiver.setDestDirectory(this.libOutput);
     this.zipUnArchiver.setOverwrite(true);
     this.zipUnArchiver.enableLogging(new MavenPlexusLogger(getLog()));
 
     for (Artifact artifact : (Set<Artifact>) this.project.getArtifacts()) {
       if (artifact.getType().equals(ErlConstants.ARTIFACT_TYPE_OTP)) {
-        extractArtifact(artifact, this.zipUnArchiver, this.directory);
+        extractArtifact(artifact, this.zipUnArchiver, this.libOutput);
       }
     }
   }

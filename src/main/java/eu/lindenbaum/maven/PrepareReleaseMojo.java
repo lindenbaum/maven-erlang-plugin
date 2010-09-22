@@ -6,7 +6,6 @@ import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +29,6 @@ import org.apache.maven.project.MavenProject;
  * 
  * @goal prepare-release
  * @phase compile
- * @requiresDependencyResolution compile
  */
 public final class PrepareReleaseMojo extends AbstractMojo {
   /**
@@ -178,17 +176,12 @@ public final class PrepareReleaseMojo extends AbstractMojo {
     replacements.put("\\?REL_VERSION", "\"" + this.project.getVersion() + "\"");
 
     final String name = getReleaseName() + ErlConstants.REL_SUFFIX;
-    try {
-      FileUtils.copyDirectory(this.inputDirectory, this.outputDirectory, new FileFilter() {
-        @Override
-        public boolean accept(File pathname) {
-          return pathname.getName().equals(name);
-        }
-      }, replacements);
-    }
-    catch (IOException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
-    }
+    FileUtils.copyDirectory(this.inputDirectory, this.outputDirectory, new FileFilter() {
+      @Override
+      public boolean accept(File pathname) {
+        return pathname.getName().equals(name);
+      }
+    }, replacements);
   }
 
   /**

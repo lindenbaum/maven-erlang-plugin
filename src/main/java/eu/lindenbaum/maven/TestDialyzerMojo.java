@@ -10,7 +10,6 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal test-dialyzer
  * @phase process-test-classes
- * @requiresDependencyResolution test-compile
  */
 public final class TestDialyzerMojo extends AbstractDialyzerMojo {
   /**
@@ -19,7 +18,7 @@ public final class TestDialyzerMojo extends AbstractDialyzerMojo {
    * @parameter expression="${project.build.directory}/test"
    * @required
    */
-  private File directory;
+  private File testOutput;
 
   /**
    * Setting this to {@code false} will disable the {@code dialyzer} analysis.
@@ -40,7 +39,7 @@ public final class TestDialyzerMojo extends AbstractDialyzerMojo {
   public void execute() throws MojoExecutionException {
     Log log = getLog();
     if (this.testUseDialyzer) {
-      execute(this.directory, this.dialyzerWithDependencies);
+      execute(this.testOutput, this.dialyzerWithDependencies);
     }
     else {
       log.info("Dialyzer is not activated for tests.");

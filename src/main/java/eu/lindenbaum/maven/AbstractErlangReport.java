@@ -6,10 +6,16 @@ import static eu.lindenbaum.maven.util.FileUtils.SOURCE_FILTER;
 import java.io.File;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 
+/**
+ * A base class for report generating {@link Mojo}s.
+ * 
+ * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ */
 abstract class AbstractErlangReport extends AbstractMavenReport {
   /**
    * {@link MavenProject} to process.
@@ -61,7 +67,7 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
         eDocExpr.append(", ");
       }
       eDocExpr.append("\"");
-      eDocExpr.append(sources[i].getAbsolutePath());
+      eDocExpr.append(sources[i].getPath());
       eDocExpr.append("\"");
     }
     eDocExpr.append("],");

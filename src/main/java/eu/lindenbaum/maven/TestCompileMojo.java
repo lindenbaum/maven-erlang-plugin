@@ -1,98 +1,90 @@
 package eu.lindenbaum.maven;
 
+import static eu.lindenbaum.maven.util.ErlConstants.BEAM_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
+import static eu.lindenbaum.maven.util.FileUtils.removeFilesRecursive;
+
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import eu.lindenbaum.maven.util.ErlConstants;
-import eu.lindenbaum.maven.util.FileUtils;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 
 /**
- * Compile the Erlang sources (with different options) and test cases.
+ * Compile erlang test sources and recompile erlang sources using the {@code export_all} option.
  * 
  * @goal test-compile
  * @phase test
- * @requiresDependencyResolution compile
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class TestCompileMojo extends AbstractCompilerMojo {
   /**
-   * Source directory.
+   * Directory where the erlang source files reside.
    * 
    * @parameter expression="${basedir}/src/main/erlang/"
+   * @required
    */
-  protected File inputDirectory;
+  private File srcMainErlang;
 
   /**
-   * Directory where the beam files are created.
-   * 
-   * @parameter expression="${project.build.directory}/test"
-   */
-  private File outputDirectory;
-
-  /**
-   * Test sources directory.
+   * Directory where the erlang test source files reside.
    * 
    * @parameter expression="${basedir}/src/test/erlang/"
+   * @required
    */
-  private File testDirectory;
+  private File srcTestErlang;
 
   /**
-   * Test include directory.
+   * Directory where the erlang test include files reside.
    * 
    * @parameter expression="${basedir}/src/test/include"
    */
-  private File testIncludeDirectory;
+  private File include;
 
   /**
-   * Additional compilation options for tests.
+   * Directory where the compiled test sources and recompiled sources will be placed into.
+   * 
+   * @parameter expression="${project.build.directory}/test"
+   * @required
+   */
+  private File testOutput;
+
+  /**
+   * Additional compiler options for test compilation.
    * 
    * @parameter
    */
   private String[] erlcTestOptions;
 
-  public void execute() throws MojoExecutionException, MojoFailureException {
-    Map<String, String> replacements = new HashMap<String, String>();
-    replacements.put("\\?APP_VERSION", "\"" + this.project.getVersion() + "\"");
+  public void execute() throws MojoExecutionException {
+    Log log = getLog();
 
-    try {
-      FileUtils.copyDirectory(this.inputDirectory, this.outputDirectory, new FileFilter() {
-        @Override
-        public boolean accept(File pathname) {
-          if (pathname.isFile()) {
-            String name = pathname.getName();
-            return name.endsWith(ErlConstants.APP_SUFFIX) || name.endsWith(ErlConstants.APPUP_SUFFIX);
-          }
-          return true;
-        }
-      }, replacements);
-    }
-    catch (IOException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
-    }
-
-    // Recompile with erlcTestOptions and +export_all.
     List<String> options = new ArrayList<String>();
-    options.add("+export_all");
     if (this.erlcTestOptions != null) {
       options.addAll(Arrays.asList(this.erlcTestOptions));
     }
+    options.add("+debug_info");
+    options.add("+export_all");
 
-    int numFiles = 0;
-    String[] opt = options.toArray(new String[0]);
-    numFiles += compileSources(this.inputDirectory, this.outputDirectory, null, opt);
-    numFiles += compileSources(this.testDirectory, this.outputDirectory, this.testIncludeDirectory, opt);
-    if (numFiles == 0) {
-      getLog().info("No sources to compile");
+    this.testOutput.mkdirs();
+    int removed = removeFilesRecursive(this.testOutput, BEAM_SUFFIX);
+    log.info("Removed " + removed + " stale " + BEAM_SUFFIX + "-files from " + this.testOutput);
+
+    int compiled = 0;
+    if (this.srcMainErlang.exists()) {
+      compiled += compile(this.srcMainErlang, this.testOutput, null, ERL_SUFFIX, BEAM_SUFFIX, options);
+    }
+    if (this.srcTestErlang.exists()) {
+      compiled += compile(this.srcTestErlang, this.testOutput, this.include, ERL_SUFFIX, BEAM_SUFFIX, options);
+    }
+    if (compiled == 0) {
+      log.info("No sources to compile");
+    }
+    else {
+      log.info("Compiled " + compiled + " files");
     }
   }
 }
