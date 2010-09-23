@@ -107,9 +107,9 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
 
   /**
    * Directory to generate the coverage report into.
-   * Default is: {@code target/site/coverage}.
+   * Default is: {@code target/site}.
    *
-   * @parameter expression="${project.reporting.outputDirectory}/coverage"
+   * @parameter expression="${project.reporting.outputDirectory}"
    * @required
    * @readonly
    */

@@ -277,4 +277,9 @@ public class CoverageReport extends AbstractErlangReport {
   public String getOutputName() {
     return "erlang-coverage-report";
   }
+
+  @Override
+  public boolean isExternalReport() {
+    return false;
+  }
 }
