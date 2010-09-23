@@ -1,11 +1,6 @@
 package eu.lindenbaum.maven.cover;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -89,40 +84,6 @@ public final class FunctionCoverData {
    */
   public Map<Integer, CoverUnit> getClauseCoverData() {
     return this.clauseCoverData;
-  }
-
-  /**
-   * Write the function cover data to an XML file, with a given indent.
-   *
-   * @param inXMLFile     writer to write to.
-   * @param inIndent      prefix for all lines.
-   * @throws IOException  if a problem occurred while writing the XML file.
-   */
-  public void writeToXMLFile(Writer inXMLFile, String inIndent) throws IOException {
-    final CoverUnit theTotalCoverData = getTotalCoverData();
-    inXMLFile.write(inIndent + "<function name=\"");
-    inXMLFile.write(CoverData.escapeXml(this.functionName));
-    inXMLFile.write("\" covered=\"");
-    inXMLFile.write(Integer.toString(theTotalCoverData.getCoveredLines()));
-    inXMLFile.write("\" notcovered=\"");
-    inXMLFile.write(Integer.toString(theTotalCoverData.getNotCoveredLines()));
-    inXMLFile.write("\">\n");
-
-    if (!this.clauseCoverData.isEmpty()) {
-      final List<Integer> theClauses = new ArrayList<Integer>(this.clauseCoverData.keySet());
-      Collections.sort(theClauses);
-      for (Integer theClause : theClauses) {
-        final CoverUnit theClauseCoverData = this.clauseCoverData.get(theClause);
-        inXMLFile.write(inIndent + "  <clause index=\"");
-        inXMLFile.write(Integer.toString(theClause));
-        inXMLFile.write("\" covered=\"");
-        inXMLFile.write(Integer.toString(theClauseCoverData.getCoveredLines()));
-        inXMLFile.write("\" notcovered=\"");
-        inXMLFile.write(Integer.toString(theClauseCoverData.getNotCoveredLines()));
-        inXMLFile.write("\" />\n");
-      }
-    }
-    inXMLFile.write(inIndent + "</function>\n");
   }
 
   public int getNumberOfClauses() {

@@ -1,7 +1,5 @@
 package eu.lindenbaum.maven.cover;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -119,47 +117,8 @@ public final class CoverData {
     }
   }
 
-  /**
-   * Accessor on the module data.
-     *
-     * @return the set of module data.
-   */
   public Collection<ModuleCoverData> getModuleCoverData() {
     return this.moduleCoverData.values();
-  }
-
-  /**
-   * Write the data to an XML file.
-   * This function writes the XML header.
-   *
-   * @param inXMLFile     writer to write to.
-   * @throws IOException if there was a problem while writing the file.
-   * 
-   * @deprecated Not to be used, will be removed.
-   */
-  @Deprecated
-  public void writeToXMLFile(Writer inXMLFile) throws IOException {
-    inXMLFile.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    inXMLFile.write("<coverdata>\n");
-    if (!this.moduleCoverData.isEmpty()) {
-      inXMLFile.write("  <modules>\n");
-      for (ModuleCoverData theModule : this.moduleCoverData.values()) {
-        theModule.writeToXMLFile(inXMLFile, "    ");
-      }
-      inXMLFile.write("  </modules>\n");
-    }
-    inXMLFile.write("</coverdata>\n");
-  }
-
-  /**
-   * @deprecated Not to be used, will be removed.
-   */
-  @Deprecated
-  static String escapeXml(String inText) {
-    return inText.replaceAll("&", "&amp;")
-                 .replaceAll("\"", "&quot;")
-                 .replaceAll("<", "&lt;")
-                 .replaceAll(">", "&gt;");
   }
 
   public int getNumberOfModules() {
