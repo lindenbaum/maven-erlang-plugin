@@ -17,17 +17,25 @@ import java.util.regex.Pattern;
 import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.Observer;
 
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Runs the specified test cases.
+ * {@link Mojo} running test cases. This {@link Mojo} will either run a specific
+ * test case (if the user specified one using {@code -Dtest=test_module_test})
+ * or runn all test cases found in the {@link AbstractErlangMojo#srcTestErlang}
+ * directory. The user can also choose to skip testing by specifying
+ * {@code -DskipTests}. A test code coverage will automatically be applied
+ * using the erlang cover module. A report about the test coverage may be
+ * created using the {@link CoverageReport}.
  * 
  * @goal test
  * @phase test
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @see CoverageReport
  */
 public final class TestMojo extends AbstractErlangMojo {
   static final Pattern SUCCESS_REGEX = Pattern.compile(".*(?:All\\s+([0-9]+)\\s+tests|Test)\\s+(successful|passed).*");
@@ -98,9 +106,9 @@ public final class TestMojo extends AbstractErlangMojo {
   }
 
   /**
-   * Returns a {@link List} of test modules to run. In case the single test case parameter {@link #test} is
-   * specified this function tries to determine whether this test can be run. Otherwise all runnable tests are
-   * returned.
+   * Returns a {@link List} of test modules to run. In case the single test case
+   * parameter {@link #test} is specified this function tries to determine
+   * whether this test can be run. Otherwise all runnable tests are returned.
    * 
    * @param directory where the compiled tests reside
    * @param singleTest name of a specific single test to run

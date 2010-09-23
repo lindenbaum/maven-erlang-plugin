@@ -12,10 +12,14 @@ import eu.lindenbaum.maven.util.MavenPlexusLogger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 
 /**
- * Unpack {@code erlang-otp} dependencies.
+ * Unpack {@code erlang-otp} dependencies. This will unpack all dependencies of
+ * this {@link MavenProject} into the {@link AbstractErlangMojo#targetLib}
+ * directory. This is done only in case the dependency has changed since the
+ * last unpack process.
  * 
  * @goal unpack-dependencies
  * @phase generate-sources

@@ -3,11 +3,16 @@ package eu.lindenbaum.maven;
 import java.util.Locale;
 
 import org.apache.maven.plugin.AbstractMojoExecutionException;
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
 
 /**
- * Generate the EDoc report for test sources.
+ * This {@link Mojo} will generate EDoc documentation for the test sources and
+ * test includes found in {@link AbstractErlangReport#srcTestErlang} and
+ * {@link AbstractErlangReport#srcTestInclude}. The output will be put into
+ * {@link AbstractErlangReport#targetSiteTestDoc}. The user may specify custom
+ * EDoc options in the project pom using the {@code eDocOptions} parameter. 
  * 
  * @goal test-doc
  * @phase generate-test-sources

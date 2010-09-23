@@ -21,7 +21,7 @@ import org.apache.maven.project.MavenProject;
  *   |     |     +-- include
  *   |     |     +-- priv
  *   |     |     +-- resources
- *   |     |    [+-- *_src]
+ *   |     |    [+-- *] (other non-erlang source folders)
  *   |     +-- test
  *   |           +-- erlang
  *   |           +-- include
@@ -33,7 +33,7 @@ import org.apache.maven.project.MavenProject;
  *   |     +-- priv
  *   |     +-- mibs
  *   |     +-- surefire
- *   |    [+-- *_src]
+ *   |    [+-- *_src] (non-erlang source folders)
  *   +-- pom.xml
  * </pre>
  * 

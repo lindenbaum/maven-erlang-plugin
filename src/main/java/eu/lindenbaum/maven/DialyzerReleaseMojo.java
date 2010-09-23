@@ -1,11 +1,18 @@
 package eu.lindenbaum.maven;
 
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Run dialyzer on the generated beam files.
+ * This {@link Mojo} runs the erlang {@code dialyzer} tool on all artifacts
+ * found in {@link AbstractErlangMojo#targetEbin}. The {@code dialyzer} can
+ * be skipped using the {@code useDialyzer} paramter in the projects pom.
+ * Since this {@link Mojo} is called in order to check a complete release it
+ * is recommended to run {@code dialyzer} also on the dependencies of the
+ * release. Therefore the pom parameter {@code dialyzerWithDependencies} is
+ * set to {@code true} by default.
  * 
  * @goal dialyzer-release
  * @phase process-classes
