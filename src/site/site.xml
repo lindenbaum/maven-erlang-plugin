@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html" />
@@ -7,6 +8,7 @@
     </menu>
     <menu name="Examples">
       <item name="Compile" href="examples/compile.html" />
+      <item name="Coverage report" href="examples/coverage.html" />
     </menu>
     <menu name="Reports">
       <item name="Releasenotes" href="changes-report.html" />

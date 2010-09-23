@@ -1,0 +1,151 @@
+
+Maven Erlang Plug-In
+
+ The Maven Erlang Plug-In manages Erlang projects under Maven2, enabling 
+ building, testing and deployment - as expected by Maven users.
+ 
+ This project is based on 
+ {{{http://maven-erlang.sourceforge.net/erlang-plugin/}maven-erlang}}, created 
+ by Paul Guyot and Olivier Sambourg, but is maintained under this new regime in 
+ order to improve and extend it. This incarnation also provides a little bit 
+ more definition for {{{development.html}development}} - be sure to check it 
+ out if you are interested in contributing.
+ 
+* Getting started
+
+ During the <alpha> stage of the plug-in, or as long as no final stable
+ version release exists, you have to check out the project source-code and 
+ install the plug-in in your repository:
+
+---
+ svn co https://erlang-plugin.svn.sourceforge.net/svnroot/erlang-plugin erlang-plugin
+ cd erlang-plugin
+ mvn install
+---
+ 
+ NOTE: As the project evolves and matures, there will of course be a
+ published artifact available at some public Maven repository. Keep checking
+ this space and the {{{./changes-report.html}release notes}} for updated
+ information.
+ 
+** Packaging Type
+
+ Two custom components are defined in the plug-in, and can be used by 
+ configuring the <<<packaging>>> type of a project.
+ 
+ * <<<erlang-otp>>> - An application development project, aimed at supporting 
+ the conventions of the Erlang
+ {{{http://www.erlang.org/doc/design_principles/users_guide.html}OTP Design Principles}}.
+ 
+ * <<<erlang-rel>>> - A release and packaging project that supports building
+ a packaged and distributable solution.  
+ 
+** Configuration
+
+ Here is an example of the minimum required configuration for any project that 
+ wishes to use the Maven Erlang Plug-In:
+ 
+---
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>[your-gropupId]</groupId>
+  <artifactId>[your-artifactId]</artifactId>
+  <version>[your-version]</version>
+  <packaging>erlang-otp</packaging>                       <-- erlang-otp or erlang-erl
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
+        <extensions>true</extensions>                     <-- required
+      </plugin>
+    </plugins>
+  </build>
+</project> 
+--- 
+
+** Directory Structure
+
+ This is the default directory structure that is supported, and in part also 
+ generated, by the plug-in. Please note that some target folders that are common
+ to Maven projects e.g. site are omitted in this listing.
+
+---
+ BASE
+   +-- src
+   |     +-- main
+   |     |     +-- erlang
+   |     |     +-- include
+   |     |     +-- priv
+   |     |     +-- resources
+   |     |    [+-- *] (other non-erlang source folders)
+   |     +-- test
+   |           +-- erlang
+   |           +-- include
+   +-- target
+   |     +-- lib
+   |     +-- ebin
+   |     +-- include
+   |     +-- test
+   |     +-- priv
+   |     +-- mibs
+   |     +-- surefire
+   |    [+-- *_src] (non-erlang source folders)
+   +-- pom.xml
+---
+
+** Goals
+
+ The tables below shows how the plug-in goals are mapped to the Maven default
+ lifecycle. 
+ 
+*** <<<erlang-otp>>>
+
+*--+--+
+ <<Maven lifecycle phase>> | <<Goal in the Maven Erlang Plug-In>> 
+*--+--+
+  generate-sources | {{{./unpack-dependencies-mojo.html}unpack-dependencies}}
+*--+--+
+  process-resources | {{{./copy-resources-mojo.html}copy-resources}}
+*--+--+
+  compile | {{{./compile-mojo.html}compile}}
+*--+--+
+  process-classes | {{{./dialyzer-mojo.html}dialyzer}}
+*--+--+
+  test-compile | {{{./test-compile-mojo.html}test-compile}}
+*--+--+
+  process-test-classes | {{{./test-dialyzer-mojo.html}test-dialyzer}}
+*--+--+
+  test | {{{./test-mojo.html}test}}
+*--+--+
+  package | {{{./package-mojo.html}package}}
+*--+--+
+
+*** <<<erlang-rel>>>
+ 
+*--+--+
+ <<Maven lifecycle phase>> | <<Goal in the Maven Erlang Plug-In>> 
+*--+--+
+  generate-sources | {{{./unpack-dependencies-mojo.html}unpack-dependencies}}
+*--+--+
+  compile | {{{./prepare-release-mojo.html}prepare-release}}
+*--+--+
+  process-classes | {{{./dialyzer-release-mojo.html}dialyzer-release}}
+*--+--+
+  package | {{{./package-release-mojo.html}package-release}}
+*--+--+
+
+** Reports
+
+ There are also plug-in goals that provide output for site generation, such as
+ {{{http://www.erlang.org/doc/apps/edoc/index.html}EDoc}} and source code test 
+ coverage reports.
+ 
+ More information:
+ 
+ * {{{./doc-mojo.html}doc}}
+ 
+ * {{{./test-doc-mojo.html}test-doc}}
+ 
+ * {{{./coverage-mojo.html}coverage}}
