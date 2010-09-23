@@ -259,6 +259,21 @@ public class CoverageReport extends AbstractErlangReport {
   }
 
   @Override
+  public boolean canGenerateReport() {
+    boolean canGenerateReport = false;
+    try {
+      CoverData coverageData = getCoverageData();
+      if (coverageData.getNumberOfModules() > 0) {
+        canGenerateReport = true;
+      }
+    }
+    catch (Throwable e) {
+      getLog().error("Failed to check if report generation is possible, probably NOT then", e);
+    }
+    return canGenerateReport;
+  }
+
+  @Override
   protected String getOutputDirectory() {
     return this.targetSiteCoverage.getAbsolutePath();
   }
