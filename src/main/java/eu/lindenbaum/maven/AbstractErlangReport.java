@@ -76,6 +76,16 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
   File srcTestInclude;
 
   /**
+   * Directory where the compiled test sources and recompiled sources will be
+   * placed into. Default is: {@code target/test}.
+   * 
+   * @parameter expression="${project.build.directory}/test"
+   * @required
+   * @readonly
+   */
+  File targetTest;
+
+  /**
    * Directory to generate the EDoc report into.
    * Default is: {@code target/site/doc}.
    * 
@@ -94,6 +104,16 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
    * @readonly
    */
   File targetSiteTestDoc;
+
+  /**
+   * Directory to generate the coverage report into.
+   * Default is: {@code target/site/coverage}.
+   *
+   * @parameter expression="${project.reporting.outputDirectory}/coverage"
+   * @required
+   * @readonly
+   */
+  File targetSiteCoverage;
 
   @Override
   protected MavenProject getProject() {

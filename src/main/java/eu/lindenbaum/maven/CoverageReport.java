@@ -19,65 +19,23 @@ import eu.lindenbaum.maven.util.ErlUtils;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributeSet;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
 /**
- * Generates a report based on the results of the Maven invocations.
+ * Generates a test coverage report with: project summary, showing the number of
+ * functions, clauses executable lines and their test coverage percentage. A 
+ * module list with individual coverage reports and an extensive source code 
+ * report, with lines annotated in red or green, showing the exact coverage.
  * 
- * <b>Note:</b> This mojo doesn't fork any lifecycle, if you have a clean 
- * working copy, you have to use a command like <code>mvn clean integration-test
- * site</code> to ensure the build results are present when this goal is 
- * invoked.
- * 
- * @goal coverage-report
- * @execute phase="test" lifecycle="coverage-report"
+ * @goal coverage
+ * @execute phase="test" lifecycle="coverage"
  * 
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
-public class CoverageReport extends AbstractMavenReport {
+public class CoverageReport extends AbstractErlangReport {
   private static final String PATTERN_COVER_ANALYSE = "cover:import(\"{0}\"), io:write(lists:foldl(fun(Module, Acc) -> [lists:map(fun(Detail) -> cover:analyse(Module, coverage, Detail) end, [function, clause, line]) | Acc] end, [], cover:imported_modules())), io:nl().";
-
-  /**
-   * The output directory for the report. Note that this parameter is only 
-   * evaluated if the goal is run directly from the command line. If the goal 
-   * is run indirectly as part of a site generation, the output directory 
-   * configured in the Maven Site Plugin is used instead.
-   *
-   * @parameter default-value="${project.reporting.outputDirectory}"
-   * @required
-   */
-  protected File outputDirectory;
-
-  /**
-   * Directory where the beam files are created.
-   * 
-   * @parameter expression="${project.build.directory}/test"
-   */
-  private File testBeamDirectory;
-
-  /**
-   * @component
-   */
-  protected Renderer siteRenderer;
-
-  /**
-   * @parameter default-value="${project}"
-   * @required
-   * @readonly
-   */
-  protected MavenProject project;
-
-  /**
-   * @parameter expression="${basedir}/src/main/erlang/"
-   * @readonly
-   */
-  private File sourceDirectory;
-
   private DecimalFormat percentFormat;
 
   /**
@@ -110,7 +68,7 @@ public class CoverageReport extends AbstractMavenReport {
   }
 
   private CoverData getCoverageData() throws MojoExecutionException, MojoFailureException {
-    File coverageDataFile = new File(this.testBeamDirectory, ErlConstants.COVERDATA_BIN);
+    File coverageDataFile = new File(this.targetTest, ErlConstants.COVERDATA_BIN);
     getLog().debug("Generating test coverage reports from " + coverageDataFile);
     String dumpCoverData = MessageFormat.format(PATTERN_COVER_ANALYSE, coverageDataFile.getPath());
     String coverageDump = ErlUtils.eval(getLog(), dumpCoverData);
@@ -239,7 +197,7 @@ public class CoverageReport extends AbstractMavenReport {
   }
 
   private void constructModuleLineCoverage(Sink sink, ModuleCoverData module) throws IOException {
-    File moduleSourceFile = new File(this.sourceDirectory, module.getModuleName() + ErlConstants.ERL_SUFFIX);
+    File moduleSourceFile = new File(this.srcMainErlang, module.getModuleName() + ErlConstants.ERL_SUFFIX);
     FileReader fileReader = new FileReader(moduleSourceFile);
     BufferedReader reader = new BufferedReader(fileReader);
     sink.verbatim(SinkEventAttributeSet.BOXED);
@@ -302,27 +260,17 @@ public class CoverageReport extends AbstractMavenReport {
 
   @Override
   protected String getOutputDirectory() {
-    return this.outputDirectory.getAbsolutePath();
-  }
-
-  @Override
-  protected MavenProject getProject() {
-    return this.project;
-  }
-
-  @Override
-  protected Renderer getSiteRenderer() {
-    return this.siteRenderer;
+    return this.targetSiteCoverage.getAbsolutePath();
   }
 
   @Override
   public String getDescription(Locale locale) {
-    return "Coverage results as reported by the Erlang coverage analysis tool.";
+    return "Test coverage results, as reported by the Erlang coverage analysis tool.";
   }
 
   @Override
   public String getName(Locale locale) {
-    return "Coverage Report";
+    return "Coverage";
   }
 
   @Override
