@@ -2,6 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.lindenbaum.maven-erlang-plugin.it</groupId>
   <artifactId>compile</artifactId>
+  <packaging>erlang-otp</packaging>
   <version>0</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -13,23 +14,8 @@
         <groupId>eu.lindenbaum</groupId>
         <artifactId>maven-erlang-plugin</artifactId>
         <version>@project.version@</version>
-        <executions>
-          <execution>
-            <id>test-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-        </executions>
+        <extensions>true</extensions>
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-    <dependency>
-      <groupId>eu.lindenbaum</groupId>
-      <artifactId>maven-erlang-plugin</artifactId>
-      <version>@project.version@</version>
-    </dependency>
-  </dependencies>
-</project>
+</project> 

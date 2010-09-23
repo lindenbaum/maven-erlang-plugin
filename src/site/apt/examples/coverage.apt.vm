@@ -1,0 +1,45 @@
+
+Generate Test Coverage Report
+
+ Test coverage reports can be easily added to the set of reports that are
+ generated for your site documentation. To enable the coverage report must add
+ the plugin to your reporting configuration:
+  
+---
+<project>
+  ...
+  <packaging>erlang-otp</packaging>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>coverage</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>  
+  ...
+</project>
+---
+ 
+ This will add <<only>> the test coverage report to your site documentation, 
+ generated as the file <<<erlang-coverage-report.html>>>, and added to the 
+ reports in the generated site reports menu.
