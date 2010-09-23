@@ -16,7 +16,6 @@ import java.util.List;
 
 import eu.lindenbaum.maven.util.Observer;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -28,15 +27,7 @@ import org.apache.maven.plugin.logging.Log;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Timo Koepke <timo.koepke@lindenbaum.eu>
  */
-abstract class AbstractDialyzerMojo extends AbstractMojo {
-  /**
-   * Directory where dependencies are unpacked.
-   * 
-   * @parameter expression="${project.build.directory}/lib/"
-   * @required
-   */
-  private File libOutput;
-
+abstract class AbstractDialyzerMojo extends AbstractErlangMojo {
   /**
    * Setting this to {@code true} will force a {@code dialyzer} run even if this would no be necessary because
    * there are no new {@code .beam} files created since the last run.
@@ -87,7 +78,7 @@ abstract class AbstractDialyzerMojo extends AbstractMojo {
       if (this.forceDialyzer || needDialyzerBuild(inputDirectory)) {
         List<File> libs = Collections.emptyList();
         if (withDependencies) {
-          libs = getDependencies(this.libOutput);
+          libs = getDependencies(this.targetLib);
         }
         dialyze(inputDirectory, libs);
       }

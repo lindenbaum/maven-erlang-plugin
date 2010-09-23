@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.Observer;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -30,40 +29,8 @@ import org.apache.maven.plugin.logging.Log;
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class TestMojo extends AbstractMojo {
+public final class TestMojo extends AbstractErlangMojo {
   static final Pattern SUCCESS_REGEX = Pattern.compile(".*(?:All\\s+([0-9]+)\\s+tests|Test)\\s+(successful|passed).*");
-
-  /**
-   * Directory where the erlang source files reside.
-   * 
-   * @parameter expression="${basedir}/src/main/erlang/"
-   * @required
-   */
-  private File srcMainErlang;
-
-  /**
-   * Directories where dependencies are unpacked.
-   * 
-   * @parameter expression="${project.build.directory}/lib/"
-   * @required
-   */
-  private File libOutput;
-
-  /**
-   * Directory where the compiled test sources and the recompiled sources reside.
-   * 
-   * @parameter expression="${project.build.directory}/test"
-   * @required
-   */
-  private File testOutput;
-
-  /**
-   * Directory where the reports should be created.
-   * 
-   * @parameter expression="${project.build.directory}/surefire-reports"
-   * @required
-   */
-  private File surefireReportsOutput;
 
   /**
    * Setting this to a module name, will only run this test case.
@@ -97,15 +64,15 @@ public final class TestMojo extends AbstractMojo {
     }
     else {
 
-      this.surefireReportsOutput.mkdirs();
-      File coverageDataFile = new File(this.testOutput, COVERDATA_BIN);
+      this.targetSurefire.mkdirs();
+      File coverageDataFile = new File(this.targetTest, COVERDATA_BIN);
       coverageDataFile.delete();
 
-      List<String> modules = getTestCases(this.testOutput, this.test);
+      List<String> modules = getTestCases(this.targetTest, this.test);
       if (modules.size() > 0) {
         log.info("Test cases: " + modules.toString());
         List<String> command = getCommandLine(modules);
-        ErlUtils.exec(command, log, this.testOutput, new Observer() {
+        ErlUtils.exec(command, log, this.targetTest, new Observer() {
           @Override
           public String handle(int exitValue, String result) throws MojoExecutionException,
                                                             MojoFailureException {
@@ -177,13 +144,13 @@ public final class TestMojo extends AbstractMojo {
                        + modules.toString() //
                        + ", [{order, inorder}, "//
                        + "{report,{eunit_surefire,[{dir,\"" //
-                       + this.surefireReportsOutput.getPath()//
+                       + this.targetSurefire.getPath()//
                        + "\"}]}}]).";
 
     String coverExpr = "cover:compile_directory(\"" + this.srcMainErlang.getPath() + "\", [export_all]).";
     List<String> command = new ArrayList<String>();
     command.add(ERL);
-    for (File lib : getDependencies(this.libOutput)) {
+    for (File lib : getDependencies(this.targetLib)) {
       command.add("-pa");
       command.add(lib.getAbsolutePath());
     }

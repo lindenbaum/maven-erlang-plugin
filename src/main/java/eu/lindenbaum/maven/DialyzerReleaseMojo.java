@@ -1,7 +1,5 @@
 package eu.lindenbaum.maven;
 
-import java.io.File;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -11,16 +9,9 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal dialyzer-release
  * @phase process-classes
+ * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class DialyzerReleaseMojo extends AbstractDialyzerMojo {
-  /**
-   * Directory where the beam files reside.
-   * 
-   * @parameter expression="${project.build.directory}/ebin/"
-   * @required
-   */
-  private File ebinOutput;
-
   /**
    * Setting this to {@code false} will disable the {@code dialyzer} analysis.
    * 
@@ -40,7 +31,7 @@ public final class DialyzerReleaseMojo extends AbstractDialyzerMojo {
   public void execute() throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
     if (this.useDialyzer) {
-      execute(this.ebinOutput, this.dialyzerWithDependencies);
+      execute(this.targetEbin, this.dialyzerWithDependencies);
     }
     else {
       log.info("Dialyzer is not activated for releases.");

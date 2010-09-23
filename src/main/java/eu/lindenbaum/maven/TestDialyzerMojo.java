@@ -1,7 +1,5 @@
 package eu.lindenbaum.maven;
 
-import java.io.File;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -11,16 +9,9 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal test-dialyzer
  * @phase process-test-classes
+ * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class TestDialyzerMojo extends AbstractDialyzerMojo {
-  /**
-   * Directory where the test beam files reside.
-   * 
-   * @parameter expression="${project.build.directory}/test"
-   * @required
-   */
-  private File testOutput;
-
   /**
    * Setting this to {@code false} will disable the {@code dialyzer} analysis.
    * 
@@ -40,7 +31,7 @@ public final class TestDialyzerMojo extends AbstractDialyzerMojo {
   public void execute() throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
     if (this.testUseDialyzer) {
-      execute(this.testOutput, this.dialyzerWithDependencies);
+      execute(this.targetTest, this.dialyzerWithDependencies);
     }
     else {
       log.info("Dialyzer is not activated for tests.");

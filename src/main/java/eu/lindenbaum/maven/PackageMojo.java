@@ -10,20 +10,18 @@ import static eu.lindenbaum.maven.util.FileUtils.SNMP_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.SOURCE_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
-import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
+import static eu.lindenbaum.maven.util.FileUtils.getDirectoriesRecursive;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
 /**
@@ -32,8 +30,9 @@ import org.codehaus.plexus.archiver.zip.ZipArchiver;
  * @goal package
  * @phase package
  * @author Olivier Sambourg
+ * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class PackageMojo extends AbstractMojo {
+public final class PackageMojo extends AbstractErlangMojo {
   /**
    * Command to extract the version from the .app file.
    */
@@ -64,24 +63,6 @@ public final class PackageMojo extends AbstractMojo {
       + "end, UpFrom ++ DownTo)," + "io:format(\"ok\"), io:nl().";
 
   /**
-   * {@link MavenProject} to process.
-   * 
-   * @parameter expression="${project}"
-   * @required
-   * @readonly
-   */
-  private MavenProject project;
-
-  /**
-   * Base directory for the build artifacts.
-   * 
-   * @parameter expression="${project.build.directory}"
-   * @required
-   * @readonly
-   */
-  private File buildOutput;
-
-  /**
    * Final name.
    * 
    * @parameter expression="${project.build.finalName}"
@@ -89,62 +70,6 @@ public final class PackageMojo extends AbstractMojo {
    * @readonly
    */
   private String buildName;
-
-  /**
-   * Directory where the erlang source files reside.
-   * 
-   * @parameter expression="${basedir}/src/main/erlang"
-   * @required
-   */
-  private File srcMainErlang;
-
-  /**
-   * Directory where the erlang include files reside.
-   * 
-   * @parameter expression="${basedir}/src/main/include"
-   * @required
-   */
-  private File srcMainInclude;
-
-  /**
-   * Directories where dependencies are unpacked.
-   * 
-   * @parameter expression="${project.build.directory}/lib/"
-   * @required
-   */
-  private File libInput;
-
-  /**
-   * Directory where the beam files were created.
-   * 
-   * @parameter expression="${project.build.directory}/ebin"
-   * @required
-   */
-  private File ebinInput;
-
-  /**
-   * Directory where the private files were created.
-   * 
-   * @parameter expression="${project.build.directory}/priv"
-   * @required
-   */
-  private File privInput;
-
-  /**
-   * Directory where the SNMP specific files were created.
-   * 
-   * @parameter expression="${project.build.directory}/mibs"
-   * @required
-   */
-  private File mibsInput;
-
-  /**
-   * Directory where resources reside.
-   * 
-   * @parameter expression="${basedir}/src/main/resources"
-   * @required
-   */
-  private File srcMainResources;
 
   /**
    * Setting this to {@code true} will break the build when the application file does not contain all found
@@ -167,51 +92,55 @@ public final class PackageMojo extends AbstractMojo {
     log.info("------------------------------------------------------------------------");
     log.info("PACKAGING PROJECT");
 
-    File target = new File(this.buildOutput, this.buildName);
-    target.mkdirs();
+    File tmpDir = new File(this.target, this.buildName);
+    tmpDir.deleteOnExit();
+    tmpDir.mkdirs();
 
+    copy(this.srcMainResources, tmpDir, NULL_FILTER, "resource");
+    copy(this.srcMainErlang, new File(tmpDir, "src"), SOURCE_FILTER, "source");
+    copy(this.targetEbin, new File(tmpDir, "ebin"), NULL_FILTER, "");
+    copy(this.srcMainInclude, new File(tmpDir, "include"), SOURCE_FILTER, "include");
+    copy(this.targetPriv, new File(tmpDir, "priv"), NULL_FILTER, "private");
+    copy(this.targetMibs, new File(tmpDir, "mibs"), SNMP_FILTER, "SNMP");
+
+    // package non erlang source folders, e.g. c, java, ... into c_src, java_src, ...
+    List<File> sources = getDirectoriesRecursive(this.srcMain, new FileFilter() {
+      @Override
+      public boolean accept(File dir) {
+        return !dir.equals(PackageMojo.this.srcMainErlang) && !dir.equals(PackageMojo.this.srcMainInclude)
+               && !dir.equals(PackageMojo.this.srcMainPriv) && !dir.equals(PackageMojo.this.srcMainResources);
+      }
+    });
+    for (File source : sources) {
+      copy(source, new File(tmpDir, source.getName() + "_src"), NULL_FILTER, "non-erlang source");
+    }
+
+    File appFile = new File(this.targetEbin, this.project.getArtifactId() + APP_SUFFIX);
+    if (appFile.exists()) {
+      checkVersion(appFile);
+      checkModules(appFile);
+
+      File appUpFile = new File(this.targetEbin, this.project.getArtifactId() + APPUP_SUFFIX);
+      if (appUpFile.exists()) {
+        checkAppUp(appUpFile);
+      }
+    }
+    else {
+      getLog().warn("No " + APP_SUFFIX + " file was found");
+    }
+
+    File toFile = new File(this.target, this.buildName + ".zip");
     try {
-      copy(this.srcMainResources, target, NULL_FILTER, "resource");
-      copy(this.srcMainErlang, new File(target, "src"), SOURCE_FILTER, "source");
-      copy(this.ebinInput, new File(target, "ebin"), NULL_FILTER, "");
-      copy(this.srcMainInclude, new File(target, "include"), SOURCE_FILTER, "include");
-      copy(this.privInput, new File(target, "priv"), NULL_FILTER, "private");
-      copy(this.mibsInput, new File(target, "mibs"), SNMP_FILTER, "SNMP");
-
-      File appFile = new File(this.ebinInput, this.project.getArtifactId() + APP_SUFFIX);
-      if (appFile.exists()) {
-        checkVersion(appFile);
-        checkModules(appFile);
-
-        File appUpFile = new File(this.ebinInput, this.project.getArtifactId() + APPUP_SUFFIX);
-        if (appUpFile.exists()) {
-          checkAppUp(appUpFile);
-        }
-      }
-      else {
-        getLog().warn("No " + APP_SUFFIX + " file was found");
-      }
-
-      File toFile = new File(this.buildOutput, this.buildName + ".zip");
-      try {
-        this.zipArchiver.setIncludeEmptyDirs(false);
-        this.zipArchiver.addDirectory(target, this.buildName + File.separator);
-        this.zipArchiver.setDestFile(toFile);
-        this.zipArchiver.createArchive();
-        this.project.getArtifact().setFile(toFile);
-      }
-      catch (Exception e) {
-        throw new MojoExecutionException(e.getMessage(), e);
-      }
+      this.zipArchiver.setIncludeEmptyDirs(false);
+      this.zipArchiver.addDirectory(tmpDir, this.buildName + File.separator);
+      this.zipArchiver.setDestFile(toFile);
+      this.zipArchiver.createArchive();
+      this.project.getArtifact().setFile(toFile);
     }
-    finally {
-      try {
-        log.info("------------------------------------------------------------------------");
-        deleteDirectory(target);
-      }
-      catch (IOException e) {
-      }
+    catch (Exception e) {
+      throw new MojoExecutionException(e.getMessage(), e);
     }
+    log.info("------------------------------------------------------------------------");
   }
 
   /**
@@ -241,7 +170,7 @@ public final class PackageMojo extends AbstractMojo {
     String name = this.project.getArtifactId();
     String version = this.project.getVersion();
     String expression = String.format(EXTRACT_VERSION, appFile.getPath(), name, name);
-    String appFileVersion = eval(log, expression, getDependencies(this.libInput));
+    String appFileVersion = eval(log, expression, getDependencies(this.targetLib));
     if (!version.equals(appFileVersion)) {
       log.error("Version mismatch.");
       log.error("Project version is " + version + " while " + APP_SUFFIX + " version is " + appFileVersion);
@@ -260,10 +189,10 @@ public final class PackageMojo extends AbstractMojo {
     Log log = getLog();
     String name = this.project.getArtifactId();
     String expression = String.format(EXTRACT_MODULES, appFile.getPath(), name, name);
-    String moduleStr = eval(log, expression, getDependencies(this.libInput));
+    String moduleStr = eval(log, expression, getDependencies(this.targetLib));
     Set<String> appModules = new HashSet<String>(Arrays.asList(moduleStr.split(" ")));
     Set<String> modules = new HashSet<String>();
-    for (File beam : Arrays.asList(this.ebinInput.listFiles(BEAM_FILTER))) {
+    for (File beam : Arrays.asList(this.targetEbin.listFiles(BEAM_FILTER))) {
       modules.add(beam.getName().replace(BEAM_SUFFIX, ""));
     }
     if (!modules.containsAll(appModules) || !appModules.containsAll(modules)) {
@@ -290,7 +219,7 @@ public final class PackageMojo extends AbstractMojo {
     Log log = getLog();
     String version = this.project.getVersion();
     String expression = String.format(CHECK_APPUP, appUpFile.getPath(), version, version);
-    String result = eval(log, expression, getDependencies(this.libInput));
+    String result = eval(log, expression, getDependencies(this.targetLib));
     if (!"ok".equals(result)) {
       log.error("Issue with .appup file : " + result);
       throw new MojoFailureException("Invalid .appup file.");

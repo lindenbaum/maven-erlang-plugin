@@ -14,24 +14,9 @@ import org.apache.maven.reporting.MavenReportException;
  * 
  * @goal doc
  * @phase generate-sources
+ * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class EdocReportMojo extends AbstractErlangReport {
-  /**
-   * Directory where the sources reside.
-   * 
-   * @parameter expression="${basedir}/src/main/erlang/"
-   * @required
-   */
-  private File srcMainErlang;
-
-  /**
-   * Directory to generate the EDoc report into.
-   * 
-   * @parameter default-value="${project.reporting.outputDirectory}/doc"
-   * @required
-   */
-  private File docOutput1;
-
+public final class EdocReportMojo extends AbstractEDocReport {
   /**
    * Additional options for EDoc.
    * 
@@ -45,15 +30,15 @@ public final class EdocReportMojo extends AbstractErlangReport {
     String description = getDescription(Locale.ENGLISH);
     if (canGenerateReport()) {
       log.debug("Generating " + description);
-      this.docOutput1.mkdirs();
+      this.targetSiteDoc.mkdirs();
       String artifactId = getProject().getArtifactId();
       File appFile = new File(this.srcMainErlang, artifactId + ErlConstants.APP_SUFFIX);
       try {
         if (appFile.exists()) {
-          generateAppEDoc(artifactId, this.srcMainErlang, this.docOutput1, this.eDocOptions);
+          generateAppEDoc(artifactId, this.srcMainErlang, this.targetSiteDoc, this.eDocOptions);
         }
         else {
-          generateEDoc(this.srcMainErlang, this.docOutput1, this.eDocOptions);
+          generateEDoc(this.srcMainErlang, this.srcMainInclude, this.targetSiteDoc, this.eDocOptions);
         }
       }
       catch (AbstractMojoExecutionException e) {
@@ -73,7 +58,7 @@ public final class EdocReportMojo extends AbstractErlangReport {
 
   @Override
   protected String getOutputDirectory() {
-    return this.docOutput1.getAbsolutePath();
+    return this.targetSiteDoc.getAbsolutePath();
   }
 
   @Override
@@ -88,6 +73,6 @@ public final class EdocReportMojo extends AbstractErlangReport {
 
   @Override
   public String getOutputName() {
-    return this.docOutput1.getName() + "/index";
+    return this.targetSiteDoc.getName() + "/index";
   }
 }

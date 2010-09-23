@@ -1,6 +1,5 @@
 package eu.lindenbaum.maven;
 
-import java.io.File;
 import java.util.Locale;
 
 import org.apache.maven.plugin.AbstractMojoExecutionException;
@@ -12,24 +11,9 @@ import org.apache.maven.reporting.MavenReportException;
  * 
  * @goal test-doc
  * @phase generate-test-sources
+ * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class TestEdocReportMojo extends AbstractErlangReport {
-  /**
-   * Directory where the test sources reside.
-   * 
-   * @parameter expression="${basedir}/src/test/erlang/"
-   * @required
-   */
-  private File srcTestErlang;
-
-  /**
-   * Directory to generate the EDoc report into.
-   * 
-   * @parameter default-value="${project.reporting.outputDirectory}/test-doc"
-   * @required
-   */
-  private File testDocOutput;
-
+public final class TestEdocReportMojo extends AbstractEDocReport {
   /**
    * Additional options for EDoc.
    * 
@@ -43,9 +27,9 @@ public final class TestEdocReportMojo extends AbstractErlangReport {
     String description = getDescription(Locale.ENGLISH);
     if (canGenerateReport()) {
       log.debug("Generating " + description);
-      this.testDocOutput.mkdirs();
+      this.targetSiteTestDoc.mkdirs();
       try {
-        generateEDoc(this.srcTestErlang, this.testDocOutput, this.eDocOptions);
+        generateEDoc(this.srcTestErlang, this.srcTestInclude, this.targetSiteTestDoc, this.eDocOptions);
       }
       catch (AbstractMojoExecutionException e) {
         throw new MavenReportException(e.getMessage(), e);
@@ -64,7 +48,7 @@ public final class TestEdocReportMojo extends AbstractErlangReport {
 
   @Override
   protected String getOutputDirectory() {
-    return this.testDocOutput.getAbsolutePath();
+    return this.targetSiteTestDoc.getAbsolutePath();
   }
 
   @Override
@@ -79,6 +63,6 @@ public final class TestEdocReportMojo extends AbstractErlangReport {
 
   @Override
   public String getOutputName() {
-    return this.testDocOutput.getName() + "/index";
+    return this.targetSiteTestDoc.getName() + "/index";
   }
 }
