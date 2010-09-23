@@ -2,6 +2,7 @@ package eu.lindenbaum.maven;
 
 import java.io.File;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.project.MavenProject;
@@ -32,6 +33,7 @@ import org.apache.maven.project.MavenProject;
  *   |     +-- test
  *   |     +-- priv
  *   |     +-- mibs
+ *   |     +-- releases
  *   |     +-- surefire
  *   |    [+-- *_src] (non-erlang source folders)
  *   +-- pom.xml
@@ -48,6 +50,15 @@ abstract class AbstractErlangMojo extends AbstractMojo {
    * @readonly
    */
   MavenProject project;
+
+  /**
+   * {@link ArtifactRepository} storing dependencies of this {@link MavenProject}.
+   * 
+   * @parameter expression="${localRepository}"
+   * @required
+   * @readonly
+   */
+  ArtifactRepository repository;
 
   /**
    * The base folder for sources of this project. This may be used to include
@@ -191,6 +202,16 @@ abstract class AbstractErlangMojo extends AbstractMojo {
    * @readonly
    */
   File targetMibs;
+
+  /**
+   * Directories where all releases will be put into.
+   * Default is: {@code target/releases}.
+   * 
+   * @parameter expression="${project.build.directory}/releases"
+   * @required
+   * @readonly
+   */
+  File targetReleases;
 
   /**
    * Directory where the surefire reports will be put into.

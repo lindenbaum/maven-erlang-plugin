@@ -10,11 +10,11 @@ import java.io.InputStreamReader;
  */
 public final class StreamGobbler implements Runnable {
   private final InputStream inputStream;
-  private final VoidProcedure<String> outputProcessor;
+  private final Processor processor;
 
-  public StreamGobbler(InputStream inputStream, VoidProcedure<String> outputProcessor) {
+  public StreamGobbler(InputStream inputStream, Processor processor) {
     this.inputStream = inputStream;
-    this.outputProcessor = outputProcessor;
+    this.processor = processor;
   }
 
   @Override
@@ -25,7 +25,7 @@ public final class StreamGobbler implements Runnable {
       String line;
       while ((line = reader.readLine()) != null) {
         if (!"".equals(line)) {
-          this.outputProcessor.apply(line);
+          this.processor.handle(line);
         }
       }
     }

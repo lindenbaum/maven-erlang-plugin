@@ -7,6 +7,7 @@ import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.FUNCS_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.HRL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.MIB_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.REL_SUFFIX;
 import static org.codehaus.plexus.util.FileUtils.copyFile;
 import static org.codehaus.plexus.util.FileUtils.fileRead;
 import static org.codehaus.plexus.util.FileUtils.fileWrite;
@@ -32,8 +33,8 @@ import org.codehaus.plexus.util.SelectorUtils;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class FileUtils {
-  static final String APP_REGEX = ".*" + File.separator + "(\\w+)-([\\d\\.]+)" + File.separator + "ebin$";
-  static final Pattern APP_PATTERN = Pattern.compile(APP_REGEX);
+  static final String R = ".*" + File.separator + "(.+)-([\\d\\.]+)(-SNAPSHOT)?" + File.separator + "ebin$";
+  static final Pattern APP_PATTERN = Pattern.compile(R);
 
   /**
    * Filename filter to filter source files (.erl & .hrl). Directories are always accepted.
@@ -44,6 +45,11 @@ public final class FileUtils {
    * Filename filter to filter app files (.app & .appup). Directories are always accepted.
    */
   public static final FileFilter APP_FILTER = getSuffixFilter(new String[]{ APP_SUFFIX, APPUP_SUFFIX });
+
+  /**
+   * Filename filter to filter rel files (.rel). Directories are always accepted.
+   */
+  public static final FileFilter REL_FILTER = getSuffixFilter(new String[]{ REL_SUFFIX });
 
   /**
    * Filename filter to filter app files (.app & .appup). Directories are always accepted.

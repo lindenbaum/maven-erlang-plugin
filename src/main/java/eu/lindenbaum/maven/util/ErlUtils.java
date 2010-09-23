@@ -98,16 +98,16 @@ public final class ErlUtils {
       logDebug(log, "Working directory " + processBuilder.directory());
       Process process = processBuilder.start();
       final LinkedList<String> output = new LinkedList<String>();
-      Thread gobbler1 = new Thread(new StreamGobbler(process.getInputStream(), new VoidProcedure<String>() {
+      Thread gobbler1 = new Thread(new StreamGobbler(process.getInputStream(), new Processor() {
         @Override
-        public void apply(String line) {
+        public void handle(String line) {
           log.info(line);
           output.addLast(line);
         }
       }));
-      Thread gobbler2 = new Thread(new StreamGobbler(process.getErrorStream(), new VoidProcedure<String>() {
+      Thread gobbler2 = new Thread(new StreamGobbler(process.getErrorStream(), new Processor() {
         @Override
-        public void apply(String line) {
+        public void handle(String line) {
           log.error(line);
         }
       }));

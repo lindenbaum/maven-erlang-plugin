@@ -11,13 +11,12 @@ import org.junit.Test;
 
 public class StreamGobblerTest {
   private IMocksControl control;
-  private VoidProcedure<String> processor;
+  private Processor processor;
 
-  @SuppressWarnings("unchecked")
   @Before
   public void setUp() throws Exception {
     this.control = createStrictControl();
-    this.processor = this.control.createMock("outputProcessor", VoidProcedure.class);
+    this.processor = this.control.createMock("outputProcessor", Processor.class);
   }
 
   @Test
@@ -38,8 +37,8 @@ public class StreamGobblerTest {
     String file = "stream-gobbler" + File.separator + "non-empty.txt";
     InputStream inputStream = getClass().getClassLoader().getResourceAsStream(file);
 
-    this.processor.apply("line1");
-    this.processor.apply("line2");
+    this.processor.handle("line1");
+    this.processor.handle("line2");
 
     this.control.replay();
 

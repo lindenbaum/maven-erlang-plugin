@@ -64,6 +64,7 @@
             <id>default</id>
             <phases>
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:unpack-dependencies</generate-sources>
+              <process-resources>eu.lindenbaum:maven-erlang-plugin:copy-resources</process-resources>
               <compile>eu.lindenbaum:maven-erlang-plugin:prepare-release</compile>
               <process-classes>eu.lindenbaum:maven-erlang-plugin:dialyzer-release</process-classes>
               <test-compile></test-compile>

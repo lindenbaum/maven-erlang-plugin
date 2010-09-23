@@ -23,6 +23,7 @@ import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
  * 
  * @goal unpack-dependencies
  * @phase generate-sources
+ * @requiresDependencyResolution test
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class UnpackDependenciesMojo extends AbstractErlangMojo {
@@ -34,14 +35,19 @@ public final class UnpackDependenciesMojo extends AbstractErlangMojo {
    */
   private ZipUnArchiver zipUnArchiver;
 
+  @Override
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
+    Log log = getLog();
+    log.info("Creating dependency directory " + this.targetLib);
     this.targetLib.mkdirs();
     this.zipUnArchiver.setDestDirectory(this.targetLib);
     this.zipUnArchiver.setOverwrite(true);
-    this.zipUnArchiver.enableLogging(new MavenPlexusLogger(getLog()));
+    this.zipUnArchiver.enableLogging(new MavenPlexusLogger(log));
 
-    for (Artifact artifact : (Set<Artifact>) this.project.getArtifacts()) {
+    Set<Artifact> artifacts = this.project.getArtifacts();
+    log.info("Found artifacts " + artifacts);
+    for (Artifact artifact : artifacts) {
       if (artifact.getType().equals(ErlConstants.ARTIFACT_TYPE_OTP)) {
         extractArtifact(artifact, this.zipUnArchiver, this.targetLib);
       }
