@@ -20,14 +20,19 @@
     <developer>
       <id>olle-t</id>
       <name>Olle Törnström</name>
-      <email>olle.toernstroem@lindenbaum.eu</email>
+      <email>olle-t@users.sourceforge.net</email>
       <url>http://www.linkedin.com/in/olletornstrom</url>
     </developer>
     <developer>
       <id>schlagert</id>
       <name>Tobias Schlager</name>
-      <email>tobias.schlager@lindenbaum.eu</email>
+      <email>schlagert@users.sourceforge.net</email>
       <url>http://www.0xbeef.net</url>
+    </developer>
+    <developer>
+      <id>lti</id>
+      <name>Timo Koepke</name>
+      <email>lti@users.sourceforge.net</email>
     </developer>
   </developers>
   <licenses>
