@@ -13,6 +13,7 @@ import static eu.lindenbaum.maven.util.FileUtils.SOURCE_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
 import static eu.lindenbaum.maven.util.FileUtils.getDirectoriesRecursive;
+import static eu.lindenbaum.maven.util.FileUtils.removeDirectory;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -79,7 +80,6 @@ public final class PackageMojo extends AbstractErlangMojo {
     log.info("PACKAGING PROJECT");
 
     File tmpDir = new File(this.target, this.buildName);
-    tmpDir.deleteOnExit();
     tmpDir.mkdirs();
 
     copy(this.srcMainResources, tmpDir, NULL_FILTER, "resource");
@@ -126,10 +126,12 @@ public final class PackageMojo extends AbstractErlangMojo {
       throw new MojoExecutionException(e.getMessage(), e);
     }
     log.info("------------------------------------------------------------------------");
+    removeDirectory(tmpDir);
   }
 
   /**
    * Copy the content of a directory to another one applying filtering and logging.
+   * If the target directory does not exist it will be created.
    * 
    * @param srcDir to copy from
    * @param targetDir to copy to

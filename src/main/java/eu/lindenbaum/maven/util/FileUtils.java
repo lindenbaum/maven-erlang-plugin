@@ -154,6 +154,19 @@ public final class FileUtils {
   }
 
   /**
+   * Removes a directory recursively.
+   * 
+   * @param directory to remove
+   */
+  public static void removeDirectory(File directory) {
+    try {
+      org.codehaus.plexus.util.FileUtils.deleteDirectory(directory);
+    }
+    catch (IOException e) {
+    }
+  }
+
+  /**
    * Get a {@link List} of directories matching the given filter. By default
    * patterns from
    * {@link org.codehaus.plexus.util.FileUtils#getDefaultExcludes()} will always

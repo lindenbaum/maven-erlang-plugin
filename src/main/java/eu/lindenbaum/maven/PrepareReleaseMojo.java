@@ -5,6 +5,7 @@ import static eu.lindenbaum.maven.util.ErlUtils.eval;
 import static eu.lindenbaum.maven.util.FileUtils.REL_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
+import static eu.lindenbaum.maven.util.FileUtils.removeDirectory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -116,6 +117,7 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
         log.info("Creating relup file for " + releaseName);
         makeRelup(relFile, previousReleases, subsequentReleases);
       }
+      removeDirectory(this.targetReleases);
       log.info("Creating scripts for " + releaseName);
       makeScript(releaseName);
     }
