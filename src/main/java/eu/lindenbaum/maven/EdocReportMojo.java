@@ -43,7 +43,7 @@ public final class EdocReportMojo extends AbstractEDocReport {
           generateAppEDoc(artifactId, this.srcMainErlang, this.targetSiteDoc, this.eDocOptions);
         }
         else {
-          generateEDoc(this.srcMainErlang, this.srcMainInclude, this.targetSiteDoc, this.eDocOptions);
+          generateEDoc(this.srcMainErlang, this.targetSiteDoc, this.eDocOptions);
         }
       }
       catch (AbstractMojoExecutionException e) {

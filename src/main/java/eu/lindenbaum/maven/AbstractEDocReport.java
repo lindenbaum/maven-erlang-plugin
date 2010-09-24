@@ -1,7 +1,6 @@
 package eu.lindenbaum.maven;
 
 import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
-import static eu.lindenbaum.maven.util.ErlConstants.HRL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlUtils.eval;
 import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
 
@@ -22,18 +21,16 @@ abstract class AbstractEDocReport extends AbstractErlangReport {
    * Generate the documentation with edoc for a set of files.
    * 
    * @param srcDir directory where sources reside
-   * @param incDir directory where includes reside
    * @param outDir directory to put edoc in
    * @param options optional edoc parameters, maybe {@code null}
    * @throws MojoFailureException
    * @throws MojoExecutionException
    */
-  protected void generateEDoc(File srcDir, File incDir, File outDir, String[] options) throws MojoExecutionException,
-                                                                                      MojoFailureException {
+  protected void generateEDoc(File srcDir, File outDir, String[] options) throws MojoExecutionException,
+                                                                         MojoFailureException {
     StringBuilder eDocExpr = new StringBuilder();
     eDocExpr.append("edoc:files([");
     List<File> sources = getFilesRecursive(srcDir, ERL_SUFFIX);
-    sources.addAll(getFilesRecursive(incDir, HRL_SUFFIX));
     for (int i = 0; i < sources.size(); ++i) {
       if (i != 0) {
         eDocExpr.append(", ");

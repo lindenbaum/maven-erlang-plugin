@@ -34,7 +34,7 @@ public final class TestEdocReportMojo extends AbstractEDocReport {
       log.debug("Generating " + description);
       this.targetSiteTestDoc.mkdirs();
       try {
-        generateEDoc(this.srcTestErlang, this.srcTestInclude, this.targetSiteTestDoc, this.eDocOptions);
+        generateEDoc(this.srcTestErlang, this.targetSiteTestDoc, this.eDocOptions);
       }
       catch (AbstractMojoExecutionException e) {
         throw new MavenReportException(e.getMessage(), e);
