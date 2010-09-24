@@ -26,6 +26,7 @@
       <item name="Unit tests" href="surefire-report.html" />
       <item name="Integration tests" href="invoker-report.html" />
       <item name="Test coverage" href="cobertura/index.html" />
+      <item name="Tag list" href="taglist.html" />
       <item name="Java API" href="apidocs/index.html" />
     </menu>
     <menu name="Dependencies">
