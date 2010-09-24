@@ -29,14 +29,17 @@ Development
  
 ** Integration Testing 
 
- If your testing requires anything beyond mocking eg. create/modify files,
+ If your testing requires <<anything>> beyond mocking eg. create/modify files,
  generate source-code or an actual project setup with the plug-in enabled, 
  use the {{http://maven.apache.org/plugins/maven-invoker-plugin/}}.
  
- NOTE: there is already a profile prepared to execute the integration tests 
+ There is already a profile prepared to execute the integration tests 
  using the invoker plug-in. All invoker tests under <<<src/it>>> will be 
  executed by calling:
  
 +---
 mvn -Pit
 +---
+
+ The invoker is configured to clone tests into <<<target/it>>> before invoking
+ them (with <<<mvn package>>>), so look for your failures and results there.
