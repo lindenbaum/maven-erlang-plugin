@@ -70,11 +70,6 @@ public interface ErlConstants {
   public static final String TARGZ_SUFFIX = ".tar.gz";
 
   /**
-   * Suffix for zipped files.
-   */
-  public static final String ZIP_SUFFIX = ".zip";
-
-  /**
    * Suffix for eunit tests.
    */
   public static final String TEST_SUFFIX = "_test" + BEAM_SUFFIX;

@@ -4,7 +4,7 @@ import static eu.lindenbaum.maven.util.ErlConstants.APPUP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.APP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.BEAM_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.SRC_SUFFIX;
-import static eu.lindenbaum.maven.util.ErlConstants.ZIP_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.TARGZ_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlUtils.eval;
 import static eu.lindenbaum.maven.util.FileUtils.BEAM_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.NULL_FILTER;
@@ -21,10 +21,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import eu.lindenbaum.maven.util.TarGzArchiver;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
 /**
  * TODO
@@ -63,15 +64,6 @@ public final class PackageMojo extends AbstractErlangMojo {
    * @readonly
    */
   private String buildName;
-
-  /**
-   * The Zip archiver.
-   * 
-   * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="zip"
-   * @required
-   * @readonly
-   */
-  private ZipArchiver archiver;
 
   /**
    * Setting this to {@code true} will break the build when the application file
@@ -123,12 +115,11 @@ public final class PackageMojo extends AbstractErlangMojo {
       getLog().warn("No " + APP_SUFFIX + " file was found");
     }
 
-    File toFile = new File(this.target, this.buildName + ZIP_SUFFIX);
+    File toFile = new File(this.target, this.buildName + TARGZ_SUFFIX);
     try {
-      this.archiver.setIncludeEmptyDirs(false);
-      this.archiver.addDirectory(tmpDir, this.buildName + File.separator);
-      this.archiver.setDestFile(toFile);
-      this.archiver.createArchive();
+      TarGzArchiver archiver = new TarGzArchiver(log, toFile);
+      archiver.addFile(tmpDir);
+      archiver.createArchive();
       this.project.getArtifact().setFile(toFile);
     }
     catch (Exception e) {
