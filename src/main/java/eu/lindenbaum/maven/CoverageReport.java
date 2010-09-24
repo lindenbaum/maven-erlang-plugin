@@ -39,9 +39,8 @@ public class CoverageReport extends AbstractErlangReport {
   private static final String RED_LINE_ANNOTATION = "style=\"background: #faa;\"";
   private static final String GREEN_LINE_ANNOTATION = "style=\"background: #afa;\"";
   private static final String NO_LINE_ANNOTATION = "";
-
-  private volatile CoverData coverData;
-  private volatile DecimalFormat percentFormat;
+  private DecimalFormat percentFormat;
+  volatile CoverData coverData;
 
   /**
    * @throws MavenReportException  
@@ -52,7 +51,7 @@ public class CoverageReport extends AbstractErlangReport {
       loadCoverageData();
       if (canGenerateReport()) {
         initializeFormatting(locale);
-        constructCoverageReport();
+        constructCoverageReport(locale);
       }
       else {
         getLog().info("No coverage data found, skipping report.");
@@ -63,11 +62,11 @@ public class CoverageReport extends AbstractErlangReport {
     }
   }
 
-  private void loadCoverageData() throws MojoExecutionException, MojoFailureException {
+  void loadCoverageData() throws MojoExecutionException, MojoFailureException {
     if (this.coverData == null) {
-      File coverageDataFile = new File(this.targetTest, ErlConstants.COVERDATA_BIN);
-      getLog().debug("Generating test coverage reports from " + coverageDataFile);
-      String dumpCoverData = MessageFormat.format(PATTERN_COVER_ANALYSE, coverageDataFile.getPath());
+      File coverDataFile = new File(this.targetTest, ErlConstants.COVERDATA_BIN);
+      getLog().debug("Generating test coverage reports from " + coverDataFile);
+      String dumpCoverData = MessageFormat.format(PATTERN_COVER_ANALYSE, coverDataFile.getPath());
       String coverageDump = ErlUtils.eval(getLog(), dumpCoverData);
       this.coverData = new CoverData(coverageDump);
     }
@@ -78,11 +77,11 @@ public class CoverageReport extends AbstractErlangReport {
     this.percentFormat = new DecimalFormat("0%", symbols);
   }
 
-  private void constructCoverageReport() throws IOException {
+  private void constructCoverageReport(Locale locale) throws IOException {
     Sink sink = getSink();
     constructHeader(sink);
     sink.body();
-    constructHeadline(sink);
+    constructHeadline(sink, locale);
     constructSummary(this.coverData, sink);
     constructModulesSummary(this.coverData, sink);
     constructModulesList(this.coverData, sink);
@@ -99,13 +98,13 @@ public class CoverageReport extends AbstractErlangReport {
     sink.head_();
   }
 
-  private void constructHeadline(Sink sink) {
+  private void constructHeadline(Sink sink, Locale locale) {
     sink.section1();
     sink.sectionTitle1();
     sink.text("Erlang Test Coverage Report");
     sink.sectionTitle1_();
     sink.paragraph();
-    sink.text("The results of the Erlang test coverage report.");
+    sink.text(getDescription(locale));
     sink.paragraph_();
     sink.section1_();
   }
@@ -213,7 +212,7 @@ public class CoverageReport extends AbstractErlangReport {
   }
 
   @SuppressWarnings("deprecation")
-  private void constructModuleLineCoverage(Sink sink, ModuleCoverData module) throws IOException {
+  void constructModuleLineCoverage(Sink sink, ModuleCoverData module) throws IOException {
     File moduleSourceFile = new File(this.srcMainErlang, module.getModuleName() + ErlConstants.ERL_SUFFIX);
     BufferedReader reader = new BufferedReader(new FileReader(moduleSourceFile));
     sink.verbatim(true);
