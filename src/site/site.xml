@@ -6,6 +6,7 @@
       <item name="Introduction" href="index.html" />
       <item name="Releasenotes" href="changes-report.html" />
       <item name="Goals" href="plugin-info.html" />
+      <item name="Configuration" href="configuration.html" />
     </menu>
     <menu name="Examples">
       <item name="Compile" href="examples/compile.html" />
