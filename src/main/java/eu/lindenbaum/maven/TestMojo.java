@@ -43,14 +43,14 @@ public final class TestMojo extends AbstractErlangMojo {
   /**
    * Setting this to a module name, will only run this test case.
    * 
-   * @parameter expression="${test}"
+   * @parameter
    */
   private String test;
 
   /**
    * Setting this to {@code true will} skip the test runs.
    * 
-   * @parameter expression="${skipTests}"
+   * @parameter default-value=false
    */
   private boolean skipTests;
 

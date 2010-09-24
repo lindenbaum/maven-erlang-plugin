@@ -33,7 +33,7 @@ abstract class AbstractDialyzerMojo extends AbstractErlangMojo {
    * would no be necessary because there are no new {@code .beam} files created
    * since the last run.
    * 
-   * @parameter expression="${forceDialyzer}"
+   * @parameter default-value=false
    */
   private boolean forceDialyzer;
 
@@ -41,7 +41,7 @@ abstract class AbstractDialyzerMojo extends AbstractErlangMojo {
    * Setting this to {@code true} will skip the {@code dialyzer} run even if the
    * {@link #forceDialyzer} variable is {@code true}.
    * 
-   * @parameter expression="${skipDialyzer}"
+   * @parameter default-value=false
    */
   private boolean skipDialyzer;
 
