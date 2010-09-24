@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Compile erlang sources.
+ * This {@link Mojo} compiles the projects erlang sources and SNMP files.
  * 
  * @goal compile
  * @phase compile

@@ -39,7 +39,7 @@ import org.apache.maven.plugin.logging.Log;
  * the application versions in the release file. The {@link Mojo} can also
  * manage the release version. To use this the user can set the release version
  * in the .rel to {@code ?REL_VERSION} which will be replaced with the project
- * version specified in the project pom.  
+ * version specified in the project pom.
  * 
  * @goal prepare-release
  * @phase compile

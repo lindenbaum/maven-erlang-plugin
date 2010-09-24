@@ -7,10 +7,18 @@ import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * Copy resources to target/priv.
+ * This {@link Mojo} copies the private resources to the
+ * {@link AbstractErlangMojo#targetPriv} directory. Default source folders for
+ * private resources are {@link AbstractErlangMojo#srcMainPriv} and
+ * {@link AbstractErlangMojo#srcMainResources}. Besides that this {@link Mojo}
+ * also copies the erlang application resource file. The {@link Mojo} can also
+ * manage the application version. To use this the user can set the application
+ * version in the .app file to {@code ?APP_VERSION} which will be replaced with
+ * the project version specified in the project pom.  
  * 
  * @goal copy-resources
  * @phase process-resources

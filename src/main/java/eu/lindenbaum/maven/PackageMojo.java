@@ -24,12 +24,20 @@ import java.util.Set;
 
 import eu.lindenbaum.maven.util.TarGzArchiver;
 
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * TODO
+ * This {@link Mojo} packages all application artifacts into a single
+ * {@code .tar.gz} package. This includes {@code .beam} files, the {@code .hrl}
+ * include files, SNMP resources, private data from the {@code priv} and
+ * {@code resources} directories and non-erlang sources as well as application
+ * resource and upgrade files (if any). The application resource and upgrade
+ * files are also checked for plausability by checking the application version
+ * against the project version and checking the application modules against
+ * the found, compiled modules.
  * 
  * @goal package
  * @phase package
@@ -82,7 +90,6 @@ public final class PackageMojo extends AbstractErlangMojo {
     File tmpDir = new File(this.target, this.buildName);
     tmpDir.mkdirs();
 
-    copy(this.srcMainResources, tmpDir, NULL_FILTER, "resource");
     copy(this.srcMainErlang, new File(tmpDir, "src"), SOURCE_FILTER, "source");
     copy(this.targetEbin, new File(tmpDir, "ebin"), NULL_FILTER, "");
     copy(this.srcMainInclude, new File(tmpDir, "include"), SOURCE_FILTER, "include");
