@@ -4,20 +4,12 @@
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html" />
+      <item name="Releasenotes" href="changes-report.html" />
       <item name="Goals" href="plugin-info.html" />
     </menu>
     <menu name="Examples">
       <item name="Compile" href="examples/compile.html" />
       <item name="Coverage report" href="examples/coverage.html" />
-    </menu>
-    <menu name="Reports">
-      <item name="Releasenotes" href="changes-report.html" />
-      <item name="Java API" href="apidocs/index.html" />
-      <item name="Unit tests" href="surefire-report.html" />
-      <item name="Integration tests" href="invoker-report.html" />
-    </menu>
-    <menu name="Development">
-      <item name="Overview" href="development.html" />
     </menu>
     <menu name="Project">
       <item name="Summary" href="project-summary.html" />
@@ -25,6 +17,15 @@
       <item name="License" href="license.html" />
       <item name="Source code" href="source-repository.html" />
       <item name="Issue tracking" href="issue-tracking.html" />
+    </menu>
+    <menu name="Development">
+      <item name="Overview" href="development.html" />
+    </menu>
+    <menu name="Reports">
+      <item name="Unit tests" href="surefire-report.html" />
+      <item name="Integration tests" href="invoker-report.html" />
+      <item name="Test coverage" href="cobertura/index.html" />
+      <item name="Java API" href="apidocs/index.html" />
     </menu>
     <menu name="Dependencies">
       <item name="Dependencies" href="dependencies.html" />
