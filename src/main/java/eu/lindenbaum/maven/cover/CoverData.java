@@ -50,70 +50,55 @@ public final class CoverData {
   private void parseFunctionData(String coverageDataDump) {
     Matcher functionMatcher = COVER_FUNCTION_REGEX.matcher(coverageDataDump);
     while (functionMatcher.find()) {
-      String theModuleName = functionMatcher.group(1);
-      ModuleCoverData theModuleData = this.moduleCoverData.get(theModuleName);
-      if (theModuleData == null) {
-        theModuleData = new ModuleCoverData(theModuleName);
-        this.moduleCoverData.put(theModuleName, theModuleData);
+      String moduleName = functionMatcher.group(1);
+      ModuleCoverData module = this.moduleCoverData.get(moduleName);
+      if (module == null) {
+        module = new ModuleCoverData(moduleName);
+        this.moduleCoverData.put(moduleName, module);
       }
-      String theFunctionName = functionMatcher.group(2);
-      int theFunctionArity = Integer.parseInt(functionMatcher.group(3));
-      String theFunction = theFunctionName + "/" + theFunctionArity;
-      int theCoveredLines = Integer.parseInt(functionMatcher.group(4));
-      int theNotCoveredLines = Integer.parseInt(functionMatcher.group(5));
-      CoverUnit theCoverUnit = new CoverUnit(theCoveredLines, theNotCoveredLines);
-      theModuleData.putFunctionCoverData(theFunction, theCoverUnit);
+      String functionName = functionMatcher.group(2);
+      int functionArity = Integer.parseInt(functionMatcher.group(3));
+      String function = functionName + "/" + functionArity;
+      int coveredLines = Integer.parseInt(functionMatcher.group(4));
+      int notCoveredLines = Integer.parseInt(functionMatcher.group(5));
+      CoverUnit coverUnit = new CoverUnit(coveredLines, notCoveredLines);
+      module.putFunctionCoverData(function, coverUnit);
     }
   }
 
   private void parseClauseData(String inDump) {
-    final Matcher clauseMatcher = COVER_CLAUSE_REGEX.matcher(inDump);
+    Matcher clauseMatcher = COVER_CLAUSE_REGEX.matcher(inDump);
     while (clauseMatcher.find()) {
-      final String theModuleName = clauseMatcher.group(1);
-      ModuleCoverData theModuleData = this.moduleCoverData.get(theModuleName);
-      if (theModuleData == null) {
-        theModuleData = new ModuleCoverData(theModuleName);
-        this.moduleCoverData.put(theModuleName, theModuleData);
-      }
-      final String theFunctionName = clauseMatcher.group(2);
-      final int theFunctionArity = Integer.parseInt(clauseMatcher.group(3));
-      final String theFunction = theFunctionName + "/" + theFunctionArity;
-      final FunctionCoverData theOriginalFunctionData = theModuleData.getFunctionCoverData(theFunction);
-      final FunctionCoverData theFunctionData;
-      if (theOriginalFunctionData == null) {
-        theFunctionData = new FunctionCoverData(theFunctionName);
-        theModuleData.putFunctionCoverData(theFunction, theFunctionData);
-      }
-      else {
-        theFunctionData = theOriginalFunctionData;
-      }
-      final int theClauseIndex = Integer.parseInt(clauseMatcher.group(4));
-      final int theCoveredLines = Integer.parseInt(clauseMatcher.group(5));
-      final int theNotCoveredLines = Integer.parseInt(clauseMatcher.group(6));
-      final CoverUnit theCoverUnit = new CoverUnit(theCoveredLines, theNotCoveredLines);
-      theFunctionData.putClauseData(theClauseIndex, theCoverUnit);
+      String moduleName = clauseMatcher.group(1);
+      ModuleCoverData module = this.moduleCoverData.get(moduleName);
+      String functionName = clauseMatcher.group(2);
+      int functionArity = Integer.parseInt(clauseMatcher.group(3));
+      String fun = functionName + "/" + functionArity;
+      FunctionCoverData function = module.getFunctionCoverData(fun);
+      int clauseIndex = Integer.parseInt(clauseMatcher.group(4));
+      int coveredLines = Integer.parseInt(clauseMatcher.group(5));
+      int notCoveredLines = Integer.parseInt(clauseMatcher.group(6));
+      CoverUnit coverUnit = new CoverUnit(coveredLines, notCoveredLines);
+      function.putClauseData(clauseIndex, coverUnit);
     }
   }
 
   private void parseLineData(String inDump) {
-    final Matcher lineMatcher = COVER_LINE_REGEX.matcher(inDump);
+    Matcher lineMatcher = COVER_LINE_REGEX.matcher(inDump);
     while (lineMatcher.find()) {
-      final String theModuleName = lineMatcher.group(1);
-      ModuleCoverData theModuleData = this.moduleCoverData.get(theModuleName);
-      if (theModuleData == null) {
-        theModuleData = new ModuleCoverData(theModuleName);
-        this.moduleCoverData.put(theModuleName, theModuleData);
+      final String moduleName = lineMatcher.group(1);
+      ModuleCoverData module = this.moduleCoverData.get(moduleName);
+      int lineNumber = Integer.parseInt(lineMatcher.group(2));
+      // TODO: Remove entries, line can only have one tuple!
+      List<CoverUnit> entries = module.getLineCoverData(lineNumber);
+      if (entries == null) {
+        entries = new LinkedList<CoverUnit>();
+        module.putLineCoverData(lineNumber, entries);
       }
-      final int theLine = Integer.parseInt(lineMatcher.group(2));
-      List<CoverUnit> theList = theModuleData.getLineCoverData(theLine);
-      if (theList == null) {
-        theList = new LinkedList<CoverUnit>();
-        theModuleData.putLineCoverData(theLine, theList);
-      }
-      final int theCoveredLines = Integer.parseInt(lineMatcher.group(3));
-      final int theNotCoveredLines = Integer.parseInt(lineMatcher.group(4));
-      final CoverUnit theCoverUnit = new CoverUnit(theCoveredLines, theNotCoveredLines);
-      theList.add(theCoverUnit);
+      int coveredLines = Integer.parseInt(lineMatcher.group(3));
+      int notCoveredLines = Integer.parseInt(lineMatcher.group(4));
+      CoverUnit theCoverUnit = new CoverUnit(coveredLines, notCoveredLines);
+      entries.add(theCoverUnit);
     }
   }
 

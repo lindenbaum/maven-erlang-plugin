@@ -19,7 +19,7 @@ public final class CoverUnit {
   public CoverUnit(int inCoveredLines, int inNotCoveredLines) {
     this.coveredLines = inCoveredLines;
     this.notCoveredLines = inNotCoveredLines;
-    this.isCovered = (this.notCoveredLines == 0);
+    this.isCovered = (this.notCoveredLines == 0 && this.coveredLines > 0);
   }
 
   /**
