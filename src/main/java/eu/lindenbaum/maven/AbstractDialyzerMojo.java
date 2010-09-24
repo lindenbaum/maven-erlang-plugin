@@ -29,16 +29,17 @@ import org.apache.maven.plugin.logging.Log;
  */
 abstract class AbstractDialyzerMojo extends AbstractErlangMojo {
   /**
-   * Setting this to {@code true} will force a {@code dialyzer} run even if this would no be necessary because
-   * there are no new {@code .beam} files created since the last run.
+   * Setting this to {@code true} will force a {@code dialyzer} run even if this
+   * would no be necessary because there are no new {@code .beam} files created
+   * since the last run.
    * 
    * @parameter expression="${forceDialyzer}"
    */
   private boolean forceDialyzer;
 
   /**
-   * Setting this to {@code true} will skip the {@code dialyzer} run even if the {@link #forceDialyzer}
-   * variable is {@code true}.
+   * Setting this to {@code true} will skip the {@code dialyzer} run even if the
+   * {@link #forceDialyzer} variable is {@code true}.
    * 
    * @parameter expression="${skipDialyzer}"
    */
@@ -53,15 +54,16 @@ abstract class AbstractDialyzerMojo extends AbstractErlangMojo {
   private String[] dialyzerOptions;
 
   /**
-   * Setting this to {@code true} will break the build when a {@code dialyzer} run returns warnings.
+   * Setting this to {@code true} will break the build when a {@code dialyzer}
+   * run returns warnings.
    * 
    * @parameter default-value=false
    */
   boolean dialyzerWarningsAreErrors;
 
   /**
-   * Starts a {@code dialyzer} run according to the project configuration on the given directory with or
-   * without dependencies.
+   * Starts a {@code dialyzer} run according to the project configuration on the
+   * given directory with or without dependencies.
    * 
    * @param inputDirectory to run {@code dialyzer} on
    * @param withDependencies whether to include the project dependencies
@@ -89,7 +91,8 @@ abstract class AbstractDialyzerMojo extends AbstractErlangMojo {
   }
 
   /**
-   * Returns whether a {@code dialyzer} run is currently necessary based on the last runs timestamp.
+   * Returns whether a {@code dialyzer} run is currently necessary based on the
+   * last runs timestamp.
    * 
    * @param dir input directory to check
    * @return true if there are .beam files newer than the last dialyzer run
@@ -110,7 +113,8 @@ abstract class AbstractDialyzerMojo extends AbstractErlangMojo {
   }
 
   /**
-   * Runs the dialyzer on the given directory, additional directories can be given with dependencies.
+   * Runs the dialyzer on the given directory, additional directories can be
+   * given with dependencies.
    * 
    * @param dir to dialyze
    * @param dependencies to dialyze

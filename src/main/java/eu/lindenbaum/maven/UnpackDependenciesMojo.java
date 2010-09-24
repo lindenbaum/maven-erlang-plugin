@@ -33,7 +33,7 @@ public final class UnpackDependenciesMojo extends AbstractErlangMojo {
    * @component role="org.codehaus.plexus.archiver.UnArchiver" roleHint="zip"
    * @required
    */
-  private ZipUnArchiver zipUnArchiver;
+  private ZipUnArchiver unArchiver;
 
   @Override
   @SuppressWarnings("unchecked")
@@ -41,20 +41,27 @@ public final class UnpackDependenciesMojo extends AbstractErlangMojo {
     Log log = getLog();
     log.info("Creating dependency directory " + this.targetLib);
     this.targetLib.mkdirs();
-    this.zipUnArchiver.setDestDirectory(this.targetLib);
-    this.zipUnArchiver.setOverwrite(true);
-    this.zipUnArchiver.enableLogging(new MavenPlexusLogger(log));
+    this.unArchiver.setDestDirectory(this.targetLib);
+    this.unArchiver.setOverwrite(true);
+    this.unArchiver.enableLogging(new MavenPlexusLogger(log));
 
     Set<Artifact> artifacts = this.project.getArtifacts();
     log.info("Found artifacts " + artifacts);
     for (Artifact artifact : artifacts) {
       if (artifact.getType().equals(ErlConstants.ARTIFACT_TYPE_OTP)) {
-        extractArtifact(artifact, this.zipUnArchiver, this.targetLib);
+        extractArtifact(artifact, this.targetLib);
       }
     }
   }
 
-  private void extractArtifact(Artifact artifact, ZipUnArchiver unArchiver, File dest) throws MojoExecutionException {
+  /**
+   * Extract a specific artifact (.zip file) into a specific directory. 
+   * 
+   * @param artifact to extract
+   * @param dest directory to extract the artifact into
+   * @throws MojoExecutionException
+   */
+  private void extractArtifact(Artifact artifact, File dest) throws MojoExecutionException {
     Log log = getLog();
     try {
       Enumeration<? extends ZipEntry> entries = new ZipFile(artifact.getFile()).entries();
@@ -63,8 +70,8 @@ public final class UnpackDependenciesMojo extends AbstractErlangMojo {
         File cachedElement = new File(dest, firstElement.getName());
         if (!cachedElement.exists() || firstElement.getTime() != cachedElement.lastModified()) {
           log.info("Extracting artifact " + artifact.getGroupId() + ":" + artifact.getId());
-          unArchiver.setSourceFile(artifact.getFile());
-          unArchiver.extract();
+          this.unArchiver.setSourceFile(artifact.getFile());
+          this.unArchiver.extract();
         }
         else {
           log.debug("Skipping artifact " + artifact.getGroupId() + ":" + artifact.getId());

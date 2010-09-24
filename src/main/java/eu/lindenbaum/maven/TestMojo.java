@@ -57,7 +57,7 @@ public final class TestMojo extends AbstractErlangMojo {
   /**
    * Setting this to {@code true} will break the build if there are no tests to run.
    * 
-   * @parameter expression="${failIfNoTests}"
+   * @parameter default-value=false
    */
   private boolean failIfNoTests;
 

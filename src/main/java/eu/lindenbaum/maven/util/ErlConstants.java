@@ -1,6 +1,5 @@
 package eu.lindenbaum.maven.util;
 
-
 /**
  * Defines Erlang related constants.
  */
@@ -66,9 +65,24 @@ public interface ErlConstants {
   public static final String REL_SUFFIX = ".rel";
 
   /**
+   * Suffix for tar gzipped files.
+   */
+  public static final String TARGZ_SUFFIX = ".tar.gz";
+
+  /**
+   * Suffix for zipped files.
+   */
+  public static final String ZIP_SUFFIX = ".zip";
+
+  /**
    * Suffix for eunit tests.
    */
   public static final String TEST_SUFFIX = "_test" + BEAM_SUFFIX;
+
+  /**
+   * Suffix for source directories containing non-erlang sources.
+   */
+  public static final String SRC_SUFFIX = "_src";
 
   /**
    * Name of the coverdata binary (coverdata) file.

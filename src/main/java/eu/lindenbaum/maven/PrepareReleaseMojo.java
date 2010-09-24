@@ -18,12 +18,27 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * TODO
+ * This {@link Mojo} prepares the packaging of a release {@code .tar.gz} package
+ * by creating the release upgrade/downgrade scripts as well as the boot and
+ * start scripts. The scripts are created using the erlang {@code systools}
+ * modules {@code make_relup} and {@code make_script} functions. These builds
+ * can be customized by passing user options through the {@link #scriptOptions}
+ * and {@link #relupOptions} parameters in the specific project pom. In order to
+ * create the release downgrade/upgrade script the {@link Mojo} also needs a
+ * list of versions to upgrade from or to downgrade to. If the user chooses to
+ * not specify both lists the release script generation will be skipped. This
+ * {@link Mojo} also checks the release file for plausability by checking its
+ * version against the pom version and checking all dependency versions against
+ * the application versions in the release file. The {@link Mojo} can also
+ * manage the release version. To use this the user can set the release version
+ * in the .rel to {@code ?REL_VERSION} which will be replaced with the project
+ * version specified in the project pom.  
  * 
  * @goal prepare-release
  * @phase compile
@@ -47,28 +62,30 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
       + "end, Applications).";
 
   /**
-   * Options for make_script.
+   * Additional options for {@code systools:make_script/2}.
    * 
    * @parameter
    */
   private String[] scriptOptions;
 
   /**
-   * Options for make_relup.
+   * Additional options for {@code systools:make_relup/4}.
    * 
    * @parameter
    */
   private String[] relupOptions;
 
   /**
-   * Options for the relup up from.
+   * A {@link List} of version {@link String}s to downgrade from when this
+   * release is installed.
    * 
    * @parameter
    */
   private List<String> subsequentVersions;
 
   /**
-   * Option for the relup down to.
+   * A {@link List} of version {@link String}s to upgrade from when this release
+   * is installed.
    * 
    * @parameter
    */

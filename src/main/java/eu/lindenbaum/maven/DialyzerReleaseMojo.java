@@ -27,8 +27,8 @@ public final class DialyzerReleaseMojo extends AbstractDialyzerMojo {
   private boolean useDialyzer;
 
   /**
-   * Setting this to {@code true} will include the projects dependencies into the {@code dialyzer} run. Note:
-   * This may take very long.
+   * Setting this to {@code true} will include the projects dependencies into
+   * the {@code dialyzer} run. Note: This may take very long.
    * 
    * @parameter default-value=true
    */

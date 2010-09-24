@@ -13,7 +13,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Compile erlang test sources and recompile erlang sources using the {@code export_all} option.
+ * Compile erlang test sources and recompile erlang sources with debug
+ * information using the {@code export_all} option.
  * 
  * @goal test-compile
  * @phase test-compile

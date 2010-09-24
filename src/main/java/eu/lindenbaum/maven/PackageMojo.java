@@ -3,6 +3,8 @@ package eu.lindenbaum.maven;
 import static eu.lindenbaum.maven.util.ErlConstants.APPUP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.APP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.BEAM_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.SRC_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.ZIP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlUtils.eval;
 import static eu.lindenbaum.maven.util.FileUtils.BEAM_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.NULL_FILTER;
@@ -25,7 +27,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
 /**
- * Package the Erlang project.
+ * TODO
  * 
  * @goal package
  * @phase package
@@ -33,18 +35,12 @@ import org.codehaus.plexus.archiver.zip.ZipArchiver;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class PackageMojo extends AbstractErlangMojo {
-  /**
-   * Command to extract the version from the .app file.
-   */
   private static final String EXTRACT_VERSION = //
   "{ok, List} = file:consult(\"%s\"), " //
       + "{value, {application, %s, Properties}} = lists:keysearch(%s, 2, List), " //
       + "{value, {vsn, Version}} = lists:keysearch(vsn, 1, Properties), " //
       + "io:format(Version), io:nl().";
 
-  /**
-   * Command to extract the modules from the .app file.
-   */
   private static final String EXTRACT_MODULES = //
   "{ok, List} = file:consult(\"%s\"), "
       + "{value, {application, %s, Properties}} = lists:keysearch(%s, 2, List), "
@@ -52,9 +48,6 @@ public final class PackageMojo extends AbstractErlangMojo {
       + "Mods = lists:foldl(fun(Mod, Acc) -> Acc ++ io_lib:format(\"~s \", [Mod]) end, \"\", M), "
       + "io:format(\"~s\", [Mods]), io:nl().";
 
-  /**
-   * Command to check the .appup file.
-   */
   private static final String CHECK_APPUP = //
   "{ok, List} = file:consult(\"%s\"), "
       + "{value, {\"%s\", UpFrom, DownTo}} = lists:keysearch(\"%s\", 1, List), "
@@ -63,7 +56,7 @@ public final class PackageMojo extends AbstractErlangMojo {
       + "end, UpFrom ++ DownTo)," + "io:format(\"ok\"), io:nl().";
 
   /**
-   * Final name.
+   * The projects final build name, usually this is {@code artifactid-version}.
    * 
    * @parameter expression="${project.build.finalName}"
    * @required
@@ -72,20 +65,21 @@ public final class PackageMojo extends AbstractErlangMojo {
   private String buildName;
 
   /**
-   * Setting this to {@code true} will break the build when the application file does not contain all found
-   * modules.
-   * 
-   * @parameter default-value="true"
-   */
-  private boolean failOnUndeclaredModules;
-
-  /**
    * The Zip archiver.
    * 
    * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="zip"
    * @required
+   * @readonly
    */
-  private ZipArchiver zipArchiver;
+  private ZipArchiver archiver;
+
+  /**
+   * Setting this to {@code true} will break the build when the application file
+   * does not contain all found modules.
+   * 
+   * @parameter default-value="true"
+   */
+  private boolean failOnUndeclaredModules;
 
   public void execute() throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
@@ -112,7 +106,7 @@ public final class PackageMojo extends AbstractErlangMojo {
       }
     });
     for (File source : sources) {
-      copy(source, new File(tmpDir, source.getName() + "_src"), NULL_FILTER, "non-erlang source");
+      copy(source, new File(tmpDir, source.getName() + SRC_SUFFIX), NULL_FILTER, "non-erlang source");
     }
 
     File appFile = new File(this.targetEbin, this.project.getArtifactId() + APP_SUFFIX);
@@ -129,12 +123,12 @@ public final class PackageMojo extends AbstractErlangMojo {
       getLog().warn("No " + APP_SUFFIX + " file was found");
     }
 
-    File toFile = new File(this.target, this.buildName + ".zip");
+    File toFile = new File(this.target, this.buildName + ZIP_SUFFIX);
     try {
-      this.zipArchiver.setIncludeEmptyDirs(false);
-      this.zipArchiver.addDirectory(tmpDir, this.buildName + File.separator);
-      this.zipArchiver.setDestFile(toFile);
-      this.zipArchiver.createArchive();
+      this.archiver.setIncludeEmptyDirs(false);
+      this.archiver.addDirectory(tmpDir, this.buildName + File.separator);
+      this.archiver.setDestFile(toFile);
+      this.archiver.createArchive();
       this.project.getArtifact().setFile(toFile);
     }
     catch (Exception e) {
@@ -179,7 +173,8 @@ public final class PackageMojo extends AbstractErlangMojo {
   }
 
   /**
-   * Checks whether the modules to be packaged are declared in the erlang application file.
+   * Checks whether the modules to be packaged are declared in the erlang
+   * application file.
    * 
    * @param appFile the erlang application resource file
    * @throws MojoExecutionException
