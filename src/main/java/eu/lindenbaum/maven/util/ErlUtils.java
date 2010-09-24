@@ -1,7 +1,5 @@
 package eu.lindenbaum.maven.util;
 
-import static eu.lindenbaum.maven.util.LoggingUtils.logDebug;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -52,7 +50,7 @@ public final class ErlUtils {
    */
   public static String eval(final Log log, String expression, List<File> libPaths, File workingDir) throws MojoExecutionException,
                                                                                                    MojoFailureException {
-    logDebug(log, "Evaluating <<" + expression + ">>");
+    log.debug("Evaluating <<" + expression + ">>");
     final List<String> command = new LinkedList<String>();
     command.add(ErlConstants.ERL);
     if (libPaths != null) {
@@ -91,11 +89,11 @@ public final class ErlUtils {
    */
   public static String exec(List<String> commands, final Log log, File workingDir, Observer observer) throws MojoExecutionException,
                                                                                                      MojoFailureException {
-    logDebug(log, "Executing " + commands.toString());
+    log.debug("Executing " + commands.toString());
     try {
       ProcessBuilder processBuilder = new ProcessBuilder(commands);
       processBuilder.directory(workingDir);
-      logDebug(log, "Working directory " + processBuilder.directory());
+      log.debug("Working directory " + processBuilder.directory());
       Process process = processBuilder.start();
       final LinkedList<String> output = new LinkedList<String>();
       Thread gobbler1 = new Thread(new StreamGobbler(process.getInputStream(), new Processor() {

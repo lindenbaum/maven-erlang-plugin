@@ -12,6 +12,30 @@
         New coverage report, replacing the old one. Now includes line-coverage
         with annotated source code listings.
       </action>
+      <action dev="schlagert" type="add">
+        Added several unit and integration tests.
+      </action>
+      <action dev="schlagert" type="fix">
+        Cover reports working with export_all option. This implies the
+        cover_with_export_all patch proposed for erlang/OTP
+        (git fetch git://github.com/schlagert/otp.git cover_with_export_all).
+      </action>
+      <action dev="schlagert" type="fix">
+        Fixed and documented automatic application/release version handling to
+        be able to support the maven-release plugin to manage project versioning.
+      </action>
+      <action dev="schlagert" type="add">
+        Added possibility to include non-erlang sources into applicatio packages.
+      </action>
+      <action dev="schlagert" type="fix">
+        Different problems with release packaging.
+      </action>
+      <action dev="schlagert" type="add">
+        Changed application packaging to .tar.gz.
+      </action>
+      <action dev="schlagert" type="add">
+        Rewritten all mojos from the original maven-erlang plugin.
+      </action>
     </release>
   </body>
 </document>
