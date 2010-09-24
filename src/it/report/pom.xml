@@ -1,29 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.lindenbaum.maven-erlang-plugin.it</groupId>
-  <artifactId>compile</artifactId>
+  <artifactId>report</artifactId>
   <version>0</version>
   <packaging>erlang-otp</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>
-    <defaultGoal>site</defaultGoal>
     <plugins>
       <plugin>
         <groupId>eu.lindenbaum</groupId>
         <artifactId>maven-erlang-plugin</artifactId>
         <version>@project.version@</version>
         <extensions>true</extensions>
-        <executions>
-          <execution>
-            <id>generate-coverage-report</id>
-            <phase>test</phase>
-            <goals>
-              <goal>coverage</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

@@ -18,7 +18,6 @@ import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.ErlUtils;
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.sink.SinkEventAttributeSet;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReportException;
@@ -36,7 +35,13 @@ import org.apache.maven.reporting.MavenReportException;
  */
 public class CoverageReport extends AbstractErlangReport {
   private static final String PATTERN_COVER_ANALYSE = "cover:import(\"{0}\"), io:write(lists:foldl(fun(Module, Acc) -> [lists:map(fun(Detail) -> cover:analyse(Module, coverage, Detail) end, [function, clause, line]) | Acc] end, [], cover:imported_modules())), io:nl().";
-  private DecimalFormat percentFormat;
+  private static final String LINE_PATTERN = "<span {0}><a name=\"{3}-{1}\">{1,number,0000}</a>: {2}</span>\n";
+  private static final String RED_LINE_ANNOTATION = "style=\"background: #faa;\"";
+  private static final String GREEN_LINE_ANNOTATION = "style=\"background: #afa;\"";
+  private static final String NO_LINE_ANNOTATION = "";
+
+  private volatile CoverData coverData;
+  private volatile DecimalFormat percentFormat;
 
   /**
    * @throws MavenReportException  
@@ -44,35 +49,46 @@ public class CoverageReport extends AbstractErlangReport {
   @Override
   protected void executeReport(Locale locale) throws MavenReportException {
     try {
-      DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
-      this.percentFormat = new DecimalFormat("0%", symbols);
-      CoverData coverageData = getCoverageData();
-      if (coverageData.getModuleCoverData().size() <= 0) {
-        getLog().info("No coverage reports found, skipping report generation.");
-        return;
+      loadCoverageData();
+      if (canGenerateReport()) {
+        initializeFormatting(locale);
+        constructCoverageReport();
       }
-      Sink sink = getSink();
-      constructHeader(sink);
-      sink.body();
-      constructHeadline(sink);
-      constructSummary(coverageData, sink);
-      constructModulesSummary(coverageData, sink);
-      constructModulesList(coverageData, sink);
-      sink.body_();
-      sink.flush();
-      sink.close();
+      else {
+        getLog().info("No coverage data found, skipping report.");
+      }
     }
-    catch (Throwable e) {
-      getLog().error("Failed to generate report.", e);
+    catch (Exception e) {
+      throw new MavenReportException("Failed to generate coverage report.", e);
     }
   }
 
-  private CoverData getCoverageData() throws MojoExecutionException, MojoFailureException {
-    File coverageDataFile = new File(this.targetTest, ErlConstants.COVERDATA_BIN);
-    getLog().debug("Generating test coverage reports from " + coverageDataFile);
-    String dumpCoverData = MessageFormat.format(PATTERN_COVER_ANALYSE, coverageDataFile.getPath());
-    String coverageDump = ErlUtils.eval(getLog(), dumpCoverData);
-    return new CoverData(coverageDump);
+  private void loadCoverageData() throws MojoExecutionException, MojoFailureException {
+    if (this.coverData == null) {
+      File coverageDataFile = new File(this.targetTest, ErlConstants.COVERDATA_BIN);
+      getLog().debug("Generating test coverage reports from " + coverageDataFile);
+      String dumpCoverData = MessageFormat.format(PATTERN_COVER_ANALYSE, coverageDataFile.getPath());
+      String coverageDump = ErlUtils.eval(getLog(), dumpCoverData);
+      this.coverData = new CoverData(coverageDump);
+    }
+  }
+
+  private void initializeFormatting(Locale locale) {
+    DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
+    this.percentFormat = new DecimalFormat("0%", symbols);
+  }
+
+  private void constructCoverageReport() throws IOException {
+    Sink sink = getSink();
+    constructHeader(sink);
+    sink.body();
+    constructHeadline(sink);
+    constructSummary(this.coverData, sink);
+    constructModulesSummary(this.coverData, sink);
+    constructModulesList(this.coverData, sink);
+    sink.body_();
+    sink.flush();
+    sink.close();
   }
 
   private void constructHeader(Sink sink) {
@@ -196,34 +212,42 @@ public class CoverageReport extends AbstractErlangReport {
     }
   }
 
+  @SuppressWarnings("deprecation")
   private void constructModuleLineCoverage(Sink sink, ModuleCoverData module) throws IOException {
     File moduleSourceFile = new File(this.srcMainErlang, module.getModuleName() + ErlConstants.ERL_SUFFIX);
-    FileReader fileReader = new FileReader(moduleSourceFile);
-    BufferedReader reader = new BufferedReader(fileReader);
-    sink.verbatim(SinkEventAttributeSet.BOXED);
-    String line;
+    BufferedReader reader = new BufferedReader(new FileReader(moduleSourceFile));
+    sink.verbatim(true);
+    String sourceCodeLine;
     int lineNumber = 1;
-    while ((line = reader.readLine()) != null) {
-      final String style;
-      List<CoverUnit> lineCoverData = module.getLineCoverData(lineNumber);
-      if (lineCoverData != null) {
-        if (lineCoverData.get(0).isCovered()) {
-          style = "style=\"background: #afa;\"";
-        }
-        else {
-          style = "style=\"background: #faa;\"";
-        }
-      }
-      else {
-        style = "";
-      }
-      String pattern = "<span {0}><a name=\"{3}-{1}\">{1,number,0000}</a>: {2}</span>\n";
-      String formattedLine = MessageFormat.format(pattern, style, lineNumber, line, module.getModuleName());
+    while ((sourceCodeLine = reader.readLine()) != null) {
+      final String lineStyle = getLineStyle(module.getLineCoverData(lineNumber));
+      String moduleName = module.getModuleName();
+      String formattedLine = MessageFormat.format(LINE_PATTERN,
+                                                  lineStyle,
+                                                  lineNumber,
+                                                  sourceCodeLine,
+                                                  moduleName);
       sink.rawText(formattedLine);
       lineNumber++;
     }
     sink.verbatim_();
     reader.close();
+  }
+
+  private String getLineStyle(List<CoverUnit> lineCoverData) {
+    final String style;
+    if (lineCoverData != null) {
+      if (lineCoverData.get(0).isCovered()) {
+        style = GREEN_LINE_ANNOTATION;
+      }
+      else {
+        style = RED_LINE_ANNOTATION;
+      }
+    }
+    else {
+      style = NO_LINE_ANNOTATION;
+    }
+    return style;
   }
 
   private void sinkIsCoveredImageCell(Sink sink, boolean covered) {
@@ -262,13 +286,13 @@ public class CoverageReport extends AbstractErlangReport {
   public boolean canGenerateReport() {
     boolean canGenerateReport = false;
     try {
-      CoverData coverageData = getCoverageData();
-      if (coverageData.getNumberOfModules() > 0) {
+      loadCoverageData();
+      if (this.coverData.getNumberOfModules() > 0) {
         canGenerateReport = true;
       }
     }
     catch (Throwable e) {
-      getLog().error("Failed to check if report generation is possible, probably NOT then", e);
+      getLog().error("Failed to check if report generation is possible, probably NOT then.", e);
     }
     return canGenerateReport;
   }
