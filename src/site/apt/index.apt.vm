@@ -8,7 +8,7 @@ Maven Erlang Plug-In
  {{{http://maven-erlang.sourceforge.net/erlang-plugin/}maven-erlang}}, created 
  by Paul Guyot and Olivier Sambourg, but is maintained under this new regime in 
  order to improve and extend it. This incarnation also provides a little bit 
- more definition for {{{development.html}development}} - be sure to check it 
+ more definition for {{{./development.html}development}} - be sure to check it 
  out if you are interested in contributing.
 
 * Getting started
