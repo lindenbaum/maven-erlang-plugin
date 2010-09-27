@@ -7,12 +7,21 @@ import static eu.lindenbaum.maven.util.ErlConstants.TEST_SUFFIX;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
 import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.jar.JarFile;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
 
 import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.Observer;
@@ -148,6 +157,41 @@ public final class TestMojo extends AbstractErlangMojo {
    * @return an executable command list
    */
   private List<String> getCommandLine(List<String> modules) {
+    Log log = getLog();
+    String cover = "cover2";
+
+    // this will extract the provided cover module from the plugin jar
+    // to be removed as soon as the proposed cover patch gets accepted
+    {
+      URL resource = getClass().getClassLoader().getResource(cover + BEAM_SUFFIX);
+      File resourceFile = new File(resource.getFile());
+      String jar = resourceFile.getParent().replace("!", "").replace("file:", "");
+      try {
+        JarFile jarFile = new JarFile(jar);
+        ZipEntry entry = jarFile.getEntry(cover + BEAM_SUFFIX);
+        File coverModule = new File(this.targetTest, entry.getName());
+        InputStream inputStream = new BufferedInputStream(jarFile.getInputStream(entry));
+        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(coverModule));
+        byte[] buffer = new byte[2048];
+        for (;;) {
+          int nBytes = inputStream.read(buffer);
+          if (nBytes <= 0) {
+            break;
+          }
+          outputStream.write(buffer, 0, nBytes);
+        }
+        outputStream.flush();
+        outputStream.close();
+        inputStream.close();
+        log.info("Using provided cover module " + cover + " from plugin jar.");
+      }
+      catch (IOException e) {
+        cover = "cover";
+        log.warn("Failed to extract provided cover module", e);
+        log.info("Using default erlang/OTP cover module.");
+      }
+    }
+
     String eunitExpr = "eunit:test(" // 
                        + modules.toString() //
                        + ", [{order, inorder}, "//
@@ -155,7 +199,7 @@ public final class TestMojo extends AbstractErlangMojo {
                        + this.targetSurefire.getPath()//
                        + "\"}]}}]).";
 
-    String coverExpr = "cover:compile_directory(\"" + this.srcMainErlang.getPath() + "\", [export_all]).";
+    String coverExpr = cover + ":compile_directory(\"" + this.srcMainErlang.getPath() + "\", [export_all]).";
     List<String> command = new ArrayList<String>();
     command.add(ERL);
     for (File lib : getDependencies(this.targetLib)) {
@@ -167,7 +211,7 @@ public final class TestMojo extends AbstractErlangMojo {
     command.add("-eval");
     command.add(eunitExpr);
     command.add("-run");
-    command.add("cover");
+    command.add(cover);
     command.add("export");
     command.add(COVERDATA_BIN);
     command.add("-noshell");

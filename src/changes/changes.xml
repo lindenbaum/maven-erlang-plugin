@@ -16,9 +16,9 @@
         Added several unit and integration tests.
       </action>
       <action dev="schlagert" type="fix">
-        Cover reports working with export_all option. This implies the
-        cover_with_export_all patch proposed for erlang/OTP
-        (git fetch git://github.com/schlagert/otp.git cover_with_export_all).
+        Cover reports working with export_all option. Therefore an alternative
+        cover module is provided by the plugin. This is to be removed as soon
+        as the proposed patch for erlang/OTP is accepted.
       </action>
       <action dev="schlagert" type="fix">
         Fixed and documented automatic application/release version handling to
