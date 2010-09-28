@@ -19,12 +19,16 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
+ * <p>
  * This {@link Mojo} packages creates a release {@code .tar.gz} using the erlang
- * {@code systools} modules {@code make_tar/2} function. The build can be
- * customized by providing additional options through the {@link #tarOptions}
- * parameter in the specific project pom. By default all release dependecies
- * will be packaged including their {@code ebin}, {@code include}, {@code mibs}
- * and non-erlang source directories.
+ * {@code systools} modules {@code make_tar/2} function.
+ * </p>
+ * <p>
+ * The build can be customized by providing additional options through the
+ * {@link #tarOptions} parameter in the specific project pom. By default all
+ * release dependecies will be packaged including their {@code ebin},
+ * {@code include}, {@code mibs} and non-erlang source directories.
+ * </p>
  * 
  * @goal package-release
  * @phase package

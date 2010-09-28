@@ -32,13 +32,19 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * {@link Mojo} running test cases. This {@link Mojo} will either run a specific
- * test case (if the user specified one using {@code -Dtest=test_module_test})
- * or runn all test cases found in the {@link AbstractErlangMojo#srcTestErlang}
- * directory. The user can also choose to skip testing by specifying
- * {@code -DskipTests}. A test code coverage will automatically be applied
- * using the erlang cover module. A report about the test coverage may be
- * created using the {@link CoverageReport}.
+ * <p>
+ * {@link Mojo} running test cases.
+ * </p>
+ * <p>
+ * This {@link Mojo} will either run a specific test case (if the user specified
+ * one using {@code -Dtest=test_module_test}) or run all test cases found in the
+ * {@link AbstractErlangMojo#srcTestErlang} directory.
+ * </p>
+ * <p>
+ * The user can also choose to skip testing by specifying {@code -DskipTests}.
+ * A test code coverage will automatically be applied. A report about the test
+ * coverage may be created using the {@link CoverageReport}.
+ * </p>
  * 
  * @goal test
  * @phase test

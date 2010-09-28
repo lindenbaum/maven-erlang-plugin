@@ -6,12 +6,17 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
+ * <p>
  * This {@link Mojo} runs the erlang {@code dialyzer} tool on the compiled
- * artifacts found in {@link AbstractErlangMojo#targetTest}. The
- * {@code dialyzer} can be skipped using the {@code testUseDialyzer} paramter in
- * the projects pom. Additionally, the user can choose to run {@code dialyzer}
- * also on the projects dependencies using the {@code dialyzerWithDependencies}
- * pom parameter. This is disabled by default since this is very slow.
+ * artifacts found in {@link AbstractErlangMojo#targetTest}.
+ * </p>
+ * <p>
+ * The {@code dialyzer} can be skipped using the {@code testUseDialyzer}
+ * paramter in the projects pom. Additionally, the user can choose to run
+ * {@code dialyzer} also on the projects dependencies using the
+ * {@code dialyzerWithDependencies} pom parameter. This is disabled by default
+ * since this is very slow.
+ * </p>
  * 
  * @goal test-dialyzer
  * @phase process-test-classes

@@ -11,11 +11,15 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
 
 /**
- * This {@link Mojo} will generate EDoc documentation for the sources and
- * includes found in {@link AbstractErlangReport#srcMainErlang} and
- * {@link AbstractErlangReport#srcMainInclude}. The output will be put into
- * {@link AbstractErlangReport#targetSiteDoc}. The user may specify custom
- * EDoc options in the project pom using the {@code eDocOptions} parameter. 
+ * <p>
+ * This {@link Mojo} will generate EDoc documentation for the sources found in
+ * {@link AbstractErlangReport#srcMainErlang}.
+ * </p>
+ * <p>
+ * The output will be put into {@link AbstractErlangReport#targetSiteDoc}. The
+ * user may specify custom EDoc options in the project pom using the
+ * {@code eDocOptions} parameter.
+ * </p> 
  * 
  * @goal doc
  * @phase generate-sources

@@ -11,14 +11,19 @@ import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
+ * <p>
  * This {@link Mojo} copies the private resources to the
  * {@link AbstractErlangMojo#targetPriv} directory. Default source folders for
  * private resources are {@link AbstractErlangMojo#srcMainPriv} and
- * {@link AbstractErlangMojo#srcMainResources}. Besides that this {@link Mojo}
- * also copies the erlang application resource file. The {@link Mojo} can also
- * manage the application version. To use this the user can set the application
- * version in the .app file to {@code ?APP_VERSION} which will be replaced with
- * the project version specified in the project pom.  
+ * {@link AbstractErlangMojo#srcMainResources}.
+ * </p>
+ * <p>
+ * Besides that this {@link Mojo} also copies the erlang application resource
+ * file. The {@link Mojo} can also manage the application version. To use this
+ * the user can set the application version in the .app file to
+ * {@code ?APP_VERSION} which will be replaced with the project version
+ * specified in the project pom.
+ * </p>  
  * 
  * @goal copy-resources
  * @phase process-resources

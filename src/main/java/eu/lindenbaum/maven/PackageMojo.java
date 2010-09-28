@@ -30,14 +30,18 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
+ * <p>
  * This {@link Mojo} packages all application artifacts into a single
  * {@code .tar.gz} package. This includes {@code .beam} files, the {@code .hrl}
  * include files, SNMP resources, private data from the {@code priv} and
  * {@code resources} directories and non-erlang sources as well as application
- * resource and upgrade files (if any). The application resource and upgrade
- * files are also checked for plausability by checking the application version
- * against the project version and checking the application modules against
- * the found, compiled modules.
+ * resource and upgrade files (if any).
+ * </p>
+ * <p>
+ * The application resource and upgrade files are also checked for plausability
+ * by checking the application version against the project version and checking
+ * the application modules against the found, compiled modules.
+ * </p>
  * 
  * @goal package
  * @phase package
