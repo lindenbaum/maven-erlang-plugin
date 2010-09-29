@@ -22,7 +22,7 @@ import org.apache.maven.reporting.MavenReportException;
  * @phase generate-test-sources
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class TestEdocReportMojo extends AbstractEDocReport {
+public final class TestEDocReport extends AbstractEDocReport {
   /**
    * Additional options for EDoc.
    * 

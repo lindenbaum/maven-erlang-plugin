@@ -70,15 +70,6 @@ public final class PackageMojo extends AbstractErlangMojo {
       + "end, UpFrom ++ DownTo)," + "io:format(\"ok\"), io:nl().";
 
   /**
-   * The projects final build name, usually this is {@code artifactid-version}.
-   * 
-   * @parameter expression="${project.build.finalName}"
-   * @required
-   * @readonly
-   */
-  private String buildName;
-
-  /**
    * Setting this to {@code true} will break the build when the application file
    * does not contain all found modules.
    * 
@@ -91,7 +82,7 @@ public final class PackageMojo extends AbstractErlangMojo {
     log.info("------------------------------------------------------------------------");
     log.info("PACKAGING PROJECT");
 
-    File tmpDir = new File(this.target, this.buildName);
+    File tmpDir = new File(this.target, this.project.getArtifactId() + "-" + this.project.getVersion());
     tmpDir.mkdirs();
 
     copy(this.srcMainErlang, new File(tmpDir, "src"), SOURCE_FILTER, "source");
@@ -126,7 +117,7 @@ public final class PackageMojo extends AbstractErlangMojo {
       getLog().warn("No " + APP_SUFFIX + " file was found");
     }
 
-    File toFile = new File(this.target, this.buildName + TARGZ_SUFFIX);
+    File toFile = new File(this.target, tmpDir.getName() + TARGZ_SUFFIX);
     try {
       TarGzArchiver archiver = new TarGzArchiver(log, toFile);
       archiver.addFile(tmpDir);
