@@ -45,6 +45,14 @@ import org.apache.maven.plugin.logging.Log;
  * A test code coverage will automatically be applied. A report about the test
  * coverage may be created using the {@link CoverageReport}.
  * </p>
+ * <p>
+ * BUG It is known that the eunit_surefire module has problems generating
+ * suitable data when mutliple test modules are given to eunit:test/2.
+ * </p>
+ * <p>
+ * BUG It is known that the eunit_surefire module has problems generating
+ * suitable data when a test module contains only one test case.
+ * </p>
  * 
  * @goal test
  * @phase test

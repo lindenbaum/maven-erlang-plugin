@@ -79,7 +79,7 @@ public final class PackageReleaseMojo extends AbstractErlangMojo {
   }
 
   /**
-   * Returns a {@link Collection} with additional folder to include in the
+   * Returns a {@link Collection} with additional folders to include in the
    * package .tar.gz. This will include all non-erlang source folders into the
    * package.  
    * 

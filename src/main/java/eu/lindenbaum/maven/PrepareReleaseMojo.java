@@ -52,6 +52,13 @@ import org.apache.maven.plugin.logging.Log;
  * can set the release version in the .rel to {@code ?REL_VERSION} which will be
  * replaced with the project version specified in the project pom.
  * </p>
+ * <p>
+ * TODO The generation of relup files has not yet been tested.
+ * </p>
+ * <p>
+ * TODO the release file processing should be extended in order to generate an
+ * appropriate release file.
+ * </p>
  * 
  * @goal prepare-release
  * @phase compile
