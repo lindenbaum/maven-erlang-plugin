@@ -177,13 +177,14 @@ public final class TestMojo extends AbstractErlangMojo {
     // this will extract the provided cover module from the plugin jar
     // to be removed as soon as the proposed cover patch gets accepted
     {
-      URL resource = getClass().getClassLoader().getResource(cover + BEAM_SUFFIX);
+      String coverResource = "coverage/" + cover + BEAM_SUFFIX;
+      URL resource = getClass().getClassLoader().getResource(coverResource);
       File resourceFile = new File(resource.getFile());
-      String jar = resourceFile.getParent().replace("!", "").replace("file:", "");
+      String jar = resourceFile.getPath().replace("!/", "").replace("file:", "").replace(coverResource, "");
       try {
         JarFile jarFile = new JarFile(jar);
-        ZipEntry entry = jarFile.getEntry(cover + BEAM_SUFFIX);
-        File coverModule = new File(this.targetTest, entry.getName());
+        ZipEntry entry = jarFile.getEntry(coverResource);
+        File coverModule = new File(this.targetTest, cover + BEAM_SUFFIX);
         InputStream inputStream = new BufferedInputStream(jarFile.getInputStream(entry));
         OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(coverModule));
         byte[] buffer = new byte[2048];
