@@ -39,6 +39,12 @@
     <license>
       <name>LGPL (GNU Lesser General Public License)</name>
       <url>http://www.gnu.org/licenses/lgpl.html</url>
+      <comments>This license applies to the non erlang code provided with this project.</comments>
+    </license>
+    <license>
+      <name>EPL (Erlang Public License)</name>
+      <url>http://www.erlang.org/EPLICENSE</url>
+      <comments>This license applies to the (modified) erlang code provided with this project.</comments>
     </license>
   </licenses>
   <distributionManagement>
