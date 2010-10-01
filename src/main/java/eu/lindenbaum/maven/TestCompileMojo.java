@@ -29,6 +29,7 @@ public final class TestCompileMojo extends AbstractCompilerMojo {
    */
   private String[] erlcTestOptions;
 
+  @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
 

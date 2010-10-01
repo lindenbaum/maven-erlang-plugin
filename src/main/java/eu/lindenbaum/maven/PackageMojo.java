@@ -142,6 +142,7 @@ public final class PackageMojo extends AbstractErlangMojo {
    */
   private boolean failOnUndeclaredModules;
 
+  @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
     log.info("------------------------------------------------------------------------");

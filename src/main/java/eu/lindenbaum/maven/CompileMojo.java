@@ -39,6 +39,7 @@ public final class CompileMojo extends AbstractCompilerMojo {
    */
   private String[] erlcOptions;
 
+  @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
 
