@@ -13,15 +13,23 @@ import static org.codehaus.plexus.util.FileUtils.fileRead;
 import static org.codehaus.plexus.util.FileUtils.fileWrite;
 import static org.codehaus.plexus.util.FileUtils.getDefaultExcludes;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -345,5 +353,53 @@ public final class FileUtils {
       }
     }
     return copied;
+  }
+
+  /**
+   * Extracts all files from a .jar file matching the given file suffix into
+   * a directory.
+   * 
+   * @param archive the jar archive to extract files from
+   * @param suffix of files to be extracted
+   * @param destDir to extract files into
+   * @throws MojoExecutionException
+   */
+  public static void extractFilesFromJar(File archive, String suffix, File destDir) throws MojoExecutionException {
+    destDir.mkdirs();
+    if (destDir.isDirectory()) {
+      try {
+        JarFile jarFile = new JarFile(archive);
+        Enumeration<JarEntry> entries = jarFile.entries();
+        List<JarEntry> toBeExtracted = new ArrayList<JarEntry>();
+        while (entries.hasMoreElements()) {
+          JarEntry current = entries.nextElement();
+          if (current.getName().endsWith(suffix)) {
+            toBeExtracted.add(current);
+          }
+        }
+        for (JarEntry entry : toBeExtracted) {
+          File dest = new File(destDir, new File(entry.getName()).getName());
+          OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(dest));
+          InputStream inputStream = new BufferedInputStream(jarFile.getInputStream(entry));
+          byte[] buffer = new byte[2048];
+          while (true) {
+            int nBytes = inputStream.read(buffer);
+            if (nBytes <= 0) {
+              break;
+            }
+            outputStream.write(buffer, 0, nBytes);
+          }
+          outputStream.flush();
+          outputStream.close();
+          inputStream.close();
+        }
+      }
+      catch (IOException e) {
+        throw new MojoExecutionException(e.getMessage(), e);
+      }
+    }
+    else {
+      throw new MojoExecutionException("directory " + destDir + " cannot be created");
+    }
   }
 }

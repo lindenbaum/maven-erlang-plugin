@@ -56,8 +56,10 @@ import org.apache.maven.plugin.logging.Log;
  * <li>{@code ?ID}: the projects id</li>
  * <li>{@code ?VERSION}: the projects version</li>
  * <li>{@code ?MODULES}: all compiled {@code .beam} files found in the target ebin folder</li>
- * <li>{@code ?REGISTERED}: TODO</li>
- * <li>{@code ?DEPENDENCIES}: TODO</li>
+ * <li>{@code ?REGISTERED}: a list of registered names, based on the
+ * {@code -registered(Names).} attribute retrieved from the compiled {@code .beam}
+ * files.</li>
+ * <li>{@code ?DEPENDENCIES}: TODO this is still experimental</li>
  * </ul>
  * <p>
  * In case there is no application resouce file specified the {@link Mojo} will

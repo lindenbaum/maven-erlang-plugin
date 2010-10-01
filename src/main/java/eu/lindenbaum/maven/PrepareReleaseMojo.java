@@ -6,8 +6,12 @@ import static eu.lindenbaum.maven.util.FileUtils.REL_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
 import static eu.lindenbaum.maven.util.FileUtils.removeDirectory;
+import static eu.lindenbaum.maven.util.MavenUtils.getArtifact;
+import static eu.lindenbaum.maven.util.MavenUtils.getArtifactFile;
+import static eu.lindenbaum.maven.util.MavenUtils.getReleaseName;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,10 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import eu.lindenbaum.maven.util.TarGzUnarchiver;
+
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -292,10 +295,10 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
     if (versions != null) {
       for (String version : versions) {
         Artifact artifact = getArtifact(this.project.getArtifact(), version);
-        File artifactFile = new File(this.repository.getBasedir(), this.repository.pathOf(artifact));
-        if (artifactFile.exists()) {
-          File destDir = new File(this.targetReleases, artifact.getVersion());
-          extract(artifact.getFile(), destDir);
+        File artifactFile = getArtifactFile(artifact, this.repository);
+        File destDir = new File(this.targetReleases, artifact.getVersion());
+        try {
+          new TarGzUnarchiver(log, destDir).extract(artifactFile);
           File relFile = new File(new File(destDir, "releases"), getReleaseName(artifact) + REL_SUFFIX);
           if (relFile.exists()) {
             result.add(relFile);
@@ -304,63 +307,10 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
             log.info("Could not find " + REL_SUFFIX + " file for version " + version);
           }
         }
-        else {
-          log.warn("Could not find artifact for version " + version);
+        catch (IOException e) {
         }
       }
     }
     return Collections.unmodifiableList(result);
-  }
-
-  /**
-   * Extracts a {@code .tar.gz} archive into a specific directory.
-   * 
-   * @param archive to extract
-   * @param destDir to extract into
-   * @throws MojoExecutionException in case the archive cannot be extracted
-   * @throws MojoFailureException in case the archive cannot be extracted
-   */
-  private void extract(File archive, File destDir) throws MojoExecutionException, MojoFailureException {
-    Log log = getLog();
-    destDir.mkdirs();
-    StringBuilder command = new StringBuilder();
-    command.append("Status = erl_tar:extract(\"");
-    command.append(archive.getAbsolutePath());
-    command.append("\", [compressed]), ");
-    command.append("StatusCode = case Status of ok -> 0; _ -> 1 end, erlang:halt(StatusCode).");
-    String result = eval(log, command.toString(), getDependencies(this.targetLib), destDir);
-    if (result != null && !result.isEmpty()) {
-      log.info("Extracting " + archive.getPath() + " returned " + result);
-    }
-  }
-
-  /**
-   * Returns an {@link Artifact} object of a specific {@link Artifact} with a
-   * specific version.
-   * 
-   * @param from to clone
-   * @param version of the returned artifact
-   * @return a new {@link Artifact} with the requested version
-   */
-  private static Artifact getArtifact(Artifact from, String version) {
-    String groupId = from.getGroupId();
-    String artifactId = from.getArtifactId();
-    String scope = from.getScope();
-    String type = from.getType();
-    String classifier = from.getClassifier();
-    ArtifactHandler artifactHandler = from.getArtifactHandler();
-    VersionRange versionRange = VersionRange.createFromVersion(version);
-    return new DefaultArtifact(groupId, artifactId, versionRange, scope, type, classifier, artifactHandler);
-  }
-
-  /**
-   * Returns the release name for the given {@link Artifact}. The release name
-   * consists of the artifacts id and its version. 
-   * 
-   * @param artifact to retrieve the release name from
-   * @return a string containing the release name
-   */
-  private static String getReleaseName(Artifact artifact) {
-    return artifact.getArtifactId() + "-" + artifact.getVersion();
   }
 }

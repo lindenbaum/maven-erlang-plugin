@@ -3,25 +3,19 @@ package eu.lindenbaum.maven;
 import static eu.lindenbaum.maven.util.ErlConstants.BEAM_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.COVERDATA_BIN;
 import static eu.lindenbaum.maven.util.ErlConstants.ERL;
+import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.TEST_SUFFIX;
+import static eu.lindenbaum.maven.util.FileUtils.extractFilesFromJar;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
 import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
+import static eu.lindenbaum.maven.util.MavenUtils.getPluginFile;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.jar.JarFile;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
 
 import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.Observer;
@@ -84,6 +78,7 @@ public final class TestMojo extends AbstractErlangMojo {
    */
   private boolean failIfNoTests;
 
+  @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     final Log log = getLog();
     log.info("------------------------------------------------------------------------");
@@ -102,6 +97,10 @@ public final class TestMojo extends AbstractErlangMojo {
       List<String> modules = getTestCases(this.targetTest, this.test);
       if (modules.size() > 0) {
         log.info("Test cases: " + modules.toString());
+
+        File plugin = getPluginFile("maven-erlang-plugin", this.project, this.repository);
+        extractFilesFromJar(plugin, ERL_SUFFIX, this.targetTest);
+
         List<String> command = getCommandLine(modules);
         ErlUtils.exec(command, log, this.targetTest, new Observer() {
           @Override
@@ -171,50 +170,13 @@ public final class TestMojo extends AbstractErlangMojo {
    * @return an executable command list
    */
   private List<String> getCommandLine(List<String> modules) {
-    Log log = getLog();
-    String cover = "cover2";
-
-    // this will extract the provided cover module from the plugin jar
-    // to be removed as soon as the proposed cover patch gets accepted
-    {
-      String coverResource = "coverage/" + cover + BEAM_SUFFIX;
-      URL resource = getClass().getClassLoader().getResource(coverResource);
-      File resourceFile = new File(resource.getFile());
-      String jar = resourceFile.getPath().replace("!/", "").replace("file:", "").replace(coverResource, "");
-      try {
-        JarFile jarFile = new JarFile(jar);
-        ZipEntry entry = jarFile.getEntry(coverResource);
-        File coverModule = new File(this.targetTest, cover + BEAM_SUFFIX);
-        InputStream inputStream = new BufferedInputStream(jarFile.getInputStream(entry));
-        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(coverModule));
-        byte[] buffer = new byte[2048];
-        for (;;) {
-          int nBytes = inputStream.read(buffer);
-          if (nBytes <= 0) {
-            break;
-          }
-          outputStream.write(buffer, 0, nBytes);
-        }
-        outputStream.flush();
-        outputStream.close();
-        inputStream.close();
-        log.info("Using provided cover module " + cover + " from plugin jar.");
-      }
-      catch (IOException e) {
-        cover = "cover";
-        log.warn("Failed to extract provided cover module", e);
-        log.info("Using default erlang/OTP cover module.");
-      }
-    }
-
-    String eunitExpr = "eunit:test(" // 
+    String eunitExpr = "eunit:test(" //  
                        + modules.toString() //
                        + ", [{order, inorder}, "//
                        + "{report,{eunit_surefire,[{dir,\"" //
                        + this.targetSurefire.getPath()//
                        + "\"}]}}]).";
 
-    String coverExpr = cover + ":compile_directory(\"" + this.srcMainErlang.getPath() + "\", [export_all]).";
     List<String> command = new ArrayList<String>();
     command.add(ERL);
     for (File lib : getDependencies(this.targetLib)) {
@@ -222,11 +184,13 @@ public final class TestMojo extends AbstractErlangMojo {
       command.add(lib.getAbsolutePath());
     }
     command.add("-eval");
-    command.add(coverExpr);
+    command.add("c:c(cover2),c:c(surefire).");
+    command.add("-eval");
+    command.add("cover2:compile_directory(\"" + this.srcMainErlang.getPath() + "\", [export_all]).");
     command.add("-eval");
     command.add(eunitExpr);
     command.add("-run");
-    command.add(cover);
+    command.add("cover2");
     command.add("export");
     command.add(COVERDATA_BIN);
     command.add("-noshell");
