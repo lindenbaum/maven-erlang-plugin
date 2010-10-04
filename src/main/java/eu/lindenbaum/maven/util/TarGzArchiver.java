@@ -14,8 +14,7 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * An archiver that can create gzipped tar archives using the erlang
- * {@code erl_tar} module. This archiver will exclude empty directories by
- * default.
+ * {@code erl_tar} module.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */

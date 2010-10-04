@@ -72,16 +72,18 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
    * Command to extract the version from the .rel file.
    */
   private static final String EXTRACT_VERSION = //
-  "{ok, [{release, {_ReleaseName, ReleaseVersion}, {erts, _ErtsVersion}, _Applications}]} = file:consult(\"%s\"), "
+  "{ok, [{release, {_, ReleaseVersion}, _, _}]} = file:consult(\"%s\"), "
       + "io:format(ReleaseVersion), io:nl().";
 
   /**
    * Command to extract the applications from the .app file.
    */
   private static final String EXTRACT_APPLICATIONS = //
-  "{ok, [{release, {_ReleaseName, _ReleaseVersion}, {erts, _ErtsVersion}, Applications}]} = file:consult(\"%s\"), "
+  "{ok, [{release, _, _, Applications}]} = file:consult(\"%s\"), "
       + "lists:foreach(fun(Tuple) when is_tuple(Tuple) -> " //
-      + "AppName = element(1, Tuple), AppVersion = element(2, Tuple), io:format(\"~p:~s \", [AppName, AppVersion]) "//
+      + "AppName = element(1, Tuple), " //
+      + "AppVersion = element(2, Tuple), " //
+      + "io:format(\"~p:~s \", [AppName, AppVersion]) "//
       + "end, Applications).";
 
   /**

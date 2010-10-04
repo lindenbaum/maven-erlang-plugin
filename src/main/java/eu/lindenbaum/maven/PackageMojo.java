@@ -29,7 +29,6 @@ import java.util.Set;
 
 import eu.lindenbaum.maven.util.TarGzArchiver;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -59,7 +58,6 @@ import org.apache.maven.plugin.logging.Log;
  * <li>{@code ?REGISTERED}: a list of registered names, based on the
  * {@code -registered(Names).} attribute retrieved from the compiled {@code .beam}
  * files.</li>
- * <li>{@code ?DEPENDENCIES}: TODO this is still experimental</li>
  * </ul>
  * <p>
  * In case there is no application resouce file specified the {@link Mojo} will
@@ -75,7 +73,7 @@ import org.apache.maven.plugin.logging.Log;
  *    {maxT, infinity},
  *    {registered, ?REGISTERED},
  *    {included_applications, []},
- *    {applications, ?DEPENDENCIES},
+ *    {applications, []},
  *    {env, []},
  *    {mod, []},
  *    {start_phases, []}]}.
@@ -129,7 +127,7 @@ public final class PackageMojo extends AbstractErlangMojo {
                                             + "   {maxT, infinity},\n" //
                                             + "   {registered, ?REGISTERED},\n" //
                                             + "   {included_applications, []},\n" //
-                                            + "   {applications, ?DEPENDENCIES},\n" //
+                                            + "   {applications, []},\n" //
                                             + "   {env, []},\n" //
                                             + "   {mod, []},\n" //
                                             + "   {start_phases, []}]}.\n";
@@ -160,7 +158,6 @@ public final class PackageMojo extends AbstractErlangMojo {
     replacements.put("?VERSION", "\"" + this.project.getVersion() + "\"");
     replacements.put("?MODULES", modules);
     replacements.put("?REGISTERED", getRegisteredNames(modules));
-    replacements.put("?DEPENDENCIES", getApplications());
     File srcAppFile = new File(this.srcMainErlang, this.project.getArtifactId() + APP_SUFFIX);
     if (!srcAppFile.exists()) {
       try {
@@ -238,7 +235,8 @@ public final class PackageMojo extends AbstractErlangMojo {
 
   /**
    * Copy the content of a directory to another one applying filtering and logging.
-   * If the target directory does not exist it will be created.
+   * If the target directory does not exist it will be created. If there were no
+   * files to copy the target directory will be removed.
    * 
    * @param srcDir to copy from
    * @param targetDir to copy to
@@ -250,6 +248,9 @@ public final class PackageMojo extends AbstractErlangMojo {
   private void copy(File srcDir, File targetDir, FileFilter filter, String kind, Map<String, String> r) throws MojoExecutionException {
     targetDir.mkdirs();
     int copied = copyDirectory(srcDir, targetDir, filter, r);
+    if (copied == 0) {
+      targetDir.delete();
+    }
     getLog().info("Copied " + copied + " " + kind + " files to " + targetDir.getAbsolutePath());
   }
 
@@ -337,28 +338,6 @@ public final class PackageMojo extends AbstractErlangMojo {
   private String getRegisteredNames(String modules) throws MojoExecutionException, MojoFailureException {
     String expression = String.format(EXTRACT_ATTRIBUTE, "registered", modules);
     return eval(getLog(), expression, getDependencies(this.targetLib), this.targetEbin);
-  }
-
-  /**
-   * Returns a {@link String} of applications to start before this application
-   * can start in valid erlang list representation. This is done based on the
-   * pom dependencies excluding the test scope dependencies. Additionally the
-   * kernel, stdlib and sasl dependency is added.
-   * 
-   * @return a {@link String} containing the dependency applications 
-   */
-  @SuppressWarnings("unchecked")
-  private String getApplications() {
-    StringBuilder applications = new StringBuilder("[kernel,stdlib,sasl");
-    Set<Artifact> dependencies = this.project.getDependencyArtifacts();
-    for (Artifact dependency : dependencies) {
-      if (!"test".equals(dependency.getScope())) {
-        applications.append(",");
-        applications.append(dependency.getArtifactId());
-      }
-    }
-    applications.append("]");
-    return applications.toString();
   }
 
   /**

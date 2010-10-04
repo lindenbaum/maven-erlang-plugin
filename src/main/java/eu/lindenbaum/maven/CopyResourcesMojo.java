@@ -24,6 +24,9 @@ public final class CopyResourcesMojo extends AbstractErlangMojo {
     int copiedFiles = 0;
     copiedFiles += copyDirectory(this.srcMainPriv, this.targetPriv, NULL_FILTER);
     copiedFiles += copyDirectory(this.srcMainResources, this.targetPriv, NULL_FILTER);
+    if (copiedFiles == 0) {
+      this.targetPriv.delete();
+    }
     getLog().info("Copied " + copiedFiles + " files");
   }
 }
