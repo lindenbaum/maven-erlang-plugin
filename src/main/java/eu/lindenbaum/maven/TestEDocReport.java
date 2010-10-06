@@ -16,7 +16,7 @@ import org.apache.maven.reporting.MavenReportException;
  * The output will be put into {@link AbstractErlangReport#targetSiteTestDoc}.
  * The user may specify custom EDoc options in the project pom using the
  * {@code eDocOptions} parameter.
- * </p> 
+ * </p>
  * 
  * @goal test-doc
  * @phase generate-test-sources

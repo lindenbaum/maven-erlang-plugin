@@ -65,7 +65,9 @@ public final class TarGzArchiver {
 
   /**
    * Creates and writes the archive to {@link #archive}.
-   * @throws IOException if there are no files to archive or {@code erl_tar} ends with erros
+   * 
+   * @throws IOException if there are no files to archive or {@code erl_tar}
+   *           ends with erros
    */
   public void createArchive() throws IOException {
     if (this.files.isEmpty()) {

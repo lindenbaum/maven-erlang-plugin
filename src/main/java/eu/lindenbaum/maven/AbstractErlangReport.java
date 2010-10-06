@@ -8,8 +8,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 
 /**
- * A base class for report generating {@link Mojo}s. Its only use is to keep
- * all path definitions in a single place in order to be easily customizable.
+ * A base class for report generating {@link Mojo}s. Its only use is to keep all
+ * path definitions in a single place in order to be easily customizable.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @see AbstractErlangMojo
@@ -36,8 +36,7 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
   /**
    * Directory where the erlang source folder reside. It is also assumed that
    * the application specific application resource file and (if any) the release
-   * files are located here.
-   * Default is: {@code src/main/erlang}.
+   * files are located here. Default is: {@code src/main/erlang}.
    * 
    * @parameter expression="${basedir}/src/main/erlang"
    * @required
@@ -46,8 +45,8 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
   File srcMainErlang;
 
   /**
-   * Directory where the header files reside.
-   * Default is: {@code src/main/include}.
+   * Directory where the header files reside. Default is:
+   * {@code src/main/include}.
    * 
    * @parameter expression="${basedir}/src/main/include"
    * @required
@@ -56,8 +55,8 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
   File srcMainInclude;
 
   /**
-   * Directory where the erlang test source files reside.
-   * Default is: {@code src/test/erlang}.
+   * Directory where the erlang test source files reside. Default is:
+   * {@code src/test/erlang}.
    * 
    * @parameter expression="${basedir}/src/test/erlang/"
    * @required
@@ -66,8 +65,8 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
   File srcTestErlang;
 
   /**
-   * Directory where the erlang test include files reside.
-   * Default is: {@code src/test/include}.
+   * Directory where the erlang test include files reside. Default is:
+   * {@code src/test/include}.
    * 
    * @parameter expression="${basedir}/src/test/include"
    * @required
@@ -86,8 +85,8 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
   File targetTest;
 
   /**
-   * Directory to generate the EDoc report into.
-   * Default is: {@code target/site/doc}.
+   * Directory to generate the EDoc report into. Default is:
+   * {@code target/site/doc}.
    * 
    * @parameter expression="${project.reporting.outputDirectory}/doc"
    * @required
@@ -96,8 +95,8 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
   File targetSiteDoc;
 
   /**
-   * Directory to generate the EDoc test report into.
-   * Default is: {@code target/site/tes-doc}.
+   * Directory to generate the EDoc test report into. Default is:
+   * {@code target/site/tes-doc}.
    * 
    * @parameter expression="${project.reporting.outputDirectory}/test-doc"
    * @required
@@ -106,9 +105,9 @@ abstract class AbstractErlangReport extends AbstractMavenReport {
   File targetSiteTestDoc;
 
   /**
-   * Directory to generate the coverage report into.
-   * Default is: {@code target/site}.
-   *
+   * Directory to generate the coverage report into. Default is:
+   * {@code target/site}.
+   * 
    * @parameter expression="${project.reporting.outputDirectory}"
    * @required
    * @readonly

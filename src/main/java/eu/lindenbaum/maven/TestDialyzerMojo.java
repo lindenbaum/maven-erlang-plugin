@@ -31,8 +31,8 @@ public final class TestDialyzerMojo extends AbstractDialyzerMojo {
   private boolean testUseDialyzer;
 
   /**
-   * Setting this to {@code true} will include the projects dependencies into the {@code dialyzer} run. Note:
-   * This may take very long.
+   * Setting this to {@code true} will include the projects dependencies into
+   * the {@code dialyzer} run. Note: This may take very long.
    * 
    * @parameter default-value=false
    */

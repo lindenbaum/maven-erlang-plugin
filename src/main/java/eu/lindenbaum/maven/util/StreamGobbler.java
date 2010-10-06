@@ -6,7 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Reads all input from an {@link InputStream} saving it into a (line based) buffer.
+ * Reads all input from an {@link InputStream} saving it into a (line based)
+ * buffer.
  */
 public final class StreamGobbler implements Runnable {
   private final InputStream inputStream;

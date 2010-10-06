@@ -41,7 +41,7 @@ public final class UnpackDependenciesMojo extends AbstractErlangMojo {
   }
 
   /**
-   * Extract a specific artifact (.zip file) into a specific directory. 
+   * Extract a specific artifact (.zip file) into a specific directory.
    * 
    * @param artifact to extract
    * @param unarchiver directory to extract the artifact into

@@ -35,8 +35,8 @@ import org.apache.maven.plugin.logging.Log;
  * {@link AbstractErlangMojo#srcTestErlang} directory.
  * </p>
  * <p>
- * The user can also choose to skip testing by specifying {@code -DskipTests}.
- * A test code coverage will automatically be applied. A report about the test
+ * The user can also choose to skip testing by specifying {@code -DskipTests}. A
+ * test code coverage will automatically be applied. A report about the test
  * coverage may be created using the {@link CoverageReport}.
  * </p>
  * <p>
@@ -72,7 +72,8 @@ public final class TestMojo extends AbstractErlangMojo {
   private boolean skipTests;
 
   /**
-   * Setting this to {@code true} will break the build if there are no tests to run.
+   * Setting this to {@code true} will break the build if there are no tests to
+   * run.
    * 
    * @parameter default-value=false
    */

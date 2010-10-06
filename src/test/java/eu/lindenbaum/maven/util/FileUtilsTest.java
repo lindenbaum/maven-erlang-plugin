@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class FileUtilsTest {
   @Test
-  public void testGetFilesRecursive() throws Exception {
+  public void testGetFilesRecursive() {
     URL resource = getClass().getClassLoader().getResource("file-utils");
     File root = new File(resource.getFile());
     List<File> files = FileUtils.getFilesRecursive(root, ".txt");
@@ -23,7 +23,7 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void testGetDirectoriesRecursive() throws Exception {
+  public void testGetDirectoriesRecursive() {
     URL resource = getClass().getClassLoader().getResource("file-utils");
     File root = new File(resource.getFile());
     List<File> files = FileUtils.getDirectoriesRecursive(root, new FileFilter() {
@@ -36,7 +36,7 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void testGetFilesAndDirectoriesRecursive() throws Exception {
+  public void testGetFilesAndDirectoriesRecursive() {
     URL resource = getClass().getClassLoader().getResource("file-utils");
     File root = new File(resource.getFile());
     List<File> files = FileUtils.getFilesAndDirectoriesRecursive(root, FileUtils.NULL_FILTER);
@@ -44,7 +44,7 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void testOtpDirectoryRegex() throws Exception {
+  public void testOtpDirectoryRegex() {
     assertTrue(FileUtils.APP_PATTERN.matcher("test-path/app-1.0/ebin").matches());
     assertTrue(FileUtils.APP_PATTERN.matcher("path/app-1.0/ebin").matches());
     assertFalse(FileUtils.APP_PATTERN.matcher("path/app/ebin").matches());
@@ -52,7 +52,7 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void testGetDependencies() throws Exception {
+  public void testGetDependencies() {
     URL resource = getClass().getClassLoader().getResource("file-utils");
     File root = new File(resource.getFile());
     List<File> files = FileUtils.getDependencies(root);

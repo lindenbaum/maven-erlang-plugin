@@ -31,7 +31,8 @@ abstract class AbstractCompilerMojo extends AbstractErlangMojo {
    * @param includeDir optional additional include directory, maybe {@code null}
    * @param inputSuffix suffix of source files
    * @param outputSuffix suffix of comiled artifacts
-   * @param options optional compiler options to be passed to the compiler, maybe {@code null}
+   * @param options optional compiler options to be passed to the compiler,
+   *          maybe {@code null}
    * @return number of compiled files
    * @throws MojoFailureException
    * @throws MojoExecutionException
@@ -67,7 +68,8 @@ abstract class AbstractCompilerMojo extends AbstractErlangMojo {
    * 
    * @param outputDir output directory for artifacts
    * @param include optional additional include path, maybe {@code null}
-   * @param options optional compiler options to be passed to the compiler, maybe {@code null}
+   * @param options optional compiler options to be passed to the compiler,
+   *          maybe {@code null}
    * @param sources list of sources to compile
    * @return the constructed command line array
    */

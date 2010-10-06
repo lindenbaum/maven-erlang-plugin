@@ -22,6 +22,7 @@ import org.apache.maven.plugin.logging.Log;
  * in a shell. Therefore an erlang shell with {@code sasl} is started and the
  * application is started using {@code application:start/1}. To package and
  * startthe application simply use
+ * 
  * <pre>
  * mvn erlang:run
  * </pre>
@@ -62,9 +63,9 @@ public final class RunMojo extends AbstractErlangMojo {
   }
 
   /**
-   * Executes the given command using a {@link ProcessBuilder} and blocks
-   * until the command completed. All input from stdin will be redirected into
-   * the process while the process output is mirrored onto stdout. 
+   * Executes the given command using a {@link ProcessBuilder} and blocks until
+   * the command completed. All input from stdin will be redirected into the
+   * process while the process output is mirrored onto stdout.
    * 
    * @param log logger to use
    * @param command command to run interactively
@@ -91,6 +92,7 @@ public final class RunMojo extends AbstractErlangMojo {
             }
           }
           catch (IOException e) {
+            // ignored
           }
         }
       });
@@ -109,6 +111,7 @@ public final class RunMojo extends AbstractErlangMojo {
             }
           }
           catch (IOException e) {
+            // ignored
           }
         }
       });

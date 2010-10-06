@@ -3,6 +3,7 @@ package eu.lindenbaum.maven.util;
 import static eu.lindenbaum.maven.util.ErlConstants.APPUP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.APP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.BEAM_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.EBIN_DIRECTORY;
 import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.FUNCS_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.HRL_SUFFIX;
@@ -41,31 +42,37 @@ import org.codehaus.plexus.util.SelectorUtils;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class FileUtils {
-  static final String R = ".*" + File.separator + "(.+)-([\\d\\.]+)(-SNAPSHOT)?" + File.separator + "ebin$";
-  static final Pattern APP_PATTERN = Pattern.compile(R);
+  static final String APP_STRING = ".*" + File.separator + "(.+)-([\\d\\.]+)(-SNAPSHOT)?" + File.separator
+                                   + EBIN_DIRECTORY + "$";
+  static final Pattern APP_PATTERN = Pattern.compile(APP_STRING);
 
   /**
-   * Filename filter to filter source files (.erl & .hrl). Directories are always accepted.
+   * Filename filter to filter source files (.erl & .hrl). Directories are
+   * always accepted.
    */
   public static final FileFilter SOURCE_FILTER = getSuffixFilter(new String[]{ HRL_SUFFIX, ERL_SUFFIX });
 
   /**
-   * Filename filter to filter app files (.app & .appup). Directories are always accepted.
+   * Filename filter to filter app files (.app & .appup). Directories are always
+   * accepted.
    */
   public static final FileFilter APP_FILTER = getSuffixFilter(new String[]{ APP_SUFFIX, APPUP_SUFFIX });
 
   /**
-   * Filename filter to filter rel files (.rel). Directories are always accepted.
+   * Filename filter to filter rel files (.rel). Directories are always
+   * accepted.
    */
   public static final FileFilter REL_FILTER = getSuffixFilter(new String[]{ REL_SUFFIX });
 
   /**
-   * Filename filter to filter app files (.app & .appup). Directories are always accepted.
+   * Filename filter to filter app files (.app & .appup). Directories are always
+   * accepted.
    */
   public static final FileFilter SNMP_FILTER = getSuffixFilter(new String[]{ MIB_SUFFIX, FUNCS_SUFFIX });
 
   /**
-   * Filename filter to filter app files (.app & .appup). Directories are always accepted.
+   * Filename filter to filter app files (.app & .appup). Directories are always
+   * accepted.
    */
   public static final FileFilter BEAM_FILTER = getSuffixFilter(new String[]{ BEAM_SUFFIX });
 
@@ -112,7 +119,8 @@ public final class FileUtils {
    * be excluded.
    * 
    * @param root directory to start recursion from
-   * @param suffix file extension to match, can be e.g. eiter {@code ".erl"} or {@code "erl"}
+   * @param suffix file extension to match, can be e.g. eiter {@code ".erl"} or
+   *          {@code "erl"}
    * @return a {@link List} of found files
    */
   public static List<File> getFilesRecursive(File root, final String suffix) {
@@ -141,8 +149,8 @@ public final class FileUtils {
   }
 
   /**
-   * Removes all files ending with a specific suffix recursively from a directory.
-   * By default patterns from
+   * Removes all files ending with a specific suffix recursively from a
+   * directory. By default patterns from
    * {@link org.codehaus.plexus.util.FileUtils#getDefaultExcludes()} will always
    * be excluded.
    * 
@@ -171,6 +179,7 @@ public final class FileUtils {
       org.codehaus.plexus.util.FileUtils.deleteDirectory(directory);
     }
     catch (IOException e) {
+      // ignore
     }
   }
 
@@ -260,7 +269,7 @@ public final class FileUtils {
       FileFilter filter = new FileFilter() {
         @Override
         public boolean accept(File dir) {
-          return "ebin".equals(dir.getName()) && APP_PATTERN.matcher(dir.getAbsolutePath()).matches();
+          return EBIN_DIRECTORY.equals(dir.getName()) && APP_PATTERN.matcher(dir.getAbsolutePath()).matches();
         }
       };
       return getDirectoriesRecursive(root, filter);
@@ -356,8 +365,8 @@ public final class FileUtils {
   }
 
   /**
-   * Extracts all files from a .jar file matching the given file suffix into
-   * a directory.
+   * Extracts all files from a .jar file matching the given file suffix into a
+   * directory.
    * 
    * @param archive the jar archive to extract files from
    * @param suffix of files to be extracted

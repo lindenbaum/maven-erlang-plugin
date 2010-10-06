@@ -29,7 +29,8 @@ public final class TarGzUnarchiver {
   }
 
   /**
-   * Returns this unarchivers destination directory. No matter if existing or not.
+   * Returns this unarchivers destination directory. No matter if existing or
+   * not.
    * 
    * @return this unarchivers destination directory
    */
@@ -42,8 +43,8 @@ public final class TarGzUnarchiver {
    * 
    * @param archive to extract
    * @throws IOException in case the archive does not exist or the destination
-   *         directory cannot be created or is not a directory or {@code erl_tar}
-   *         ends with errors.
+   *           directory cannot be created or is not a directory or
+   *           {@code erl_tar} ends with errors.
    */
   public void extract(File archive) throws IOException {
     if (archive.isFile()) {

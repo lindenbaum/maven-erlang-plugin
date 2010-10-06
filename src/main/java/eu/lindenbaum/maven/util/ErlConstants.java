@@ -90,12 +90,14 @@ public interface ErlConstants {
   public static final String DIALYZER_OK = ".dialyzer.ok";
 
   /**
-   * Type of artifacts for applications, i.e. zip archive containing an erlang-otp application.
+   * Type of artifacts for applications, i.e. zip archive containing an
+   * erlang-otp application.
    */
   public static final String ARTIFACT_TYPE_OTP = "erlang-otp";
 
   /**
-   * Type of artifacts for releases, i.e. tar gz archive containing an erlang-otp release.
+   * Type of artifacts for releases, i.e. tar gz archive containing an
+   * erlang-otp release.
    */
   public static final String ARTIFACT_TYPE_REL = "erlang-rel";
 
@@ -103,6 +105,16 @@ public interface ErlConstants {
    * Name of the directory that contains the beam files.
    */
   public static final String EBIN_DIRECTORY = "ebin";
+
+  /**
+   * Name of the directory that contains the beam files.
+   */
+  public static final String MIBS_DIRECTORY = "mibs";
+
+  /**
+   * Name of the directory that contains the beam files.
+   */
+  public static final String PRIV_DIRECTORY = "priv";
 
   /**
    * Name of the directory that contains the include files.

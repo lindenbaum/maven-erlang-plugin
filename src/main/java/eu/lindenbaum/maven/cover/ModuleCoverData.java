@@ -23,8 +23,8 @@ public final class ModuleCoverData {
 
   /**
    * Constructor from a name.
-   *
-   * @param moduleName  name of the module.
+   * 
+   * @param moduleName name of the module.
    */
   public ModuleCoverData(String moduleName) {
     this.moduleName = moduleName;
@@ -46,9 +46,9 @@ public final class ModuleCoverData {
 
   /**
    * Fill the module cover data with function data.
-   *
-   * @param inFunction    identifier of the function (name/arity).
-   * @param inUnit        cover data for the function.
+   * 
+   * @param inFunction identifier of the function (name/arity).
+   * @param inUnit cover data for the function.
    */
   public void putFunctionCoverData(String inFunction, CoverUnit inUnit) {
     this.functionCoverData.put(inFunction, new FunctionCoverData(inFunction, inUnit));
@@ -56,9 +56,9 @@ public final class ModuleCoverData {
 
   /**
    * Fill the module cover data with function data.
-   *
-   * @param inFunction    identifier for the function (name/arity).
-   * @param inCoverData   cover data for the function.
+   * 
+   * @param inFunction identifier for the function (name/arity).
+   * @param inCoverData cover data for the function.
    */
   public void putFunctionCoverData(String inFunction, FunctionCoverData inCoverData) {
     this.functionCoverData.put(inFunction, inCoverData);
@@ -66,8 +66,8 @@ public final class ModuleCoverData {
 
   /**
    * Get the coverage data for a given function.
-   *
-   * @param inFunction    identifier for the function (name/arity).
+   * 
+   * @param inFunction identifier for the function (name/arity).
    * @return the cover data for the function.
    */
   public FunctionCoverData getFunctionCoverData(String inFunction) {
@@ -76,7 +76,7 @@ public final class ModuleCoverData {
 
   /**
    * Get the coverage data for all functions.
-   *
+   * 
    * @return the set of the cover data for all functions.
    */
   public Collection<FunctionCoverData> getFunctionCoverData() {
@@ -85,9 +85,9 @@ public final class ModuleCoverData {
 
   /**
    * Fill the module cover data with line data.
-   *
-   * @param inLine        line considered.
-   * @param inCoverData   cover data for the line.
+   * 
+   * @param inLine line considered.
+   * @param inCoverData cover data for the line.
    */
   public void putLineCoverData(Integer inLine, List<CoverUnit> inCoverData) {
     this.lineCoverData.put(inLine, inCoverData);
@@ -95,8 +95,8 @@ public final class ModuleCoverData {
 
   /**
    * Get the coverage data for a given line.
-   *
-   * @param inLine        line considered.
+   * 
+   * @param inLine line considered.
    * @return the list of cover data units for this line.
    */
   public List<CoverUnit> getLineCoverData(Integer inLine) {
@@ -105,7 +105,7 @@ public final class ModuleCoverData {
 
   /**
    * Get the coverage data for all lines.
-   *
+   * 
    * @return a map with line numbers as keys and list of cover data as values.
    */
   public Map<Integer, List<CoverUnit>> getLineCoverData() {
@@ -114,7 +114,7 @@ public final class ModuleCoverData {
 
   /**
    * Return the name of the module.
-   *
+   * 
    * @return the name of the module.
    */
   public String getModuleName() {

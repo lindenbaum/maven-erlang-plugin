@@ -24,13 +24,12 @@ import org.apache.maven.reporting.MavenReportException;
 
 /**
  * Generates a test coverage report with: project summary, showing the number of
- * functions, clauses executable lines and their test coverage percentage. A 
- * module list with individual coverage reports and an extensive source code 
+ * functions, clauses executable lines and their test coverage percentage. A
+ * module list with individual coverage reports and an extensive source code
  * report, with lines annotated in red or green, showing the exact coverage.
  * 
  * @goal coverage
  * @execute phase="test" lifecycle="coverage"
- * 
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public class CoverageReport extends AbstractErlangReport {
@@ -43,7 +42,7 @@ public class CoverageReport extends AbstractErlangReport {
   volatile CoverData coverData;
 
   /**
-   * @throws MavenReportException  
+   * @throws MavenReportException
    */
   @Override
   protected void executeReport(Locale locale) throws MavenReportException {

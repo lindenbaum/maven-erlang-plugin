@@ -25,8 +25,9 @@ import org.junit.Test;
 public class CoverageReportTest {
   private static final Locale LOCALE = Locale.getDefault();
   private IMocksControl control;
-  private Sink sink;
-  private Log log;
+
+  Sink sink;
+  Log log;
 
   @Before
   public void setUp() {
@@ -190,7 +191,7 @@ public class CoverageReportTest {
         @Override
         public Log getLog() {
           return CoverageReportTest.this.log;
-        };
+        }
       }.executeReport(LOCALE);
       fail("MavenReportException expected");
     }
@@ -205,11 +206,11 @@ public class CoverageReportTest {
 
   @Test
   public void testGetOutputDirectory() {
-    String actual = (new LocalCoverageReport() {
+    String actual = new LocalCoverageReport() {
       {
         this.targetSiteCoverage = new File("actual");
       }
-    }).getOutputDirectory();
+    }.getOutputDirectory();
     assertTrue(actual.startsWith("/") && actual.endsWith("/actual"));
   }
 
@@ -244,7 +245,7 @@ public class CoverageReportTest {
       @Override
       public Log getLog() {
         return CoverageReportTest.this.log;
-      };
+      }
     }.canGenerateReport();
     assertEquals(false, actual);
     this.control.verify();

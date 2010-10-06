@@ -52,7 +52,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   MavenProject project;
 
   /**
-   * {@link ArtifactRepository} storing dependencies of this {@link MavenProject}.
+   * {@link ArtifactRepository} storing dependencies of this
+   * {@link MavenProject}.
    * 
    * @parameter expression="${localRepository}"
    * @required
@@ -62,8 +63,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
 
   /**
    * The base folder for sources of this project. This may be used to include
-   * sources from other languages into the erlang application.
-   * Default is: {@code src/main}.
+   * sources from other languages into the erlang application. Default is:
+   * {@code src/main}.
    * 
    * @parameter expression="${basedir}/src/main"
    * @required
@@ -74,8 +75,7 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   /**
    * Directory where the erlang source folder reside. It is also assumed that
    * the application specific application resource file and (if any) the release
-   * files are located here.
-   * Default is: {@code src/main/erlang}.
+   * files are located here. Default is: {@code src/main/erlang}.
    * 
    * @parameter expression="${basedir}/src/main/erlang"
    * @required
@@ -84,8 +84,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File srcMainErlang;
 
   /**
-   * Directory where the header files reside.
-   * Default is: {@code src/main/include}.
+   * Directory where the header files reside. Default is:
+   * {@code src/main/include}.
    * 
    * @parameter expression="${basedir}/src/main/include"
    * @required
@@ -94,8 +94,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File srcMainInclude;
 
   /**
-   * Directory where the private files reside.
-   * Default is: {@code src/main/priv}.
+   * Directory where the private files reside. Default is: {@code src/main/priv}
+   * .
    * 
    * @parameter expression="${basedir}/src/main/priv"
    * @required
@@ -104,8 +104,7 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File srcMainPriv;
 
   /**
-   * Directory where resources reside.
-   * Default is: {@code src/main/resources}.
+   * Directory where resources reside. Default is: {@code src/main/resources}.
    * 
    * @parameter expression="${basedir}/src/main/resources"
    * @required
@@ -114,8 +113,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File srcMainResources;
 
   /**
-   * Directory where the erlang test source files reside.
-   * Default is: {@code src/test/erlang}.
+   * Directory where the erlang test source files reside. Default is:
+   * {@code src/test/erlang}.
    * 
    * @parameter expression="${basedir}/src/test/erlang/"
    * @required
@@ -124,8 +123,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File srcTestErlang;
 
   /**
-   * Directory where the erlang test include files reside.
-   * Default is: {@code src/test/include}.
+   * Directory where the erlang test include files reside. Default is:
+   * {@code src/test/include}.
    * 
    * @parameter expression="${basedir}/src/test/include"
    * @required
@@ -134,8 +133,7 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File srcTestInclude;
 
   /**
-   * Base directory for the build artifacts.
-   * Default is: {@code target}.
+   * Base directory for the build artifacts. Default is: {@code target}.
    * 
    * @parameter expression="${project.build.directory}"
    * @required
@@ -144,8 +142,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File target;
 
   /**
-   * Directories where dependencies are unpacked.
-   * Default is: {@code target/lib}.
+   * Directories where dependencies are unpacked. Default is: {@code target/lib}
+   * .
    * 
    * @parameter expression="${project.build.directory}/lib/"
    * @required
@@ -154,8 +152,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File targetLib;
 
   /**
-   * Directory where the compiled sources will be placed into.
-   * Default is: {@code target/ebin}.
+   * Directory where the compiled sources will be placed into. Default is:
+   * {@code target/ebin}.
    * 
    * @parameter expression="${project.build.directory}/ebin/"
    * @required
@@ -164,8 +162,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File targetEbin;
 
   /**
-   * Directory where generated includes will be put into.
-   * Default is: {@code target/include}.
+   * Directory where generated includes will be put into. Default is:
+   * {@code target/include}.
    * 
    * @parameter expression="${project.build.directory}/include"
    * @required
@@ -174,8 +172,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File targetInclude;
 
   /**
-   * Directory where private resources will be put into.
-   * Default is: {@code target/priv}.
+   * Directory where private resources will be put into. Default is:
+   * {@code target/priv}.
    * 
    * @parameter expression="${project.build.directory}/priv"
    * @required
@@ -194,8 +192,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File targetTest;
 
   /**
-   * Directory where SNMP related resources will be put into.
-   * Default is: {@code target/mibs}.
+   * Directory where SNMP related resources will be put into. Default is:
+   * {@code target/mibs}.
    * 
    * @parameter expression="${project.build.directory}/mibs"
    * @required
@@ -204,8 +202,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File targetMibs;
 
   /**
-   * Directories where all releases will be put into.
-   * Default is: {@code target/releases}.
+   * Directories where all releases will be put into. Default is:
+   * {@code target/releases}.
    * 
    * @parameter expression="${project.build.directory}/releases"
    * @required
@@ -214,8 +212,8 @@ abstract class AbstractErlangMojo extends AbstractMojo {
   File targetReleases;
 
   /**
-   * Directory where the surefire reports will be put into.
-   * Default is: {@code target/surefire}.
+   * Directory where the surefire reports will be put into. Default is:
+   * {@code target/surefire}.
    * 
    * @parameter expression="${project.build.directory}/surefire"
    * @required

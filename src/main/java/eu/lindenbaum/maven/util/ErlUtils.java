@@ -45,7 +45,8 @@ public final class ErlUtils {
    * @param log logger
    * @param expression the expression to evaluate.
    * @param libPaths list of paths to add to the path, maybe {@code null}
-   * @param workingDir the working directory for the spawned process, maybe {@code null}
+   * @param workingDir the working directory for the spawned process, maybe
+   *          {@code null}
    * @return the output of the erl interpreter.
    */
   public static String eval(final Log log, String expression, List<File> libPaths, File workingDir) throws MojoExecutionException,
@@ -79,12 +80,14 @@ public final class ErlUtils {
   }
 
   /**
-   * Executes the given command array in the given working directory. After process completion the given
-   * {@link Observer} is notfied to process the result.
+   * Executes the given command array in the given working directory. After
+   * process completion the given {@link Observer} is notfied to process the
+   * result.
    * 
    * @param command to execute
    * @param log used to log errors
-   * @param workingDir the working directory for the spawned process, maybe {@code null}
+   * @param workingDir the working directory for the spawned process, maybe
+   *          {@code null}
    * @param observer to be notified on process completion
    */
   public static String exec(List<String> commands, final Log log, File workingDir, Observer observer) throws MojoExecutionException,

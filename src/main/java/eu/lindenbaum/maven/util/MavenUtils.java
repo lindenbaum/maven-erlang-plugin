@@ -19,8 +19,8 @@ import org.apache.maven.project.MavenProject;
  */
 public final class MavenUtils {
   /**
-   * Returns an (existing) file pointing to a plugin {@link Artifact} used by
-   * a {@link MavenProject} from a {@link ArtifactRepository}.  
+   * Returns an (existing) file pointing to a plugin {@link Artifact} used by a
+   * {@link MavenProject} from a {@link ArtifactRepository}.
    * 
    * @param artifactId to lookup in the project
    * @param project to scan for the plugin {@link Artifact}
@@ -48,7 +48,7 @@ public final class MavenUtils {
 
   /**
    * Returns an (existing) file pointing to an {@link Artifact} of an
-   * {@link ArtifactRepository}.  
+   * {@link ArtifactRepository}.
    * 
    * @param artifact to lookup in the repository
    * @param repository to scan for the artifact
@@ -84,7 +84,7 @@ public final class MavenUtils {
 
   /**
    * Returns the release name for the given {@link Artifact}. The release name
-   * consists of the artifacts id and its version. 
+   * consists of the artifacts id and its version.
    * 
    * @param artifact to retrieve the release name from
    * @return a string containing the release name
