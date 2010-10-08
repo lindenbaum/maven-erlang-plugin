@@ -1,5 +1,7 @@
 package eu.lindenbaum.maven;
 
+import static eu.lindenbaum.maven.util.ErlConstants.MIBS_DIRECTORY;
+import static eu.lindenbaum.maven.util.ErlConstants.PRIV_DIRECTORY;
 import static eu.lindenbaum.maven.util.ErlConstants.SRC_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.TARGZ_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlUtils.eval;
@@ -56,7 +58,7 @@ public final class PackageReleaseMojo extends AbstractErlangMojo {
     command.append(", [");
     command.append("{outdir, \"");
     command.append(this.target.getPath());
-    command.append("\"}, {dirs, [mibs, include");
+    command.append("\"}, {dirs, [" + MIBS_DIRECTORY + ", " + PRIV_DIRECTORY);
     Collection<String> folders = getAdditionalFolders(this.targetLib);
     for (String folder : folders) {
       command.append(",");
@@ -71,7 +73,7 @@ public final class PackageReleaseMojo extends AbstractErlangMojo {
     }
     command.append("]");
     command.append("), StatusCode = case Status of ok -> 0; _ -> 1 end, erlang:halt(StatusCode).");
-    String result = eval(getLog(), command.toString(), getDependencies(this.targetLib), this.targetEbin);
+    String result = eval(log, command.toString(), getDependencies(this.targetLib), this.targetEbin);
     if (result != null && !result.isEmpty()) {
       log.info("make_tar returned " + result);
     }
@@ -81,14 +83,14 @@ public final class PackageReleaseMojo extends AbstractErlangMojo {
   /**
    * Returns a {@link Collection} with additional folders to include in the
    * package .tar.gz. This will include all non-erlang source folders into the
-   * package.  
+   * package.
    * 
    * @param root to start the scan in
    * @return a {@link Collection} with folders to include
    */
-  private Collection<String> getAdditionalFolders(File root) {
+  private static Collection<String> getAdditionalFolders(File root) {
     Set<String> folders = new HashSet<String>();
-    for (File dir : getDirectoriesRecursive(this.targetLib, new FileFilter() {
+    for (File dir : getDirectoriesRecursive(root, new FileFilter() {
       @Override
       public boolean accept(File dir) {
         return dir.getName().endsWith(SRC_SUFFIX);
@@ -101,7 +103,7 @@ public final class PackageReleaseMojo extends AbstractErlangMojo {
 
   /**
    * Returns the release name for the given {@link Artifact}. The release name
-   * consists of the artifacts id and its version. 
+   * consists of the artifacts id and its version.
    * 
    * @param artifact to retrieve the release name from
    * @return a string containing the release name

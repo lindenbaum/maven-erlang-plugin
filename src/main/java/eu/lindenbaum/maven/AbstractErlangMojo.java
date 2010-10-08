@@ -215,9 +215,9 @@ abstract class AbstractErlangMojo extends AbstractMojo {
    * Directory where the surefire reports will be put into. Default is:
    * {@code target/surefire}.
    * 
-   * @parameter expression="${project.build.directory}/surefire"
+   * @parameter expression="${project.build.directory}/surefire-reports"
    * @required
    * @readonly
    */
-  File targetSurefire;
+  File targetSurefireReports;
 }

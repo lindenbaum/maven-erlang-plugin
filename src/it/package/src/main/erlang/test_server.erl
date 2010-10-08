@@ -10,6 +10,8 @@
 
 -behaviour(gen_server).
 
+-registered([?MODULE]).
+
 %% API
 -export([start_link/0, test/1, current_time_millis/0]).
 

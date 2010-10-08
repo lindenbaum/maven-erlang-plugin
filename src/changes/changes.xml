@@ -4,6 +4,12 @@
   </properties>
   <body>
     <release version="1.0.0" date="TBA" description="Initial release">
+      <action dev="schlagert" type="add">
+        New (fixed) surefire report generation.
+      </action>
+      <action dev="schlagert" type="add">
+        Release file generation support.
+      </action>
       <action dev="olle-t" type="add">
         Added initial site documentation, generation of plugin-docs, changes
         and some development/contribution information.
@@ -25,7 +31,7 @@
         be able to support the maven-release plugin to manage project versioning.
       </action>
       <action dev="schlagert" type="add">
-        Added possibility to include non-erlang sources into applicatio packages.
+        Added possibility to include non-erlang sources into application packages.
       </action>
       <action dev="schlagert" type="fix">
         Different problems with release packaging.

@@ -39,14 +39,6 @@ import org.apache.maven.plugin.logging.Log;
  * test code coverage will automatically be applied. A report about the test
  * coverage may be created using the {@link CoverageReport}.
  * </p>
- * <p>
- * BUG It is known that the eunit_surefire module has problems generating
- * suitable data when mutliple test modules are given to eunit:test/2.
- * </p>
- * <p>
- * BUG It is known that the eunit_surefire module has problems generating
- * suitable data when a test module contains only one test case.
- * </p>
  * 
  * @goal test
  * @phase test
@@ -91,7 +83,7 @@ public final class TestMojo extends AbstractErlangMojo {
     }
     else {
 
-      this.targetSurefire.mkdirs();
+      this.targetSurefireReports.mkdirs();
       File coverageDataFile = new File(this.targetTest, COVERDATA_BIN);
       coverageDataFile.delete();
 
@@ -173,10 +165,11 @@ public final class TestMojo extends AbstractErlangMojo {
   private List<String> getCommandLine(List<String> modules) {
     String eunitExpr = "eunit:test(" //  
                        + modules.toString() //
-                       + ", [{order, inorder}, "//
-                       + "{report,{eunit_surefire,[{dir,\"" //
-                       + this.targetSurefire.getPath()//
-                       + "\"}]}}]).";
+                       + ", [{report,{surefire,[{dir,\"" //
+                       + this.targetSurefireReports.getPath()//
+                       + "\"}, {package, \""//
+                       + this.project.getArtifactId() //
+                       + ".\"}]}}]).";
 
     List<String> command = new ArrayList<String>();
     command.add(ERL);

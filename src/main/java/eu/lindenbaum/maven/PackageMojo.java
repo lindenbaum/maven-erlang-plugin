@@ -3,6 +3,10 @@ package eu.lindenbaum.maven;
 import static eu.lindenbaum.maven.util.ErlConstants.APPUP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.APP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.BEAM_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.EBIN_DIRECTORY;
+import static eu.lindenbaum.maven.util.ErlConstants.INCLUDE_DIRECTORY;
+import static eu.lindenbaum.maven.util.ErlConstants.MIBS_DIRECTORY;
+import static eu.lindenbaum.maven.util.ErlConstants.PRIV_DIRECTORY;
 import static eu.lindenbaum.maven.util.ErlConstants.SRC_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.TARGZ_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlUtils.eval;
@@ -11,8 +15,7 @@ import static eu.lindenbaum.maven.util.FileUtils.NULL_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.SNMP_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.SOURCE_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
-import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
-import static eu.lindenbaum.maven.util.FileUtils.getDirectoriesRecursive;
+import static eu.lindenbaum.maven.util.FileUtils.getFilesAndDirectoriesRecursive;
 import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
 import static eu.lindenbaum.maven.util.FileUtils.removeDirectory;
 import static org.codehaus.plexus.util.FileUtils.fileWrite;
@@ -45,44 +48,46 @@ import org.apache.maven.plugin.logging.Log;
  * Besides that this {@link Mojo} also copies the erlang application resource
  * file. In order to manage the project over the project pom there is the
  * possibility to let the {@link Mojo} automatically fill in values from the
- * project pom into the {@code .app} file. This can be done by placing
- * placeholders into the application resource files. Below is a list of
- * possible placeholders and their substitutions:
+ * project pom into the {@code .app} file. This can be done by using one of the
+ * supported variables into the application resource files. Below is a list of
+ * supported variables and their substitutions:
  * </p>
  * <ul>
- * <li>{@code ?ARTIFACT}: the projects artifact id</li>
- * <li>{@code ?DESCRIPTION}: the projects description</li>
- * <li>{@code ?ID}: the projects id</li>
- * <li>{@code ?VERSION}: the projects version</li>
- * <li>{@code ?MODULES}: all compiled {@code .beam} files found in the target ebin folder</li>
- * <li>{@code ?REGISTERED}: a list of registered names, based on the
- * {@code -registered(Names).} attribute retrieved from the compiled {@code .beam}
- * files.</li>
+ * <li><code>${ARTIFACT}</code>: the projects artifact id (atom)</li>
+ * <li><code>${DESCRIPTION}</code>: the projects description (string)</li>
+ * <li><code>${ID}</code>: the projects id (string)</li>
+ * <li><code>${VERSION}</code>: the projects version (string)</li>
+ * <li><code>${MODULES}</code>: all compiled {@code .beam} files found in the
+ * target ebin folder (list)</li>
+ * <li><code>${REGISTERED}</code>: all registered names, based on the
+ * {@code -registered(Names).} attribute retrieved from the compiled
+ * {@code .beam} files (list)</li>
  * </ul>
  * <p>
  * In case there is no application resouce file specified the {@link Mojo} will
- * try to generate a default {@code .app} file for you. A default app file
- * would look like this: 
+ * generate a default {@code .app} file which looks like this:
  * </p>
+ * 
  * <pre>
- * {application, ?ARTIFACT,
- *   [{description, ?DESCRIPTION},
- *    {id, ?ID},
- *    {vsn, ?VERSION},
- *    {modules, ?MODULES},
+ * {application, ${ARTIFACT},
+ *   [{description, ${DESCRIPTION}},
+ *    {id, ${ID}},
+ *    {vsn, ${VERSION}},
+ *    {modules, ${MODULES}},
  *    {maxT, infinity},
- *    {registered, ?REGISTERED},
+ *    {registered, ${REGISTERED}},
  *    {included_applications, []},
  *    {applications, []},
  *    {env, []},
- *    {mod, []},
+ *    {mod, undefined},
  *    {start_phases, []}]}.
  * </pre>
  * <p>
- * In case the user decides to provide its own application resource and upgrade
- * files these will be checked for plausability by checking the application
- * version against the project version and checking the application modules
- * against the found, compiled modules.
+ * The resulting application resource file as well as the application upgrade
+ * file will be checked for plausability regardless if generated or not. This is
+ * done by checking the application version against the project version,
+ * checking the application modules against the found compiled modules as well
+ * as checking the application's start module.
  * </p>
  * 
  * @goal package
@@ -92,45 +97,51 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class PackageMojo extends AbstractErlangMojo {
   private static final String EXTRACT_VERSION = //
-  "{ok, List} = file:consult(\"%s\"), " //
-      + "{value, {application, %s, Properties}} = lists:keysearch(%s, 2, List), " //
+  " " + "{ok, [{application, \'%s\', Properties}]} = file:consult(\"%s\"), " //
       + "{value, {vsn, Version}} = lists:keysearch(vsn, 1, Properties), " //
       + "io:format(Version), io:nl().";
 
   private static final String EXTRACT_MODULES = //
-  "{ok, List} = file:consult(\"%s\"), "
-      + "{value, {application, %s, Properties}} = lists:keysearch(%s, 2, List), "
-      + "{value, {modules, M}} = lists:keysearch(modules, 1, Properties), "
-      + "Mods = lists:foldl(fun(Mod, Acc) -> Acc ++ io_lib:format(\"~s \", [Mod]) end, \"\", M), "
-      + "io:format(\"~s\", [Mods]), io:nl().";
+  " " + "{ok, [{application, \'%s\', Properties}]} = file:consult(\"%s\"), " //
+      + "{value, {modules, M}} = lists:keysearch(modules, 1, Properties), " //
+      + "Mods = lists:foldl(fun(Mod, Acc) -> Acc ++ io_lib:format(\"~s \", [Mod]) end, \"\", M), " //
+      + "io:format(Mods), io:nl().";
+
+  private static final String EXTRACT_START_MODULE = //
+  " " + "{ok, [{application, \'%s\', Properties}]} = file:consult(\"%s\"), " //
+      + "case proplists:get_value(mod, Properties) of" //
+      + "  undefined -> ok;" //
+      + "  {Module, _} -> io:format(\"~p\", [Module]), io:nl()" //
+      + "end.";
 
   private static final String CHECK_APPUP = //
-  "{ok, List} = file:consult(\"%s\"), "
-      + "{value, {\"%s\", UpFrom, DownTo}} = lists:keysearch(\"%s\", 1, List), "
-      + "lists:foreach(fun({Version, ProcList}) -> "
-      + "  lists:foreach(fun(ProcElement) -> true = is_tuple(ProcElement) end, ProcList) "
-      + "end, UpFrom ++ DownTo)," + "io:format(\"ok\"), io:nl().";
+  " " + "{ok, [{\"%s\", UpFrom, DownTo}]} = file:consult(\"%s\"), " //
+      + "lists:foreach(fun({_, Instructions}) -> " //
+      + "  lists:foreach(fun(E) -> true = is_tuple(E) end," //
+      + "Instructions) end, UpFrom ++ DownTo)," //
+      + "io:format(\"ok\"), io:nl().";
 
   private static final String EXTRACT_ATTRIBUTE = //
-  "Attr = lists:foldl(fun(Module, Acc) ->" //
+  " " + "Attr = lists:foldl(fun(Module, Acc) ->" //
       + "A = Module:module_info(attributes)," //
-      + "case proplists:get_value(%s, A) of" //
+      + "case proplists:get_value(\'%s\', A) of" //
       + "  undefined -> Acc;" + "  Registered -> [Registered | Acc]" //
       + "end end, [], %s)," //
-      + "io:format(\"~p\", [lists:flatten(Attr)]),io:nl().";
+      + "io:format(\"~p\", [lists:flatten(Attr)]), io:nl().";
 
-  private static final String DEFAULT_APP = "{application, ?ARTIFACT,\n" //
-                                            + "  [{description,  ?DESCRIPTION},\n" //
-                                            + "   {id, ?ID},\n" //
-                                            + "   {vsn, ?VERSION},\n" //
-                                            + "   {modules, ?MODULES},\n" //
-                                            + "   {maxT, infinity},\n" //
-                                            + "   {registered, ?REGISTERED},\n" //
-                                            + "   {included_applications, []},\n" //
-                                            + "   {applications, []},\n" //
-                                            + "   {env, []},\n" //
-                                            + "   {mod, []},\n" //
-                                            + "   {start_phases, []}]}.\n";
+  private static final String DEFAULT_APP = //
+  "{application, ${ARTIFACT},\n" //
+      + "  [{description,  ${DESCRIPTION}},\n" //
+      + "   {id, ${ID}},\n" //
+      + "   {vsn, ${VERSION}},\n" //
+      + "   {modules, ${MODULES}},\n" //
+      + "   {maxT, infinity},\n" //
+      + "   {registered, ${REGISTERED}},\n" //
+      + "   {included_applications, []},\n" //
+      + "   {applications, []},\n" //
+      + "   {env, []},\n" //
+      + "   {mod, undefined},\n" //
+      + "   {start_phases, []}]}.\n";
 
   /**
    * Setting this to {@code true} will break the build when the application file
@@ -152,12 +163,12 @@ public final class PackageMojo extends AbstractErlangMojo {
     // prepare and copy .app and .appup files
     String modules = getModules(this.targetEbin);
     Map<String, String> replacements = new HashMap<String, String>();
-    replacements.put("?ARTIFACT", "\'" + this.project.getArtifactId() + "\'");
-    replacements.put("?DESCRIPTION", "\"" + this.project.getDescription() + "\"");
-    replacements.put("?ID", "\"" + this.project.getId() + "\"");
-    replacements.put("?VERSION", "\"" + this.project.getVersion() + "\"");
-    replacements.put("?MODULES", modules);
-    replacements.put("?REGISTERED", getRegisteredNames(modules));
+    replacements.put("${ARTIFACT}", "\'" + this.project.getArtifactId() + "\'");
+    replacements.put("${DESCRIPTION}", "\"" + this.project.getDescription() + "\"");
+    replacements.put("${ID}", "\"" + this.project.getId() + "\"");
+    replacements.put("${VERSION}", "\"" + this.project.getVersion() + "\"");
+    replacements.put("${MODULES}", modules);
+    replacements.put("${REGISTERED}", getRegisteredNames(modules));
     File srcAppFile = new File(this.srcMainErlang, this.project.getArtifactId() + APP_SUFFIX);
     if (!srcAppFile.exists()) {
       try {
@@ -172,20 +183,23 @@ public final class PackageMojo extends AbstractErlangMojo {
 
     // package all otp standard resources
     copy(this.srcMainErlang, new File(tmpDir, "src"), SOURCE_FILTER, "source");
-    copy(this.targetEbin, new File(tmpDir, "ebin"), NULL_FILTER, "");
-    copy(this.srcMainInclude, new File(tmpDir, "include"), SOURCE_FILTER, "include");
-    copy(this.targetPriv, new File(tmpDir, "priv"), NULL_FILTER, "private");
-    copy(this.targetMibs, new File(tmpDir, "mibs"), SNMP_FILTER, "SNMP");
+    copy(this.targetEbin, new File(tmpDir, EBIN_DIRECTORY), NULL_FILTER, "");
+    copy(this.srcMainInclude, new File(tmpDir, INCLUDE_DIRECTORY), SOURCE_FILTER, "include");
+    copy(this.targetPriv, new File(tmpDir, PRIV_DIRECTORY), NULL_FILTER, "private");
+    copy(this.targetMibs, new File(tmpDir, MIBS_DIRECTORY), SNMP_FILTER, "SNMP");
 
     // package non erlang source folders, e.g. c, java, ... into c_src, java_src, ...
-    List<File> sources = getDirectoriesRecursive(this.srcMain, new FileFilter() {
+    FileFilter filter = new FileFilter() {
       @Override
       public boolean accept(File dir) {
-        return !dir.equals(PackageMojo.this.srcMainErlang) && !dir.equals(PackageMojo.this.srcMainInclude)
-               && !dir.equals(PackageMojo.this.srcMainPriv) && !dir.equals(PackageMojo.this.srcMainResources);
+        return dir.isDirectory() //
+               && !dir.equals(PackageMojo.this.srcMainErlang) //
+               && !dir.equals(PackageMojo.this.srcMainInclude) //
+               && !dir.equals(PackageMojo.this.srcMainPriv) //
+               && !dir.equals(PackageMojo.this.srcMainResources);
       }
-    });
-    for (File source : sources) {
+    };
+    for (File source : getFilesAndDirectoriesRecursive(this.srcMain, filter)) {
       copy(source, new File(tmpDir, source.getName() + SRC_SUFFIX), NULL_FILTER, "non-erlang source");
     }
 
@@ -194,6 +208,7 @@ public final class PackageMojo extends AbstractErlangMojo {
     if (appFile.exists()) {
       checkVersion(appFile);
       checkModules(appFile);
+      checkStartModule(appFile);
 
       File appUpFile = new File(this.targetEbin, this.project.getArtifactId() + APPUP_SUFFIX);
       if (appUpFile.exists()) {
@@ -220,8 +235,8 @@ public final class PackageMojo extends AbstractErlangMojo {
   }
 
   /**
-   * Copy the content of a directory to another one applying filtering and logging.
-   * If the target directory does not exist it will be created.
+   * Copy the content of a directory to another one applying filtering and
+   * logging. If the target directory does not exist it will be created.
    * 
    * @param srcDir to copy from
    * @param targetDir to copy to
@@ -234,9 +249,9 @@ public final class PackageMojo extends AbstractErlangMojo {
   }
 
   /**
-   * Copy the content of a directory to another one applying filtering and logging.
-   * If the target directory does not exist it will be created. If there were no
-   * files to copy the target directory will be removed.
+   * Copy the content of a directory to another one applying filtering and
+   * logging. If the target directory does not exist it will be created. If
+   * there were no files to copy the target directory will be removed.
    * 
    * @param srcDir to copy from
    * @param targetDir to copy to
@@ -265,8 +280,7 @@ public final class PackageMojo extends AbstractErlangMojo {
     Log log = getLog();
     String name = this.project.getArtifactId();
     String version = this.project.getVersion();
-    String expression = String.format(EXTRACT_VERSION, appFile.getPath(), name, name);
-    String appFileVersion = eval(log, expression, getDependencies(this.targetLib));
+    String appFileVersion = eval(log, String.format(EXTRACT_VERSION, name, appFile.getPath()));
     if (!version.equals(appFileVersion)) {
       log.error("Version mismatch.");
       log.error("Project version is " + version + " while " + APP_SUFFIX + " version is " + appFileVersion);
@@ -280,13 +294,13 @@ public final class PackageMojo extends AbstractErlangMojo {
    * 
    * @param appFile the erlang application resource file
    * @throws MojoExecutionException
-   * @throws MojoFailureException in case of undeclared modules, if {@link #failOnUndeclaredModules}
+   * @throws MojoFailureException in case of undeclared modules, if
+   *           {@link #failOnUndeclaredModules}
    */
   private void checkModules(File appFile) throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
     String name = this.project.getArtifactId();
-    String expression = String.format(EXTRACT_MODULES, appFile.getPath(), name, name);
-    String moduleStr = eval(log, expression, getDependencies(this.targetLib));
+    String moduleStr = eval(log, String.format(EXTRACT_MODULES, name, appFile.getPath()));
     Set<String> appModules = new HashSet<String>(Arrays.asList(moduleStr.split(" ")));
     Set<String> modules = new HashSet<String>();
     for (File beam : getFilesRecursive(this.targetEbin, BEAM_SUFFIX)) {
@@ -306,6 +320,33 @@ public final class PackageMojo extends AbstractErlangMojo {
   }
 
   /**
+   * Checks whether the start module of the project is correcty configured, by
+   * means whether the module exists and whether it implements the
+   * {@code application} behaviour.
+   * 
+   * @param appFile the erlang application upgrade file
+   * @throws MojoExecutionException
+   * @throws MojoFailureException in case of configuration problems with the
+   *           start module
+   */
+  private void checkStartModule(File appFile) throws MojoExecutionException, MojoFailureException {
+    Log log = getLog();
+    String name = this.project.getArtifactId();
+    String module = eval(log, String.format(EXTRACT_START_MODULE, name, appFile.getPath()));
+    if (module != null && !module.isEmpty()) {
+      File startModuleFile = new File(this.targetEbin, module + BEAM_SUFFIX);
+      if (!startModuleFile.isFile()) {
+        throw new MojoFailureException("Configured start module does not exist.");
+      }
+      String expression = String.format(EXTRACT_ATTRIBUTE, "behaviour", "[" + module + "]");
+      String behaviour = eval(log, expression, null, this.targetEbin);
+      if (!behaviour.contains("application")) {
+        throw new MojoFailureException("Configured start module does not implement the application behaviour");
+      }
+    }
+  }
+
+  /**
    * Checks the erlang application upgrade file for plausability.
    * 
    * @param appUpFile the erlang application upgrade file
@@ -315,8 +356,7 @@ public final class PackageMojo extends AbstractErlangMojo {
   private void checkAppUp(File appUpFile) throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
     String version = this.project.getVersion();
-    String expression = String.format(CHECK_APPUP, appUpFile.getPath(), version, version);
-    String result = eval(log, expression, getDependencies(this.targetLib));
+    String result = eval(log, String.format(CHECK_APPUP, version, appUpFile.getPath()));
     if (!"ok".equals(result)) {
       log.error("Issue with .appup file : " + result);
       throw new MojoFailureException("Invalid .appup file.");
@@ -337,7 +377,7 @@ public final class PackageMojo extends AbstractErlangMojo {
    */
   private String getRegisteredNames(String modules) throws MojoExecutionException, MojoFailureException {
     String expression = String.format(EXTRACT_ATTRIBUTE, "registered", modules);
-    return eval(getLog(), expression, getDependencies(this.targetLib), this.targetEbin);
+    return eval(getLog(), expression, null, this.targetEbin);
   }
 
   /**
@@ -354,7 +394,7 @@ public final class PackageMojo extends AbstractErlangMojo {
       if (i != 0) {
         modules.append(", ");
       }
-      modules.append(sources.get(i).getName().replace(BEAM_SUFFIX, ""));
+      modules.append("\'" + sources.get(i).getName().replace(BEAM_SUFFIX, "") + "\'");
     }
     modules.append("]");
     return modules.toString();

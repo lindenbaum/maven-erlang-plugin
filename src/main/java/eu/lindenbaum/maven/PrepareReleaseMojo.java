@@ -1,5 +1,6 @@
 package eu.lindenbaum.maven;
 
+import static eu.lindenbaum.maven.util.ErlConstants.EBIN_DIRECTORY;
 import static eu.lindenbaum.maven.util.ErlConstants.REL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlUtils.eval;
 import static eu.lindenbaum.maven.util.FileUtils.REL_FILTER;
@@ -9,8 +10,10 @@ import static eu.lindenbaum.maven.util.FileUtils.removeDirectory;
 import static eu.lindenbaum.maven.util.MavenUtils.getArtifact;
 import static eu.lindenbaum.maven.util.MavenUtils.getArtifactFile;
 import static eu.lindenbaum.maven.util.MavenUtils.getReleaseName;
+import static org.codehaus.plexus.util.FileUtils.fileWrite;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +40,37 @@ import org.apache.maven.plugin.logging.Log;
  * <p>
  * The builds can be customized by passing user options through the
  * {@link #scriptOptions} and {@link #relupOptions} parameters in the specific
- * project pom.
+ * project pom. In order to manage the project over the project pom there is the
+ * possibility to let the {@link Mojo} automatically fill in values from the
+ * project pom into the {@code .rel} file. This can be done by using one of the
+ * supported variables into the release file. Below is a list of supported
+ * variables and their substitutions:
+ * </p>
+ * <ul>
+ * <li><code>${ARTIFACT}</code>: the projects artifact id (atom)</li>
+ * <li><code>${VERSION}</code>: the projects version (string)</li>
+ * <li><code>${APPLICATIONS}</code>: a list of the project dependencies
+ * application and version tuples</li>
+ * <li><code>${<i>APPLICATION_NAME</i>}</code>: will be replaced by a string
+ * representing the available application version on this host</li>
+ * </ul>
+ * <p>
+ * In case there is no release file specified the {@link Mojo} will generate a
+ * default {@code .rel} file which looks like this:
+ * </p>
+ * 
+ * <pre>
+ * {release,\n"
+ *   {${ARTIFACT}, ${VERSION}},
+ *   {erts, ${ERTS}},
+ *   [{kernel, ${KERNEL}}, 
+ *    {stdlib, ${STDLIB}}] ++ ${APPLICATIONS}}.
+ * </pre>
+ * <p>
+ * The resulting release file will be checked for plausability regardless if
+ * generated or not. This is done by checking the release version against the
+ * project version and checking all dependency versions against the application
+ * versions in the release file.
  * </p>
  * <p>
  * In order to create the release downgrade/upgrade script the {@link Mojo} also
@@ -46,21 +79,7 @@ import org.apache.maven.plugin.logging.Log;
  * skipped.
  * </p>
  * <p>
- * This {@link Mojo} also checks the release file for plausability by checking
- * its version against the pom version and checking all dependency versions
- * against the application versions in the release file.
- * </p>
- * <p>
- * The {@link Mojo} can also manage the release version. To use this the user
- * can set the release version in the .rel to {@code ?REL_VERSION} which will be
- * replaced with the project version specified in the project pom.
- * </p>
- * <p>
  * TODO The generation of relup files has not yet been tested.
- * </p>
- * <p>
- * TODO the release file processing should be extended in order to generate an
- * appropriate release file.
  * </p>
  * 
  * @goal prepare-release
@@ -68,23 +87,25 @@ import org.apache.maven.plugin.logging.Log;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class PrepareReleaseMojo extends AbstractErlangMojo {
-  /**
-   * Command to extract the version from the .rel file.
-   */
-  private static final String EXTRACT_VERSION = //
-  "{ok, [{release, {_, ReleaseVersion}, _, _}]} = file:consult(\"%s\"), "
+  private static final String EXTRACT_VERSION = // 
+  " " + "{ok, [{release, {_, ReleaseVersion}, _, _}]} = file:consult(\"%s\"), " //
       + "io:format(ReleaseVersion), io:nl().";
 
-  /**
-   * Command to extract the applications from the .app file.
-   */
   private static final String EXTRACT_APPLICATIONS = //
-  "{ok, [{release, _, _, Applications}]} = file:consult(\"%s\"), "
+  " " + "{ok, [{release, _, _, Applications}]} = file:consult(\"%s\"), "
       + "lists:foreach(fun(Tuple) when is_tuple(Tuple) -> " //
-      + "AppName = element(1, Tuple), " //
-      + "AppVersion = element(2, Tuple), " //
-      + "io:format(\"~p:~s \", [AppName, AppVersion]) "//
+      + "  AppName = element(1, Tuple), " //
+      + "  AppVersion = element(2, Tuple), " //
+      + "  io:format(\"~p:~s \", [AppName, AppVersion]) "//
       + "end, Applications).";
+
+  private static final String DEFAULT_REL = //
+  "{release,\n" //
+      + "  {${ARTIFACT}, ${VERSION}},\n" //
+      + "  {erts, ${ERTS}},\n" //
+      + "  [{kernel, ${KERNEL}},\n" // 
+      + "   {stdlib, ${STDLIB}}] ++\n"//
+      + "  ${APPLICATIONS}}.";
 
   /**
    * Additional options for {@code systools:make_script/2}.
@@ -118,10 +139,13 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    Map<String, String> replacements = new HashMap<String, String>();
-    replacements.put("?REL_VERSION", "\"" + this.project.getVersion() + "\"");
-
     Log log = getLog();
+    Map<String, String> replacements = new HashMap<String, String>();
+    replacements.put("${ARTIFACT}", "\"" + this.project.getArtifactId() + "\"");
+    replacements.put("${VERSION}", "\"" + this.project.getVersion() + "\"");
+    replacements.put("${APPLICATIONS}", getReleaseDependencies());
+    putApplicationReplacements(replacements);
+
     this.targetEbin.mkdirs();
     int copied = copyDirectory(this.srcMainErlang, this.targetEbin, REL_FILTER, replacements);
     log.info("Copied " + copied + " release files to " + this.targetEbin.getAbsolutePath());
@@ -129,34 +153,38 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
     String releaseName = getReleaseName(this.project.getArtifact());
     log.info("Preparing release of " + releaseName);
     File relFile = new File(this.targetEbin, releaseName + REL_SUFFIX);
-    if (relFile.exists()) {
-      log.info("Checking version of " + relFile);
-      checkVersion(relFile);
-      log.info("Checking dependencies of " + relFile);
-      checkDependencies(relFile);
-
-      List<File> previousReleases = getReleaseFiles(this.previousVersions);
-      List<File> subsequentReleases = getReleaseFiles(this.subsequentVersions);
-      if (!previousReleases.isEmpty() || !subsequentReleases.isEmpty()) {
-        log.info("Creating relup file for " + releaseName);
-        makeRelup(relFile, previousReleases, subsequentReleases);
+    if (!relFile.exists()) {
+      try {
+        fileWrite(relFile.getPath(), "UTF-8", DEFAULT_REL);
       }
-      removeDirectory(this.targetReleases);
-      log.info("Creating scripts for " + releaseName);
-      makeScript(releaseName);
+      catch (IOException e) {
+        throw new MojoFailureException("Could not find .rel file, also failed to create default .rel file");
+      }
     }
-    else {
-      log.error("No " + REL_SUFFIX + " file found with version " + this.project.getVersion());
+    log.info("Checking version of " + relFile);
+    checkVersion(relFile);
+    log.info("Checking dependencies of " + relFile);
+    checkDependencies(relFile);
+
+    List<File> previousReleases = getReleaseFiles(this.previousVersions);
+    List<File> subsequentReleases = getReleaseFiles(this.subsequentVersions);
+    if (!previousReleases.isEmpty() || !subsequentReleases.isEmpty()) {
+      log.info("Creating relup file for " + releaseName);
+      makeRelup(relFile, previousReleases, subsequentReleases);
     }
+    removeDirectory(this.targetReleases);
+    log.info("Creating scripts for " + releaseName);
+    makeScript(releaseName);
   }
 
   /**
-   * Creates a relup file for the .rel files of the given previous and subsequent
-   * releases of this project using {@code systools:relup}.
+   * Creates a relup file for the .rel files of the given previous and
+   * subsequent releases of this project using {@code systools:relup}.
    * 
    * @param relFile erlang release file of this release
    * @param previousReleases list of erlang release files of previous releases
-   * @param subsequentReleases list of erlang release files of subsequent releases
+   * @param subsequentReleases list of erlang release files of subsequent
+   *          releases
    * @throws MojoExecutionException in case {@code systools:make_relup} fails
    * @throws MojoFailureException in case {@code systools:make_relup} fails
    */
@@ -192,7 +220,8 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
     command.append(File.separator);
     command.append("*");
     command.append(File.separator);
-    command.append("ebin\"]}");
+    command.append(EBIN_DIRECTORY);
+    command.append("\"]}");
     if (this.relupOptions != null) {
       for (String option : this.relupOptions) {
         command.append(", ");
@@ -253,13 +282,12 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
 
   /**
    * Checks whether all project dependencies are declared in the .rel file and
-   * whether the versions match. 
+   * whether the versions match.
    * 
    * @param relFile the erlang release file
    * @throws MojoExecutionException
    * @throws MojoFailureException in case of application mismatches
    */
-  @SuppressWarnings("unchecked")
   private void checkDependencies(File relFile) throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
     String expression = String.format(EXTRACT_APPLICATIONS, relFile.getPath());
@@ -269,6 +297,7 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
       String[] application = dep.split(":"); // "name:version"
       dependencies.put(application[0], application[1]);
     }
+    @SuppressWarnings("unchecked")
     Set<Artifact> artifacts = this.project.getArtifacts();
     for (Artifact artifact : artifacts) {
       String artifactId = artifact.getArtifactId();
@@ -283,15 +312,14 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
   }
 
   /**
-   * Returns a list of .rel files of other releases of this project. 
+   * Returns a list of .rel files of other releases of this project.
    * 
    * @param versions the versions of releases to retrieve the .rel file for
    * @return a list of existing .rel files for the requested versions
    * @throws MojoExecutionException in case an artifact cannot be extracted
    * @throws MojoFailureException in case an artifact cannot be extracted
    */
-  private List<File> getReleaseFiles(List<String> versions) throws MojoExecutionException,
-                                                           MojoFailureException {
+  private List<File> getReleaseFiles(List<String> versions) throws MojoExecutionException {
     Log log = getLog();
     List<File> result = new ArrayList<File>();
     if (versions != null) {
@@ -310,9 +338,61 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
           }
         }
         catch (IOException e) {
+          // ignored
         }
       }
     }
     return Collections.unmodifiableList(result);
+  }
+
+  /**
+   * Return list of application version tuples taken from the projects
+   * dependency section in the form of a valid erlang list. From is
+   * <code>[{"application", "version"}, ...]</code>.
+   * 
+   * @return a list of application and version tuples
+   */
+  private String getReleaseDependencies() {
+    @SuppressWarnings("unchecked")
+    Set<Artifact> artifacts = this.project.getArtifacts();
+    int i = 0;
+    StringBuilder applications = new StringBuilder("[");
+    for (Artifact artifact : artifacts) {
+      if (i++ != 0) {
+        applications.append(",\n  ");
+      }
+      applications.append("{\'");
+      applications.append(artifact.getArtifactId());
+      applications.append("\', \"");
+      applications.append(artifact.getVersion());
+      applications.append("\"}");
+    }
+    applications.append("]");
+    return applications.toString();
+  }
+
+  /**
+   * Inserts version mappings of the form <code>${APP_NAME}</code> for all
+   * applications available in the local OTP installation.
+   * 
+   * @param replacements to insert mappings into
+   * @throws MojoExecutionException
+   * @throws MojoFailureException
+   */
+  private void putApplicationReplacements(Map<String, String> replacements) throws MojoExecutionException,
+                                                                           MojoFailureException {
+    Log log = getLog();
+    String libDirectory = eval(log, "io:format(\"~s\", [code:lib_dir()]), io:nl().");
+    File[] applications = new File(libDirectory).listFiles(new FileFilter() {
+      @Override
+      public boolean accept(File file) {
+        return file.isDirectory();
+      }
+    });
+    for (File application : applications) {
+      String[] nameVersion = application.getName().split("-");
+      replacements.put("${" + nameVersion[0].toUpperCase() + "}", "\"" + nameVersion[1] + "\"");
+    }
+    log.debug("replacements: " + replacements.toString());
   }
 }

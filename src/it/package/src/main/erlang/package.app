@@ -5,7 +5,7 @@
   {vsn, ${VERSION}},
   {modules, ${MODULES}},
   {maxT, infinity},
-  {registered, []},
+  {registered, ${REGISTERED}},
   {included_applications, []},
   {applications, [kernel, stdlib, sasl]},
   {env, []},
