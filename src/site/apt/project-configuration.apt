@@ -103,7 +103,7 @@ Project Configuration
  look like this:
 
 +---
-{release,"
+{release,
   {${ARTIFACT}, ${VERSION}},
   {erts, ${ERTS}},
   [{kernel, ${KERNEL}}, 
