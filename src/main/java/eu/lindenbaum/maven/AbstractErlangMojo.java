@@ -22,6 +22,7 @@ import org.apache.maven.project.MavenProject;
  *   |     |     +-- include
  *   |     |     +-- priv
  *   |     |     +-- resources
+ *   |     |     |     +-- priv
  *   |     |    [+-- *] (other non-erlang source folders)
  *   |     +-- test
  *   |           +-- erlang
@@ -34,7 +35,7 @@ import org.apache.maven.project.MavenProject;
  *   |     +-- priv
  *   |     +-- mibs
  *   |     +-- releases
- *   |     +-- surefire
+ *   |     +-- surefire-reports
  *   |    [+-- *_src] (non-erlang source folders)
  *   +-- pom.xml
  * </pre>
@@ -111,6 +112,15 @@ abstract class AbstractErlangMojo extends AbstractMojo {
    * @readonly
    */
   File srcMainResources;
+
+  /**
+   * Directory where resources reside. Default is: {@code src/main/resources}.
+   * 
+   * @parameter expression="${basedir}/src/main/resources/priv"
+   * @required
+   * @readonly
+   */
+  File srcMainResourcesPriv;
 
   /**
    * Directory where the erlang test source files reside. Default is:

@@ -11,7 +11,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * This {@link Mojo} copies the private resources to the
  * {@link AbstractErlangMojo#targetPriv} directory. Default source folders for
  * private resources are {@link AbstractErlangMojo#srcMainPriv} and
- * {@link AbstractErlangMojo#srcMainResources}.
+ * {@link AbstractErlangMojo#srcMainResourcesPriv}.
  * </p>
  * 
  * @goal copy-resources
@@ -23,7 +23,7 @@ public final class CopyResourcesMojo extends AbstractErlangMojo {
   public void execute() throws MojoExecutionException {
     int copiedFiles = 0;
     copiedFiles += copyDirectory(this.srcMainPriv, this.targetPriv, NULL_FILTER);
-    copiedFiles += copyDirectory(this.srcMainResources, this.targetPriv, NULL_FILTER);
+    copiedFiles += copyDirectory(this.srcMainResourcesPriv, this.targetPriv, NULL_FILTER);
     if (copiedFiles == 0) {
       this.targetPriv.delete();
     }

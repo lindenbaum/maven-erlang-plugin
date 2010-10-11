@@ -82,6 +82,7 @@ Maven Erlang Plug-In
    |     |     +-- include
    |     |     +-- priv
    |     |     +-- resources
+   |     |     |     +-- priv
    |     |    [+-- *] (other non-erlang source folders)
    |     +-- test
    |           +-- erlang
@@ -93,7 +94,8 @@ Maven Erlang Plug-In
    |     +-- test
    |     +-- priv
    |     +-- mibs
-   |     +-- surefire
+   |     +-- releases
+   |     +-- surefire-reports
    |    [+-- *_src] (non-erlang source folders)
    +-- pom.xml
 ---

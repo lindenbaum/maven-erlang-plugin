@@ -33,11 +33,13 @@ Grouped Parameter Summary
  
  * useDialyzer: will enable/disable the <<<dialyzer>>> analysis when compiling
 
- * dialyzerOptions: will be passed to <<<dialyzer>>>, see {{http://www.erlang.org/doc/man/dialyzer.html}}
+ * dialyzerOptions: will be passed to <<<dialyzer>>>, see
+ {{http://www.erlang.org/doc/man/dialyzer.html}}
  
  * testUseDialyzer: will enable/disable the <<<dialyzer>>> analysis when testing
 
- * dialyzerWarningsAreErrors: will break the build when a <<<dialyzer>>> run returns warnings
+ * dialyzerWarningsAreErrors: will break the build when a <<<dialyzer>>> run
+ returns warnings
 
  * dialyzerWithDependencies: will include the projects dependencies into the
  <<<dialyzer>>> run. Note: This may take very long.

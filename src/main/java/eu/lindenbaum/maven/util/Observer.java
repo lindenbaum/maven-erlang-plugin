@@ -4,7 +4,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * A class interested in the result of calls to {@link ErlUtils#exec()}.
+ * A class interested in the result of an {@link Process}.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */

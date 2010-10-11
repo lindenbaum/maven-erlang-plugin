@@ -84,7 +84,7 @@ public final class ErlUtils {
    * process completion the given {@link Observer} is notfied to process the
    * result.
    * 
-   * @param command to execute
+   * @param commands to execute
    * @param log used to log errors
    * @param workingDir the working directory for the spawned process, maybe
    *          {@code null}

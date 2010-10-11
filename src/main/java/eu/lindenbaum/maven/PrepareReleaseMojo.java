@@ -60,7 +60,7 @@ import org.apache.maven.plugin.logging.Log;
  * </p>
  * 
  * <pre>
- * {release,\n"
+ * {release,"
  *   {${ARTIFACT}, ${VERSION}},
  *   {erts, ${ERTS}},
  *   [{kernel, ${KERNEL}}, 

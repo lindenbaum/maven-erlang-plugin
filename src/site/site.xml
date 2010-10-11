@@ -10,7 +10,8 @@
       <item name="Introduction" href="index.html" />
       <item name="Releasenotes" href="changes-report.html" />
       <item name="Goals" href="plugin-info.html" />
-      <item name="Configuration" href="configuration.html" />
+      <item name="Plugin Configuration" href="plugin-configuration.html" />
+      <item name="Project Configuration" href="project-configuration.html" />
     </menu>
     <menu name="Examples">
       <item name="Compile" href="examples/compile.html" />
