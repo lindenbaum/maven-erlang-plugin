@@ -39,6 +39,7 @@ public final class TestCompileMojo extends AbstractCompilerMojo {
     }
     options.add("+debug_info");
     options.add("+export_all");
+    options.add("-DTEST");
 
     this.targetTest.mkdirs();
     int removed = removeFilesRecursive(this.targetTest, BEAM_SUFFIX);
