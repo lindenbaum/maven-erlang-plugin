@@ -26,23 +26,16 @@ Grouped Parameter Summary
 
 * Dialyzer
 
- * forceDialyzer: will force a <<<dialyzer>>> run even if this would not be
- necessary because there are no new <<<.beam>>> files created since the last run
- 
- * skipDialyzer: will disable the <<<dialyzer>>> analysis for this maven run
- 
- * useDialyzer: will enable/disable the <<<dialyzer>>> analysis when compiling
+ * skipDialyzer: will skip the <<<dialyzer>>> analysis when packaging
 
  * dialyzerOptions: will be passed to <<<dialyzer>>>, see
  {{http://www.erlang.org/doc/man/dialyzer.html}}
  
- * testUseDialyzer: will enable/disable the <<<dialyzer>>> analysis when testing
-
  * dialyzerWarningsAreErrors: will break the build when a <<<dialyzer>>> run
  returns warnings
 
  * dialyzerWithDependencies: will include the projects dependencies into the
- <<<dialyzer>>> run. Note: This may take very long.
+ <<<dialyzer>>> run. Only for packaging erlang-otp.
 
 * Compiler
 

@@ -27,9 +27,8 @@
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:unpack-dependencies</generate-sources>
               <process-resources>eu.lindenbaum:maven-erlang-plugin:copy-resources</process-resources>
               <compile>eu.lindenbaum:maven-erlang-plugin:compile</compile>
-              <process-classes>eu.lindenbaum:maven-erlang-plugin:dialyzer</process-classes>
               <test-compile>eu.lindenbaum:maven-erlang-plugin:test-compile</test-compile>
-              <process-test-classes>eu.lindenbaum:maven-erlang-plugin:test-dialyzer</process-test-classes>
+              <process-test-classes>eu.lindenbaum:maven-erlang-plugin:dialyzer</process-test-classes>
               <test>eu.lindenbaum:maven-erlang-plugin:test</test>
               <package>eu.lindenbaum:maven-erlang-plugin:package</package>
               <install>org.apache.maven.plugins:maven-install-plugin:install</install>
@@ -65,8 +64,8 @@
             <phases>
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:unpack-dependencies</generate-sources>
               <process-resources>eu.lindenbaum:maven-erlang-plugin:copy-resources</process-resources>
-              <compile>eu.lindenbaum:maven-erlang-plugin:prepare-release</compile>
-              <process-classes>eu.lindenbaum:maven-erlang-plugin:dialyzer-release</process-classes>
+              <compile>eu.lindenbaum:maven-erlang-plugin:dialyzer-release</compile>
+              <process-classes>eu.lindenbaum:maven-erlang-plugin:prepare-release</process-classes>
               <test-compile></test-compile>
               <process-test-classes></process-test-classes>
               <test></test>

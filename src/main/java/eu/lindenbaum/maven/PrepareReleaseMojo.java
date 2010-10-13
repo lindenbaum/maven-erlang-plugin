@@ -83,7 +83,7 @@ import org.apache.maven.plugin.logging.Log;
  * </p>
  * 
  * @goal prepare-release
- * @phase compile
+ * @phase process-classes
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class PrepareReleaseMojo extends AbstractErlangMojo {

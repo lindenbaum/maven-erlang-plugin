@@ -4,6 +4,9 @@
   </properties>
   <body>
     <release version="1.0.0" date="TBA" description="Initial release">
+      <action dev="schlagert" type="update">
+        Changed dialyzer to run on sources not beams.
+      </action>
       <action dev="schlagert" type="add">
         New (fixed) surefire report generation.
       </action>

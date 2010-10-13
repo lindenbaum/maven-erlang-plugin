@@ -7,6 +7,7 @@ import static eu.lindenbaum.maven.util.ErlConstants.EBIN_DIRECTORY;
 import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.FUNCS_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.HRL_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.INCLUDE_DIRECTORY;
 import static eu.lindenbaum.maven.util.ErlConstants.MIB_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.REL_SUFFIX;
 import static org.codehaus.plexus.util.FileUtils.copyFile;
@@ -42,9 +43,9 @@ import org.codehaus.plexus.util.SelectorUtils;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class FileUtils {
-  static final String APP_STRING = ".*" + File.separator + "(.+)-([\\d\\.]+)(-SNAPSHOT)?" + File.separator
-                                   + EBIN_DIRECTORY + "$";
-  static final Pattern APP_PATTERN = Pattern.compile(APP_STRING);
+  static final String APP_STRING = ".*" + File.separator + "(.+)-([\\d\\.]+)(-SNAPSHOT)?";
+  static final Pattern EBIN_PATTERN = Pattern.compile(APP_STRING + File.separator + EBIN_DIRECTORY + "$");
+  static final Pattern INC_PATTERN = Pattern.compile(APP_STRING + File.separator + INCLUDE_DIRECTORY + "$");
 
   /**
    * Filename filter to filter source files (.erl & .hrl). Directories are
@@ -269,7 +270,31 @@ public final class FileUtils {
       FileFilter filter = new FileFilter() {
         @Override
         public boolean accept(File dir) {
-          return EBIN_DIRECTORY.equals(dir.getName()) && APP_PATTERN.matcher(dir.getAbsolutePath()).matches();
+          return EBIN_DIRECTORY.equals(dir.getName())
+                 && EBIN_PATTERN.matcher(dir.getAbsolutePath()).matches();
+        }
+      };
+      return getDirectoriesRecursive(root, filter);
+    }
+    return Collections.emptyList();
+  }
+
+  /**
+   * Return the list of the module-version/include/ paths in the given
+   * directory. By default patterns from
+   * {@link org.codehaus.plexus.util.FileUtils#getDefaultExcludes()} will always
+   * be excluded.
+   * 
+   * @param root directory to start the scan from
+   * @return a list of matching {@link File}s
+   */
+  public static List<File> getDependencyIncludes(File root) {
+    if (root != null && root.exists()) {
+      FileFilter filter = new FileFilter() {
+        @Override
+        public boolean accept(File dir) {
+          return INCLUDE_DIRECTORY.equals(dir.getName())
+                 && INC_PATTERN.matcher(dir.getAbsolutePath()).matches();
         }
       };
       return getDirectoriesRecursive(root, filter);
@@ -362,6 +387,29 @@ public final class FileUtils {
       }
     }
     return copied;
+  }
+
+  /**
+   * Returns whether there are newer files in a specific directory (recursive)
+   * than a given reference file.
+   * 
+   * @param dir input directory to check
+   * @param reference the file taken as reference time (modified)
+   * @return true if there are .erl/.hrl files newer than the reference file
+   */
+  public static boolean newerFilesThan(File dir, File reference) {
+    final long referenceTime = reference.lastModified();
+    if (referenceTime > 0L) {
+      List<File> sources = getFilesRecursive(dir, ERL_SUFFIX);
+      sources.addAll(getFilesRecursive(dir, HRL_SUFFIX));
+      for (File file : sources) {
+        if (file.lastModified() > referenceTime) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return true;
   }
 
   /**

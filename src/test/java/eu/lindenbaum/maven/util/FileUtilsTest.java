@@ -45,10 +45,10 @@ public class FileUtilsTest {
 
   @Test
   public void testOtpDirectoryRegex() {
-    assertTrue(FileUtils.APP_PATTERN.matcher("test-path/app-1.0/ebin").matches());
-    assertTrue(FileUtils.APP_PATTERN.matcher("path/app-1.0/ebin").matches());
-    assertFalse(FileUtils.APP_PATTERN.matcher("path/app/ebin").matches());
-    assertFalse(FileUtils.APP_PATTERN.matcher("test-path/app/ebin").matches());
+    assertTrue(FileUtils.EBIN_PATTERN.matcher("test-path/app-1.0/ebin").matches());
+    assertTrue(FileUtils.EBIN_PATTERN.matcher("path/app-1.0/ebin").matches());
+    assertFalse(FileUtils.EBIN_PATTERN.matcher("path/app/ebin").matches());
+    assertFalse(FileUtils.EBIN_PATTERN.matcher("test-path/app/ebin").matches());
   }
 
   @Test
