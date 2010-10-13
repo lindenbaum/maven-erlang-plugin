@@ -4,6 +4,15 @@
   </properties>
   <body>
     <release version="1.0.0" date="TBA" description="Initial release">
+      <action dev="schlagert, heyll" type="add">
+        Added mock system (formerly known as ltest_mock, formerly known as
+        erlymock). The system is automatically available for test modules during
+        the test phase.  
+      </action>
+      <action dev="schlagert, heyll" type="fix">
+        Fixed problems in test/compile phase when using include files from
+        dependencies.
+      </action>
       <action dev="schlagert" type="update">
         Changed dialyzer to run on sources not beams.
       </action>

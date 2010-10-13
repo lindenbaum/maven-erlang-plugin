@@ -3,6 +3,7 @@ package eu.lindenbaum.maven;
 import static eu.lindenbaum.maven.util.ErlConstants.ERLC;
 import static eu.lindenbaum.maven.util.ErlUtils.exec;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
+import static eu.lindenbaum.maven.util.FileUtils.getDependencyIncludes;
 import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
 
 import java.io.File;
@@ -84,9 +85,13 @@ abstract class AbstractCompilerMojo extends AbstractErlangMojo {
       command.add("-I");
       command.add(include.getPath());
     }
-    for (File lib : getDependencies(this.targetLib)) {
+    for (File includePath : getDependencyIncludes(this.targetLib)) {
+      command.add("-I");
+      command.add(includePath.getAbsolutePath());
+    }
+    for (File libPath : getDependencies(this.targetLib)) {
       command.add("-pa");
-      command.add(lib.getAbsolutePath());
+      command.add(libPath.getAbsolutePath());
     }
     command.add("-o");
     command.add(outputDir.getPath());

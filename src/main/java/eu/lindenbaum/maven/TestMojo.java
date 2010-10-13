@@ -7,6 +7,7 @@ import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.TEST_SUFFIX;
 import static eu.lindenbaum.maven.util.FileUtils.extractFilesFromJar;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
+import static eu.lindenbaum.maven.util.FileUtils.getDependencyIncludes;
 import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
 import static eu.lindenbaum.maven.util.MavenUtils.getPluginFile;
 
@@ -166,7 +167,7 @@ public final class TestMojo extends AbstractErlangMojo {
     String eunitExpr = "eunit:test(" //  
                        + modules.toString() //
                        + ", [{report,{surefire,[{dir,\"" //
-                       + this.targetSurefireReports.getPath()//
+                       + this.targetSurefireReports.getAbsolutePath()//
                        + "\"}, {package, \""//
                        + this.project.getArtifactId() //
                        + ".\"}]}}]).";
@@ -178,9 +179,18 @@ public final class TestMojo extends AbstractErlangMojo {
       command.add(lib.getAbsolutePath());
     }
     command.add("-eval");
-    command.add("c:c(cover2),c:c(surefire).");
+    command.add("c:c(cover2),c:c(surefire),c:c(mock).");
     command.add("-eval");
-    command.add("cover2:compile_directory(\"" + this.srcMainErlang.getPath() + "\", [export_all]).");
+    StringBuilder coverCompileStr = new StringBuilder("cover2:compile_directory(\"");
+    coverCompileStr.append(this.srcMainErlang.getAbsolutePath());
+    coverCompileStr.append("\", [export_all");
+    List<File> dependencyIncludes = getDependencyIncludes(this.targetLib);
+    dependencyIncludes.addAll(Arrays.asList(new File[]{ this.srcMainInclude, this.srcTestInclude }));
+    for (File includePath : dependencyIncludes) {
+      coverCompileStr.append(", {i, \"" + includePath.getAbsolutePath() + "\"}");
+    }
+    coverCompileStr.append("]).");
+    command.add(coverCompileStr.toString());
     command.add("-eval");
     command.add(eunitExpr);
     command.add("-run");

@@ -12,7 +12,7 @@
 %%% @end
 %%% Created :  3 Dec 2009 by Samuel Rivas <samuel.rivas@lambdastream.com>
 %%%-------------------------------------------------------------------
--module(ltest_mock).
+-module(mock).
 -author('Sven Heyll').
 
 -export([await/1,await/2,signal_fun/2,new/0, expect/7, expect/6, strict/6,
@@ -198,7 +198,7 @@ module_header_abstract_form(Mod) ->
 
 %% @private
 %% @doc Abstract form of function definition, this function replaces calls to
-%%      original module by calls to ltest_mock
+%%      original module by calls to mock
 %% @end
 fundef_to_abstract_meta_form(Self, Mod, FunName, Arity) ->
     Line = 1,
@@ -208,7 +208,7 @@ fundef_to_abstract_meta_form(Self, Mod, FunName, Arity) ->
      [{clause, Line,
        Params, [],
        [{call, Line,
-	 {remote, Line, {atom, Line, ltest_mock},
+	 {remote, Line, {atom, Line, mock},
           {atom, Line, invocation_event}},
 	 [{tuple, Line,
 	   [{string,Line, Self},
