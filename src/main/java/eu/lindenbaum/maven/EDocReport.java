@@ -16,9 +16,17 @@ import org.apache.maven.reporting.MavenReportException;
  * {@link AbstractErlangReport#srcMainErlang}.
  * </p>
  * <p>
- * The output will be put into {@link AbstractErlangReport#targetSiteDoc}. The
+ * The output will be put into {@link AbstractErlangReport#targetSite}/doc. The
  * user may specify custom EDoc options in the project pom using the
  * {@code eDocOptions} parameter.
+ * </p>
+ * <p>
+ * BUG It is known that {@code edoc} does not generate a charset meta tag for
+ * the resulting {@code html} output.
+ * </p>
+ * <p>
+ * BUG It is known that {@code doxia} overwrites the reports {@code index.html}
+ * with a broken template when the report is invoked as standalone.
  * </p>
  * 
  * @goal doc
@@ -39,15 +47,16 @@ public final class EDocReport extends AbstractEDocReport {
     String description = getDescription(Locale.ENGLISH);
     if (canGenerateReport()) {
       log.debug("Generating " + description);
-      this.targetSiteDoc.mkdirs();
+      File outputDir = new File(getReportOutputDirectory(), "doc");
+      outputDir.mkdirs();
       String artifactId = getProject().getArtifactId();
       File appFile = new File(this.srcMainErlang, artifactId + ErlConstants.APP_SUFFIX);
       try {
         if (appFile.exists()) {
-          generateAppEDoc(artifactId, this.srcMainErlang, this.targetSiteDoc, this.eDocOptions);
+          generateAppEDoc(artifactId, this.srcMainErlang, outputDir, this.eDocOptions);
         }
         else {
-          generateEDoc(this.srcMainErlang, this.targetSiteDoc, this.eDocOptions);
+          generateEDoc(this.srcMainErlang, outputDir, this.eDocOptions);
         }
       }
       catch (AbstractMojoExecutionException e) {
@@ -67,7 +76,7 @@ public final class EDocReport extends AbstractEDocReport {
 
   @Override
   protected String getOutputDirectory() {
-    return this.targetSiteDoc.getAbsolutePath();
+    return this.target.getAbsolutePath();
   }
 
   @Override
@@ -82,6 +91,6 @@ public final class EDocReport extends AbstractEDocReport {
 
   @Override
   public String getOutputName() {
-    return this.targetSiteDoc.getName() + "/index";
+    return "doc/index";
   }
 }

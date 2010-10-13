@@ -297,7 +297,7 @@ public class CoverageReport extends AbstractErlangReport {
 
   @Override
   protected String getOutputDirectory() {
-    return this.targetSiteCoverage.getAbsolutePath();
+    return this.targetSite.getAbsolutePath();
   }
 
   @Override

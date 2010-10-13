@@ -208,7 +208,7 @@ public class CoverageReportTest {
   public void testGetOutputDirectory() {
     String actual = new LocalCoverageReport() {
       {
-        this.targetSiteCoverage = new File("actual");
+        this.targetSite = new File("actual");
       }
     }.getOutputDirectory();
     assertTrue(actual.startsWith("/") && actual.endsWith("/actual"));

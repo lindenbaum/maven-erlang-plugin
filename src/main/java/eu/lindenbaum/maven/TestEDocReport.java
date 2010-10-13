@@ -1,5 +1,6 @@
 package eu.lindenbaum.maven;
 
+import java.io.File;
 import java.util.Locale;
 
 import org.apache.maven.plugin.AbstractMojoExecutionException;
@@ -13,9 +14,17 @@ import org.apache.maven.reporting.MavenReportException;
  * in {@link AbstractErlangReport#srcTestErlang}.
  * </p>
  * <p>
- * The output will be put into {@link AbstractErlangReport#targetSiteTestDoc}.
+ * The output will be put into {@link AbstractErlangReport#targetSite}/test-doc.
  * The user may specify custom EDoc options in the project pom using the
  * {@code eDocOptions} parameter.
+ * </p>
+ * <p>
+ * BUG It is known that {@code edoc} does not generate a charset meta tag for
+ * the resulting {@code html} output.
+ * </p>
+ * <p>
+ * BUG It is known that {@code doxia} overwrites the reports {@code index.html}
+ * with a broken template when the report is invoked as standalone.
  * </p>
  * 
  * @goal test-doc
@@ -36,9 +45,10 @@ public final class TestEDocReport extends AbstractEDocReport {
     String description = getDescription(Locale.ENGLISH);
     if (canGenerateReport()) {
       log.debug("Generating " + description);
-      this.targetSiteTestDoc.mkdirs();
+      File outputDir = new File(getReportOutputDirectory(), "test-doc");
+      outputDir.mkdirs();
       try {
-        generateEDoc(this.srcTestErlang, this.targetSiteTestDoc, this.eDocOptions);
+        generateEDoc(this.srcTestErlang, outputDir, this.eDocOptions);
       }
       catch (AbstractMojoExecutionException e) {
         throw new MavenReportException(e.getMessage(), e);
@@ -57,7 +67,7 @@ public final class TestEDocReport extends AbstractEDocReport {
 
   @Override
   protected String getOutputDirectory() {
-    return this.targetSiteTestDoc.getAbsolutePath();
+    return this.target.getAbsolutePath();
   }
 
   @Override
@@ -72,6 +82,6 @@ public final class TestEDocReport extends AbstractEDocReport {
 
   @Override
   public String getOutputName() {
-    return this.targetSiteTestDoc.getName() + "/index";
+    return "test-doc/index";
   }
 }
