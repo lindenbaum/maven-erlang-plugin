@@ -184,6 +184,7 @@ public final class PackageMojo extends AbstractErlangMojo {
     // package all otp standard resources
     copy(this.srcMainErlang, new File(tmpDir, "src"), SOURCE_FILTER, "source");
     copy(this.targetEbin, new File(tmpDir, EBIN_DIRECTORY), NULL_FILTER, "");
+    copy(this.targetInclude, new File(tmpDir, INCLUDE_DIRECTORY), SOURCE_FILTER, "include");
     copy(this.srcMainInclude, new File(tmpDir, INCLUDE_DIRECTORY), SOURCE_FILTER, "include");
     copy(this.targetPriv, new File(tmpDir, PRIV_DIRECTORY), NULL_FILTER, "private");
     copy(this.targetMibs, new File(tmpDir, MIBS_DIRECTORY), SNMP_FILTER, "SNMP");
