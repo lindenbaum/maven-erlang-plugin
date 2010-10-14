@@ -64,14 +64,26 @@
         Rewritten all mojos from the original maven-erlang plugin.
       </action>
       <action dev="schlagert" type="add">
-        Initial feature set:
-          - compile project and test sources
-          - execute eunit tests
-          - execute dialyzer on erlang/OTP applications/releases
-          - generate site documentation with edoc for project and test code as
-            well as surefire test reports and basic test code coverage
-          - package erlang/OTP applications
-          - package erlang/OTP releases (consisting of erlang/OTP applications)
+        Initial feature set: Compile project and test sources
+      </action>
+      <action dev="schlagert" type="add">
+        Initial feature set: Execute eunit tests
+      </action>
+      <action dev="schlagert" type="add">
+        Initial feature set: Execute dialyzer on erlang/OTP applications and
+        releases
+      </action>
+      <action dev="schlagert" type="add">
+        Initial feature set: Generate site documentation with edoc for project
+        and test code as well as surefire test reports and basic test code
+        coverage
+      </action>
+      <action dev="schlagert" type="add">
+        Initial feature set: Package erlang/OTP applications
+      </action>
+      <action dev="schlagert" type="add">
+        Initial feature set: Package erlang/OTP releases (consisting of
+        erlang/OTP applications)
       </action>
     </release>
   </body>
