@@ -17,7 +17,6 @@ public final class ModuleCoverData {
 
   private int numberOfClauses;
   private int numberOfLInes;
-  private boolean isCovered;
   private int numberOfCoveredLines;
   private int numberOfNotCoveredLines;
 
@@ -35,7 +34,6 @@ public final class ModuleCoverData {
   public void calculateStatistics() {
     for (FunctionCoverData function : this.functionCoverData.values()) {
       this.numberOfClauses += function.getNumberOfClauses();
-      this.isCovered &= function.isCovered();
       this.numberOfCoveredLines += function.getCoveredLines();
       this.numberOfNotCoveredLines += function.getNotCoveredLines();
     }
@@ -134,7 +132,7 @@ public final class ModuleCoverData {
   }
 
   public boolean isCovered() {
-    return this.isCovered;
+    return this.numberOfNotCoveredLines == 0 && this.numberOfCoveredLines != 0;
   }
 
   public int getNumberOfCoveredLines() {
