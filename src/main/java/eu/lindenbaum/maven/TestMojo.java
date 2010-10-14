@@ -83,7 +83,6 @@ public final class TestMojo extends AbstractErlangMojo {
       log.info("Tests are skipped.");
     }
     else {
-
       this.targetSurefireReports.mkdirs();
       File coverageDataFile = new File(this.targetTest, COVERDATA_BIN);
       coverageDataFile.delete();
@@ -154,7 +153,7 @@ public final class TestMojo extends AbstractErlangMojo {
     for (File test : tests) {
       modules.add(test.getName().replace(BEAM_SUFFIX, ""));
     }
-    return modules;
+    return Collections.unmodifiableList(modules);
   }
 
   /**
@@ -164,7 +163,21 @@ public final class TestMojo extends AbstractErlangMojo {
    * @return an executable command list
    */
   private List<String> getCommandLine(List<String> modules) {
-    String eunitExpr = "eunit:test(" //  
+    StringBuilder coverCompileStr = new StringBuilder("cover2:compile_directory(\"");
+    coverCompileStr.append(this.srcMainErlang.getAbsolutePath());
+    coverCompileStr.append("\", [export_all");
+    List<File> includes = new ArrayList<File>();
+    includes.addAll(Arrays.asList(new File[]{ this.srcMainInclude, this.srcTestInclude, this.targetInclude }));
+    includes.addAll(getDependencyIncludes(this.targetLib));
+    for (File inc : includes) {
+      if (inc != null && inc.isDirectory()) {
+        coverCompileStr.append(", {i, \"" + inc.getAbsolutePath() + "\"}");
+      }
+    }
+    coverCompileStr.append("]).");
+    String coverExpr = coverCompileStr.toString();
+
+    String eunitExpr = "eunit:test(" //
                        + modules.toString() //
                        + ", [{report,{surefire,[{dir,\"" //
                        + this.targetSurefireReports.getAbsolutePath()//
@@ -181,16 +194,7 @@ public final class TestMojo extends AbstractErlangMojo {
     command.add("-eval");
     command.add("c:c(cover2),c:c(surefire),c:c(mock).");
     command.add("-eval");
-    StringBuilder coverCompileStr = new StringBuilder("cover2:compile_directory(\"");
-    coverCompileStr.append(this.srcMainErlang.getAbsolutePath());
-    coverCompileStr.append("\", [export_all");
-    List<File> dependencyIncludes = getDependencyIncludes(this.targetLib);
-    dependencyIncludes.addAll(Arrays.asList(new File[]{ this.srcMainInclude, this.srcTestInclude }));
-    for (File includePath : dependencyIncludes) {
-      coverCompileStr.append(", {i, \"" + includePath.getAbsolutePath() + "\"}");
-    }
-    coverCompileStr.append("]).");
-    command.add(coverCompileStr.toString());
+    command.add(coverExpr);
     command.add("-eval");
     command.add(eunitExpr);
     command.add("-run");

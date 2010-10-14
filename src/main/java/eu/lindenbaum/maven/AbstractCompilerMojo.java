@@ -8,6 +8,8 @@ import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import eu.lindenbaum.maven.util.Observer;
@@ -77,21 +79,18 @@ abstract class AbstractCompilerMojo extends AbstractErlangMojo {
   private List<String> getCommandLine(File outputDir, File include, List<String> options, List<File> sources) {
     List<String> command = new ArrayList<String>();
     command.add(ERLC);
-    command.add("-I");
-    command.add(this.srcMainInclude.getPath());
-    command.add("-I");
-    command.add(this.targetInclude.getPath());
-    if (include != null) {
-      command.add("-I");
-      command.add(include.getPath());
-    }
-    for (File includePath : getDependencyIncludes(this.targetLib)) {
-      command.add("-I");
-      command.add(includePath.getAbsolutePath());
-    }
     for (File libPath : getDependencies(this.targetLib)) {
       command.add("-pa");
       command.add(libPath.getAbsolutePath());
+    }
+    List<File> includes = new ArrayList<File>();
+    includes.addAll(Arrays.asList(new File[]{ this.srcMainInclude, this.targetInclude, include }));
+    includes.addAll(getDependencyIncludes(this.targetLib));
+    for (File inc : includes) {
+      if (inc != null && inc.isDirectory()) {
+        command.add("-I");
+        command.add(inc.getPath());
+      }
     }
     command.add("-o");
     command.add(outputDir.getPath());
@@ -103,6 +102,6 @@ abstract class AbstractCompilerMojo extends AbstractErlangMojo {
     for (File source : sources) {
       command.add(source.getPath());
     }
-    return command;
+    return Collections.unmodifiableList(command);
   }
 }

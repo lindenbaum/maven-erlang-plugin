@@ -60,12 +60,12 @@ public final class DialyzerReleaseMojo extends AbstractDialyzerMojo {
         List<String> command = new ArrayList<String>();
         command.add(DIALYZER);
         command.add("--src");
+        command.add("-r");
+        command.add(this.targetLib.getPath());
         for (File include : getDependencyIncludes(this.targetLib)) {
           command.add("-I");
           command.add(include.getPath());
         }
-        command.add("-r");
-        command.add(this.targetLib.getPath());
         if (this.dialyzerOptions != null) {
           command.addAll(Arrays.asList(this.dialyzerOptions));
         }

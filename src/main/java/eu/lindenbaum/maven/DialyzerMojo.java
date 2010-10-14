@@ -67,9 +67,9 @@ public final class DialyzerMojo extends AbstractDialyzerMojo {
     }
     else {
       File lastBuildIndicator = new File(DIALYZER_OK);
-      boolean newerSources = newerFilesThan(this.srcMainErlang, lastBuildIndicator);
-      boolean newerHeaders = newerFilesThan(this.srcMainInclude, lastBuildIndicator);
-      if (newerSources || newerHeaders) {
+      if (newerFilesThan(this.srcMainErlang, lastBuildIndicator)
+          || newerFilesThan(this.srcMainInclude, lastBuildIndicator)
+          || newerFilesThan(this.targetLib, lastBuildIndicator)) {
         lastBuildIndicator.delete();
         log.info("Running dialyzer on " + this.srcMainErlang.getAbsolutePath());
 
@@ -78,14 +78,15 @@ public final class DialyzerMojo extends AbstractDialyzerMojo {
         command.add("--src");
         command.add("-r");
         command.add(this.srcMainErlang.getPath());
-        if (this.srcMainInclude.isDirectory()) {
-          command.add("-I");
-          command.add(this.srcMainInclude.getPath());
-        }
         if (this.dialyzerWithDependencies) {
           command.add("-r");
           command.add(this.targetLib.getPath());
-          for (File include : getDependencyIncludes(this.targetLib)) {
+        }
+        List<File> includes = new ArrayList<File>();
+        includes.addAll(Arrays.asList(new File[]{ this.srcMainInclude, this.targetInclude }));
+        includes.addAll(getDependencyIncludes(this.targetLib));
+        for (File include : includes) {
+          if (include != null && include.isDirectory()) {
             command.add("-I");
             command.add(include.getPath());
           }

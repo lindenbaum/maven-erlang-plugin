@@ -11,6 +11,7 @@ import static eu.lindenbaum.maven.util.ErlConstants.INCLUDE_DIRECTORY;
 import static eu.lindenbaum.maven.util.ErlConstants.MIB_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.REL_SUFFIX;
 import static org.codehaus.plexus.util.FileUtils.copyFile;
+import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
 import static org.codehaus.plexus.util.FileUtils.fileRead;
 import static org.codehaus.plexus.util.FileUtils.fileWrite;
 import static org.codehaus.plexus.util.FileUtils.getDefaultExcludes;
@@ -177,7 +178,7 @@ public final class FileUtils {
    */
   public static void removeDirectory(File directory) {
     try {
-      org.codehaus.plexus.util.FileUtils.deleteDirectory(directory);
+      deleteDirectory(directory);
     }
     catch (IOException e) {
       // ignore
@@ -438,7 +439,7 @@ public final class FileUtils {
           File dest = new File(destDir, new File(entry.getName()).getName());
           OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(dest));
           InputStream inputStream = new BufferedInputStream(jarFile.getInputStream(entry));
-          byte[] buffer = new byte[2048];
+          byte[] buffer = new byte[4096];
           while (true) {
             int nBytes = inputStream.read(buffer);
             if (nBytes <= 0) {
