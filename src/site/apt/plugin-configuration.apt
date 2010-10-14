@@ -26,58 +26,61 @@ Grouped Parameter Summary
 
 * Dialyzer
 
- * skipDialyzer: will skip the <<<dialyzer>>> analysis when packaging
+ * <<<skipDialyzer>>>: will skip the <<<dialyzer>>> analysis when packaging
 
- * dialyzerOptions: will be passed to <<<dialyzer>>>, see
+ * <<<dialyzerOptions>>>: will be passed to <<<dialyzer>>>, see
  {{http://www.erlang.org/doc/man/dialyzer.html}}
  
- * dialyzerWarningsAreErrors: will break the build when a <<<dialyzer>>> run
- returns warnings
+ * <<<dialyzerWarningsAreErrors>>>: will break the build when a <<<dialyzer>>>
+ run returns warnings
 
- * dialyzerWithDependencies: will include the projects dependencies into the
- <<<dialyzer>>> run. Only for packaging erlang-otp.
+ * <<<dialyzerWithDependencies>>>: will include the projects dependencies into
+ the <<<dialyzer>>> run. Only for packaging erlang-otp.
 
 * Compiler
 
- * debugInfo: will compile all modules with debug information
+ * <<<debugInfo>>>: will compile all modules with debug information
  
- * erlcOptions: will be passed to <<<erlc>>> when compiling sources,
+ * <<<erlcOptions>>>: will be passed to <<<erlc>>> when compiling sources,
  see {{http://www.erlang.org/doc/man/compile.html}}
  
- * erlcTestOptions: will be passed to <<<erlc>>> when compiling test sources,
- see {{http://www.erlang.org/doc/man/compile.html}}
+ * <<<erlcTestOptions>>>: will be passed to <<<erlc>>> when compiling test
+ sources, see {{http://www.erlang.org/doc/man/compile.html}}
 
 * Documentation
 
- * eDocOptions: will be passed to <<<edoc:files/2>>> or <<<edoc:application/2>>>,
- see {{http://www.erlang.org/doc/man/edoc.html}}
+ * <<<eDocOptions>>>: will be passed to <<<edoc:files/2>>> or
+ <<<edoc:application/2>>>, see {{http://www.erlang.org/doc/man/edoc.html}}
 
 * Testing
  
- * test: will only run this test case / test module 
+ * <<<test>>>: will only run this test case / test module 
  
- * skipTests: will skip the eunit tests for this maven run
+ * <<<skipTests>>>: will skip the eunit tests for this maven run
  
- * failIfNoTests: will break the build if no eunit tests are found in the project
+ * <<<failIfNoTests>>>: will break the build if no eunit tests are found in the
+ project
 
 * Application Packaging
 
- * failOnUndeclaredModules: will break the build when the application file
+ * <<<failOnUndeclaredModules>>>: will break the build when the application file
  does not contain all found modules
 
 * Release Packaging
  
- * tarOptions: will be passed to <<<systools:make_tar/2>>>,
+ * <<<tarOptions>>>: will be passed to <<<systools:make_tar/2>>>,
  see {{http://www.erlang.org/doc/man/systools.html}}
  
- * scriptOptions: will be passed to <<<systools:make_script/2>>>,
+ * <<<scriptOptions>>>: will be passed to <<<systools:make_script/2>>>,
  see {{http://www.erlang.org/doc/man/systools.html}}
  
- * relupOptions: will be passed to <<<systools:make_relup/4>>>,
+ * <<<relupOptions>>>: will be passed to <<<systools:make_relup/4>>>,
  see {{http://www.erlang.org/doc/man/systools.html}}
  
- * subsequentVersions: a list of versions to downgrade from when this release is
- installed, refers to the <<<DownTo>>> argument in <<<systools:make_relup/4>>>
+ * <<<subsequentVersions>>>: a list of versions to downgrade from when this
+ release is installed, refers to the <<<DownTo>>> argument in
+ <<<systools:make_relup/4>>>
  
- * previousVersions: a list of versions to upgrade from when this release is
- installed, refers to the <<<UpFrom>>> argument in <<<systools:make_relup/4>>>
+ * <<<previousVersions>>>: a list of versions to upgrade from when this release
+ is installed, refers to the <<<UpFrom>>> argument in
+ <<<systools:make_relup/4>>>
