@@ -7,20 +7,29 @@
       <action dev="schlagert, heyll" type="add">
         Added mock system (formerly known as ltest_mock, formerly known as
         erlymock). The system is automatically available for test modules during
-        the test phase.  
+        the test phase.
       </action>
       <action dev="schlagert, heyll" type="fix">
-        Fixed problems in test/compile phase when using include files from
-        dependencies.
+        Fixed various problems in test/compile phase when using include files
+        from dependency applications.
       </action>
       <action dev="schlagert" type="update">
         Changed dialyzer to run on sources not beams.
       </action>
       <action dev="schlagert" type="add">
-        New (fixed) surefire report generation.
+        New (fixed) surefire report generation handling each test module as
+        separate test suite. Therefore an alternative surefire module is
+        provided by the plugin.
       </action>
       <action dev="schlagert" type="add">
-        Release file generation support.
+        Added run goal for packaging erlang-otp to compile/test and run an
+        erlang/OTP application for easy testing.
+      </action>
+      <action dev="schlagert" type="add">
+        Release file generation and management support.
+      </action>
+      <action dev="schlagert" type="add">
+        Application file generation and management support.
       </action>
       <action dev="olle-t" type="add">
         Added initial site documentation, generation of plugin-docs, changes
@@ -30,29 +39,39 @@
         New coverage report, replacing the old one. Now includes line-coverage
         with annotated source code listings.
       </action>
+      <action dev="schlagert" type="fix">
+        Fixed cover compilation with the export_all option to provide coverage
+        reports for non-exported module functions. Therefore an alternative,
+        patched cover module is provided by the plugin.
+      </action>
       <action dev="schlagert" type="add">
-        Added several unit and integration tests.
-      </action>
-      <action dev="schlagert" type="fix">
-        Cover reports working with export_all option. Therefore an alternative
-        cover module is provided by the plugin. This is to be removed as soon
-        as the proposed patch for erlang/OTP is accepted.
-      </action>
-      <action dev="schlagert" type="fix">
-        Fixed and documented automatic application/release version handling to
-        be able to support the maven-release plugin to manage project versioning.
+        Added support for the maven-release-plugin by using application and
+        release packaging variables in .app and .rel files.
       </action>
       <action dev="schlagert" type="add">
         Added possibility to include non-erlang sources into application packages.
       </action>
       <action dev="schlagert" type="fix">
-        Different problems with release packaging.
+        Fixed different problems with release packaging.
       </action>
       <action dev="schlagert" type="add">
-        Changed application packaging to .tar.gz.
+        Changed erlang-otp packaging to .tar.gz internally.
+      </action>
+      <action dev="schlagert" type="add">
+        Added several unit and integration tests.
       </action>
       <action dev="schlagert" type="add">
         Rewritten all mojos from the original maven-erlang plugin.
+      </action>
+      <action dev="schlagert" type="add">
+        Initial feature set:
+          - compile project and test sources
+          - execute eunit tests
+          - execute dialyzer on erlang/OTP applications/releases
+          - generate site documentation with edoc for project and test code as
+            well as surefire test reports and basic test code coverage
+          - package erlang/OTP applications
+          - package erlang/OTP releases (consisting of erlang/OTP applications)
       </action>
     </release>
   </body>
