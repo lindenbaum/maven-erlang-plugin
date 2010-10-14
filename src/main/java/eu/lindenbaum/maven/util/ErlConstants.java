@@ -2,6 +2,10 @@ package eu.lindenbaum.maven.util;
 
 /**
  * Defines Erlang related constants.
+ * 
+ * @author Olivier Sambourg
+ * @author Paul Guyot
+ * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public interface ErlConstants {
   /**

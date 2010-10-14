@@ -8,6 +8,10 @@ import java.io.InputStreamReader;
 /**
  * Reads all input from an {@link InputStream} saving it into a (line based)
  * buffer.
+ * 
+ * @author Olivier Sambourg
+ * @author Paul Guyot
+ * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class StreamGobbler implements Runnable {
   private final InputStream inputStream;

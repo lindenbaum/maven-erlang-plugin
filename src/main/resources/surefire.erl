@@ -1,4 +1,13 @@
+%%%-------------------------------------------------------------------
+%%% @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+%%% @doc
+%%%  An {@link eunit_listener} collecting/writing surefire compatible
+%%%  reports.
+%%% @end
+%%% Created : 1 Oct 2010
+%%%-------------------------------------------------------------------
 -module(surefire).
+-author('Tobias Schlager').
 
 -behaviour(eunit_listener).
 
