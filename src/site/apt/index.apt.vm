@@ -116,11 +116,9 @@ Maven Erlang Plug-In
 *--+--+
   compile | {{{./compile-mojo.html}compile}}
 *--+--+
-  process-classes | {{{./dialyzer-mojo.html}dialyzer}}
-*--+--+
   test-compile | {{{./test-compile-mojo.html}test-compile}}
 *--+--+
-  process-test-classes | {{{./test-dialyzer-mojo.html}test-dialyzer}}
+  process-test-classes | {{{./dialyzer-mojo.html}dialyzer}}
 *--+--+
   test | {{{./test-mojo.html}test}}
 *--+--+
@@ -134,12 +132,25 @@ Maven Erlang Plug-In
 *--+--+
   generate-sources | {{{./unpack-dependencies-mojo.html}unpack-dependencies}}
 *--+--+
-  compile | {{{./prepare-release-mojo.html}prepare-release}}
+  process-resources | {{{./copy-resources-mojo.html}copy-resources}}
 *--+--+
-  process-classes | {{{./dialyzer-release-mojo.html}dialyzer-release}}
+  compile | {{{./dialyzer-release-mojo.html}dialyzer-release}}
+*--+--+
+  process-classes | {{{./prepare-release-mojo.html}prepare-release}}
 *--+--+
   package | {{{./package-release-mojo.html}package-release}}
 *--+--+
+
+** Run
+
+ There is a plug-in goal to run an <<<erlang-otp>>> packaged project for basic
+ testing purposes. It will start an interactive erlang shell with <<<sasl>>>
+ which is able to start the application. The goal ends up in the shell in order
+ to provide interactive access to the started application.
+ 
+ More information:
+ 
+ * {{{./run-mojo.html}run}}
 
 ** Reports
 
