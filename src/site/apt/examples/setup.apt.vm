@@ -1,0 +1,54 @@
+
+Setting up a new Erlang/OTP project
+
+ Instead of an archetype for erlang-otp projects, the setup goal can be used
+ to create some common default resources for your project.
+ 
+ When starting a new project, define a minimal POM with the following
+ properties:
+ 
+ * GROUP-ID
+ 
+ * ARTIFACT-ID
+ 
+ * VERSION
+ 
+ * NAME
+ 
+ * DESCRIPTION
+ 
+ It would look something like this:
+ 
++--
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>[GROUP-ID]</groupId>
+  <artifactId>[ARTIFACT-ID]</artifactId>
+  <version>[VERSION]</version>
+  <packaging>erlang-otp</packaging>
+  <name>[NAME]</name>
+  <description>[DESCRIPTION]</description>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
++--
+
+ Now executing <<<mvn erlang:setup>>> will run the setup goal and check for
+ default resources and create those that are missing.
+ 
+ At the end of the check, there will be an advice on plugins or dependencies
+ that you manually have to add.
+
+[../erlang-setup-example.png] Example output from the setup goal.
+ 
+ Note that you can, at any time, run the goal again. Only missing files will be
+ created an never replaced or overwritten.
+ 

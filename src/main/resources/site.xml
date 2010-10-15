@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
-  <skin>
-    <groupId>eu.lindenbaum.development</groupId>
-    <artifactId>template-skin</artifactId>
-  </skin>
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html" />
       <item name="Releasenotes" href="changes-report.html" />
-      <item name="Goals" href="plugin-info.html" />
-      <item name="Plugin Configuration" href="plugin-configuration.html" />
-      <item name="Project Configuration" href="project-configuration.html" />
-    </menu>
-    <menu name="Examples">
-      <item name="Project setup" href="examples/setup.html" />
-      <item name="Compile source" href="examples/compile.html" />
-      <item name="Coverage report" href="examples/coverage.html" />
     </menu>
     <menu name="Project">
       <item name="Summary" href="project-summary.html" />
@@ -25,13 +13,8 @@
       <item name="Source code" href="source-repository.html" />
       <item name="Issue tracking" href="issue-tracking.html" />
     </menu>
-    <menu name="Development">
-      <item name="Sourceforge" href="https://sourceforge.net/projects/erlang-plugin/" />
-      <item name="Overview" href="development.html" />
-    </menu>
     <menu name="Reports">
       <item name="Unit tests" href="surefire-report.html" />
-      <item name="Integration tests" href="invoker-report.html" />
       <item name="Test coverage" href="cobertura/index.html" />
       <item name="Tag list" href="taglist.html" />
       <item name="Java API" href="apidocs/index.html" />
@@ -41,5 +24,6 @@
       <item name="Plug-In management" href="plugin-management.html" />
       <item name="Plug-Ins" href="plugins.html" />
     </menu>
+    <menu ref="reports" />
   </body>
 </project>

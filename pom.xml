@@ -21,7 +21,7 @@
       <id>olle-t</id>
       <name>Olle Törnström</name>
       <email>olle-t@users.sourceforge.net</email>
-      <url>http://www.linkedin.com/in/olletornstrom</url>
+      <url>http://www.studiomediatech.com</url>
     </developer>
     <developer>
       <id>schlagert</id>
@@ -33,6 +33,12 @@
       <id>lti</id>
       <name>Timo Koepke</name>
       <email>lti@users.sourceforge.net</email>
+    </developer>
+    <developer>
+      <id>heyll</id>
+      <name>Sven Heyll</name>
+      <email>heyll@users.sourceforge.net</email>
+      <url>http://sheyll.blogspot.com</url>
     </developer>
   </developers>
   <licenses>
@@ -50,9 +56,9 @@
   <distributionManagement>
     <site>
       <!-- 1) Enable a shell account (SSH/SCP) -->
-      <!--    SEE: http://maven.apache.org/plugins/maven-site-plugin/examples/site-deploy-to-sourceforge.net.html -->
+      <!-- SEE: http://maven.apache.org/plugins/maven-site-plugin/examples/site-deploy-to-sourceforge.net.html -->
       <!-- 2) Append account info to your settings.xml file -->
-      <!--    SEE: http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
+      <!-- SEE: http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
       <id>erlang-plugin.sourceforge.net</id>
       <url>scp://shell.sourceforge.net/home/groups/e/er/erlang-plugin/htdocs</url>
     </site>

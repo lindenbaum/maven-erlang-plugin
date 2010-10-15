@@ -5,7 +5,7 @@ Generate Test Coverage Report
  generated for your site documentation. To enable the coverage report must add
  the plugin to your reporting configuration:
   
----
++--
 <project>
   ...
   <packaging>erlang-otp</packaging>
@@ -38,8 +38,12 @@ Generate Test Coverage Report
   </reporting>  
   ...
 </project>
----
++--
  
  This will add <<only>> the test coverage report to your site documentation, 
  generated as the file <<<erlang-coverage-report.html>>>, and added to the 
  reports in the generated site reports menu.
+ 
+ NOTE: by default both EDoc and test coverage reports are generated when adding
+ the plugin without specific <<<reportSets>>> to the <<<reporting>>> section of
+ your pom.

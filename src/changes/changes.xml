@@ -1,6 +1,6 @@
 <document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <properties>
-    <title>Maven Erlang Plug-In Releasenotes</title>
+    <title>Maven Erlang Plug-In Release Notes</title>
   </properties>
   <body>
     <release version="1.0.0" date="TBA" description="Initial release">
@@ -84,6 +84,10 @@
       <action dev="schlagert" type="add">
         Initial feature set: Package erlang/OTP releases (consisting of
         erlang/OTP applications)
+      </action>
+      <action dev="olle-t" type="add">
+        Initial feature set: Project setup-goal, with defaults for site and
+        changelog, main sources and tests.
       </action>
     </release>
   </body>
