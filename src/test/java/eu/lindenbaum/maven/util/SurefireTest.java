@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
@@ -39,7 +38,7 @@ public class SurefireTest {
 
     String result = exec(command, new SystemStreamLog(), null, new Observer() {
       @Override
-      public String handle(int exitValue, String result) throws MojoExecutionException, MojoFailureException {
+      public String handle(int exitValue, String result) throws MojoFailureException {
         if (exitValue != 0) {
           throw new MojoFailureException("test exited with " + exitValue);
         }

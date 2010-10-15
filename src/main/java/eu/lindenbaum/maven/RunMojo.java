@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -42,7 +40,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class RunMojo extends AbstractErlangMojo {
   @Override
-  public void execute() throws MojoExecutionException, MojoFailureException {
+  public void execute() {
     Log log = getLog();
     if (ARTIFACT_TYPE_OTP.equals(this.project.getPackaging())) {
       ArrayList<String> command = new ArrayList<String>();

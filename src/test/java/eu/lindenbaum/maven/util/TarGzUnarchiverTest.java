@@ -20,6 +20,7 @@ public class TarGzUnarchiverTest {
       fail("IOException expected");
     }
     catch (IOException expected) {
+      // OK
     }
   }
 

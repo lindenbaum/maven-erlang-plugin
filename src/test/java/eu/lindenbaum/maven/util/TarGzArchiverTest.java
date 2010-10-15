@@ -26,6 +26,7 @@ public class TarGzArchiverTest {
       fail("IOException expected");
     }
     catch (IOException expected) {
+      // OK
     }
 
     assertFalse(archive.exists());

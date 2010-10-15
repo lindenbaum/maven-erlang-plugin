@@ -14,13 +14,13 @@ public class StreamGobblerTest {
   private Processor processor;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     this.control = createStrictControl();
     this.processor = this.control.createMock("outputProcessor", Processor.class);
   }
 
   @Test
-  public void testEmpty() throws Exception {
+  public void testEmpty() {
     String file = "stream-gobbler" + File.separator + "empty.txt";
     InputStream inputStream = getClass().getClassLoader().getResourceAsStream(file);
 
@@ -33,7 +33,7 @@ public class StreamGobblerTest {
   }
 
   @Test
-  public void testNonEmpty() throws Exception {
+  public void testNonEmpty() {
     String file = "stream-gobbler" + File.separator + "non-empty.txt";
     InputStream inputStream = getClass().getClassLoader().getResourceAsStream(file);
 
