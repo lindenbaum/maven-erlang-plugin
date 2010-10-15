@@ -7,6 +7,11 @@
   <name>Maven Erlang Plug-In</name>
   <description>Maven2 Plug-In to manage Erlang projects.</description>
   <url>http://erlang-plugin.sourceforge.net</url>
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>5</version>
+  </parent>
   <scm>
     <connection>scm:svn:https://erlang-plugin.svn.sourceforge.net/svnroot/erlang-plugin/trunk/maven-erlang-plugin</connection>
     <developerConnection>scm:svn:https://erlang-plugin.svn.sourceforge.net/svnroot/erlang-plugin/trunk/maven-erlang-plugin</developerConnection>
@@ -54,6 +59,11 @@
     </license>
   </licenses>
   <distributionManagement>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Sonatype OSS Repository Hosting - Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
     <site>
       <!-- 1) Enable a shell account (SSH/SCP) -->
       <!-- SEE: http://maven.apache.org/plugins/maven-site-plugin/examples/site-deploy-to-sourceforge.net.html -->
@@ -119,6 +129,8 @@
       </build>
     </profile>
   </profiles>
+  <repositories>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
