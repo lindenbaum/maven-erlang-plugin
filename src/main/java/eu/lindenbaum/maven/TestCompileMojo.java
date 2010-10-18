@@ -39,6 +39,8 @@ public final class TestCompileMojo extends AbstractCompilerMojo {
     }
     options.add("+debug_info");
     options.add("+export_all");
+    options.add("+report_errors");
+    options.add("+report_warnings");
     options.add("-DTEST");
 
     this.targetTest.mkdirs();
@@ -47,7 +49,7 @@ public final class TestCompileMojo extends AbstractCompilerMojo {
 
     int i = 0;
     if (this.srcMainErlang.exists()) {
-      i += compile(this.srcMainErlang, this.targetTest, null, ERL_SUFFIX, BEAM_SUFFIX, options);
+      i += compile(this.srcMainErlang, this.targetTest, this.srcMainErlang, ERL_SUFFIX, BEAM_SUFFIX, options);
     }
     if (this.srcTestErlang.exists()) {
       i += compile(this.srcTestErlang, this.targetTest, this.srcTestInclude, ERL_SUFFIX, BEAM_SUFFIX, options);

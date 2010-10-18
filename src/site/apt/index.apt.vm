@@ -70,33 +70,48 @@ Maven Erlang Plug-In
 
 ** Directory Structure
 
- This is the default directory structure that is supported, and in part also 
- generated, by the plug-in. Please note that some target folders that are common
- to Maven projects e.g. site are omitted in this listing.
+ This is the default directory structure that is supported for projects, and in
+ part also generated, by the plug-in. Please note that some target folders that
+ are common to Maven projects e.g. site are omitted in this listing.
+
+*** <<<erlang-otp>>>
 
 +--
  BASE
    +-- src
    |     +-- main
-   |     |     +-- erlang
-   |     |     +-- include
-   |     |     +-- priv
+   |     |     +-- erlang (*.erl, *.app, *.appup, *.mib, *.funcs)
+   |     |     +-- include (*.hrl)
+   |     |     +-- priv (*)
    |     |     +-- resources
-   |     |     |     +-- priv
+   |     |     |     +-- priv (*)
    |     |    [+-- *] (other non-erlang source folders)
    |     +-- test
-   |           +-- erlang
-   |           +-- include
-   +-- target
-   |     +-- lib
-   |     +-- ebin
-   |     +-- include
-   |     +-- test
-   |     +-- priv
-   |     +-- mibs
-   |     +-- releases
-   |     +-- surefire-reports
+   |           +-- erlang (*.erl)
+   |           +-- include (*.hrl)
+   +-- target (.dialyzer.ok)
+   |     +-- ebin (*.beam, *.app, *.appup)
+   |     +-- lib (dependency applications)
+   |     +-- include (*.hrl)
+   |     +-- mibs (*.bin)
+   |     +-- priv (*)
+   |     +-- surefire-reports (TEST-*.xml)
+   |     +-- test (*.beam, *.hrl)
    |    [+-- *_src] (non-erlang source folders)
+   +-- pom.xml
++--
+
+*** <<<erlang-rel>>>
+
++--
+ BASE
+   +-- src
+   |     +-- main
+   |           +-- erlang (*.rel, *.relup)
+   +-- target (.dialyzer.ok)
+   |     +-- ebin (*.rel, *.relup)
+   |     +-- lib (dependency applications)
+   |     +-- releases (previous/subsequent releases)
    +-- pom.xml
 +--
 

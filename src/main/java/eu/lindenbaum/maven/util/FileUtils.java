@@ -3,6 +3,7 @@ package eu.lindenbaum.maven.util;
 import static eu.lindenbaum.maven.util.ErlConstants.APPUP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.APP_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.BEAM_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.BIN_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.EBIN_DIRECTORY;
 import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.FUNCS_SUFFIX;
@@ -67,13 +68,14 @@ public final class FileUtils {
   public static final FileFilter REL_FILTER = getSuffixFilter(new String[]{ REL_SUFFIX });
 
   /**
-   * Filename filter to filter app files (.app & .appup). Directories are always
-   * accepted.
+   * Filename filter to filter snmp files (.mib, .bin & .funcs). Directories are
+   * always accepted.
    */
-  public static final FileFilter SNMP_FILTER = getSuffixFilter(new String[]{ MIB_SUFFIX, FUNCS_SUFFIX });
+  public static final FileFilter SNMP_FILTER = getSuffixFilter(new String[]{ MIB_SUFFIX, FUNCS_SUFFIX,
+                                                                            BIN_SUFFIX });
 
   /**
-   * Filename filter to filter app files (.app & .appup). Directories are always
+   * Filename filter to filter compiled files (.beam). Directories are always
    * accepted.
    */
   public static final FileFilter BEAM_FILTER = getSuffixFilter(new String[]{ BEAM_SUFFIX });

@@ -66,12 +66,12 @@ public final class DialyzerMojo extends AbstractDialyzerMojo {
       log.warn("Dialyzer is configured to be skipped.");
     }
     else {
-      File lastBuildIndicator = new File(DIALYZER_OK);
+      File lastBuildIndicator = new File(this.target, DIALYZER_OK);
       if (newerFilesThan(this.srcMainErlang, lastBuildIndicator)
           || newerFilesThan(this.srcMainInclude, lastBuildIndicator)
           || newerFilesThan(this.targetLib, lastBuildIndicator)) {
         lastBuildIndicator.delete();
-        log.info("Running dialyzer on " + this.srcMainErlang.getAbsolutePath());
+        log.info("Running dialyzer on " + this.srcMainErlang);
 
         List<String> command = new ArrayList<String>();
         command.add(DIALYZER);

@@ -71,8 +71,7 @@ abstract class AbstractCompilerMojo extends AbstractErlangMojo {
    * 
    * @param outputDir output directory for artifacts
    * @param include optional additional include path, maybe {@code null}
-   * @param options optional compiler options to be passed to the compiler,
-   *          maybe {@code null}
+   * @param options compiler options to be passed to the compiler
    * @param sources list of sources to compile
    * @return the constructed command line array
    */
@@ -94,11 +93,7 @@ abstract class AbstractCompilerMojo extends AbstractErlangMojo {
     }
     command.add("-o");
     command.add(outputDir.getPath());
-    command.add("+report_errors");
-    command.add("+report_warnings");
-    if (options != null) {
-      command.addAll(options);
-    }
+    command.addAll(options);
     for (File source : sources) {
       command.add(source.getPath());
     }

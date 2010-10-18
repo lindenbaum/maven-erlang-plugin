@@ -15,29 +15,29 @@ import org.apache.maven.project.MavenProject;
  * </p>
  * 
  * <pre>
- * BASE
- *   +-- src
- *   |     +-- main
- *   |     |     +-- erlang
- *   |     |     +-- include
- *   |     |     +-- priv
- *   |     |     +-- resources
- *   |     |     |     +-- priv
- *   |     |    [+-- *] (other non-erlang source folders)
- *   |     +-- test
- *   |           +-- erlang
- *   |           +-- include
- *   +-- target
- *   |     +-- lib
- *   |     +-- ebin
- *   |     +-- include
- *   |     +-- test
- *   |     +-- priv
- *   |     +-- mibs
- *   |     +-- releases
- *   |     +-- surefire-reports
- *   |    [+-- *_src] (non-erlang source folders)
- *   +-- pom.xml
+ *  BASE
+ *    +-- src
+ *    |     +-- main
+ *    |     |     +-- erlang (*.erl, *.app, *.appup, *.mib, *.funcs, *.rel, *.relup)
+ *    |     |     +-- include (*.hrl)
+ *    |     |     +-- priv (*)
+ *    |     |     +-- resources
+ *    |     |     |     +-- priv (*)
+ *    |     |    [+-- *] (other non-erlang source folders)
+ *    |     +-- test
+ *    |           +-- erlang (*.erl)
+ *    |           +-- include (*.hrl)
+ *    +-- target (.dialyzer.ok)
+ *    |     +-- ebin (*.beam, *.app, *.appup, *.rel, *.relup)
+ *    |     +-- include (*.hrl)
+ *    |     +-- lib (dependency applications)
+ *    |     +-- mibs (*.bin)
+ *    |     +-- priv (*)
+ *    |     +-- releases (previous/subsequent releases)
+ *    |     +-- surefire-reports (TEST-*.xml)
+ *    |     +-- test (*.beam, *.hrl)
+ *    |    [+-- *_src] (non-erlang source folders)
+ *    +-- pom.xml
  * </pre>
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>

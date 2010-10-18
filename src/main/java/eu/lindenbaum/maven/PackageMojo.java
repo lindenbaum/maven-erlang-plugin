@@ -187,6 +187,7 @@ public final class PackageMojo extends AbstractErlangMojo {
     copy(this.targetInclude, new File(tmpDir, INCLUDE_DIRECTORY), SOURCE_FILTER, "include");
     copy(this.srcMainInclude, new File(tmpDir, INCLUDE_DIRECTORY), SOURCE_FILTER, "include");
     copy(this.targetPriv, new File(tmpDir, PRIV_DIRECTORY), NULL_FILTER, "private");
+    copy(this.srcMainErlang, new File(tmpDir, MIBS_DIRECTORY), SNMP_FILTER, "SNMP");
     copy(this.targetMibs, new File(tmpDir, MIBS_DIRECTORY), SNMP_FILTER, "SNMP");
 
     // package non erlang source folders, e.g. c, java, ... into c_src, java_src, ...
@@ -267,7 +268,7 @@ public final class PackageMojo extends AbstractErlangMojo {
     if (copied == 0) {
       targetDir.delete();
     }
-    getLog().info("Copied " + copied + " " + kind + " files to " + targetDir.getAbsolutePath());
+    getLog().info("Copied " + copied + " " + kind + " files from " + srcDir + " to " + targetDir);
   }
 
   /**
@@ -337,12 +338,13 @@ public final class PackageMojo extends AbstractErlangMojo {
     if (module != null && !module.isEmpty()) {
       File startModuleFile = new File(this.targetEbin, module + BEAM_SUFFIX);
       if (!startModuleFile.isFile()) {
-        throw new MojoFailureException("Configured start module does not exist.");
+        throw new MojoFailureException("Configured start module \'" + module + "\' does not exist.");
       }
       String expression = String.format(EXTRACT_ATTRIBUTE, "behaviour", "[" + module + "]");
       String behaviour = eval(log, expression, null, this.targetEbin);
       if (!behaviour.contains("application")) {
-        throw new MojoFailureException("Configured start module does not implement the application behaviour");
+        throw new MojoFailureException("Configured start module \'" + module
+                                       + "\' does not implement the application behaviour");
       }
     }
   }

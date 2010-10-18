@@ -52,10 +52,10 @@ public final class DialyzerReleaseMojo extends AbstractDialyzerMojo {
       log.warn("Dialyzer is configured to be skipped.");
     }
     else {
-      File lastBuildIndicator = new File(DIALYZER_OK);
+      File lastBuildIndicator = new File(this.target, DIALYZER_OK);
       if (newerFilesThan(this.targetLib, lastBuildIndicator)) {
         lastBuildIndicator.delete();
-        log.info("Running dialyzer on " + this.targetLib.getAbsolutePath());
+        log.info("Running dialyzer on " + this.targetLib);
 
         List<String> command = new ArrayList<String>();
         command.add(DIALYZER);
