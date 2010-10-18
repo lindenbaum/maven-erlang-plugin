@@ -58,12 +58,18 @@
       <comments>This license applies to the (modified) erlang code provided in the cover2.erl, surefire.erl and surefire_test.erl modules.</comments>
     </license>
   </licenses>
-  <distributionManagement>
+  <distributionManagement>    
+    <!-- SEE: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
     <snapshotRepository>
       <id>sonatype-nexus-snapshots</id>
       <name>Sonatype OSS Repository Hosting - Snapshots</name>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
+    </snapshotRepository>      
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <name>Sonatyp OSS Repository Hosting - Staging</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
     <site>
       <!-- 1) Enable a shell account (SSH/SCP) -->
       <!-- SEE: http://maven.apache.org/plugins/maven-site-plugin/examples/site-deploy-to-sourceforge.net.html -->
