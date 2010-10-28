@@ -169,17 +169,21 @@ public final class PackageMojo extends AbstractErlangMojo {
     replacements.put("${VERSION}", "\"" + this.project.getVersion() + "\"");
     replacements.put("${MODULES}", modules);
     replacements.put("${REGISTERED}", getRegisteredNames(modules));
+
     File srcAppFile = new File(this.srcMainErlang, this.project.getArtifactId() + APP_SUFFIX);
-    if (!srcAppFile.exists()) {
+    boolean srcAppFileExisted = srcAppFile.exists();
+    if (!srcAppFileExisted) {
       try {
         fileWrite(srcAppFile.getPath(), "UTF-8", DEFAULT_APP);
-        srcAppFile.deleteOnExit();
       }
       catch (IOException e) {
         log.info("Could not find .app file, also failed to create default .app file, ignoring ...");
       }
     }
     copy(this.srcMainErlang, this.targetEbin, APP_FILTER, "application", replacements);
+    if (!srcAppFileExisted) {
+      srcAppFile.delete();
+    }
 
     // package all otp standard resources
     copy(this.srcMainErlang, new File(tmpDir, "src"), SOURCE_FILTER, "source");
