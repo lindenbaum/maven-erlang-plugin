@@ -91,6 +91,16 @@ public final class FileUtils {
   };
 
   /**
+   * a {@link Predicate} that checks a file for {@code null} and existance
+   */
+  public static Predicate<File> FILE_PRED = new Predicate<File>() {
+    @Override
+    public boolean pred(File file) {
+      return file != null && file.exists();
+    }
+  };
+
+  /**
    * Returns a {@link FileFilter} which only accepts <b>files</b> ending with
    * one of the given suffixes. The suffixes may be of the for {@code .java} or
    * {@code java}. Directories will always be accepted.
