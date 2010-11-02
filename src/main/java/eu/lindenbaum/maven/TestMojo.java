@@ -9,6 +9,7 @@ import static eu.lindenbaum.maven.util.FileUtils.extractFilesFromJar;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencies;
 import static eu.lindenbaum.maven.util.FileUtils.getDependencyIncludes;
 import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
+import static eu.lindenbaum.maven.util.MavenUtils.SEPARATOR;
 import static eu.lindenbaum.maven.util.MavenUtils.getPluginFile;
 
 import java.io.File;
@@ -75,9 +76,9 @@ public final class TestMojo extends AbstractErlangMojo {
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     final Log log = getLog();
-    log.info("------------------------------------------------------------------------");
+    log.info(SEPARATOR);
     log.info(" T E S T S");
-    log.info("------------------------------------------------------------------------");
+    log.info(SEPARATOR);
 
     if (this.skipTests) {
       log.info("Tests are skipped.");
@@ -103,7 +104,7 @@ public final class TestMojo extends AbstractErlangMojo {
               throw new MojoExecutionException("Unit test run returned with " + exitValue);
             }
             if (!SUCCESS_REGEX.matcher(result).find()) {
-              log.info("------------------------------------------------------------------------");
+              log.info(SEPARATOR);
               log.error("Tests failed.");
               throw new MojoFailureException("There are test failures.");
             }

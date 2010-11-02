@@ -18,6 +18,7 @@ import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
 import static eu.lindenbaum.maven.util.FileUtils.getFilesAndDirectoriesRecursive;
 import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
 import static eu.lindenbaum.maven.util.FileUtils.removeDirectory;
+import static eu.lindenbaum.maven.util.MavenUtils.SEPARATOR;
 import static org.codehaus.plexus.util.FileUtils.fileWrite;
 
 import java.io.File;
@@ -154,7 +155,7 @@ public final class PackageMojo extends AbstractErlangMojo {
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
-    log.info("------------------------------------------------------------------------");
+    log.info(SEPARATOR);
     log.info("PACKAGING PROJECT");
 
     File tmpDir = new File(this.target, this.project.getArtifactId() + "-" + this.project.getVersion());
@@ -236,7 +237,7 @@ public final class PackageMojo extends AbstractErlangMojo {
     catch (Exception e) {
       throw new MojoExecutionException(e.getMessage(), e);
     }
-    log.info("------------------------------------------------------------------------");
+    log.info(SEPARATOR);
     removeDirectory(tmpDir);
   }
 
