@@ -18,6 +18,8 @@ import org.apache.maven.project.MavenProject;
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public final class MavenUtils {
+  public static String SEPARATOR = "------------------------------------------------------------------------";
+
   /**
    * Returns an (existing) file pointing to a plugin {@link Artifact} used by a
    * {@link MavenProject} from a {@link ArtifactRepository}.
