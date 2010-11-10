@@ -95,6 +95,7 @@ import org.apache.maven.plugin.logging.Log;
  * @phase package
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public final class PackageMojo extends AbstractErlangMojo {
   private static final String EXTRACT_VERSION = //
@@ -152,6 +153,14 @@ public final class PackageMojo extends AbstractErlangMojo {
    */
   private boolean failOnUndeclaredModules;
 
+  /**
+   * Whether to delete the temporary packaging dir or not. Generally useful for
+   * debugging. Setting this to {@code false} will preserve the temp dir.
+   * 
+   * @parameter default-value="true"
+   */
+  private boolean removeTempDir;
+
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     Log log = getLog();
@@ -188,7 +197,7 @@ public final class PackageMojo extends AbstractErlangMojo {
 
     // package all otp standard resources
     copy(this.srcMainErlang, new File(tmpDir, "src"), SOURCE_FILTER, "source");
-    copy(this.targetEbin, new File(tmpDir, EBIN_DIRECTORY), NULL_FILTER, "");
+    copy(this.targetEbin, new File(tmpDir, EBIN_DIRECTORY), NULL_FILTER, "binary", null);
     copy(this.targetInclude, new File(tmpDir, INCLUDE_DIRECTORY), SOURCE_FILTER, "include");
     copy(this.srcMainInclude, new File(tmpDir, INCLUDE_DIRECTORY), SOURCE_FILTER, "include");
     copy(this.targetPriv, new File(tmpDir, PRIV_DIRECTORY), NULL_FILTER, "private");
@@ -238,7 +247,11 @@ public final class PackageMojo extends AbstractErlangMojo {
       throw new MojoExecutionException(e.getMessage(), e);
     }
     log.info(SEPARATOR);
-    removeDirectory(tmpDir);
+
+    if (this.removeTempDir) {
+      getLog().info("Removing packaging temp directory " + tmpDir);
+      removeDirectory(tmpDir);
+    }
   }
 
   /**
@@ -269,7 +282,13 @@ public final class PackageMojo extends AbstractErlangMojo {
    */
   private void copy(File srcDir, File targetDir, FileFilter filter, String kind, Map<String, String> r) throws MojoExecutionException {
     targetDir.mkdirs();
-    int copied = copyDirectory(srcDir, targetDir, filter, r);
+    final int copied;
+    if (r == null) {
+      copied = copyDirectory(srcDir, targetDir, filter);
+    }
+    else {
+      copied = copyDirectory(srcDir, targetDir, filter, r);
+    }
     if (copied == 0) {
       targetDir.delete();
     }

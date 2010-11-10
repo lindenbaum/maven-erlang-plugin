@@ -14,6 +14,9 @@
         <artifactId>maven-erlang-plugin</artifactId>
         <version>@project.version@</version>
         <extensions>true</extensions>
+        <configuration>
+          <removeTempDir>false</removeTempDir>
+        </configuration>
       </plugin>
     </plugins>
   </build>

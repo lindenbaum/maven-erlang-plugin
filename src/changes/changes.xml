@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="1.0.0" date="TBA" description="Initial release">
+      <action dev="olle-t" type="add">
+        Parameter in the package goal, controlling if the temporary directory is
+        deleted or not.
+      </action>
       <action dev="schlagert, heyll" type="add">
         Added mock system (formerly known as ltest_mock, formerly known as
         erlymock). The system is automatically available for test modules during
