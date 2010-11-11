@@ -14,6 +14,12 @@
         <artifactId>maven-erlang-plugin</artifactId>
         <version>@project.version@</version>
         <extensions>true</extensions>
+        <configuration>
+          <runOptions>
+            <param>-name</param>
+            <param>defined</param>
+          </runOptions>
+        </configuration>
       </plugin>
     </plugins>
   </build>

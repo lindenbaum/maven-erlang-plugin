@@ -33,7 +33,7 @@
 %%--------------------------------------------------------------------
 start(_, _) ->
   Pid = self(),
-  {ok, touch_file_and_exit(Pid)}. 
+  {ok, touch_file_and_exit(Pid, node())}. 
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -48,10 +48,10 @@ stop(_) ->
     c:q(),
     ok.
 
-touch_file_and_exit(Pid) ->
+touch_file_and_exit(Pid, Node) ->
   spawn(fun() ->
     io:format("Creating touch file...~n"),
-    file:write_file("touched", <<$t,$o,$u,$c,$h,$e,$d>>),
+    file:write_file("touched", io_lib:format("~p", [Node])),
     io:format("Ending process...~n"),
     exit(Pid, normal)
   end).

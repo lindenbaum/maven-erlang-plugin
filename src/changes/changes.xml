@@ -5,6 +5,10 @@
   <body>
     <release version="1.0.0" date="TBA" description="Initial release">
       <action dev="olle-t" type="add">
+        New parameter for the run goal, allowing optional command line 
+        parameters to be passed to the starting Erlang node.
+      </action>
+      <action dev="olle-t" type="add">
         Parameter in the package goal, controlling if the temporary directory is
         deleted or not.
       </action>

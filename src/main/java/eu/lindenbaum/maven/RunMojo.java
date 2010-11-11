@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.plugin.Mojo;
@@ -19,7 +20,7 @@ import org.apache.maven.plugin.logging.Log;
  * This {@link Mojo} runs a, {@code erlang-otp} packaged project interactively
  * in a shell. Therefore an erlang shell with {@code sasl} is started and the
  * application is started using {@code application:start/1}. To package and
- * startthe application simply use
+ * start the application simply use
  * 
  * <pre>
  * mvn erlang:run
@@ -37,8 +38,23 @@ import org.apache.maven.plugin.logging.Log;
  * @goal run
  * @execute phase="package"
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public final class RunMojo extends AbstractErlangMojo {
+
+  /**
+   * Additional list of command line options, passed when starting the
+   * application.
+   * <p>
+   * NOTE: {@code -boot start_sasl} and the path to the resolved application
+   * dependencies (with {@code -pa}) are always added.
+   * </p>
+   * 
+   * @parameter
+   * @see http://www.erlang.org/doc/man/erl.html
+   */
+  private String[] runOptions;
+
   @Override
   public void execute() {
     Log log = getLog();
@@ -51,7 +67,9 @@ public final class RunMojo extends AbstractErlangMojo {
         command.add("-pa");
         command.add(lib.getAbsolutePath());
       }
-
+      if (this.runOptions != null) {
+        command.addAll(Arrays.asList(this.runOptions));
+      }
       String afterStarted = "application:start(\'" + this.project.getArtifactId() + "\').\n";
       runInteractive(log, command, afterStarted, this.targetEbin);
     }
