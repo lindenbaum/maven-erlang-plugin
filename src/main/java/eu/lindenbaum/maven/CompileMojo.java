@@ -31,7 +31,7 @@ public final class CompileMojo extends AbstractCompilerMojo {
    * Setting this to {@code true} will compile all modules with debug
    * information.
    * 
-   * @parameter expression=${debugInfo} default-value=false
+   * @parameter expression="${debugInfo}" default-value=false
    */
   private boolean debugInfo;
 

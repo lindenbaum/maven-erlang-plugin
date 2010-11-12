@@ -62,7 +62,7 @@ public final class TestMojo extends AbstractErlangMojo {
   /**
    * Setting this to {@code true will} skip the test runs.
    * 
-   * @parameter expression=${skipTests} default-value=false
+   * @parameter expression="${skipTests}" default-value=false
    */
   private boolean skipTests;
 
@@ -70,7 +70,7 @@ public final class TestMojo extends AbstractErlangMojo {
    * Setting this to {@code true} will break the build if there are no tests to
    * run.
    * 
-   * @parameter expression=${failIfNoTest} default-value=false
+   * @parameter expression="${failIfNoTest}" default-value=false
    */
   private boolean failIfNoTests;
 

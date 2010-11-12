@@ -22,7 +22,7 @@ abstract class AbstractDialyzerMojo extends AbstractErlangMojo {
    * Setting this to {@code true} will break the build when a {@code dialyzer}
    * run returns warnings.
    * 
-   * @parameter expression=${dialyzerWarningsAreErrors} default-value=false
+   * @parameter expression="${dialyzerWarningsAreErrors}" default-value=false
    */
   boolean dialyzerWarningsAreErrors;
 

@@ -40,7 +40,7 @@ public final class DialyzerMojo extends AbstractDialyzerMojo {
   /**
    * Setting this to {@code true} will skip the {@code dialyzer} analysis.
    * 
-   * @parameter expression=${skipDialyzer} default-value=false
+   * @parameter expression="${skipDialyzer}" default-value=false
    */
   private boolean skipDialyzer;
 
@@ -48,7 +48,7 @@ public final class DialyzerMojo extends AbstractDialyzerMojo {
    * Setting this to {@code true} will include the projects dependencies into
    * the {@code dialyzer} run. Note: This may take very long.
    * 
-   * @parameter expression=${dialyzerWithDependencies} default-value=false
+   * @parameter expression="${dialyzerWithDependencies}" default-value=false
    */
   private boolean dialyzerWithDependencies;
 
