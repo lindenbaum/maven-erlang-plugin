@@ -15,13 +15,14 @@ import org.apache.maven.plugin.MojoFailureException;
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Timo Koepke <timo.koepke@lindenbaum.eu>
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 abstract class AbstractDialyzerMojo extends AbstractErlangMojo {
   /**
    * Setting this to {@code true} will break the build when a {@code dialyzer}
    * run returns warnings.
    * 
-   * @parameter default-value=false
+   * @parameter expression=${dialyzerWarningsAreErrors} default-value=false
    */
   boolean dialyzerWarningsAreErrors;
 

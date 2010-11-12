@@ -24,13 +24,14 @@ import org.apache.maven.plugin.logging.Log;
  * @phase compile
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public final class CompileMojo extends AbstractCompilerMojo {
   /**
    * Setting this to {@code true} will compile all modules with debug
    * information.
    * 
-   * @parameter default-value=false
+   * @parameter expression=${debugInfo} default-value=false
    */
   private boolean debugInfo;
 

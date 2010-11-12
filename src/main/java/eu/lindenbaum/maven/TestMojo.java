@@ -46,6 +46,7 @@ import org.apache.maven.plugin.logging.Log;
  * @phase test
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  * @see CoverageReport
  */
 public final class TestMojo extends AbstractErlangMojo {
@@ -61,7 +62,7 @@ public final class TestMojo extends AbstractErlangMojo {
   /**
    * Setting this to {@code true will} skip the test runs.
    * 
-   * @parameter default-value=false
+   * @parameter expression=${skipTests} default-value=false
    */
   private boolean skipTests;
 
@@ -69,7 +70,7 @@ public final class TestMojo extends AbstractErlangMojo {
    * Setting this to {@code true} will break the build if there are no tests to
    * run.
    * 
-   * @parameter default-value=false
+   * @parameter expression=${failIfNoTest} default-value=false
    */
   private boolean failIfNoTests;
 
