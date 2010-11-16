@@ -287,7 +287,12 @@ program_mock_replay(InOrder, OutOfOrder, Stub, From) ->
       fun () ->
 	      uninstall(ModuleBins),
 	      signal(From, cleanup_finished)
-      end),
+      end, 
+      self()),
+    receive 
+        {auto_cleanup_started, _ACPid} ->
+            ok
+    end,
     record_invocations(
       lists:reverse(InOrder),
       OutOfOrder,
@@ -587,12 +592,14 @@ uninstall_module(Mod) ->
     code:purge(Mod),
     code:delete(Mod).
 
-auto_cleanup(CleanupFun) ->
+auto_cleanup(CleanupFun, FromPid) ->
     spawn_link(
-      fun() ->
+      fun() ->              
 	      erlang:process_flag(trap_exit, true),
 	      error_logger:info_msg(
-		"auto cleanup handler ~p waiting for the end...~n", [self()]),
+		"auto cleanup handler ~p waiting for the end of ~p ...~n", 
+                [self(), FromPid]),
+              FromPid ! {auto_cleanup_started, self()},
 	      receive
 		  Msg = {'EXIT', _From, _Reason} ->
 		      error_logger:info_msg(
