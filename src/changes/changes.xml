@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="1.0.0" date="TBA" description="Initial release">
+      <action dev="heyll" type="fix">
+        'TEST' was not set while compiling sources in testphase for coverage.
+        Added setting of 'TEST' macro to the cover2:compile call.
+      </action>
       <action dev="olle-t" type="add">
         New parameter for the run goal, allowing optional command line 
         parameters to be passed to the starting Erlang node.

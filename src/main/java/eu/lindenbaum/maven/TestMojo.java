@@ -167,7 +167,7 @@ public final class TestMojo extends AbstractErlangMojo {
   private List<String> getCommandLine(List<String> modules) {
     StringBuilder coverCompileStr = new StringBuilder("cover2:compile_directory(\"");
     coverCompileStr.append(this.srcMainErlang.getAbsolutePath());
-    coverCompileStr.append("\", [export_all");
+    coverCompileStr.append("\", [{d, 'TEST'}, export_all");
     List<File> includes = new ArrayList<File>();
     includes.addAll(Arrays.asList(new File[]{ this.srcMainInclude, this.srcTestInclude, this.targetInclude }));
     includes.addAll(getDependencyIncludes(this.targetLib));
