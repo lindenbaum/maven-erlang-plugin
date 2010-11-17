@@ -19,12 +19,17 @@
 	 strict/5, o_o/5, stub/5, replay/1, verify/1, verify_after_last_call/1,
 	 verify_after_last_call/2, invocation_event/1]).
 
+-ifdef(MOCK_LOGGING_ON).
+-define(LOG(F, D), error_logger:info_msg(F,D)).
+-else.
+-define(LOG(F,D), ok).
+-endif.
 
 %% use this to create a new instance of a mock process that is in programming
 %% phase
 new() ->
     Mock = spawn_link(fun() -> program_mock([],[],[]) end),
-    error_logger:info_msg("mock ~w: created~n", [Mock]),
+    ?LOG("mock ~w: created~n", [Mock]),
     Mock.
 
 %% expect has the following options:
@@ -84,11 +89,11 @@ verify_after_last_call(Mock, TimeOut) ->
 	call(Mock, verify, 2000)
     catch
 	{timeout, verify} ->
-	    error_logger:info_msg("mock ~p: verify finished~n~n~n", [Mock]),
+	    ?LOG("mock ~p: verify finished~n~n~n", [Mock]),
 	    fail(mock_failed_before_verify)
     end,
     await(cleanup_finished),
-    error_logger:info_msg("mock ~p: verify finished~n~n~n", [Mock]).
+    ?LOG("mock ~p: verify finished~n~n~n", [Mock]).
 
 
 %%%-------------------------------------------------------------------
@@ -113,7 +118,7 @@ signal_fun(Atom, RetVal) ->
 %% some "await(...)"
 %%--------------------------------------------------------------------
 signal(Pid, Atom) ->
-    error_logger:info_msg("signalling ~p from  ~p to ~p~n", [Atom, self(), Pid]),
+    ?LOG("signalling ~p from  ~p to ~p~n", [Atom, self(), Pid]),
     Pid ! {mock_signal, Atom}.
 
 %%--------------------------------------------------------------------
@@ -124,21 +129,21 @@ await(Atom) when is_atom(Atom) ->
     await(Atom, 2000).
 
 await(Atom,To) when is_atom(Atom)->
-    error_logger:info_msg("now awaiting ~p in process ~p~n", [Atom, self()]),
+    ?LOG("now awaiting ~p in process ~p~n", [Atom, self()]),
     receive
 	{mock_signal, Atom} ->
-	    error_logger:info_msg("await succeeded: ~p~n", [Atom])
+	    ?LOG("await succeeded: ~p~n", [Atom])
     after To ->
 	    fail({timeout, await, Atom})
     end.
 
 
 fail(Pid, Reason) ->
-    error_logger:info_msg("mock ~w: failed: ~w~n",[self(), Reason]),
+    error_logger:error_msg("mock ~w: failed: ~w~n",[self(), Reason]),
     Pid ! {error, Reason}.
 
 fail(Reason) ->
-    error_logger:info_msg("mock ~w: failed: ~w~n",[self(), Reason]),
+    error_logger:error_msg("mock ~w: failed: ~w~n",[self(), Reason]),
     throw({mock_failure, Reason}).
 
 success(Pid) ->
@@ -146,7 +151,7 @@ success(Pid) ->
     success().
 
 success() ->
-    error_logger:info_msg("mock ~w: successfully finished.~n",[self()]),
+    ?LOG("mock ~w: successfully finished.~n",[self()]),
     test_passed.
 
 %% @private
@@ -329,14 +334,14 @@ get_binaries(ModuleSet) ->
 get_cover_compiled_binary(Mod) ->
     case ets:info(cover_binary_code_table) of
 	undefined ->
-	    error_logger:info_msg(
+	    error_logger:error_msg(
 	      "mock ~w: ERROR table of cover compiled binaries not found~n",
 	      [self()]),
 	    Mod;
 	_ ->
 	    case ets:lookup(cover_binary_code_table, Mod) of
 		[] ->
-		    error_logger:info_msg(
+		    error_logger:error_msg(
 		      "mock ~w: ERROR cover compiled binary of ~p not found~n",
 		      [self(), Mod]),
 		    Mod;
@@ -366,11 +371,11 @@ replace_modules_by_abstract_forms(Self, Combined, ModuleSet) ->
 				end,
 				[],
 				FunsOfModSet),
-	      CLRes = compile_and_load_abstract_form(
+	      _CLRes = compile_and_load_abstract_form(
 			HeaderForm ++ FunctionForms),
-	      error_logger:info_msg(
+	      ?LOG(
 		"mock ~w: created and loaded mock code ~w~n",
-		[self(), CLRes])
+		[self(), _CLRes])
       end, [], ModuleSet).
 
 %% @private
@@ -535,7 +540,7 @@ in_order_invocation(InOrder, OutOfOrder, Stub, EF,
 
 invocation_event({MockPidStr, Mod, Fun, Arity, Args}) ->
     MockPid = list_to_pid(MockPidStr),
-    error_logger:info_msg(
+    ?LOG(
       "mock ~w: invocation: ~w:~w/~w ~w~n",[MockPid, Mod, Fun, Arity, Args]),
     MockPid ! {self(), Mod, Fun, Arity, Args},
     receive
@@ -548,26 +553,26 @@ invocation_event({MockPidStr, Mod, Fun, Arity, Args}) ->
 	{mock_process_gaurd__, {exit, R}} ->
 	    exit(R);
 	{mock_process_gaurd__, {function, F}} ->
-	    error_logger:info_msg("mock ~w: invoking answerer~n",[MockPid]),
+	    ?LOG("mock ~w: invoking answerer~n",[MockPid]),
 	    R = apply(F,Args),
-	    error_logger:info_msg(
+	    ?LOG(
 	      "mock ~w: answerer returned: ~w~n",[MockPid,R]),
 	    R;
 	{mock_process_gaurd__, {function1, F}} ->
-	    error_logger:info_msg("mock ~w: invoking answerer~n",[MockPid]),
+	    ?LOG("mock ~w: invoking answerer~n",[MockPid]),
 	    R = F(Args),
-	    error_logger:info_msg(
+	    ?LOG(
 	      "mock ~w: answerer returned: ~w~n",[MockPid,R]),
 	    R;
 	{mock_process_gaurd__, {rec_msg, P}} ->
-	    error_logger:info_msg(
+	    ?LOG(
 	      "mock ~w: receiving message for ~w~n",[MockPid,P]),
-	    Msg = receive
+	    _Msg = receive
 		      M ->
 			  P ! M
 		  end,
-	    error_logger:info_msg(
-	      "mock ~w: message ~w delivered to ~w~n",[MockPid,Msg,P])
+	    ?LOG(
+	      "mock ~w: message ~w delivered to ~w~n",[MockPid,_Msg,P])
     end.
 
 seq(A, E) when A > E -> [];
@@ -588,7 +593,7 @@ uninstall(ModuleList) ->
       end, ModuleList).
 
 uninstall_module(Mod) ->
-    error_logger:info_msg("Deleting and purging module ~p~n", [Mod]),
+    ?LOG("Deleting and purging module ~p~n", [Mod]),
     code:purge(Mod),
     code:delete(Mod).
 
@@ -596,18 +601,18 @@ auto_cleanup(CleanupFun, FromPid) ->
     spawn_link(
       fun() ->              
 	      erlang:process_flag(trap_exit, true),
-	      error_logger:info_msg(
+	      ?LOG(
 		"auto cleanup handler ~p waiting for the end of ~p ...~n", 
                 [self(), FromPid]),
               FromPid ! {auto_cleanup_started, self()},
 	      receive
-		  Msg = {'EXIT', _From, _Reason} ->
-		      error_logger:info_msg(
+		  _Msg = {'EXIT', _From, _Reason} ->
+		      ?LOG(
 			"auto cleanup handler ~p receive exit message ~p.~n",
-			[self(), Msg]),
+			[self(), _Msg]),
 		      CleanupFun();
 		  _Ather ->
-		      error_logger:info_msg(
+		      error_logger:warning_msg(
 			"auto cleanup handler ~p received "
 			"unexpected message  ~p.~n",
 			[self(), _Ather])
