@@ -86,9 +86,12 @@ Maven Erlang Plug-In
    |     |     +-- resources
    |     |     |     +-- priv (*)
    |     |    [+-- *] (other non-erlang source folders)
+   |     |
    |     +-- test
    |           +-- erlang (*.erl)
    |           +-- include (*.hrl)
+   |           +-- resources (*)
+   |
    +-- target (.dialyzer.ok)
    |     +-- ebin (*.beam, *.app, *.appup)
    |     +-- lib (dependency applications)
@@ -98,6 +101,7 @@ Maven Erlang Plug-In
    |     +-- surefire-reports (TEST-*.xml)
    |     +-- test (*.beam, *.hrl)
    |    [+-- *_src] (non-erlang source folders)
+   |
    +-- pom.xml
 +--
 
@@ -127,9 +131,11 @@ Maven Erlang Plug-In
 *--+--+
   generate-sources | {{{./unpack-dependencies-mojo.html}unpack-dependencies}}
 *--+--+
-  process-resources | {{{./copy-resources-mojo.html}copy-resources}}
+  generate-resources | {{{./copy-resources-mojo.html}copy-resources}}
 *--+--+
   compile | {{{./compile-mojo.html}compile}}
+*--+--+
+  generate-test-resources | {{{./copy-test-resources-mojo.html}copy-test-resources}}
 *--+--+
   test-compile | {{{./test-compile-mojo.html}test-compile}}
 *--+--+

@@ -15,8 +15,9 @@ import org.apache.maven.plugin.MojoExecutionException;
  * </p>
  * 
  * @goal copy-resources
- * @phase process-resources
+ * @phase generate-resources
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public final class CopyResourcesMojo extends AbstractErlangMojo {
   @Override

@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="1.0.0" date="TBA" description="Initial release">
+      <action dev="olle-t" type="add">
+        New mojo that copies test-resources, bound to the 
+        generate-test-resources phase. 
+      </action>
       <action dev="heyll" type="fix">
         'TEST' was not set while compiling sources in testphase for coverage.
         Added setting of 'TEST' macro to the cover2:compile call.

@@ -12,3 +12,8 @@ File report2 = new File(basedir, "target/surefire-reports/TEST-test_app_test.xml
 if (report2.isFile()) {
     throw new IllegalStateException("Test report file " + report2 + " must not exist before test is run.");
 }
+
+File resourceFile = new File(basedir, "target/test/resource-file");
+if (resourceFile.isFile()) {
+    throw new IllegalStateException("Test resource file " + resourceFile + " must not exist before test is run.");
+}

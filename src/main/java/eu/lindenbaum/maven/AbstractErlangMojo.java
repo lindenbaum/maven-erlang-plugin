@@ -24,9 +24,11 @@ import org.apache.maven.project.MavenProject;
  *    |     |     +-- resources
  *    |     |     |     +-- priv (*)
  *    |     |    [+-- *] (other non-erlang source folders)
+ *    |     |
  *    |     +-- test
  *    |           +-- erlang (*.erl)
  *    |           +-- include (*.hrl)
+ *    |
  *    +-- target (.dialyzer.ok)
  *    |     +-- ebin (*.beam, *.app, *.appup, *.rel, *.relup)
  *    |     +-- include (*.hrl)
@@ -37,10 +39,12 @@ import org.apache.maven.project.MavenProject;
  *    |     +-- surefire-reports (TEST-*.xml)
  *    |     +-- test (*.beam, *.hrl)
  *    |    [+-- *_src] (non-erlang source folders)
+ *    |
  *    +-- pom.xml
  * </pre>
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 abstract class AbstractErlangMojo extends AbstractMojo {
   /**
@@ -141,6 +145,36 @@ abstract class AbstractErlangMojo extends AbstractMojo {
    * @readonly
    */
   File srcTestInclude;
+
+  /**
+   * Directory where test resources reside. Default is:
+   * {@code src/test/resources}.
+   * 
+   * @parameter expression="${basedir}/src/test/resources"
+   * @required
+   * @readonly
+   */
+  File srcTestResources;
+
+  /**
+   * Directory where test resources reside. Default is:
+   * {@code src/test/resources/priv}.
+   * 
+   * @parameter expression="${basedir}/src/test/resources/priv"
+   * @required
+   * @readonly
+   */
+  File srcTestResourcesPriv;
+
+  /**
+   * Directory where the private test files reside. Default is:
+   * {@code src/test/priv}.
+   * 
+   * @parameter expression="${basedir}/src/test/priv"
+   * @required
+   * @readonly
+   */
+  File srcTestPriv;
 
   /**
    * Base directory for the build artifacts. Default is: {@code target}.
