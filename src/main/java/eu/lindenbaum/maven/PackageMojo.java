@@ -15,7 +15,7 @@ import static eu.lindenbaum.maven.util.FileUtils.NULL_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.SNMP_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.SOURCE_FILTER;
 import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
-import static eu.lindenbaum.maven.util.FileUtils.getFilesAndDirectoriesRecursive;
+import static eu.lindenbaum.maven.util.FileUtils.getDirectoriesNonRecursive;
 import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
 import static eu.lindenbaum.maven.util.FileUtils.removeDirectory;
 import static eu.lindenbaum.maven.util.MavenUtils.SEPARATOR;
@@ -215,7 +215,7 @@ public final class PackageMojo extends AbstractErlangMojo {
                && !dir.equals(PackageMojo.this.srcMainResources);
       }
     };
-    for (File source : getFilesAndDirectoriesRecursive(this.srcMain, filter)) {
+    for (File source : getDirectoriesNonRecursive(this.srcMain, filter)) {
       copy(source, new File(tmpDir, source.getName() + SRC_SUFFIX), NULL_FILTER, "non-erlang source");
     }
 

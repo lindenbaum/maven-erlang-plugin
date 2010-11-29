@@ -270,6 +270,37 @@ public final class FileUtils {
   }
 
   /**
+   * Returns a list of all found filtered directories in the specified root
+   * path.By default patterns from
+   * {@link org.codehaus.plexus.util.FileUtils#getDefaultExcludes()} will always
+   * be excluded.
+   * 
+   * @param root directory to search in
+   * @param filter used to filter the found directories
+   * @return a {@link List} of found directories
+   */
+  public static List<File> getDirectoriesNonRecursive(File root, final FileFilter filter) {
+    final List<File> files = new ArrayList<File>();
+    if (root.isDirectory()) {
+      final String[] excludes = getDefaultExcludes();
+      files.addAll(Arrays.asList(root.listFiles(new FileFilter() {
+        @Override
+        public boolean accept(File child) {
+          boolean accept = filter.accept(child);
+          for (String exclude : excludes) {
+            if (SelectorUtils.match(exclude, child.getAbsolutePath())) {
+              accept = false;
+              break;
+            }
+          }
+          return accept;
+        }
+      })));
+    }
+    return files;
+  }
+
+  /**
    * Return the list of the module-version/ebin/ paths in the given directory.
    * By default patterns from
    * {@link org.codehaus.plexus.util.FileUtils#getDefaultExcludes()} will always

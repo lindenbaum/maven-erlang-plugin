@@ -52,4 +52,13 @@ for (int i = 0; i < digestExpected.length; i++) {
   }
 } 
 
+File yesFolder = new File(basedir, "target/package-0/yes_src");
+File noFolder = new File(basedir, "target/package-0/no_src");
+if (!yesFolder.isDirectory())
+  throw new IllegalStateException("A non-erlang source directory " + yesFolder + " was missing.");
+  
+if (noFolder.isDirectory())
+  throw new IllegalStateException("Non-erlang source directory " + noFolder + " was copied.");
+
 return true;
+
