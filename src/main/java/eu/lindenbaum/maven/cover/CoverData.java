@@ -25,7 +25,6 @@ public final class CoverData {
   private int numberOfLines;
   private int numberOfCoveredLines;
   private int numberOfNotCoveredLines;
-  private boolean isCovered;
 
   public CoverData(String coverageDataDump) {
     this.moduleCoverData = new HashMap<String, ModuleCoverData>();
@@ -43,7 +42,6 @@ public final class CoverData {
       this.numberOfLines += module.getNumberOfLines();
       this.numberOfCoveredLines += module.getNumberOfCoveredLines();
       this.numberOfNotCoveredLines += module.getNumberOfNotCoveredLines();
-      this.isCovered &= module.isCovered();
     }
   }
 
@@ -131,6 +129,6 @@ public final class CoverData {
   }
 
   public boolean isCovered() {
-    return this.isCovered;
+    return this.numberOfNotCoveredLines == 0 && this.numberOfCoveredLines != 0;
   }
 }
