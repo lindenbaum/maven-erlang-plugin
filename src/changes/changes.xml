@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="1.0.0" date="TBA" description="Initial release">
+      <action dev="olle-t" type="update">
+        Changed the use of the "test" property, a single specified test 
+        (-Dtest=some_test) is always considered to have a .beam suffix, but
+        never assumes anything else about the test module name. 
+      </action>
       <action dev="olle-t" type="add">
         New mojo that copies test-resources, bound to the 
         generate-test-resources phase. 

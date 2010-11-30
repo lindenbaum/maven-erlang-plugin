@@ -54,8 +54,11 @@ public final class TestMojo extends AbstractErlangMojo {
 
   /**
    * Setting this to a module name, will only run this test case.
+   * <p>
+   * For example, specifying <code>my_module_test</code> will run the test
+   * <code>target/test/my_module_test.beam</code>.
    * 
-   * @parameter
+   * @parameter expression="${test}"
    */
   private String test;
 
@@ -137,7 +140,7 @@ public final class TestMojo extends AbstractErlangMojo {
       tests = getFilesRecursive(directory, TEST_SUFFIX);
     }
     else {
-      File test = new File(directory, singleTest + TEST_SUFFIX);
+      File test = new File(directory, singleTest + BEAM_SUFFIX);
       if (test.exists()) {
         tests = Arrays.asList(new File[]{ test });
       }
