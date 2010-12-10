@@ -45,9 +45,10 @@ import org.codehaus.plexus.util.SelectorUtils;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class FileUtils {
-  static final String APP_STRING = ".*" + File.separator + "(.+)-([\\d\\.]+)(-SNAPSHOT)?";
-  static final Pattern EBIN_PATTERN = Pattern.compile(APP_STRING + File.separator + EBIN_DIRECTORY + "$");
-  static final Pattern INC_PATTERN = Pattern.compile(APP_STRING + File.separator + INCLUDE_DIRECTORY + "$");
+  static final String FILE_SEP = File.separator.equals("\\") ? "\\\\" : File.separator;
+  static final String APP_STRING = ".*" + FILE_SEP + "(.+)-([\\d\\.]+)(-SNAPSHOT)?";
+  static final Pattern EBIN_PATTERN = Pattern.compile(APP_STRING + FILE_SEP + EBIN_DIRECTORY + "$");
+  static final Pattern INC_PATTERN = Pattern.compile(APP_STRING + FILE_SEP + INCLUDE_DIRECTORY + "$");
 
   /**
    * Filename filter to filter source files (.erl & .hrl). Directories are
