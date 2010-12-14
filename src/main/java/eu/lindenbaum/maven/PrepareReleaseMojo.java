@@ -96,7 +96,7 @@ public final class PrepareReleaseMojo extends AbstractErlangMojo {
       + "lists:foreach(fun(Tuple) when is_tuple(Tuple) -> " //
       + "  AppName = element(1, Tuple), " //
       + "  AppVersion = element(2, Tuple), " //
-      + "  io:format(\"~p:~s \", [AppName, AppVersion]) "//
+      + "  io:format(\"~w:~s \", [AppName, AppVersion]) "//
       + "end, Applications).";
 
   private static final String DEFAULT_REL = //

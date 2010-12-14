@@ -113,7 +113,7 @@ public final class PackageMojo extends AbstractErlangMojo {
   " " + "{ok, [{application, \'%s\', Properties}]} = file:consult(\"%s\"), " //
       + "case proplists:get_value(mod, Properties) of" //
       + "  undefined -> ok;" //
-      + "  {Module, _} -> io:format(\"~p\", [Module]), io:nl()" //
+      + "  {Module, _} -> io:format(\"~w\", [Module]), io:nl()" //
       + "end.";
 
   private static final String CHECK_APPUP = //
@@ -129,7 +129,7 @@ public final class PackageMojo extends AbstractErlangMojo {
       + "case proplists:get_value(\'%s\', A) of" //
       + "  undefined -> Acc;" + "  Registered -> [Registered | Acc]" //
       + "end end, [], %s)," //
-      + "io:format(\"~p\", [lists:flatten(Attr)]), io:nl().";
+      + "io:format(\"~w\", [lists:flatten(Attr)]), io:nl().";
 
   private static final String DEFAULT_APP = //
   "{application, ${ARTIFACT},\n" //
