@@ -3,7 +3,7 @@
     <title>Maven Erlang Plug-In Release Notes</title>
   </properties>
   <body>
-    <release version="1.0.0" date="TBA" description="Initial release">
+    <release version="1.0.0-beta" date="2010-12-16" description="Initial release">
       <action dev="olle-t" type="update">
         Changed the use of the "test" property, a single specified test 
         (-Dtest=some_test) is always considered to have a .beam suffix, but
