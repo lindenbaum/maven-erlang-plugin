@@ -42,15 +42,14 @@ Maven Erlang Plug-In
  plug-in has been tested with OTP R13B04.
  
  To install the download version of the plug-in you need to extract the provided
- package and install the .jar artifacts with the following (replace VERSION
- with the version of the plug-in that was downloaded):
+ package and install the .jar artifacts with the following:
 
 +--
- tar xzvf ${project.artifactId}-VERSION.tar.gz
- cd ${project.artifactId}-VERSION
- mvn install:install-file -Dfile=${project.artifactId}-VERSION.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=VERSION -Dpackaging=jar
- mvn install:install-file -Dfile=${project.artifactId}-VERSION-javadoc.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=VERSION -Dpackaging=jar -Dclassifier=javadoc
- mvn install:install-file -Dfile=${project.artifactId}-VERSION-sources.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=VERSION -Dpackaging=jar -Dclassifier=sources
+ tar xzvf ${project.artifactId}-${project.version}.tar.gz
+ cd ${project.artifactId}-${project.version}
+ mvn install:install-file -Dfile=${project.artifactId}-${project.version}.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=${project.version} -Dpackaging=jar
+ mvn install:install-file -Dfile=${project.artifactId}-${project.version}-javadoc.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=${project.version} -Dpackaging=jar -Dclassifier=javadoc
+ mvn install:install-file -Dfile=${project.artifactId}-${project.version}-sources.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=${project.version} -Dpackaging=jar -Dclassifier=sources
 +--
 
 ** Packaging Type
