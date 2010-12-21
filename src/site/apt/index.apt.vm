@@ -14,8 +14,8 @@ Maven Erlang Plug-In
 * Getting started
 
  The plug-in is available from the Sonatype OSS Repository 
- {{https://oss.sonatype.org/service/local/}}. Add this to your POM {{plugins}}
- section.
+ {{https://repository.sonatype.org/}}. Add this to your POM {{plugins}}
+ section:
  
 +--
 ...
