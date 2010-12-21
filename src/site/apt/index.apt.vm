@@ -13,24 +13,34 @@ Maven Erlang Plug-In
 
 * Getting started
 
- During the <alpha> stage of the plug-in, or as long as no final stable
- version release exists, you have to check out the project source-code and 
- install the plug-in in your repository:
+ The plug-in is available from the Sonatype OSS Repository 
+ {{https://oss.sonatype.org/service/local/}}. Add this to your POM {{plugins}}
+ section.
+ 
++--
+...
+<plugin>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+  <extensions>true</extensions>
+</plugin>
+...
++--
+
+ Or you may check out the source code from the repository and install it
+ locally.
 
 +--
- svn co https://erlang-plugin.svn.sourceforge.net/svnroot/erlang-plugin erlang-plugin
+ svn co https://erlang-plugin.svn.sourceforge.net/svnroot/trunk/erlang-plugin erlang-plugin
  cd erlang-plugin
  mvn install
 +--
 
  This will build, test, package and install the plug-in - of course you need
- to have {{{http://www.erlang.org/download.html}Erlang/OTP}} installed.
- 
- NOTE: As the project evolves and matures, there will of course be a
- published artifact available at some public Maven repository. Keep checking
- this space and the {{{./changes-report.html}release notes}} for updated
- information.
- 
+ to have {{{http://www.erlang.org/download.html}Erlang/OTP}} installed. The
+ plug-in has been tested with OTP R13B04.
+  
 ** Packaging Type
 
  Two custom components are defined in the plug-in, and can be used by 
