@@ -25,7 +25,7 @@ Setting up a new Erlang/OTP project
   <groupId>[GROUP-ID]</groupId>
   <artifactId>[ARTIFACT-ID]</artifactId>
   <version>[VERSION]</version>
-  <packaging>erlang-otp</packaging>
+  <packaging>erlang-otp</packaging>     <!-- either erlang-otp or erlang-std -->
   <name>[NAME]</name>
   <description>[DESCRIPTION]</description>
   <build>

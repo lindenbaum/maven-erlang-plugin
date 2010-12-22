@@ -8,10 +8,11 @@
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html" />
-      <item name="Releasenotes" href="changes-report.html" />
-      <item name="Goals" href="plugin-info.html" />
+      <item name="Features (in detail)" href="features.html" />
       <item name="Plugin Configuration" href="plugin-configuration.html" />
       <item name="Project Configuration" href="project-configuration.html" />
+      <item name="Releasenotes" href="changes-report.html" />
+      <item name="Goals" href="plugin-info.html" />
     </menu>
     <menu name="Examples">
       <item name="Project setup" href="examples/setup.html" />

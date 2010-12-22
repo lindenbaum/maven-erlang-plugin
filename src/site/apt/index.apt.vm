@@ -4,16 +4,22 @@ Maven Erlang Plug-In
  The Maven Erlang Plug-In manages Erlang projects under Maven2, enabling 
  building, testing and deployment - as expected by Maven users.
  
- This project is based on 
+ This project is based on the ideas of
  {{{http://maven-erlang.sourceforge.net/erlang-plugin/}maven-erlang}}, created 
  by Paul Guyot and Olivier Sambourg, but is maintained under this new regime in 
  order to improve and extend it. This incarnation also provides a little bit 
  more definition for {{{./development.html}development}} - be sure to check it 
  out if you are interested in contributing.
 
+* Prerequisites
+
+ You will need to have {{{http://maven.apache.org/download.html}maven2}} and
+ {{{http://www.erlang.org/download.html}erlang}} version <<R13B04>> or
+ later installed. 
+
 * Getting started
 
- The plug-in is available from the Sonatype OSS Repository 
+ The plug-in is available from the Sonatype OSS Repository
  {{https://repository.sonatype.org/}}. Add this to your POM {{plugins}}
  section:
  
@@ -37,9 +43,7 @@ Maven Erlang Plug-In
  mvn install
 +--
 
- This will build, test, package and install the plug-in - of course you need
- to have {{{http://www.erlang.org/download.html}Erlang/OTP}} installed. The
- plug-in has been tested with OTP R13B04.
+ This will build, test, package and install the plug-in.
  
  To install the download version of the plug-in you need to extract the provided
  package and install the .jar artifacts with the following:
@@ -51,18 +55,24 @@ Maven Erlang Plug-In
  mvn install:install-file -Dfile=${project.artifactId}-${project.version}-javadoc.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=${project.version} -Dpackaging=jar -Dclassifier=javadoc
  mvn install:install-file -Dfile=${project.artifactId}-${project.version}-sources.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=${project.version} -Dpackaging=jar -Dclassifier=sources
 +--
-
+ 
 ** Packaging Type
 
- Two custom components are defined in the plug-in, and can be used by 
+ Three custom components are defined in the plug-in, and can be used by 
  configuring the <<<packaging>>> type of a project.
  
  * <<<erlang-otp>>> - An application development project, aimed at supporting 
  the conventions of the Erlang
- {{{http://www.erlang.org/doc/design_principles/users_guide.html}OTP Design Principles}}.
+ {{{http://www.erlang.org/doc/design_principles/users_guide.html}OTP Design Principles}}
+ respecting the default <<<maven2>>> directory layout.
  
+ * <<<erlang-std>>> - An application development project, aimed at supporting 
+ the conventions of the Erlang
+ {{{http://www.erlang.org/doc/design_principles/users_guide.html}OTP Design Principles}}
+ respecting the default erlang/OTP directory layout.
+
  * <<<erlang-rel>>> - A release and packaging project that supports building
- a packaged and distributable solution.  
+ an erlang/OTP packaged and distributable solution.  
  
 ** Configuration
 
@@ -75,7 +85,7 @@ Maven Erlang Plug-In
   <groupId>[your-gropupId]</groupId>
   <artifactId>[your-artifactId]</artifactId>
   <version>[your-version]</version>
-  <packaging>erlang-otp</packaging>                       <-- erlang-otp or erlang-erl
+  <packaging>erlang-std</packaging>                       <-- erlang-std, erlang-otp or erlang-erl
   <build>
     <plugins>
       <plugin>
@@ -89,80 +99,67 @@ Maven Erlang Plug-In
 </project> 
 +--
 
+ To generate erlang specific output for site generation you may also configure
+ the plug-in into the <<<reporting>>> section of your project's pom:
+
++--
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>edoc</report>
+              <report>coverage</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
++--
+
+ For more information about project reports please refer to:
+ 
+ * {{{./edoc-mojo.html}edoc}}
+ 
+ * {{{./coverage-mojo.html}coverage}}
+
 ** Directory Structure
 
- This is the default directory structure that is supported for projects, and in
- part also generated, by the plug-in. Please note that some target folders that
- are common to Maven projects e.g. site are omitted in this listing.
-
-*** <<<erlang-otp>>>
-
-+--
- BASE
-   +-- src
-   |     +-- main
-   |     |     +-- erlang (*.erl, *.app, *.appup, *.mib, *.funcs)
-   |     |     +-- include (*.hrl)
-   |     |     +-- priv (*)
-   |     |     +-- resources
-   |     |     |     +-- priv (*)
-   |     |    [+-- *] (other non-erlang source folders)
-   |     |
-   |     +-- test
-   |           +-- erlang (*.erl)
-   |           +-- include (*.hrl)
-   |           +-- resources (*)
-   |
-   +-- target (.dialyzer.ok)
-   |     +-- ebin (*.beam, *.app, *.appup)
-   |     +-- lib (dependency applications)
-   |     +-- include (*.hrl)
-   |     +-- mibs (*.bin)
-   |     +-- priv (*)
-   |     +-- surefire-reports (TEST-*.xml)
-   |     +-- test (*.beam, *.hrl)
-   |    [+-- *_src] (non-erlang source folders)
-   |
-   +-- pom.xml
-+--
-
-*** <<<erlang-rel>>>
-
-+--
- BASE
-   +-- src
-   |     +-- main
-   |           +-- erlang (*.rel, *.relup)
-   +-- target (.dialyzer.ok)
-   |     +-- ebin (*.rel, *.relup)
-   |     +-- lib (dependency applications)
-   |     +-- releases (previous/subsequent releases)
-   +-- pom.xml
-+--
+ The default directory structure that is supported for projects depends on the
+ project's packaging. For further information please refer to the documentation
+ of the specific {{{./apidocs/eu/lindenbaum/maven/PackagingType.html}PackagingType}}.
+ Please note that target folder structure is omitted in this listing.
 
 ** Goals
 
  The tables below shows how the plug-in goals are mapped to the Maven default
  lifecycle. 
  
-*** <<<erlang-otp>>>
+*** <<<erlang-otp>>> and <<<erlang-std>>>
 
 *--+--+
- <<Maven lifecycle phase>> | <<Goal in the Maven Erlang Plug-In>> 
+ <<Maven lifecycle phase>> | <<Goal in the Maven Erlang Plug-In>>
 *--+--+
-  generate-sources | {{{./unpack-dependencies-mojo.html}unpack-dependencies}}
+  initialize | {{{./initialize-mojo.html}initialize}}
 *--+--+
-  generate-resources | {{{./copy-resources-mojo.html}copy-resources}}
+  generate-sources | {{{./extract-dependencies-mojo.html}extract-dependencies}}
+*--+--+
+  generate-resources | {{{./generate-resources-mojo.html}generate-resources}}
 *--+--+
   compile | {{{./compile-mojo.html}compile}}
 *--+--+
-  generate-test-resources | {{{./copy-test-resources-mojo.html}copy-test-resources}}
+  generate-test-resources | {{{./generate-test-resources-mojo.html}generate-test-resources}}
 *--+--+
   test-compile | {{{./test-compile-mojo.html}test-compile}}
 *--+--+
-  process-test-classes | {{{./dialyzer-mojo.html}dialyzer}}
-*--+--+
   test | {{{./test-mojo.html}test}}
+*--+--+
+  prepare-package | {{{./dialyzer-mojo.html}dialyzer}}
 *--+--+
   package | {{{./package-mojo.html}package}}
 *--+--+
@@ -172,21 +169,23 @@ Maven Erlang Plug-In
 *--+--+
  <<Maven lifecycle phase>> | <<Goal in the Maven Erlang Plug-In>> 
 *--+--+
-  generate-sources | {{{./unpack-dependencies-mojo.html}unpack-dependencies}}
+  initialize | {{{./initialize-mojo.html}initialize}}
 *--+--+
-  process-resources | {{{./copy-resources-mojo.html}copy-resources}}
+  generate-sources | {{{./extract-dependencies-mojo.html}extract-dependencies}}
+*--+--+
+  generate-resources | {{{./generate-release-resources-mojo.html}generate-release-resources}}
 *--+--+
   compile | {{{./dialyzer-release-mojo.html}dialyzer-release}}
 *--+--+
-  process-classes | {{{./prepare-release-mojo.html}prepare-release}}
+  test | {{{./test-release-mojo.html}test-release}}
 *--+--+
   package | {{{./package-release-mojo.html}package-release}}
 *--+--+
 
 ** Setup
 
- Provides the option to generate <sensible> defaults, replacing the need for
- a maven archetype.
+ Provides the option to generate <sensible> defaults for <<<erlang-std>>> and
+ <<<erlang-otp>>> packaged projects, replacing the need for a maven archetype.
  
  More information:
  
@@ -194,25 +193,12 @@ Maven Erlang Plug-In
 
 ** Run
 
- There is a plug-in goal to run an <<<erlang-otp>>> packaged project for basic
- testing purposes. It will start an interactive erlang shell with <<<sasl>>>
- which is able to start the application. The goal ends up in the shell in order
- to provide interactive access to the started application.
+ There is a plug-in goal to run an <<<erlang-otp>>> or <<<erlang-std>>> packaged
+ project for testing purposes. This will also start all required (transitive)
+ applications. On successfull start the build will be paused to allow you to
+ connect to the running application on the backend node remotely. To shutdown
+ the applications and finish the build you will be prompted for further action.
  
  More information:
  
  * {{{./run-mojo.html}run}}
-
-** Reports
-
- There are also plug-in goals that provide output for site generation, such as
- {{{http://www.erlang.org/doc/apps/edoc/index.html}EDoc}} and source code test 
- coverage reports.
- 
- More information:
- 
- * {{{./doc-mojo.html}doc}}
- 
- * {{{./test-doc-mojo.html}test-doc}}
- 
- * {{{./coverage-mojo.html}coverage}}

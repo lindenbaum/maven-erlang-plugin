@@ -2,7 +2,7 @@
 Compile erlang sources
 
   By default the compilation goal is bound to the <<<compile>>> phase when
-  the project packaging is defined as <<<erlang-otp>>>.
+  the project packaging is defined as <<<erlang-otp>>> or <<<erlang-std>>>.
   
   Information about configuration options see the goal
   {{{../compile-mojo.html}reference documentation}}. 

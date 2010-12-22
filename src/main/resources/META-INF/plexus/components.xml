@@ -25,21 +25,70 @@
             <id>default</id>
             <phases>
               <validate></validate>
-              <initialize></initialize>
-              <generate-sources>eu.lindenbaum:maven-erlang-plugin:unpack-dependencies</generate-sources>
+              <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
+              <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
               <process-sources></process-sources>
-              <generate-resources>eu.lindenbaum:maven-erlang-plugin:copy-resources</generate-resources>
+              <generate-resources>eu.lindenbaum:maven-erlang-plugin:generate-resources</generate-resources>
               <process-resources></process-resources>
               <compile>eu.lindenbaum:maven-erlang-plugin:compile</compile>
               <process-classes></process-classes>
               <generate-test-sources></generate-test-sources>
               <process-test-sources></process-test-sources>
-              <generate-test-resources>eu.lindenbaum:maven-erlang-plugin:copy-test-resources</generate-test-resources>
-              <process-test-resources></process-test-resources>              
+              <generate-test-resources>eu.lindenbaum:maven-erlang-plugin:generate-test-resources</generate-test-resources>
+              <process-test-resources></process-test-resources>
               <test-compile>eu.lindenbaum:maven-erlang-plugin:test-compile</test-compile>
-              <process-test-classes>eu.lindenbaum:maven-erlang-plugin:dialyzer</process-test-classes>
+              <process-test-classes></process-test-classes>
               <test>eu.lindenbaum:maven-erlang-plugin:test</test>
-              <prepare-package></prepare-package>
+              <prepare-package>eu.lindenbaum:maven-erlang-plugin:dialyzer</prepare-package>
+              <package>eu.lindenbaum:maven-erlang-plugin:package</package>
+              <verify></verify>
+              <install>org.apache.maven.plugins:maven-install-plugin:install</install>
+              <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+            </phases>
+          </lifecycle>
+        </lifecycles>
+      </configuration>
+    </component>
+
+    <!-- applications (erlang-std) -->
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>erlang-std</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <classifier></classifier>
+        <extension>erlang-std</extension>
+        <type>erlang-std</type>
+        <packaging>erlang-std</packaging>
+        <language>erlang</language>
+        <addedToClasspath>false</addedToClasspath>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+      <role-hint>erlang-std</role-hint>
+      <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+      <configuration>
+        <lifecycles>
+          <lifecycle>
+            <id>default</id>
+            <phases>
+              <validate></validate>
+              <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
+              <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
+              <process-sources></process-sources>
+              <generate-resources>eu.lindenbaum:maven-erlang-plugin:generate-resources</generate-resources>
+              <process-resources></process-resources>
+              <compile>eu.lindenbaum:maven-erlang-plugin:compile</compile>
+              <process-classes></process-classes>
+              <generate-test-sources></generate-test-sources>
+              <process-test-sources></process-test-sources>
+              <generate-test-resources>eu.lindenbaum:maven-erlang-plugin:generate-test-resources</generate-test-resources>
+              <process-test-resources></process-test-resources>
+              <test-compile>eu.lindenbaum:maven-erlang-plugin:test-compile</test-compile>
+              <process-test-classes></process-test-classes>
+              <test>eu.lindenbaum:maven-erlang-plugin:test</test>
+              <prepare-package>eu.lindenbaum:maven-erlang-plugin:dialyzer</prepare-package>
               <package>eu.lindenbaum:maven-erlang-plugin:package</package>
               <verify></verify>
               <install>org.apache.maven.plugins:maven-install-plugin:install</install>
@@ -73,14 +122,23 @@
           <lifecycle>
             <id>default</id>
             <phases>
-              <generate-sources>eu.lindenbaum:maven-erlang-plugin:unpack-dependencies</generate-sources>
-              <process-resources>eu.lindenbaum:maven-erlang-plugin:copy-resources</process-resources>
+              <validate></validate>
+              <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
+              <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
+              <process-sources></process-sources>
+              <generate-resources>eu.lindenbaum:maven-erlang-plugin:generate-release-resources</generate-resources>
+              <process-resources></process-resources>
               <compile>eu.lindenbaum:maven-erlang-plugin:dialyzer-release</compile>
-              <process-classes>eu.lindenbaum:maven-erlang-plugin:prepare-release</process-classes>
+              <generate-test-sources></generate-test-sources>
+              <process-test-sources></process-test-sources>
+              <generate-test-resources></generate-test-resources>
+              <process-test-resources></process-test-resources>
               <test-compile></test-compile>
               <process-test-classes></process-test-classes>
-              <test></test>
+              <test>eu.lindenbaum:maven-erlang-plugin:test-release</test>
+              <prepare-package></prepare-package>
               <package>eu.lindenbaum:maven-erlang-plugin:package-release</package>
+              <verify></verify>
               <install>org.apache.maven.plugins:maven-install-plugin:install</install>
               <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
             </phases>

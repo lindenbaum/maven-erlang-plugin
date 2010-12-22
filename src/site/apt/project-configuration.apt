@@ -1,20 +1,23 @@
 
 Project Configuration
 
-* Application Resource & Application Upgrade File
+* Application Resource, Application Upgrade and Release Files
 
- The following sections describe the ways the plugin can support an
- <<<erlang-otp>>> projects application resource and upgrade file management.
- For further information about application resource and upgrade files see
- {{http://www.erlang.org/doc/man/app.html}} and
- {{http://www.erlang.org/doc/man/appup.html}}. 
+ The following sections describe the ways the plugin can support a projects
+ application resource, upgrade and release file management. For further
+ information about application resource, upgrade and release files see:
+ 
+ * {{http://www.erlang.org/doc/man/app.html}}
+ 
+ * {{http://www.erlang.org/doc/man/appup.html}}
+ 
+ * {{http://www.erlang.org/doc/man/rel.html}}
 
-** Application Resource File Management
+** File Management
 
- The plugin supports the management of application resource and application
- upgrade files by providing application packaging variables. These will be
- replaced by values on application packaging time. Provided application
- packaging variables currently include:
+ The plugin supports the management of erlang resource files by providing
+ <<<project packaging variables>>>. These will be replaced by values on project
+ packaging time. Provided project packaging variables currently include:
  
  * <<<$\{ARTIFACT\}>>>: the projects artifact id (atom)
 
@@ -24,39 +27,39 @@ Project Configuration
 
  * <<<$\{VERSION\}>>>: the projects version (string)
 
+ Only <<<erlang-otp>>> and <<<erlang-std>>>:
+
  * <<<$\{MODULES\}>>>: all compiled <<<.beam>>> files found in the target ebin
  folder (list)
 
- * <<<$\{REGISTERED\}>>>: all registered names, based on the
+ * <<<$\{REGISTERED\}>>>: all registered names of the application, based on the
  <<<-registered(Names).>>> attribute retrieved from the compiled <<<.beam>>>
  files (list)
 
-** Application Resource File Generation
-
- In case there's no application resource file found in the <<<src/main/erlang>>>
- folder the plugin will create one automatically. The values are based on the
- project configuration and the supported application packaging variables. The
- default would look like this and is suitable for library applications:
-
-+---
-{application, ${ARTIFACT},
-  [{description, ${DESCRIPTION}},
-   {id, ${ID}},
-   {vsn, ${VERSION}},
-   {modules, ${MODULES}},
-   {maxT, infinity},
-   {registered, ${REGISTERED}},
-   {included_applications, []},
-   {applications, []},
-   {env, []},
-   {mod, undefined},
-   {start_phases, []}]}.
-+---
+ Only <<<erlang-rel>>>:
  
+ * <<<$\{APPLICATIONS\}>>>: the project dependencies application and version
+ tuples (list)
+
+ * <<<$\{ERTS\}>>>: the version of <<<erts>>> as found in the backend node
+
+ * <<<$\{APPLICATION_NAME\}>>>: will be replaced by a string representing
+ the available version of the application denoted by <<<APPLICATION_NAME>>> on
+ the backend node
+
+** File Generation
+
+ The plug-in can generate default versions of application resource and upgrade
+ files for your project. This is done by the setup mojo. For further information
+ please refer to the {{{./setup-mojo.html}mojos documentation}}. Generation of
+ release files is not supported (due to their complexity).
+
 ** Application Resource File Checking
 
- Will be performed on (erlang-otp) project packaging regardless whether the
- application resource file was generated or not. Checks include:
+ Will be performed on <<<erlang-otp>>> or <<<erlang-std>>> project packaging.
+ Checks include:
+
+ * consistency of application file and pom project name (artifactId)
 
  * consistency of application file and pom project version
 
@@ -65,56 +68,19 @@ Project Configuration
  * consistency of configured start module (exists and implements correct
  behaviour)
 
+ * consistency of configured application dependencies
+
 ** Application Upgrade File Checking
 
  Will be performed on (erlang-otp) project packaging. Checks whether upgrade
  file has correct term structure.
  
-* Release & Release Upgrade File
+* Release File Checking
 
- The following sections describe the ways the plugin can support an
- <<<erlang-rel>>> projects release and release upgrade file management. For
- further information about application resource and upgrade files see
- {{http://www.erlang.org/doc/man/rel.html}} and
- {{http://www.erlang.org/doc/man/relup.html}}.
- 
-** Release File Management
+ Will be performed on <<<erlang-rel>>> project packaging. Checks include:
 
- The plugin supports the management of release and release upgrade files by
- providing release packaging variables. These will be replaced by values on
- release packaging time. Provided release packaging variables currently include:
- 
- * <<<$\{ARTIFACT\}>>>: the projects artifact id (atom)
+ * consistency of release file and pom project name (artifactId)
 
- * <<<$\{VERSION\}>>>: the projects version (string)
+ * consistency of release file and pom project version
 
- * <<<$\{APPLICATIONS\}>>>: a list of the project dependencies application and
- version tuples
-
- * <<<$\{APPLICATION_NAME\}>>>: will be replaced by a string representing
- the available version of the application denoted by <<<APPLICATION_NAME>>> on
- this host
-  
-** Release File Generation
-
- In case there's no release file found in the <<<src/main/erlang>>> folder the
- plugin will create one automatically. The values are based on the project
- configuration and the supported release packaging variables. The default would
- look like this:
-
-+---
-{release,
-  {${ARTIFACT}, ${VERSION}},
-  {erts, ${ERTS}},
-  [{kernel, ${KERNEL}}, 
-   {stdlib, ${STDLIB}}] ++
-     ${APPLICATIONS}}.
-+---
-  
-** Release Upgrade File Generation
-
- The plugin will try to generate a release upgrade file for an <<<erlang-rel>>>
- project based on the information provided in the <<<subsequentVersions>>> and
- <<<previousVersions>>> variables in the pom. These specify a list of versions
- to upgrade from or to downgrade to.  If these lists are not specified in the
- projects pom the the release script generation will be skipped.
+ * consistency of configured application dependencies

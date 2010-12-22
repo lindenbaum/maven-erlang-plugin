@@ -3,6 +3,47 @@
     <title>Maven Erlang Plug-In Release Notes</title>
   </properties>
   <body>
+    <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert" type="remove">
+        Removed support for SNMP resource compilation.
+      </action>
+      <action dev="schlagert" type="add">
+        Added support for test resources which will override main resources.
+      </action>
+      <action dev="schlagert" type="add">
+        Added support for test and provided scope dependencies.
+      </action>
+      <action dev="schlagert" type="add">
+        Fixed run goal to start all transitive application dependencies and
+        pre-load all project (and dependency) modules.
+      </action>
+      <action dev="schlagert" type="add">
+        Added more checks for release file management support, removed automatic
+        release file generation.
+      </action>
+      <action dev="schlagert" type="add">
+        Added more checks for application file management support, removed
+        automatic application file generation.
+      </action>
+      <action dev="schlagert" type="add">
+        Added several unit and integration tests.
+      </action>
+      <action dev="schlagert, olle-t" type="add">
+        All mojos now use jinterface for erlang rpcs instead of using
+        erl -run or erl -eval. First of all this speeds up the build
+        significantly. Another big advantage is that the plugin can now be
+        integrated into the development using emacs with the distel extension
+        since the plugin can use the emacs distel node or vice versa.
+      </action>
+      <action dev="schlagert" type="add">
+        Added packaging type erlang-std which respects the default erlang/OTP
+        application directory layout.
+      </action>
+      <action dev="schlagert" type="add">
+        Test suffixes can now be either "_test" (for backward compatibility) or
+        "_tests" eunit standard.
+      </action>
+    </release>
     <release version="1.0.0-beta" date="2010-12-17" description="Initial release">
       <action dev="olle-t" type="update">
         Changed the use of the "test" property, a single specified test 

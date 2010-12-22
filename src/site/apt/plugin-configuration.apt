@@ -22,7 +22,26 @@ mvn -Dparameter1=value ...
 
 Grouped Parameter Summary
 
- For the default values please refer to the specific class documentation.
+ For the default values please refer to the specific mojo documentation.
+
+* General
+
+  * <<<node>>>: specifies the node to use as backend node (will be started
+  automatically if not running)
+
+  * <<<cookie>>>: specifies the cookie used for the java and the backend node
+
+  * <<<shutdownNode>>>: specifies whether to shutdown the backend node after
+  a build has completed (set this to false to reuse the backend node for
+  subsequent builds)
+
+* Compiler
+
+ * <<<compilerOptions>>>: will be passed to <<<erlc>>> when compiling sources,
+ see {{http://www.erlang.org/doc/man/compile.html}}
+
+ * <<<testCompilerOptions>>>: will be passed to <<<erlc>>> when compiling test
+ sources, see {{http://www.erlang.org/doc/man/compile.html}}
 
 * Dialyzer
 
@@ -37,26 +56,11 @@ Grouped Parameter Summary
  * <<<dialyzerWithDependencies>>>: will include the projects dependencies into
  the <<<dialyzer>>> run. Only for packaging erlang-otp.
 
-* Compiler
-
- * <<<debugInfo>>>: will compile all modules with debug information
- 
- * <<<erlcOptions>>>: will be passed to <<<erlc>>> when compiling sources,
- see {{http://www.erlang.org/doc/man/compile.html}}
- 
- * <<<erlcTestOptions>>>: will be passed to <<<erlc>>> when compiling test
- sources, see {{http://www.erlang.org/doc/man/compile.html}}
-
-* Documentation
-
- * <<<eDocOptions>>>: will be passed to <<<edoc:files/2>>> or
- <<<edoc:application/2>>>, see {{http://www.erlang.org/doc/man/edoc.html}}
-
 * Testing
  
- * <<<test>>>: will only run this test case / test module 
+ * <<<test>>>: will only run this module (using <<<eunit>>>) 
  
- * <<<skipTests>>>: will skip the eunit tests for this maven run
+ * <<<skipTests>>>: will skip test compilation and running
  
  * <<<failIfNoTests>>>: will break the build if no eunit tests are found in the
  project
@@ -73,14 +77,3 @@ Grouped Parameter Summary
  
  * <<<scriptOptions>>>: will be passed to <<<systools:make_script/2>>>,
  see {{http://www.erlang.org/doc/man/systools.html}}
- 
- * <<<relupOptions>>>: will be passed to <<<systools:make_relup/4>>>,
- see {{http://www.erlang.org/doc/man/systools.html}}
- 
- * <<<subsequentVersions>>>: a list of versions to downgrade from when this
- release is installed, refers to the <<<DownTo>>> argument in
- <<<systools:make_relup/4>>>
- 
- * <<<previousVersions>>>: a list of versions to upgrade from when this release
- is installed, refers to the <<<UpFrom>>> argument in
- <<<systools:make_relup/4>>>

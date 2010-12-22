@@ -1,65 +1,78 @@
-%%%-------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
 %%% @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
 %%% @doc
-%%%  An {@link eunit_listener} collecting/writing surefire compatible
-%%%  reports.
+%%% An {@link eunit_listener} collecting/writing surefire compatible
+%%% reports.
 %%% @end
 %%% Created : 1 Oct 2010
-%%%-------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
 -module(surefire).
 -author('Tobias Schlager').
 
 -behaviour(eunit_listener).
 
--export([start/0, start/1, init/1, handle_begin/3, handle_end/3,
-	 handle_cancel/3, terminate/2]).
+-export([start/0,
+	 start/1, 
+	 init/1, 
+	 handle_begin/3, 
+	 handle_end/3,
+	 handle_cancel/3, 
+	 terminate/2]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% define section
+%% define section
 
 -define(DEFAULT_SUITE, "Suite").
 -define(DEFAULT_OUTPUT_DIR, ".").
 -define(DEFAULT_TEST, {unknown, unknown, 0}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% record section
+%% record definition section
 
 -record(state, {
-	  output_dir = ?DEFAULT_OUTPUT_DIR,
-	  package = "",
+	  output_dir = ?DEFAULT_OUTPUT_DIR :: string(),
+	  package = "" :: string(),
 	  suites = dict:new()}).
 
 -record(suite, {
-	  data = [],
-	  cases = []}).
+	  data = [] :: list(term()),
+	  cases = [] :: list(term())}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% public function section
+%% public function section
 
-%-------------------------------------------------------------------------------
-% Initialize this module.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Initialize this module.
+%%% @end
+%%%-----------------------------------------------------------------------------
 start() ->
     start([]).
 
-%-------------------------------------------------------------------------------
-% Initialize this module with options.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Initialize this module with options.
+%%% @end
+%%%-----------------------------------------------------------------------------
 start(Options) ->
     eunit_listener:start(?MODULE, Options).
 
-%-------------------------------------------------------------------------------
-% Initialize this module with options. Default output path is
-% {@code ?DEFAULT_OUTPUT_DIR}.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Initialize this module with options. Default output path is
+%%% <code>?DEFAULT_OUTPUT_DIR</code>.
+%%% @end
+%%%-----------------------------------------------------------------------------
 init(Options) ->
     Dir = proplists:get_value(dir, Options, ?DEFAULT_OUTPUT_DIR),
     Package = proplists:get_value(package, Options, ""),
     #state{output_dir = Dir, package = Package}.
 
-%-------------------------------------------------------------------------------
-% Handles the begin of a test case or suite.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Handles the begin of a test case or suite.
+%%% @end
+%%%-----------------------------------------------------------------------------
 handle_begin(group, Data, State) ->
     case get_suite_id(Data) of
 	undefined ->
@@ -70,9 +83,11 @@ handle_begin(group, Data, State) ->
 handle_begin(_, _, State) ->
     State.
 
-%-------------------------------------------------------------------------------
-% Handles the end of a test case or suite.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Handles the end of a test case or suite.
+%%% @end
+%%%-----------------------------------------------------------------------------
 handle_end(test, Data, State) ->
     case get_test_id(Data) of
 	undefined ->
@@ -90,9 +105,11 @@ handle_end(group, Data, State) ->
 handle_end(_, _, State) ->
     State.
 
-%-------------------------------------------------------------------------------
-% Handles the cancellation of a test case or suite.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Handles the cancellation of a test case or suite.
+%%% @end
+%%%-----------------------------------------------------------------------------
 handle_cancel(test, Data, State) ->
     case get_test_id(Data) of
 	undefined ->
@@ -112,9 +129,11 @@ handle_cancel(group, Data, State) ->
 handle_cancel(_, _, State) ->
     State.
 
-%-------------------------------------------------------------------------------
-% Writes the test report xml files.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Writes the test report xml files.
+%%% @end
+%%%-----------------------------------------------------------------------------
 terminate(_, #state{output_dir = OutputDir, package = P, suites = Suites}) ->
     dict:map(
       fun(_, #suite{data = Data, cases = Cases}) ->
@@ -126,10 +145,12 @@ terminate(_, #state{output_dir = OutputDir, package = P, suites = Suites}) ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % internal function section
 
-%-------------------------------------------------------------------------------
-% Writes a suite with its data into the given state. In case the suite
-% already exists only the data field will be updated by adding the new data.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Writes a suite with its data into the given state. In case the suite
+%%% already exists only the data field will be updated by adding the new data.
+%%% @end
+%%%-----------------------------------------------------------------------------
 store_suite(SuiteId, Data, State = #state{suites = Suites}) ->
     Suite = case dict:find(SuiteId, Suites) of
 		{ok, S = #suite{data = OldData}} ->
@@ -140,11 +161,13 @@ store_suite(SuiteId, Data, State = #state{suites = Suites}) ->
     Suites2 = dict:store(SuiteId, Suite, Suites),
     State#state{suites = Suites2}.
 
-%-------------------------------------------------------------------------------
-% Writes a test case into a specific suite of the given state. In case the
-% test case already exists the state is not changed. In case the according
-% suite does not exist a default suite will be created.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Writes a test case into a specific suite of the given state. In case the
+%%% test case already exists the state is not changed. In case the according
+%%% suite does not exist a default suite will be created.
+%%% @end
+%%%-----------------------------------------------------------------------------
 store_test(SuiteId, Data, State = #state{suites = Suites}) ->
     case dict:find(SuiteId, Suites) of
 	{ok, Suite = #suite{cases = Cases}} ->
@@ -156,9 +179,11 @@ store_test(SuiteId, Data, State = #state{suites = Suites}) ->
 	    store_test(SuiteId, Data, NewState)
     end.
 
-%-------------------------------------------------------------------------------
-% Extracts the suite id from the given data.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Extracts the suite id from the given data.
+%%% @end
+%%%-----------------------------------------------------------------------------
 get_suite_id(Data) ->
     case proplists:get_value(id, Data) of
 	[SuiteId | _] ->
@@ -167,9 +192,11 @@ get_suite_id(Data) ->
 	    undefined
     end.
 
-%-------------------------------------------------------------------------------
-% Extracts the suite and test id from the given data.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Extracts the suite and test id from the given data.
+%%% @end
+%%%-----------------------------------------------------------------------------
 get_test_id(Data) ->
     case proplists:get_value(id, Data) of
 	[SuiteId, TestId | _] ->
@@ -178,10 +205,12 @@ get_test_id(Data) ->
 	    undefined
     end.
 
-%-------------------------------------------------------------------------------
-% Returns how many cases contain the requested status from the given test case
-% list.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Returns how many cases contain the requested status from the given test case
+%%% list.
+%%% @end
+%%%-----------------------------------------------------------------------------
 get_number_for_status(Category, Cases) ->
     lists:foldl(
       fun(Case, Acc) ->
@@ -192,9 +221,11 @@ get_number_for_status(Category, Cases) ->
 	      end
       end, 0, Cases).
 
-%-------------------------------------------------------------------------------
-% Returns a string containing the report of a certain test suite.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Returns a string containing the report of a certain test suite.
+%%% @end
+%%%-----------------------------------------------------------------------------
 get_suite_report(Package, Data, Cases) ->
     Failed = get_number_for_status(error, Cases),
     Skipped = get_number_for_status(skipped, Cases),
@@ -214,9 +245,11 @@ get_suite_report(Package, Data, Cases) ->
 		    end, "", Cases) ++
 	"</testsuite>\n".
 
-%-------------------------------------------------------------------------------
-% Returns a string containing the report of a certain test case.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Returns a string containing the report of a certain test case.
+%%% @end
+%%%-----------------------------------------------------------------------------
 get_test_report(Package, Case) ->
     Time = proplists:get_value(time, Case, 0),
     {M, F, A} = proplists:get_value(source, Case, ?DEFAULT_TEST),
@@ -248,22 +281,28 @@ get_test_report(Package, Case) ->
 		""
 	end ++ "  </testcase>\n".
 
-%-------------------------------------------------------------------------------
-% Return a valid suite name parseable by the surefire-report-plugin.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Return a valid suite name parseable by the surefire-report-plugin.
+%%% @end
+%%%-----------------------------------------------------------------------------
 get_suite_name(Name) ->
     string_replace(string_replace(binary_to_list(Name), "module ", ""), "'", "").
 
-%-------------------------------------------------------------------------------
-% Returns a surefire-report-plugin recognizable test suite file name.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Returns a surefire-report-plugin recognizable test suite file name.
+%%% @end
+%%%-----------------------------------------------------------------------------
 get_suite_filename(Data) ->
     Name = proplists:get_value(desc, Data, ?DEFAULT_SUITE),
     "TEST-" ++ get_suite_name(Name) ++ ".xml".
 
-%-------------------------------------------------------------------------------
-% Parses a string and escaping it for xml output.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Parses a string and escaping it for xml output.
+%%% @end
+%%%-----------------------------------------------------------------------------
 escape_string(String) ->
     escape_string(lists:flatten(String), [], false).
 escape_string(String, Unline) ->
@@ -285,15 +324,19 @@ escape_string([$" | Tail], Acc, Unline) ->
 escape_string([Char | Tail], Acc, Unline) when is_integer(Char) ->
     escape_string(Tail, [Char | Acc], Unline).
 
-%-------------------------------------------------------------------------------
-% Parses a string escaping it for xml output as well as removing line breaks.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Parses a string escaping it for xml output as well as removing line breaks.
+%%% @end
+%%%-----------------------------------------------------------------------------
 unline_string(String) ->
     escape_string(String, true).
 
-%-------------------------------------------------------------------------------
-% Replaces all occurences of a (sub)string in a string with another string.
-%-------------------------------------------------------------------------------
+%%%-----------------------------------------------------------------------------
+%%% @doc
+%%% Replaces all occurences of a (sub)string in a string with another string.
+%%% @end
+%%%-----------------------------------------------------------------------------
 string_replace(String, ToReplace, ReplaceWith) ->
     string_replace(String, ToReplace, ReplaceWith, "").
 string_replace(Rest, ToReplace, ReplaceWith, Acc) ->

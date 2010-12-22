@@ -8,5 +8,4 @@
    {included_applications, []},
    {applications, []},
    {env, []},
-   {mod, undefined},
    {start_phases, []}]}.

@@ -58,13 +58,13 @@
       <comments>This license applies to the (modified) erlang code provided in the cover2.erl, surefire.erl and surefire_test.erl modules.</comments>
     </license>
   </licenses>
-  <distributionManagement>    
+  <distributionManagement>
     <!-- SEE: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
     <snapshotRepository>
       <id>sonatype-nexus-snapshots</id>
       <name>Sonatype OSS Repository Hosting - Snapshots</name>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>      
+    </snapshotRepository>
     <repository>
       <id>sonatype-nexus-staging</id>
       <name>Sonatyp OSS Repository Hosting - Staging</name>
@@ -149,6 +149,21 @@
       <version>2.0.5</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.erlang.otp</groupId>
+      <artifactId>jinterface</artifactId>
+      <version>1.5.3.1</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.7</version>
@@ -159,16 +174,6 @@
       <artifactId>easymock</artifactId>
       <version>3.0</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-impl</artifactId>
-      <version>2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
-      <version>3.0</version>
     </dependency>
   </dependencies>
   <reporting>

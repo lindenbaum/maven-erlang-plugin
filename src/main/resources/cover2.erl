@@ -994,8 +994,8 @@ get_data_for_remote_loading({Module,File}) ->
 %% Create a match spec which returns the clause info {Module,InitInfo} and 
 %% all #bump keys for the given module with 0 number of calls.
 ms(Module) ->
-    ets:fun2ms(fun({Module,InitInfo})  -> 
-		       {Module,InitInfo};
+    ets:fun2ms(fun({Mod,InitInfo})  -> 
+		       {Mod,InitInfo};
 		  ({Key,_}) when is_record(Key,bump),Key#bump.module=:=Module -> 
 		       {Key,0}
 	       end).
