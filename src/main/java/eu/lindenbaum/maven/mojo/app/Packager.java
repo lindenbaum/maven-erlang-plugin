@@ -192,7 +192,7 @@ public final class Packager extends ErlangMojo {
         String behaviours = MavenSelf.get(p.cookie()).eval(p.node(), behaviourScript, codePaths);
         if (behaviours.contains("application")) {
           if (!r.getApplications().contains("sasl")) {
-            log.error("Application dependency to 'sasl' is missing.");
+            log.error("Application dependency to 'sasl' is missing in .app file.");
             throw new MojoFailureException("Dependency to sasl is missing.");
           }
         }
@@ -221,10 +221,10 @@ public final class Packager extends ErlangMojo {
     if (!m.containsAll(actual) || !actual.containsAll(m)) {
       Set<String> undeclared = new HashSet<String>(m);
       undeclared.removeAll(actual);
-      log.warn("Undeclared modules: " + undeclared.toString());
+      log.warn("Undeclared modules (not in .app file): " + undeclared.toString());
       Set<String> unbacked = new HashSet<String>(actual);
       unbacked.removeAll(m);
-      log.warn("Unbacked modules: " + unbacked.toString());
+      log.warn("Unbacked modules (no .beam file): " + unbacked.toString());
       if (this.failOnUndeclaredModules) {
         throw new MojoFailureException("Module mismatch found.");
       }
@@ -241,7 +241,7 @@ public final class Packager extends ErlangMojo {
     for (Artifact artifact : expected) {
       String artifactId = artifact.getArtifactId();
       if (!actual.contains(artifactId)) {
-        log.error("Application dependency to '" + artifactId + "' is missing.");
+        log.error("Application dependency to '" + artifactId + "' is missing in .app file.");
         missingDependencies = true;
       }
     }
