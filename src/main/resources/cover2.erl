@@ -55,18 +55,25 @@
 
 %% External exports
 -export([start/0, start/1,
-	 compile/1, compile/2, compile_module/1, compile_module/2,
+	 compile/1, compile/2,
+	 compile_module/1, compile_module/2,
 	 compile_directory/0, compile_directory/1, compile_directory/2,
-	 compile_beam/1, compile_beam_directory/0, compile_beam_directory/1,
-	 analyse/1, analyse/2, analyse/3, analyze/1, analyze/2, analyze/3,
+	 compile_beam/1, compile_beam/2,
+	 compile_beam_directory/0, compile_beam_directory/1, compile_beam_directory/2,
+	 analyse/1, analyse/2, analyse/3,
+	 analyze/1, analyze/2, analyze/3,
 	 analyse_to_file/1, analyse_to_file/2, analyse_to_file/3,
 	 analyze_to_file/1, analyze_to_file/2, analyze_to_file/3,
 	 export/1, export/2, import/1,
-	 modules/0, imported/0, imported_modules/0, which_nodes/0, is_compiled/1,
+	 modules/0,
+	 imported/0,
+	 imported_modules/0,
+	 which_nodes/0,
+	 is_compiled/1,
 	 reset/1, reset/0,
 	 stop/0, stop/1]).
+
 -export([remote_start/1]).
-%-export([bump/5]).
 -export([transform/4]). % for test purposes
 
 -record(main_state, {compiled=[],           % [{Module,File}]
@@ -248,15 +255,18 @@ compile_modules([],_Opts,Result) ->
 %%   Result - see compile/1
 %%   Reason = non_existing | already_cover_compiled
 compile_beam(Module) when is_atom(Module) ->
+    compile_beam(Module, []).
+
+compile_beam(Module, Options) when is_atom(Module) ->
     case code:which(Module) of
 	non_existing -> 
 	    {error,non_existing};
 	?TAG ->
-	    compile_beam(Module,?TAG);
+	    compile_beam(Module, ?TAG, Options);
 	File ->
-	    compile_beam(Module,File)
+	    compile_beam(Module, File, Options)
     end;
-compile_beam(File) when is_list(File) ->
+compile_beam(File, Options) when is_list(File) ->
     {WithExt,WithoutExt}
 	= case filename:rootname(File,".beam") of
 	      File ->
@@ -266,15 +276,12 @@ compile_beam(File) when is_list(File) ->
 	      end,
     AbsFile = filename:absname(WithExt),
     Module = list_to_atom(filename:basename(WithoutExt)),
-    compile_beam(Module,AbsFile).
+    compile_beam(Module, AbsFile, Options).
 
-compile_beam(Module,File) ->
-    call({compile_beam,Module,File}).
-    
+compile_beam(Module, File, Options) ->
+    call({compile_beam, Module, File, Options}).
 
-
-%% compile_beam_directory(Dir) -> [Result] | {error,Reason}
-%%   Dir - see compile_directory/1
+%% compile_beam_directory() -> [Result] | {error, Reason}
 %%   Result - see compile/1
 %%   Reason = eacces | enoent
 compile_beam_directory() ->
@@ -284,39 +291,39 @@ compile_beam_directory() ->
 	Error ->
 	    Error
     end.
+
+%% compile_beam_directory(Dir) -> [Result] | {error, Reason}
+%%   Dir - see compile_directory/1
+%%   Result - see compile/1
+%%   Reason = eacces | enoent
 compile_beam_directory(Dir) when is_list(Dir) ->
+    compile_beam_directory(Dir, []).
+
+%% compile_beam_directory(Dir, Options) -> [Result] | {error, Reason}
+%%   Dir - see compile_directory/1
+%%   Options - see compile_module/2
+%%   Result - see compile/1
+%%   Reason = eacces | enoent
+compile_beam_directory(Dir, Options) when is_list(Dir) ->
     case file:list_dir(Dir) of
 	{ok, Files} ->
-	    
-	    %% Filter out all beam files (except cover.beam)
-	    BeamFileNames =
-		lists:filter(fun("cover.beam") ->
-				     false;
-				(File) ->
-				     case filename:extension(File) of
-					 ".beam" -> true;
-					 _ -> false
-				     end
-			     end,
-			     Files),
-
-	    %% Create a list of .beam file names (incl path) and call
-	    %% compile_beam/1 for each such file name
-	    BeamFiles = lists:map(fun(BeamFileName) ->
-					  filename:join(Dir, BeamFileName)
-				  end,
-				  BeamFileNames),
-	    compile_beams(BeamFiles);
+	    %% Filter out all beam files and exclude this module
+	    CoverModule = lists:flatten(io_lib:format("~p.beam", [?MODULE])),
+	    BeamFiles = [filename:join(Dir, File) || File <- Files,
+				     filename:extension(File) =:= ".beam",
+				     File =/= CoverModule],
+	    compile_beams(BeamFiles, Options);
 	Error ->
 	    Error
     end.
 
-compile_beams(Files) ->
-    compile_beams(Files,[]).
-compile_beams([File|Files],Result) ->
-    R = compile_beam(File),
-    compile_beams(Files,[R|Result]);
-compile_beams([],Result) ->
+compile_beams(Files, Options) ->
+    compile_beams(Files, Options, []).
+
+compile_beams([File | Files], Options, Result) ->
+    R = compile_beam(File, Options),
+    compile_beams(Files, Options, [R | Result]);
+compile_beams([], _Options, Result) ->
     reverse(Result).
 
 
@@ -449,16 +456,6 @@ stop(Node) when is_atom(Node) ->
 stop(Nodes) ->
     call({stop,remove_myself(Nodes,[])}).
 
-%% bump(Module, Function, Arity, Clause, Line)
-%%   Module = Function = atom()
-%%   Arity = Clause = Line = integer()
-%% This function is inserted into Cover compiled modules, once for each
-%% executable line.
-%bump(Module, Function, Arity, Clause, Line) ->
-%    Key = #bump{module=Module, function=Function, arity=Arity, clause=Clause,
-%		line=Line},
-%    ets:update_counter(?COVER_TABLE, Key, 1).
-
 call(Request) ->
     Ref = erlang:monitor(process,?SERVER),
     receive {'DOWN', Ref, _Type, _Object, noproc} -> 
@@ -565,12 +562,12 @@ main_process_loop(State) ->
 		    main_process_loop(State)
 	    end;
 
-	{From, {compile_beam, Module, BeamFile0}} ->
+	{From, {compile_beam, Module, BeamFile0, Options}} ->
 	    Compiled0 = State#main_state.compiled,
 	    case get_beam_file(Module,BeamFile0,Compiled0) of
 		{ok,BeamFile} ->
 		    {Reply,Compiled} = 
-			case do_compile_beam(Module,BeamFile,[]) of
+			case do_compile_beam(Module, BeamFile, Options) of
 			    {ok, Module} ->
 				remote_load_compiled(State#main_state.nodes,
 						     [{Module,BeamFile}]),

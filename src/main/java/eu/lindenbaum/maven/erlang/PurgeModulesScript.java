@@ -15,7 +15,7 @@ public final class PurgeModulesScript implements Script<Void> {
       "lists:foreach(" + //
       "  fun({_, preloaded}) ->" + //
       "        ok;" + //
-      "     ({Module, Path}) ->" + //
+      "     ({Module, Path}) when is_list(Path) ->" + //
       "        case string:str(Path, LibDir) of" + //
       "             1 ->" + //
       "                 ok;" + //
@@ -23,7 +23,11 @@ public final class PurgeModulesScript implements Script<Void> {
       "                 code:purge(Module)," + //
       "                 code:delete(Module)," + //
       "                 code:purge(Module)" + //
-      "        end" + //
+      "        end;" + //
+      "     ({Module, cover_compiled}) ->" + //
+      "        code:purge(Module)," + //
+      "        code:delete(Module)," + //
+      "        code:purge(Module)" + //
       "  end, code:all_loaded()).";
 
   public PurgeModulesScript() {

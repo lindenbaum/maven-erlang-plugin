@@ -13,12 +13,14 @@ import java.util.Locale;
 import eu.lindenbaum.maven.ErlangReport;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.CoverageReportResult;
+import eu.lindenbaum.maven.erlang.CoverageReportScript;
+import eu.lindenbaum.maven.erlang.LoadModulesScript;
+import eu.lindenbaum.maven.erlang.MavenSelf;
+import eu.lindenbaum.maven.erlang.PurgeModulesScript;
+import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.erlang.CoverageReportResult.Report;
 import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Function;
 import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Module;
-import eu.lindenbaum.maven.erlang.CoverageReportScript;
-import eu.lindenbaum.maven.erlang.MavenSelf;
-import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
@@ -76,6 +78,9 @@ public class CoverageReport extends ErlangReport {
       return;
     }
 
+    Script<Void> purgeScript = new PurgeModulesScript();
+    MavenSelf.get(p.cookie()).exec(p.node(), purgeScript);
+
     File targetTestEbin = p.targetTestEbin();
 
     List<File> tests = new ArrayList<File>();
@@ -93,6 +98,14 @@ public class CoverageReport extends ErlangReport {
 
     Script<CoverageReportResult> script = new CoverageReportScript(targetTestEbin, tests, sources);
     CoverageReportResult result = MavenSelf.get(p.cookie()).eval(p.node(), script, testCodePaths);
+
+    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
+    codePaths.add(p.targetEbin());
+    List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
+    modules.addAll(FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX));
+    Script<Integer> loadScript = new LoadModulesScript(modules, codePaths);
+    Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript);
+    log.debug("Successfully reloaded " + loaded + " .beam file(s).");
 
     if (result.failed()) {
       throw new MojoExecutionException("failed to generate coverage report");

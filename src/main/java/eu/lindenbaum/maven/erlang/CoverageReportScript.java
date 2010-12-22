@@ -22,7 +22,7 @@ public class CoverageReportScript implements Script<CoverageReportResult> {
   "    Dir = \"%s\"," + //
       "Tests = %s," + //
       "Modules = %s," + //
-      "case cover2:compile_beam_directory(Dir) of " + //
+      "case cover2:compile_beam_directory(Dir, [debug_info, export_all, {d, 'TEST'}]) of " + //
       "   {error, Reason} ->" + //
       "       {error, [lists:flatten(io_lib:format(\"~p\", [Reason]))]};" + //
       "   _ ->" + //

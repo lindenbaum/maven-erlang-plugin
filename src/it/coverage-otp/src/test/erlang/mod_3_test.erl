@@ -10,3 +10,11 @@ fun_2_test() ->
 
 fun_3_test() ->
   ?assertMatch({ok, fun_3}, mod_3:fun_3()).
+
+-ifdef(TEST).
+test_define_test() ->
+  ?assert(true).
+-else.
+test_define_test() ->
+  ?assert(false).
+-endif.
