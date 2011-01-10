@@ -92,6 +92,7 @@ public class CoverageReport extends ErlangReport {
     List<File> testCodePaths = new ArrayList<File>();
     testCodePaths.add(p.targetTestEbin());
     testCodePaths.addAll(FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX));
+    testCodePaths.addAll(FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX));
 
     File outdir = new File(getReportOutputDirectory(), "coverage");
     outdir.mkdirs();
