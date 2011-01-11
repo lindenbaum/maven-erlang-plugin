@@ -13,14 +13,14 @@ import java.util.Locale;
 import eu.lindenbaum.maven.ErlangReport;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.CoverageReportResult;
+import eu.lindenbaum.maven.erlang.CoverageReportResult.Report;
+import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Function;
+import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Module;
 import eu.lindenbaum.maven.erlang.CoverageReportScript;
 import eu.lindenbaum.maven.erlang.LoadModulesScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.PurgeModulesScript;
 import eu.lindenbaum.maven.erlang.Script;
-import eu.lindenbaum.maven.erlang.CoverageReportResult.Report;
-import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Function;
-import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Module;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
@@ -34,6 +34,10 @@ import org.apache.maven.plugin.logging.Log;
  * functions, clauses executable lines and their test coverage percentage. A
  * module list with individual coverage reports and an extensive source code
  * report, with lines annotated in red or green, showing the exact coverage.
+ * <p>
+ * ISSUE If a test purges or unloads a module to do coverage for, the coverage
+ * compilation information will be gone and the coverage report will fail.
+ * </p>
  * 
  * @goal coverage
  * @execute phase="test" lifecycle="coverage"
