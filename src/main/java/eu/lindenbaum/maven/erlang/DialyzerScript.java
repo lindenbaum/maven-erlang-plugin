@@ -15,15 +15,15 @@ import eu.lindenbaum.maven.util.ErlUtils;
  */
 public final class DialyzerScript implements Script<String[]> {
   private static final String script = //
-  "    Options = [{from, src_code}," + //
-      "           {get_warnings, true}," + //
-      "           {files_rec, %s}," + //
-      "           {include_dirs, %s}," + //
-      "           {warnings, %s}]," + //
-      "lists:map(fun(Warning) ->" + //
-      "              S = dialyzer:format_warning(Warning)," + //
-      "              lists:flatten(S)" + //
-      "          end, dialyzer:run(Options)).";
+  NL + "Options = [{from, src_code}," + NL + //
+      "           {get_warnings, true}," + NL + //
+      "           {files_rec, %s}," + NL + //
+      "           {include_dirs, %s}," + NL + //
+      "           {warnings, %s}]," + NL + //
+      "lists:map(fun(Warning) ->" + NL + //
+      "              S = dialyzer:format_warning(Warning)," + NL + //
+      "              lists:flatten(S)" + NL + //
+      "          end, dialyzer:run(Options))." + NL;
 
   private final List<File> files;
   private final List<File> includes;

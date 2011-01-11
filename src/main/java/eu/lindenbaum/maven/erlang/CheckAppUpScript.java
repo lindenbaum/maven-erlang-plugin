@@ -13,29 +13,29 @@ import com.ericsson.otp.erlang.OtpErlangString;
  */
 public class CheckAppUpScript implements Script<String> {
   private static final String script = //
-  "    lists:flatten(" + //
-      "  case file:consult(\"%s\") of" + //
-      "      {ok, [{\"%s\", Up, Down}]} when is_list(Up) andalso is_list(Down) ->" + //
-      "          lists:foldl(" + //
-      "            fun({V, Is}, []) when is_list(Is) ->" + //
-      "                    lists:foldl(" + //
-      "                      fun(E, []) when is_tuple(E) -> [];" + //
-      "                         (E, []) ->" + //
-      "                              io_lib:format(\"malformed instruction in ~p: ~p\", [V, E]);" + //
-      "                         (_, Acc) -> Acc" + //
-      "                      end,  [], Is);" + //
-      "               (T, []) -> io_lib:format(\"malformed entry ~p\", [T]);" + //
-      "               (_, Acc) -> Acc" + //
-      "            end, [], Up ++ Down);" + //
-      "      {ok, [{V, _, _}]} ->" + //
-      "          io_lib:format(\".appup has invalid version ~p\", [V]);" + //
-      "      {ok, _} ->" + //
-      "          \".appup file is malformed\";" + //
-      "      {error, E = {_, _, _}} ->" + //
-      "          file:format_error(E);" + //
-      "      {error, Reason} ->" + //
-      "          io_lib:format(\"file:consult/1 failed with ~p\", [Reason])" + //
-      "  end).";
+  NL + "lists:flatten(" + NL + //
+      "  case file:consult(\"%s\") of" + NL + //
+      "      {ok, [{\"%s\", Up, Down}]} when is_list(Up) andalso is_list(Down) ->" + NL + //
+      "          lists:foldl(" + NL + //
+      "            fun({V, Is}, []) when is_list(Is) ->" + NL + //
+      "                    lists:foldl(" + NL + //
+      "                      fun(E, []) when is_tuple(E) -> [];" + NL + //
+      "                         (E, []) ->" + NL + //
+      "                              io_lib:format(\"malformed instruction in ~p: ~p\", [V, E]);" + NL + //
+      "                         (_, Acc) -> Acc" + NL + //
+      "                      end,  [], Is);" + NL + //
+      "               (T, []) -> io_lib:format(\"malformed entry ~p\", [T]);" + NL + //
+      "               (_, Acc) -> Acc" + NL + //
+      "            end, [], Up ++ Down);" + NL + //
+      "      {ok, [{V, _, _}]} ->" + NL + //
+      "          io_lib:format(\".appup has invalid version ~p\", [V]);" + NL + //
+      "      {ok, _} ->" + NL + //
+      "          \".appup file is malformed\";" + NL + //
+      "      {error, E = {_, _, _}} ->" + NL + //
+      "          file:format_error(E);" + NL + //
+      "      {error, Reason} ->" + NL + //
+      "          io_lib:format(\"file:consult/1 failed with ~p\", [Reason])" + NL + //
+      "  end)." + NL;
 
   private final File appUpFile;
   private final String version;

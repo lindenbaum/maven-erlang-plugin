@@ -15,10 +15,10 @@ import eu.lindenbaum.maven.util.ErlUtils;
  */
 public class StopApplicationScript implements Script<Void> {
   private static final String script = //
-  "    ToPreserve = %s, " + //
-      "ToStop = [A || {A, _, _} <- application:which_applications()] -- ToPreserve," + //
-      "[application:stop(A) || A <- ToStop]," + //
-      "[application:unload(A) || A <- ToStop].";
+  NL + "ToPreserve = %s, " + NL + //
+      "ToStop = [A || {A, _, _} <- application:which_applications()] -- ToPreserve," + NL + //
+      "[application:stop(A) || A <- ToStop]," + NL + //
+      "[application:unload(A) || A <- ToStop]." + NL;
 
   private final List<String> applicationsToPreserve;
 

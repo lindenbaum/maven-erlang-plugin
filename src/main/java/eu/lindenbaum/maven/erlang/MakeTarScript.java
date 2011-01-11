@@ -19,14 +19,14 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class MakeTarScript implements Script<SystoolsScriptResult> {
   private static final String script = //
-  "    case systools:make_tar(\"%s\", [silent, {outdir, \"%s\"}] ++ [%s]) of" + //
-      "    ok -> {ok, \"\"};" + //
-      "    error -> {error, \"unknown\"};" + //
-      "    {ok, Module, Warnings} ->" + //
-      "        {warn, Module:format_warning(Warnings)};" + //
-      "    {error, Module, Error} ->" + //
-      "        {error, Module:format_error(Error)}" + //
-      "end.";
+  NL + "case systools:make_tar(\"%s\", [silent, {outdir, \"%s\"}] ++ [%s]) of" + NL + //
+      "    ok -> {ok, \"\"};" + NL + //
+      "    error -> {error, \"unknown\"};" + NL + //
+      "    {ok, Module, Warnings} ->" + NL + //
+      "        {warn, Module:format_warning(Warnings)};" + NL + //
+      "    {error, Module, Error} ->" + NL + //
+      "        {error, Module:format_error(Error)}" + NL + //
+      "end." + NL;
 
   private final File releaseFile;
   private final File outdir;

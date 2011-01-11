@@ -9,6 +9,8 @@ import com.ericsson.otp.erlang.OtpErlangObject;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public interface Script<T> {
+  public static String NL = System.getProperty("line.separator");
+
   /**
    * Returns an evaluateable {@link String} containing the erlang script of the
    * implementing class.

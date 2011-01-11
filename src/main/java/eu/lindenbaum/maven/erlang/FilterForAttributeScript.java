@@ -17,15 +17,15 @@ import eu.lindenbaum.maven.util.ErlUtils;
  */
 public class FilterForAttributeScript implements Script<String> {
   private static final String script = //
-  "    lists:flatten(" + //
-      "    lists:foldl(" + //
-      "      fun(Module, Acc) ->" + //
-      "              A = Module:module_info(attributes)," + //
-      "              case proplists:get_value(%s, A) of" + //
-      "                  undefined -> Acc;" + //
-      "                  _ -> [Module | Acc]" + //
-      "              end" + //
-      "      end, [], %s)).";
+  NL + "lists:flatten(" + NL + //
+      "    lists:foldl(" + NL + //
+      "      fun(Module, Acc) ->" + NL + //
+      "              A = Module:module_info(attributes)," + NL + //
+      "              case proplists:get_value(%s, A) of" + NL + //
+      "                  undefined -> Acc;" + NL + //
+      "                  _ -> [Module | Acc]" + NL + //
+      "              end" + NL + //
+      "      end, [], %s))." + NL;
 
   private final List<File> modules;
   private final String attribute;

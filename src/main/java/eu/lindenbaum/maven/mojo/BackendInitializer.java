@@ -4,18 +4,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.ericsson.otp.erlang.OtpAuthException;
-import com.ericsson.otp.erlang.OtpConnection;
-import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpPeer;
 import com.ericsson.otp.erlang.OtpSelf;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.MavenSelf;
+import eu.lindenbaum.maven.erlang.NodeShutdownHook;
 import eu.lindenbaum.maven.erlang.PurgeModulesScript;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
-import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -42,41 +40,10 @@ public class BackendInitializer extends ErlangMojo {
    */
   private volatile boolean shutdownNode = true;
 
-  /**
-   * Static placeholder to insert the actual (configured) node name into the
-   * shutdown hook.
-   */
-  static volatile String nodeName = "maven-erlang-plugin-backend";
-
-  /**
-   * Static placeholder to insert the actual (configured) erlang cookie into the
-   * shutdown hook.
-   */
-  static volatile String nodeCookie = null;
-
-  /**
-   * Static thread shutting down the running plugin backend.
-   */
-  private static final Thread shutdownHook = new Thread(new Runnable() {
-    @Override
-    public void run() {
-      try {
-        OtpConnection connection = MavenSelf.get(nodeCookie).connect(nodeName);
-        connection.sendRPC("erlang", "halt", new OtpErlangList());
-        System.out.println("[INFO] Successfully shut down '" + nodeName + "'");
-      }
-      catch (Exception e) {
-        System.out.println("[ERROR] Failed to shutdown '" + nodeName + "'");
-        e.printStackTrace();
-      }
-      System.out.println("[INFO] " + MavenUtils.SEPARATOR);
-    }
-  });
-
   @Override
   protected void execute(final Log log, Properties p) throws MojoExecutionException, MojoFailureException {
-    nodeName = p.node();
-    nodeCookie = p.cookie();
+    String nodeName = p.node();
+    String nodeCookie = p.cookie();
     OtpPeer peer = new OtpPeer(nodeName);
     try {
       try {
@@ -102,7 +69,7 @@ public class BackendInitializer extends ErlangMojo {
       }
       if (this.shutdownNode) {
         try {
-          Runtime.getRuntime().addShutdownHook(shutdownHook);
+          Runtime.getRuntime().addShutdownHook(NodeShutdownHook.get(nodeName, nodeCookie));
         }
         catch (IllegalArgumentException e1) {
           log.debug("shutdown hook already registered.");

@@ -20,29 +20,29 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class StartApplicationScript implements Script<StartResult> {
   private static final String script = //
-  "    CodePaths = %s," + //
-      "Applications = %s," + //
-      "code:add_pathsa(CodePaths)," + //
-      "Before = [A || {A, _, _} <- application:which_applications()]," + //
-      "Fun = fun([], ok, _) ->" + //
-      "              ok;" + //
-      "         ([A | Rest], ok, Rec) ->" + //
-      "              case application:start(A) of" + //
-      "                  ok ->" + //
-      "                      Rec(Rest, ok, Rec);" + //
-      "                  {error, already_started, _} ->" + //
-      "                      Rec(Rest, ok, Rec);" + //
-      "                  {error, {not_started, Dep}} ->" + //
-      "                      Rec(Rest ++ [Dep, A], ok, Rec);" + //
-      "                  Error ->" + //
-      "                      Error" + //
-      "              end;" + //
-      "         (_, Error, _) ->" + //
-      "              Error" + //
-      "      end," + //
-      "Result = Fun(Applications, ok, Fun)," + //
-      "[code:del_path(P) || P <- CodePaths]," + //
-      "{Result, Before}.";
+  NL + "CodePaths = %s," + NL + //
+      "Applications = %s," + NL + //
+      "code:add_pathsa(CodePaths)," + NL + //
+      "Before = [A || {A, _, _} <- application:which_applications()]," + NL + //
+      "Fun = fun([], ok, _) ->" + NL + //
+      "              ok;" + NL + //
+      "         ([A | Rest], ok, Rec) ->" + NL + //
+      "              case application:start(A) of" + NL + //
+      "                  ok ->" + NL + //
+      "                      Rec(Rest, ok, Rec);" + NL + //
+      "                  {error, already_started, _} ->" + NL + //
+      "                      Rec(Rest, ok, Rec);" + NL + //
+      "                  {error, {not_started, Dep}} ->" + NL + //
+      "                      Rec(Rest ++ [Dep, A], ok, Rec);" + NL + //
+      "                  Error ->" + NL + //
+      "                      Error" + NL + //
+      "              end;" + NL + //
+      "         (_, Error, _) ->" + NL + //
+      "              Error" + NL + //
+      "      end," + NL + //
+      "Result = Fun(Applications, ok, Fun)," + NL + //
+      "[code:del_path(P) || P <- CodePaths]," + NL + //
+      "{Result, Before}." + NL;
 
   private final List<File> codePaths;
   private final List<String> applications;

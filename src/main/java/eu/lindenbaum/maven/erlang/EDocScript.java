@@ -14,11 +14,11 @@ import eu.lindenbaum.maven.util.ErlUtils;
  */
 public class EDocScript implements Script<Boolean> {
   private static final String script = //
-  "    In = \"%s\"," + //
-      "Out = [{dir, \"%s\"}]," + //
-      "Overview = [{overview, \"%s\"}]," + //
-      "Options = [{todo, true}, {new, true}, {subpackages, true}]," + //
-      "edoc:application('%s', In, Out ++ Overview ++ Options).";
+  NL + "In = \"%s\"," + NL + //
+      "Out = [{dir, \"%s\"}]," + NL + //
+      "Overview = [{overview, \"%s\"}]," + NL + //
+      "Options = [{todo, true}, {new, true}, {subpackages, true}]," + NL + //
+      "edoc:application('%s', In, Out ++ Overview ++ Options)." + NL;
 
   private final String appName;
   private final File indir;

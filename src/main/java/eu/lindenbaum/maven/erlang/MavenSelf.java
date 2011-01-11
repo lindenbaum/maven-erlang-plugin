@@ -1,5 +1,7 @@
 package eu.lindenbaum.maven.erlang;
 
+import static eu.lindenbaum.maven.erlang.Script.NL;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,25 +37,25 @@ public final class MavenSelf {
   private static final int MAX_RETRIES = 10;
 
   private static final String script = //
-  "    C_O_D_E_P_A_T_H_S_ = %s," + //
-      "code:add_pathsa(C_O_D_E_P_A_T_H_S_)," + //
-      "_B_E_F_O_R_E_ = code:all_loaded()," + //
-      "_R_E_S_U_L_T_ = try" + //
+  NL + "C_O_D_E_P_A_T_H_S_ = %s," + NL + //
+      "code:add_pathsa(C_O_D_E_P_A_T_H_S_)," + NL + //
+      "_B_E_F_O_R_E_ = code:all_loaded()," + NL + //
+      "_R_E_S_U_L_T_ = try" + NL + //
       "                    %s " + //
-      "                catch" + //
-      "                    _C_:_R_ ->" + //
-      "                        {exception, _C_, _R_, erlang:get_stacktrace()}" + //
-      "                end," + //
-      "[code:del_path(_P_A_T_H_) || _P_A_T_H_ <- C_O_D_E_P_A_T_H_S_]," + //
-      "_P_U_R_G_E_ = code:all_loaded() -- _B_E_F_O_R_E_," + //
-      "[code:purge(_M_O_D_) || {_M_O_D_, _} <- _P_U_R_G_E_]," + //
-      "[code:delete(_M_O_D_) || {_M_O_D_, _} <- _P_U_R_G_E_]," + //
-      "[code:purge(_M_O_D_) || {_M_O_D_, _} <- _P_U_R_G_E_]," + //
-      "case _R_E_S_U_L_T_ of" + //
-      "    {exception, _C_L_A_S_S_, _R_E_A_S_O_N_, _S_T_A_C_K_} ->" + //
-      "        erlang:raise(_C_L_A_S_S_, _R_E_A_S_O_N_, _S_T_A_C_K_);" + //
-      "    _ -> _R_E_S_U_L_T_ " + // do not kill the whitespace at the end of this line!!!
-      "end.";
+      "                catch" + NL + //
+      "                    _C_:_R_ ->" + NL + //
+      "                        {exception, _C_, _R_, erlang:get_stacktrace()}" + NL + //
+      "                end," + NL + //
+      "[code:del_path(_P_A_T_H_) || _P_A_T_H_ <- C_O_D_E_P_A_T_H_S_]," + NL + //
+      "_P_U_R_G_E_ = code:all_loaded() -- _B_E_F_O_R_E_," + NL + //
+      "[code:purge(_M_O_D_) || {_M_O_D_, _} <- _P_U_R_G_E_]," + NL + //
+      "[code:delete(_M_O_D_) || {_M_O_D_, _} <- _P_U_R_G_E_]," + NL + //
+      "[code:purge(_M_O_D_) || {_M_O_D_, _} <- _P_U_R_G_E_]," + NL + //
+      "case _R_E_S_U_L_T_ of" + NL + //
+      "    {exception, _C_L_A_S_S_, _R_E_A_S_O_N_, _S_T_A_C_K_} ->" + NL + //
+      "        erlang:raise(_C_L_A_S_S_, _R_E_A_S_O_N_, _S_T_A_C_K_);" + NL + //
+      "    _ -> _R_E_S_U_L_T_ " + NL + // do not kill the whitespace at the end of this line!!!
+      "end." + NL;
 
   private static final AtomicLong serial = new AtomicLong(0L);
   private static final Map<String, MavenSelf> instances = new HashMap<String, MavenSelf>();
@@ -213,34 +215,41 @@ public final class MavenSelf {
             }
             else {
               OtpErlangObject errorInfo = result.elementAt(1);
-              throw new MojoExecutionException("failed to evaluate form: " + errorInfo.toString());
+              String msg = "in script: " + expression + "failed to evaluate form: " + errorInfo.toString();
+              throw new MojoExecutionException(msg);
             }
           }
           else {
-            throw new MojoExecutionException("couldn't find forms to evaluate in expression");
+            String msg = "in script: " + expression + "couldn't find forms to evaluate in expression";
+            throw new MojoExecutionException(msg);
           }
         }
         else {
           OtpErlangObject errorInfo = result.elementAt(1);
-          throw new MojoExecutionException("failed to parse tokens: " + errorInfo.toString());
+          String msg = "in script: " + expression + "failed to parse tokens: " + errorInfo.toString();
+          throw new MojoExecutionException(msg);
         }
       }
       else {
         OtpErlangObject errorInfo = result.elementAt(1);
-        throw new MojoExecutionException("failed to scan expression: " + errorInfo.toString());
+        String msg = "in script: " + expression + "failed to scan expression: " + errorInfo.toString();
+        throw new MojoExecutionException(msg);
       }
     }
     catch (IOException e) {
       removeConnection(peer);
-      throw new MojoExecutionException(e.getMessage(), e);
+      String msg = "in script: " + expression + "failure: " + e.getMessage();
+      throw new MojoExecutionException(msg, e);
     }
     catch (OtpErlangExit e) {
       removeConnection(peer);
-      throw new MojoExecutionException(e.getMessage(), e);
+      String msg = "in script: " + expression + "failure: " + e.getMessage();
+      throw new MojoExecutionException(msg, e);
     }
     catch (OtpAuthException e) {
       removeConnection(peer);
-      throw new MojoExecutionException(e.getMessage(), e);
+      String msg = "in script: " + expression + "failure: " + e.getMessage();
+      throw new MojoExecutionException(msg, e);
     }
   }
 }

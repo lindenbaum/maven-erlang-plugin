@@ -21,38 +21,38 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class BeamCompilerScript implements Script<CompilerResult> {
   private static final String script = //
-  "    Options = [return, {outdir, \"%s\"}] ++ %s ++ %s," + //
-      "lists:foldl(" + //
-      "  fun(ToCompile, {\"\", Reports}) ->" + //
-      "          {Fail, Messages} = case compile:file(ToCompile, Options) of" + //
-      "                               {error, E, W} ->" + //
-      "                                   {ToCompile," + //
-      "                                    lists:map(fun(Elem) -> {error, Elem} end, E)" + //
-      "                                    ++ lists:map(fun(Elem) -> {warn, Elem} end, W)};" + //
-      "                               {ok, _, W} ->" + //
-      "                                   {\"\"," + //
-      "                                    lists:map(fun(Elem) -> {warn, Elem} end, W)}" + //
-      "                             end," + //
-      "          R = lists:foldr(" + //
-      "                fun({Level, {File, Exceptions}}, Acc) ->" + //
-      "                        lists:foldr(fun({Line, Module, Info}, A) ->" + //
-      "                                            Formatted = Module:format_error(Info)," + //
-      "                                            Flattened = lists:flatten(Formatted)," + //
-      "                                            F = io_lib:format(\"~s:~p:\", [File, Line])," + //
-      "                                            S = io_lib:format(\"~s\", [Flattened])," + //
-      "                                            [{Level, lists:flatten(F)}," + //
-      "                                             {Level, lists:flatten(S)}] ++ A;" + //
-      "                                       (Else, A) ->" + //
-      "                                            F = io_lib:format(\"~s:\", [File])," + //
-      "                                            S = io_lib:format(\"~p\", [Else])," + //
-      "                                            [{Level, lists:flatten(F)}," + //
-      "                                             {Level, lists:flatten(S)}] ++ A" + //
-      "                                    end, Acc, Exceptions)" + //
-      "                end, [], Messages)," + //
-      "          {Fail, Reports ++ R};" + //
-      "     (_, Result) ->" + //
-      "          Result" + //
-      "  end, {\"\", []}, %s).";
+  NL + "Options = [return, {outdir, \"%s\"}] ++ %s ++ %s," + NL + //
+      "lists:foldl(" + NL + //
+      "  fun(ToCompile, {\"\", Reports}) ->" + NL + //
+      "          {Fail, Messages} = case compile:file(ToCompile, Options) of" + NL + //
+      "                               {error, E, W} ->" + NL + //
+      "                                   {ToCompile," + NL + //
+      "                                    lists:map(fun(Elem) -> {error, Elem} end, E)" + NL + //
+      "                                    ++ lists:map(fun(Elem) -> {warn, Elem} end, W)};" + NL + //
+      "                               {ok, _, W} ->" + NL + //
+      "                                   {\"\"," + NL + //
+      "                                    lists:map(fun(Elem) -> {warn, Elem} end, W)}" + NL + //
+      "                             end," + NL + //
+      "          R = lists:foldr(" + NL + //
+      "                fun({Level, {File, Exceptions}}, Acc) ->" + NL + //
+      "                        lists:foldr(fun({Line, Module, Info}, A) ->" + NL + //
+      "                                            Formatted = Module:format_error(Info)," + NL + //
+      "                                            Flattened = lists:flatten(Formatted)," + NL + //
+      "                                            F = io_lib:format(\"~s:~p:\", [File, Line])," + NL + //
+      "                                            S = io_lib:format(\"~s\", [Flattened])," + NL + //
+      "                                            [{Level, lists:flatten(F)}," + NL + //
+      "                                             {Level, lists:flatten(S)}] ++ A;" + NL + //
+      "                                       (Else, A) ->" + NL + //
+      "                                            F = io_lib:format(\"~s:\", [File])," + NL + //
+      "                                            S = io_lib:format(\"~p\", [Else])," + NL + //
+      "                                            [{Level, lists:flatten(F)}," + NL + //
+      "                                             {Level, lists:flatten(S)}] ++ A" + NL + //
+      "                                    end, Acc, Exceptions)" + NL + //
+      "                end, [], Messages)," + NL + //
+      "          {Fail, Reports ++ R};" + NL + //
+      "     (_, Result) ->" + NL + //
+      "          Result" + NL + //
+      "  end, {\"\", []}, %s)." + NL;
 
   private final List<File> files;
   private final File outdir;

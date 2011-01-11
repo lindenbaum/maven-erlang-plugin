@@ -11,24 +11,24 @@ import com.ericsson.otp.erlang.OtpErlangObject;
  */
 public final class PurgeModulesScript implements Script<Void> {
   private static final String script = //
-  "    LibDir = code:lib_dir()," + //
-      "lists:foreach(" + //
-      "  fun({_, preloaded}) ->" + //
-      "        ok;" + //
-      "     ({Module, Path}) when is_list(Path) ->" + //
-      "        case string:str(Path, LibDir) of" + //
-      "             1 ->" + //
-      "                 ok;" + //
-      "             _ ->" + //
-      "                 code:purge(Module)," + //
-      "                 code:delete(Module)," + //
-      "                 code:purge(Module)" + //
-      "        end;" + //
-      "     ({Module, cover_compiled}) ->" + //
-      "        code:purge(Module)," + //
-      "        code:delete(Module)," + //
-      "        code:purge(Module)" + //
-      "  end, code:all_loaded()).";
+  NL + "LibDir = code:lib_dir()," + NL + //
+      "lists:foreach(" + NL + //
+      "  fun({_, preloaded}) ->" + NL + //
+      "        ok;" + NL + //
+      "     ({Module, Path}) when is_list(Path) ->" + NL + //
+      "        case string:str(Path, LibDir) of" + NL + //
+      "             1 ->" + NL + //
+      "                 ok;" + NL + //
+      "             _ ->" + NL + //
+      "                 code:purge(Module)," + NL + //
+      "                 code:delete(Module)," + NL + //
+      "                 code:purge(Module)" + NL + //
+      "        end;" + NL + //
+      "     ({Module, cover_compiled}) ->" + NL + //
+      "        code:purge(Module)," + NL + //
+      "        code:delete(Module)," + NL + //
+      "        code:purge(Module)" + NL + //
+      "  end, code:all_loaded())." + NL;
 
   public PurgeModulesScript() {
     // no params

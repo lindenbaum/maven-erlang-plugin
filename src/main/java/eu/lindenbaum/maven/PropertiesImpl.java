@@ -120,7 +120,7 @@ final class PropertiesImpl implements Properties {
     this.targetSite = new File(this.target, "site");
     this.targetSrc = new File(this.targetProject, "src");
     this.targetSurefireReports = new File(this.target, "surefire-reports");
-    this.targetTest = new File(this.target, "test-" + this.projectName);
+    this.targetTest = new File(this.target, this.projectName + "-test");
     this.targetTestEbin = new File(this.targetTest, "ebin");
     this.targetTestPriv = new File(this.targetTest, "priv");
   }

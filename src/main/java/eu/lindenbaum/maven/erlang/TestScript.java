@@ -20,16 +20,16 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class TestScript implements Script<TestResult> {
   private static final String script = //
-  "    Surefire = {report, {surefire, [{dir, \"%s\"}, {package, \"%s.\"}]}}," + //
-      "Tty = {report, {ttycapture, [{report_to, self()}]}}," + //
-      "Out = try eunit:test(%s, [Surefire, Tty]) of" + //
-      "          _ -> []" + //
-      "      catch" + //
-      "          Class:Exception ->" + //
-      "              Msg = io_lib:format(\"~p:~p\", [Class, Exception])," + //
-      "              [lists:flatten(Msg)]" + //
-      "      end," + //
-      "receive {Level, Captured} -> {Level, Captured ++ Out} end.";
+  NL + "Surefire = {report, {surefire, [{dir, \"%s\"}, {package, \"%s.\"}]}}," + NL + //
+      "Tty = {report, {ttycapture, [{report_to, self()}]}}," + NL + //
+      "Out = try eunit:test(%s, [Surefire, Tty]) of" + NL + //
+      "          _ -> []" + NL + //
+      "      catch" + NL + //
+      "          Class:Exception ->" + NL + //
+      "              Msg = io_lib:format(\"~p:~p\", [Class, Exception])," + NL + //
+      "              [lists:flatten(Msg)]" + NL + //
+      "      end," + NL + //
+      "receive {Level, Captured} -> {Level, Captured ++ Out} end." + NL;
 
   private final List<File> tests;
   private final File surefireDir;

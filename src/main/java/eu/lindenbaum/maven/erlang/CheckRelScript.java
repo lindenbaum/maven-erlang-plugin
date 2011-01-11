@@ -19,16 +19,16 @@ import eu.lindenbaum.maven.util.ErlUtils;
  */
 public class CheckRelScript implements Script<CheckRelResult> {
   private static final String script = //
-  "    case file:consult(\"%s\") of" + //
-      "    {ok, [{release, {N, V}, {erts, E}, Apps}]} ->" + //
-      "        {N, V, E, lists:map(" + //
-      "                    fun({App, Vsn}) -> {App, Vsn};" + //
-      "                       ({App, Vsn, _}) -> {App, Vsn};" + //
-      "                       ({App, Vsn, _, _}) -> {App, Vsn}" + //
-      "                    end, Apps)};" + //
-      "    _ ->" + //
-      "        {undefined, undefined, undefined, []} " + // do not remove the trailing whitespace!
-      "end.";
+  NL + "case file:consult(\"%s\") of" + NL + //
+      "    {ok, [{release, {N, V}, {erts, E}, Apps}]} ->" + NL + //
+      "        {N, V, E, lists:map(" + NL + //
+      "                    fun({App, Vsn}) -> {App, Vsn};" + NL + //
+      "                       ({App, Vsn, _}) -> {App, Vsn};" + NL + //
+      "                       ({App, Vsn, _, _}) -> {App, Vsn}" + NL + //
+      "                    end, Apps)};" + NL + //
+      "    _ ->" + NL + //
+      "        {undefined, undefined, undefined, []} " + NL + // do not remove the trailing whitespace!
+      "end." + NL;
 
   private final File relFile;
 

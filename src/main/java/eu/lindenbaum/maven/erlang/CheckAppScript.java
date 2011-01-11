@@ -19,16 +19,16 @@ import eu.lindenbaum.maven.util.ErlUtils;
  */
 public final class CheckAppScript implements Script<CheckAppResult> {
   private static final String script = //
-  "    case file:consult(\"%s\") of" + //
-      "    {ok, [{application, A, Props}]} ->" + //
-      "        V = proplists:get_value(vsn, Props, undefined)," + //
-      "        S = proplists:get_value(mod, Props, omitted)," + //
-      "        M = proplists:get_value(modules, Props, [])," + //
-      "        D = proplists:get_value(applications, Props, [])," + //
-      "        case S of {Module, _} -> {A, V, Module, M, D}; _ -> {A, V, S, M, D} end;" + //
-      "    _ ->" + //
-      "        {undefined, undefined, undefined, [], []}" + //
-      "end.";
+  NL + "case file:consult(\"%s\") of" + NL + //
+      "    {ok, [{application, A, Props}]} ->" + NL + //
+      "        V = proplists:get_value(vsn, Props, undefined)," + NL + //
+      "        S = proplists:get_value(mod, Props, omitted)," + NL + //
+      "        M = proplists:get_value(modules, Props, [])," + NL + //
+      "        D = proplists:get_value(applications, Props, [])," + NL + //
+      "        case S of {Module, _} -> {A, V, Module, M, D}; _ -> {A, V, S, M, D} end;" + NL + //
+      "    _ ->" + NL + //
+      "        {undefined, undefined, undefined, [], []}" + NL + //
+      "end." + NL;
 
   private final File appFile;
 

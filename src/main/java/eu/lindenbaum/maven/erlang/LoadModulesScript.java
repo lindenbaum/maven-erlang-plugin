@@ -19,21 +19,21 @@ import eu.lindenbaum.maven.util.ErlUtils;
  */
 public final class LoadModulesScript implements Script<Integer> {
   private static final String script = //
-  "    CodePaths = %s," + //
-      "Modules = %s," + //
-      "code:add_pathsa(CodePaths)," + //
-      "L = lists:foldl(" + //
-      "      fun(Module, Acc) ->" + //
-      "            code:purge(Module)," + //
-      "            code:delete(Module)," + //
-      "            code:purge(Module)," + //
-      "            case code:load_file(Module) of" + //
-      "                {module, _} -> Acc + 1;" + //
-      "                _ -> Acc" + //
-      "            end" + //
-      "      end, 0, Modules)," + //
-      "[code:del_path(P) || P <- CodePaths]," + //
-      "L.";
+  NL + "CodePaths = %s," + NL + //
+      "Modules = %s," + NL + //
+      "code:add_pathsa(CodePaths)," + NL + //
+      "L = lists:foldl(" + NL + //
+      "      fun(Module, Acc) ->" + NL + //
+      "            code:purge(Module)," + NL + //
+      "            code:delete(Module)," + NL + //
+      "            code:purge(Module)," + NL + //
+      "            case code:load_file(Module) of" + NL + //
+      "                {module, _} -> Acc + 1;" + NL + //
+      "                _ -> Acc" + NL + //
+      "            end" + NL + //
+      "      end, 0, Modules)," + NL + //
+      "[code:del_path(P) || P <- CodePaths]," + NL + //
+      "L." + NL;
 
   private final List<File> modules;
   private final List<File> codePaths;
