@@ -30,10 +30,10 @@ public class StartApplicationScript implements Script<StartResult> {
       "              case application:start(A) of" + NL + //
       "                  ok ->" + NL + //
       "                      Rec(Rest, ok, Rec);" + NL + //
-      "                  {error, already_started, _} ->" + NL + //
+      "                  {error, {already_started, _}} ->" + NL + //
       "                      Rec(Rest, ok, Rec);" + NL + //
       "                  {error, {not_started, Dep}} ->" + NL + //
-      "                      Rec(Rest ++ [Dep, A], ok, Rec);" + NL + //
+      "                      Rec([Dep, A] ++ Rest, ok, Rec);" + NL + //
       "                  Error ->" + NL + //
       "                      Error" + NL + //
       "              end;" + NL + //
