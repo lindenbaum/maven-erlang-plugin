@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="olle-t" type="add">
+        Added plain text coverage report as optional output direct to stdout
+        instead of saved coverage report.
+      </action>
       <action dev="schlagert" type="remove">
         Removed support for SNMP resource compilation.
       </action>

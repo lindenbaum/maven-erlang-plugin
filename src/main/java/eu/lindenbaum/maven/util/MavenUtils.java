@@ -23,6 +23,7 @@ import org.apache.maven.project.MavenProject;
  */
 public final class MavenUtils {
   public static String SEPARATOR = "------------------------------------------------------------------------";
+  public static String FAT_SEPARATOR = "========================================================================";
 
   /**
    * Returns an (existing) file pointing to a plugin {@link Artifact} used by a

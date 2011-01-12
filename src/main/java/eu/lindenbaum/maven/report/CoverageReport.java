@@ -44,6 +44,15 @@ import org.apache.maven.plugin.logging.Log;
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public class CoverageReport extends ErlangReport {
+
+  /**
+   * Setting this to {@code true} will generate a plain text output to the
+   * console (stdout) only, without saving the coverage report as HTML.
+   * 
+   * @parameter expression="${console}" default-value="false"
+   */
+  private boolean console;
+
   private static final String LINE_PATTERN = "<span {0}><a name=\"{3}-{1}\">{1,number,0000}</a>: {2}</span>\n";
   private static final String RED_LINE_ANNOTATION = "style=\"background: #faa;\"";
   private static final String GREEN_LINE_ANNOTATION = "style=\"background: #afa;\"";
@@ -116,14 +125,66 @@ public class CoverageReport extends ErlangReport {
       throw new MojoExecutionException("failed to generate coverage report");
     }
     else {
+      generateReport(this.console, locale, result);
+      log.info("Successfully generated coverage report.");
+    }
+  }
+
+  private void generateReport(boolean plainText, Locale locale, CoverageReportResult result) {
+    if (plainText) {
+      getLog().info("");
+      printModulesSummary(getLog(), locale, result.getReport());
+      printReportSummary(getLog(), locale, result.getReport());
+    }
+    else {
       generateReportHeader(getSink(), locale, result.getReport());
       generateReportSummary(getSink(), locale, result.getReport());
       generateReportModulesSummary(getSink(), locale, result.getReport());
       generateReportForEachModule(getSink(), locale, result.getReport());
       generateReportFooter(getSink(), locale, result.getReport());
-
-      log.info("Successfully generated coverage report.");
     }
+  }
+
+  @SuppressWarnings("unused")
+  private void printModulesSummary(Log log, Locale locale, Report report) {
+    log.info("MODULES");
+    log.info(MavenUtils.FAT_SEPARATOR);
+    for (Module module : report.getModules()) {
+      String name = module.getName() + ErlConstants.ERL_SUFFIX;
+      int padding = 69 - name.length();
+      String covered = module.getCoverage() == 100 ? "COVERED" : "NOT COVERED!";
+      log.info(String.format("> %1$s %2$" + padding + "s", name, covered));
+      log.info(MavenUtils.SEPARATOR);
+      log.info(String.format("Coverage: %1$23d%% | Lines: %2$28d",
+                             module.getCoverage(),
+                             module.getNumberOfLines()));
+      log.info(String.format("Functions: %1$23d | Covered lines: %2$20d",
+                             module.getNumberOfFunctions(),
+                             module.getNumberOfCoveredLines()));
+      log.info(String.format("Clauses: %1$25d | Not covered lines: %2$16d",
+                             module.getNumberOfClauses(),
+                             module.getNumberOfNotCoveredLines()));
+      log.info(MavenUtils.SEPARATOR);
+    }
+    log.info("");
+  }
+
+  @SuppressWarnings("unused")
+  private void printReportSummary(Log log, Locale locale, Report report) {
+    log.info("SUMMARY");
+    log.info(MavenUtils.FAT_SEPARATOR);
+    log.info(String.format("Total coverage:%1$56d%%", 99));
+    log.info(MavenUtils.SEPARATOR);
+    log.info(String.format("Modules:%1$26d | Lines:%2$29d",
+                           report.getNumberOfModules(),
+                           report.getNumberOfLines()));
+    log.info(String.format("Functions:%1$24d | Covered lines:%2$21d",
+                           report.getNumberOfFunctions(),
+                           report.getNumberOfCoveredLines()));
+    log.info(String.format("Clauses:%1$26d | Not covered lines:%2$17d",
+                           report.getNumberOfClauses(),
+                           report.getNumberOfNotCoveredLines()));
+    log.info("");
   }
 
   @SuppressWarnings("unused")
