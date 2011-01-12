@@ -122,6 +122,7 @@ public class CoverageReport extends ErlangReport {
     log.debug("Successfully reloaded " + loaded + " .beam file(s).");
 
     if (result.failed()) {
+      result.logOutput(getLog());
       throw new MojoExecutionException("failed to generate coverage report");
     }
     else {
@@ -173,7 +174,7 @@ public class CoverageReport extends ErlangReport {
   private void printReportSummary(Log log, Locale locale, Report report) {
     log.info("SUMMARY");
     log.info(MavenUtils.FAT_SEPARATOR);
-    log.info(String.format("Total coverage:%1$56d%%", 99));
+    log.info(String.format("Total coverage:%1$56d%%", report.getCoverage()));
     log.info(MavenUtils.SEPARATOR);
     log.info(String.format("Modules:%1$26d | Lines:%2$29d",
                            report.getNumberOfModules(),
