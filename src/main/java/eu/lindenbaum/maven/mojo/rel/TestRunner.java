@@ -54,7 +54,7 @@ public final class TestRunner extends ErlangMojo {
 
     File relFile = new File(p.target(), relFileBaseName + ErlConstants.REL_SUFFIX);
     CheckRelScript relScript = new CheckRelScript(relFile);
-    CheckRelResult relResult = MavenSelf.get(p.cookie()).eval(p.node(), relScript, new ArrayList<File>());
+    CheckRelResult relResult = MavenSelf.get(p.cookie()).exec(p.node(), relScript, new ArrayList<File>());
     checkReleaseName(log, releaseName, relResult.getName());
     checkReleaseVersion(log, releaseVersion, relResult.getReleaseVersion());
     checkDependencies(log, artifacts, relResult.getApplications());

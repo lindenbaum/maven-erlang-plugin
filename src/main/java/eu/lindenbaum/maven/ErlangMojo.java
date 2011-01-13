@@ -72,6 +72,22 @@ public abstract class ErlangMojo extends AbstractMojo {
   private String cookie;
 
   /**
+   * The name of the backend node to use.
+   * 
+   * @parameter expression="${testNode}"
+   *            default-value="maven-erlang-plugin-test-backend"
+   * @required
+   */
+  private String testNode;
+
+  /**
+   * The cookie to use for the java and the backend node.
+   * 
+   * @parameter expression="${testCookie}" default-value=""
+   */
+  private String testCookie;
+
+  /**
    * Injects the needed {@link Properties} into the abstract
    * {@link #execute(Log, Properties)} method to be implemented by subclasses.
    */
@@ -84,7 +100,9 @@ public abstract class ErlangMojo extends AbstractMojo {
                                          this.base,
                                          this.target,
                                          this.node,
-                                         this.cookie));
+                                         this.cookie,
+                                         this.testNode,
+                                         this.testCookie));
   }
 
   /**

@@ -66,8 +66,8 @@ public final class ProjectRunner extends ErlangMojo {
     List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
     modules.addAll(FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX));
 
-    LoadModulesScript loadScript = new LoadModulesScript(modules, codePaths);
-    Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript);
+    LoadModulesScript loadScript = new LoadModulesScript(modules);
+    Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript, codePaths);
     log.info("Successfully loaded " + loaded + " .beam file(s) into backend node.");
 
     List<String> applications = new ArrayList<String>();

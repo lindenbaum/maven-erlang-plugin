@@ -17,9 +17,7 @@ import eu.lindenbaum.maven.erlang.CoverageReportResult.Report;
 import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Function;
 import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Module;
 import eu.lindenbaum.maven.erlang.CoverageReportScript;
-import eu.lindenbaum.maven.erlang.LoadModulesScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
-import eu.lindenbaum.maven.erlang.PurgeModulesScript;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
@@ -49,7 +47,7 @@ public class CoverageReport extends ErlangReport {
    * Setting this to {@code true} will generate a plain text output to the
    * console (stdout) only, without saving the coverage report as HTML.
    * 
-   * @parameter expression="${console}" default-value="false"
+   * @parameter expression="${console}" default-value="true"
    */
   private boolean console;
 
@@ -91,9 +89,6 @@ public class CoverageReport extends ErlangReport {
       return;
     }
 
-    Script<Void> purgeScript = new PurgeModulesScript();
-    MavenSelf.get(p.cookie()).exec(p.node(), purgeScript);
-
     File targetTestEbin = p.targetTestEbin();
 
     List<File> tests = new ArrayList<File>();
@@ -111,15 +106,7 @@ public class CoverageReport extends ErlangReport {
     outdir.mkdirs();
 
     Script<CoverageReportResult> script = new CoverageReportScript(targetTestEbin, tests, sources);
-    CoverageReportResult result = MavenSelf.get(p.cookie()).eval(p.node(), script, testCodePaths);
-
-    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    codePaths.add(p.targetEbin());
-    List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    modules.addAll(FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX));
-    Script<Integer> loadScript = new LoadModulesScript(modules, codePaths);
-    Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript);
-    log.debug("Successfully reloaded " + loaded + " .beam file(s).");
+    CoverageReportResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script, testCodePaths);
 
     if (result.failed()) {
       result.logOutput(getLog());
@@ -137,13 +124,11 @@ public class CoverageReport extends ErlangReport {
       printModulesSummary(getLog(), locale, result.getReport());
       printReportSummary(getLog(), locale, result.getReport());
     }
-    else {
-      generateReportHeader(getSink(), locale, result.getReport());
-      generateReportSummary(getSink(), locale, result.getReport());
-      generateReportModulesSummary(getSink(), locale, result.getReport());
-      generateReportForEachModule(getSink(), locale, result.getReport());
-      generateReportFooter(getSink(), locale, result.getReport());
-    }
+    generateReportHeader(getSink(), locale, result.getReport());
+    generateReportSummary(getSink(), locale, result.getReport());
+    generateReportModulesSummary(getSink(), locale, result.getReport());
+    generateReportForEachModule(getSink(), locale, result.getReport());
+    generateReportFooter(getSink(), locale, result.getReport());
   }
 
   @SuppressWarnings("unused")

@@ -1,9 +1,12 @@
 package eu.lindenbaum.maven.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.ericsson.otp.erlang.OtpAuthException;
 import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangInt;
 import com.ericsson.otp.erlang.OtpErlangList;
@@ -12,6 +15,16 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangRangeException;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangUInt;
+import com.ericsson.otp.erlang.OtpPeer;
+import com.ericsson.otp.erlang.OtpSelf;
+
+import eu.lindenbaum.maven.erlang.MavenSelf;
+import eu.lindenbaum.maven.erlang.NodeShutdownHook;
+import eu.lindenbaum.maven.erlang.PurgeModulesScript;
+import eu.lindenbaum.maven.erlang.Script;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * Containing utilities related to erlang code execution.
@@ -174,5 +187,75 @@ public final class ErlUtils {
       // Ok
     }
     return 0;
+  }
+
+  /**
+   * Attaches the plugin to a backend erlang node. If the backend node is not
+   * already running it will be started. On successful connection the function
+   * also purges all modules that are not preloaded in order to clean up the
+   * backend.
+   * 
+   * @param log logger to use
+   * @param shutdownGoal to run in order to shutdown the backend node
+   * @param nodeName name of the backend to connect to
+   * @param nodeCookie cookie of the backend to connect to
+   * @param autoShutdown whether to register a shutdown hook that stops the
+   *          backend automatically on JVM exit
+   * @throws MojoExecutionException
+   */
+  public static void startBackend(Log log,
+                                  String shutdownGoal,
+                                  String nodeName,
+                                  String nodeCookie,
+                                  boolean autoShutdown) throws MojoExecutionException {
+    OtpPeer peer = new OtpPeer(nodeName);
+    try {
+      try {
+        String startupName = "maven-erlang-plugin-startup-" + System.nanoTime();
+        OtpSelf self = nodeCookie != null ? new OtpSelf(startupName, nodeCookie) : new OtpSelf(startupName);
+        self.connect(peer);
+        log.debug("Node " + peer + " is already running.");
+      }
+      catch (IOException e) {
+        log.debug("starting " + peer + ".");
+        ArrayList<String> command = new ArrayList<String>();
+        command.add(ErlConstants.ERL);
+        command.add("-boot");
+        command.add("start_sasl");
+        command.add("-name");
+        command.add(peer.node());
+        command.add("-detached");
+        Process process = new ProcessBuilder(command).start();
+        if (process.waitFor() != 0) {
+          throw new MojoExecutionException("Failed to start " + peer + ".");
+        }
+        log.debug("Node " + peer + " sucessfully started.");
+      }
+      if (autoShutdown) {
+        try {
+          Runtime.getRuntime().addShutdownHook(NodeShutdownHook.get(nodeName, nodeCookie));
+        }
+        catch (IllegalArgumentException e1) {
+          log.debug("shutdown hook already registered.");
+        }
+      }
+      else {
+        log.info("Node " + peer + " will not be shutdown automatically.");
+        log.info("To shutdown the node run 'mvn " + shutdownGoal + "'");
+      }
+
+      // clean up dynamically loaded modules on backend from previous runs
+      Script<Void> purgeScript = new PurgeModulesScript();
+      MavenSelf.get(nodeCookie).exec(nodeName, purgeScript);
+    }
+    catch (IOException e) {
+      throw new MojoExecutionException("Failed to start " + peer + ".", e);
+    }
+    catch (OtpAuthException e) {
+      throw new MojoExecutionException("Failed to connect to " + peer + ".", e);
+    }
+    catch (InterruptedException e) {
+      throw new MojoExecutionException("Failed to start " + peer + ".", e);
+    }
   }
 }

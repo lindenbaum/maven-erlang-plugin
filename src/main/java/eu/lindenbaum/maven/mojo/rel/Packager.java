@@ -52,7 +52,7 @@ public final class Packager extends ErlangMojo {
     codePaths.add(p.target());
 
     Script<SystoolsScriptResult> script = new MakeTarScript(relFile, p.target(), this.tarOptions);
-    SystoolsScriptResult result = MavenSelf.get(p.cookie()).eval(p.node(), script, codePaths);
+    SystoolsScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script, codePaths);
     result.logOutput(log);
     if (!result.success()) {
       throw new MojoFailureException("Could not create release package.");

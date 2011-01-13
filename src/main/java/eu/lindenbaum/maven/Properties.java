@@ -2,7 +2,6 @@ package eu.lindenbaum.maven;
 
 import java.io.File;
 
-
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProject;
 
@@ -43,6 +42,17 @@ public interface Properties {
    * Returns the cookie that must be used when connecting to the backend node.
    */
   public String cookie();
+
+  /**
+   * Returns the name of the test backend node to use.
+   */
+  public String testNode();
+
+  /**
+   * Returns the cookie that must be used when connecting to the test backend
+   * node.
+   */
+  public String testCookie();
 
   /**
    * Returns the directory where the maven .apt resources reside.

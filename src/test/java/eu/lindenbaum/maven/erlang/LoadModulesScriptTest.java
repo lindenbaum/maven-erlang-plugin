@@ -16,8 +16,7 @@ public class LoadModulesScriptTest {
   @Test
   public void testGet() {
     List<File> modules = Arrays.asList(new File("module"));
-    List<File> codePaths = Arrays.asList(new File("path"));
-    LoadModulesScript script = new LoadModulesScript(modules, codePaths);
+    LoadModulesScript script = new LoadModulesScript(modules);
     String expression = script.get();
     assertNotNull(expression);
     assertFalse(expression.isEmpty());
@@ -29,8 +28,7 @@ public class LoadModulesScriptTest {
     OtpErlangInt result = new OtpErlangInt(2);
 
     List<File> modules = Arrays.asList(new File("module"));
-    List<File> codePaths = Arrays.asList(new File("path"));
-    LoadModulesScript script = new LoadModulesScript(modules, codePaths);
+    LoadModulesScript script = new LoadModulesScript(modules);
     assertEquals(new Integer(2), script.handle(result));
   }
 }

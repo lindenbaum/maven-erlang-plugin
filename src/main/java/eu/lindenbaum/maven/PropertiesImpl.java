@@ -19,6 +19,8 @@ final class PropertiesImpl implements Properties {
   private final PackagingType packagingType;
   private final String node;
   private final String cookie;
+  private final String testNode;
+  private final String testCookie;
 
   private final File apt;
   private final File base;
@@ -54,7 +56,9 @@ final class PropertiesImpl implements Properties {
                  File base,
                  File target,
                  String node,
-                 String cookie) {
+                 String cookie,
+                 String testNode,
+                 String testCookie) {
     this.project = project;
     this.repository = repository;
 
@@ -62,6 +66,8 @@ final class PropertiesImpl implements Properties {
     this.packagingType = type;
     this.node = node;
     this.cookie = cookie;
+    this.testNode = testNode;
+    this.testCookie = testCookie;
 
     switch (type) {
       case ERLANG_STD: {
@@ -153,6 +159,16 @@ final class PropertiesImpl implements Properties {
   @Override
   public String cookie() {
     return this.cookie;
+  }
+
+  @Override
+  public String testNode() {
+    return this.testNode;
+  }
+
+  @Override
+  public String testCookie() {
+    return this.testCookie;
   }
 
   @Override

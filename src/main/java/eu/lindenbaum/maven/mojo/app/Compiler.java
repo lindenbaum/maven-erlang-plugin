@@ -69,7 +69,7 @@ public final class Compiler extends ErlangMojo {
       Script<CompilerResult> script = new BeamCompilerScript(files, p.targetEbin(), includes, options);
       List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
       codePaths.add(p.targetEbin());
-      CompilerResult result = MavenSelf.get(p.cookie()).eval(p.node(), script, codePaths);
+      CompilerResult result = MavenSelf.get(p.cookie()).exec(p.node(), script, codePaths);
       result.logOutput(log);
       String failedCompilationUnit = result.getFailed();
       if (failedCompilationUnit != null) {
@@ -79,8 +79,8 @@ public final class Compiler extends ErlangMojo {
 
       List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
       modules.addAll(FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX));
-      Script<Integer> loadScript = new LoadModulesScript(modules, codePaths);
-      Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript);
+      Script<Integer> loadScript = new LoadModulesScript(modules);
+      Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript, codePaths);
       log.debug("Successfully loaded " + loaded + " .beam file(s).");
     }
     else {

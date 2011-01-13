@@ -38,7 +38,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class TestCompiler extends ErlangMojo {
   /**
-   * Setting this to {@code true will} will skip the test compilation.
+   * Setting this to {@code true} will skip the test compilation.
    * 
    * @parameter expression="${skipTests}" default-value=false
    */
@@ -103,7 +103,7 @@ public final class TestCompiler extends ErlangMojo {
 
       Script<CompilerResult> script = new BeamCompilerScript(files, p.targetTestEbin(), includes, options);
       List<File> codePaths = getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-      CompilerResult result = MavenSelf.get(p.cookie()).eval(p.node(), script, codePaths);
+      CompilerResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script, codePaths);
       result.logOutput(log);
       String failedCompilationUnit = result.getFailed();
       if (failedCompilationUnit != null) {

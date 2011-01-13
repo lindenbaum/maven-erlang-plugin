@@ -19,9 +19,7 @@ import eu.lindenbaum.maven.util.ErlUtils;
  */
 public final class LoadModulesScript implements Script<Integer> {
   private static final String script = //
-  NL + "CodePaths = %s," + NL + //
-      "Modules = %s," + NL + //
-      "code:add_pathsa(CodePaths)," + NL + //
+  NL + "Modules = %s," + NL + //
       "L = lists:foldl(" + NL + //
       "      fun(Module, Acc) ->" + NL + //
       "            code:purge(Module)," + NL + //
@@ -32,22 +30,18 @@ public final class LoadModulesScript implements Script<Integer> {
       "                _ -> Acc" + NL + //
       "            end" + NL + //
       "      end, 0, Modules)," + NL + //
-      "[code:del_path(P) || P <- CodePaths]," + NL + //
       "L." + NL;
 
   private final List<File> modules;
-  private final List<File> codePaths;
 
-  public LoadModulesScript(List<File> modules, List<File> codePaths) {
+  public LoadModulesScript(List<File> modules) {
     this.modules = modules;
-    this.codePaths = codePaths;
   }
 
   @Override
   public String get() {
-    String paths = ErlUtils.toFileList(this.codePaths, "\"", "\"");
     String modules = ErlUtils.toModuleList(this.modules, "'", "'");
-    return String.format(script, paths, modules);
+    return String.format(script, modules);
   }
 
   /**

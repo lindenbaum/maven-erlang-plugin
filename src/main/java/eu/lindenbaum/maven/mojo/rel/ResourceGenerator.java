@@ -67,7 +67,7 @@ public final class ResourceGenerator extends ErlangMojo {
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
     RuntimeInfoScript infoScript = new RuntimeInfoScript();
-    RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).eval(p.node(), infoScript, new ArrayList<File>());
+    RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).exec(p.node(), infoScript, new ArrayList<File>());
 
     List<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
     String releaseName = p.project().getArtifactId();
@@ -93,7 +93,7 @@ public final class ResourceGenerator extends ErlangMojo {
     codePaths.add(p.target());
 
     Script<SystoolsScriptResult> script = new MakeScriptScript(relFile, p.target(), this.scriptOptions);
-    SystoolsScriptResult makeScriptResult = MavenSelf.get(p.cookie()).eval(p.node(), script, codePaths);
+    SystoolsScriptResult makeScriptResult = MavenSelf.get(p.cookie()).exec(p.node(), script, codePaths);
     makeScriptResult.logOutput(log);
     if (!makeScriptResult.success()) {
       throw new MojoFailureException("Could not create boot scripts.");
@@ -109,7 +109,7 @@ public final class ResourceGenerator extends ErlangMojo {
     HashMap<String, String> appMap = new HashMap<String, String>();
     for (File appFile : FileUtils.getFilesRecursive(libDirectory, ErlConstants.APP_SUFFIX)) {
       Script<CheckAppResult> script = new CheckAppScript(appFile);
-      CheckAppResult result = MavenSelf.get(p.cookie()).eval(p.node(), script, new ArrayList<File>());
+      CheckAppResult result = MavenSelf.get(p.cookie()).exec(p.node(), script, new ArrayList<File>());
       String appName = "${" + result.getName().toUpperCase() + "}";
       String appVersion = "\"" + result.getVersion() + "\"";
       appMap.put(appName, appVersion);

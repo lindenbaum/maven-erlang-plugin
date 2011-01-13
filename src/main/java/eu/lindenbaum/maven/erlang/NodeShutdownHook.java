@@ -9,17 +9,19 @@ import com.ericsson.otp.erlang.OtpErlangList;
 import eu.lindenbaum.maven.util.MavenUtils;
 
 /**
+ * Provides JVM unique shutdown hooks that stop erlang backend nodes.
+ * 
  * @author Tobias Schlager tobias.schlager@lindenbaum.eu
  */
 public final class NodeShutdownHook extends Thread {
   private static final Map<String, NodeShutdownHook> instances = new HashMap<String, NodeShutdownHook>();
 
-  private final String nodeCookie;
   private final String nodeName;
+  private volatile String nodeCookie;
 
   private NodeShutdownHook(String nodeName, String nodeCookie) {
-    this.nodeCookie = nodeCookie;
     this.nodeName = nodeName;
+    this.nodeCookie = nodeCookie;
   }
 
   /**
@@ -38,6 +40,9 @@ public final class NodeShutdownHook extends Thread {
         shutdownHook = new NodeShutdownHook(nodeName, nodeCookie);
         instances.put(nodeName, shutdownHook);
       }
+      else {
+        shutdownHook.nodeCookie = nodeCookie;
+      }
       return shutdownHook;
     }
   }
@@ -55,7 +60,6 @@ public final class NodeShutdownHook extends Thread {
     }
     catch (Exception e) {
       System.out.println("[ERROR] Failed to shutdown '" + this.nodeName + "'");
-      e.printStackTrace();
     }
     System.out.println("[INFO] " + MavenUtils.SEPARATOR);
   }

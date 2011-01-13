@@ -36,26 +36,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 public final class MavenSelf {
   private static final int MAX_RETRIES = 10;
 
-  private static final String script = //
-  NL + "C_O_D_E_P_A_T_H_S_ = %s," + NL + //
-      "code:add_pathsa(C_O_D_E_P_A_T_H_S_)," + NL + //
-      "_B_E_F_O_R_E_ = code:all_loaded()," + NL + //
-      "_R_E_S_U_L_T_ = try" + NL + //
-      "                    %s " + //
-      "                catch" + NL + //
-      "                    _C_:_R_ ->" + NL + //
-      "                        {exception, _C_, _R_, erlang:get_stacktrace()}" + NL + //
-      "                end," + NL + //
-      "[code:del_path(_P_A_T_H_) || _P_A_T_H_ <- C_O_D_E_P_A_T_H_S_]," + NL + //
-      "_P_U_R_G_E_ = code:all_loaded() -- _B_E_F_O_R_E_," + NL + //
-      "[code:purge(_M_O_D_) || {_M_O_D_, _} <- _P_U_R_G_E_]," + NL + //
-      "[code:delete(_M_O_D_) || {_M_O_D_, _} <- _P_U_R_G_E_]," + NL + //
-      "[code:purge(_M_O_D_) || {_M_O_D_, _} <- _P_U_R_G_E_]," + NL + //
-      "case _R_E_S_U_L_T_ of" + NL + //
-      "    {exception, _C_L_A_S_S_, _R_E_A_S_O_N_, _S_T_A_C_K_} ->" + NL + //
-      "        erlang:raise(_C_L_A_S_S_, _R_E_A_S_O_N_, _S_T_A_C_K_);" + NL + //
-      "    _ -> _R_E_S_U_L_T_ " + NL + // do not kill the whitespace at the end of this line!!!
-      "end." + NL;
+  private static final String execScript = NL + "code:add_pathsa(%s)," + NL + "%s";
 
   private static final AtomicLong serial = new AtomicLong(0L);
   private static final Map<String, MavenSelf> instances = new HashMap<String, MavenSelf>();
@@ -137,29 +118,6 @@ public final class MavenSelf {
 
   /**
    * Executes a {@link Script} on a specific remote erlang node using RPC. A
-   * connection to the remote node will be established if necessary. The given
-   * code paths will be added before script execution and are guaranteed to be
-   * removed when the script ends (abnormally). Additionally, all dynamically
-   * loaded modules will be purged on the remote node when the script exits.
-   * 
-   * @param peer to evaluate the {@link Script} on
-   * @param script to evaluate
-   * @param codePaths a list of paths needed for the script to run
-   * @return the processed result of the {@link Script}
-   * @throws MojoExecutionException
-   */
-  public <T> T eval(String peer, Script<T> script, List<File> codePaths) throws MojoExecutionException {
-    String scriptString = script.get().trim();
-    if (scriptString.endsWith(".")) {
-      scriptString = scriptString.substring(0, scriptString.length() - 1);
-    }
-    String pathsString = ErlUtils.toFileList(codePaths, "\"", "\"");
-    String toEval = String.format(MavenSelf.script, pathsString, scriptString);
-    return script.handle(eval(peer, toEval));
-  }
-
-  /**
-   * Executes a {@link Script} on a specific remote erlang node using RPC. A
    * connection to the remote node will be established if necessary. NOTE: This
    * will <b>not</b> automatically purge dynamically loaded modules neither will
    * it cleanup the code path of the backend node's code server.
@@ -171,6 +129,23 @@ public final class MavenSelf {
    */
   public <T> T exec(String peer, Script<T> script) throws MojoExecutionException {
     return script.handle(eval(peer, script.get()));
+  }
+
+  /**
+   * Executes a {@link Script} on a specific remote erlang node using RPC. A
+   * connection to the remote node will be established if necessary. NOTE: This
+   * will <b>not</b> automatically purge dynamically loaded modules neither will
+   * it cleanup the code path of the backend node's code server.
+   * 
+   * @param peer to evaluate the {@link Script} on
+   * @param script to evaluate
+   * @param codePaths a list of paths needed for the script to run
+   * @return the processed result of the {@link Script}
+   * @throws MojoExecutionException
+   */
+  public <T> T exec(String peer, Script<T> script, List<File> codePaths) throws MojoExecutionException {
+    String toExec = String.format(execScript, ErlUtils.toFileList(codePaths, "\"", "\""), script.get());
+    return script.handle(eval(peer, toExec));
   }
 
   /**

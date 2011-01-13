@@ -6,9 +6,7 @@ import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
-import eu.lindenbaum.maven.erlang.LoadModulesScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
-import eu.lindenbaum.maven.erlang.PurgeModulesScript;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.erlang.TestResult;
 import eu.lindenbaum.maven.erlang.TestScript;
@@ -32,7 +30,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class TestRunner extends ErlangMojo {
   /**
-   * Setting this to {@code true will} will skip the test compilation.
+   * Setting this to {@code true} will skip the test compilation.
    * 
    * @parameter expression="${skipTests}" default-value=false
    */
@@ -87,25 +85,14 @@ public final class TestRunner extends ErlangMojo {
     }
     p.targetSurefireReports().mkdirs();
 
-    Script<Void> purgeScript = new PurgeModulesScript();
-    MavenSelf.get(p.cookie()).exec(p.node(), purgeScript);
-
     List<File> testCodePaths = new ArrayList<File>();
     testCodePaths.add(p.targetTestEbin());
     testCodePaths.addAll(FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX));
 
     String suiteName = p.project().getArtifactId();
     Script<TestResult> script = new TestScript(tests, p.targetSurefireReports(), suiteName);
-    TestResult result = MavenSelf.get(p.cookie()).eval(p.node(), script, testCodePaths);
+    TestResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script, testCodePaths);
     result.logOutput(log);
-
-    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    codePaths.add(p.targetEbin());
-    List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    modules.addAll(FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX));
-    Script<Integer> loadScript = new LoadModulesScript(modules, codePaths);
-    Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript);
-    log.debug("Successfully reloaded " + loaded + " .beam file(s).");
 
     if (!result.testsPassed()) {
       throw new MojoFailureException("There were test failures.");

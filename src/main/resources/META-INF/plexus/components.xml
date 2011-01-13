@@ -32,7 +32,7 @@
               <process-resources></process-resources>
               <compile>eu.lindenbaum:maven-erlang-plugin:compile</compile>
               <process-classes></process-classes>
-              <generate-test-sources></generate-test-sources>
+              <generate-test-sources>eu.lindenbaum:maven-erlang-plugin:test-initialize</generate-test-sources>
               <process-test-sources></process-test-sources>
               <generate-test-resources>eu.lindenbaum:maven-erlang-plugin:generate-test-resources</generate-test-resources>
               <process-test-resources></process-test-resources>
@@ -81,7 +81,7 @@
               <process-resources></process-resources>
               <compile>eu.lindenbaum:maven-erlang-plugin:compile</compile>
               <process-classes></process-classes>
-              <generate-test-sources></generate-test-sources>
+              <generate-test-sources>eu.lindenbaum:maven-erlang-plugin:test-initialize</generate-test-sources>
               <process-test-sources></process-test-sources>
               <generate-test-resources>eu.lindenbaum:maven-erlang-plugin:generate-test-resources</generate-test-resources>
               <process-test-resources></process-test-resources>

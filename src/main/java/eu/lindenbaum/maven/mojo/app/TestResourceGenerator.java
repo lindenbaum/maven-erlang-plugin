@@ -30,7 +30,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class TestResourceGenerator extends ErlangMojo {
   /**
-   * Setting this to {@code true will} will skip copying the test resources.
+   * Setting this to {@code true} will skip copying the test resources.
    * 
    * @parameter expression="${skipTests}" default-value=false
    */
