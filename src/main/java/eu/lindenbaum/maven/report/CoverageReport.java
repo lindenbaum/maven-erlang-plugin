@@ -42,14 +42,14 @@ import org.apache.maven.plugin.logging.Log;
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public class CoverageReport extends ErlangReport {
-
   /**
-   * Setting this to {@code true} will generate a plain text output to the
-   * console (stdout) only, without saving the coverage report as HTML.
+   * Setting this to {@code true} will supress the console output and only
+   * generate the coverage report output HTML file.
    * 
-   * @parameter expression="${console}" default-value="true"
+   * @parameter expression="${silent}" default-value="false"
+   * @since 2.0
    */
-  private boolean console;
+  private boolean silent;
 
   private static final String LINE_PATTERN = "<span {0}><a name=\"{3}-{1}\">{1,number,0000}</a>: {2}</span>\n";
   private static final String RED_LINE_ANNOTATION = "style=\"background: #faa;\"";
@@ -113,14 +113,13 @@ public class CoverageReport extends ErlangReport {
       throw new MojoExecutionException("failed to generate coverage report");
     }
     else {
-      generateReport(this.console, locale, result);
+      generateReport(this.silent, locale, result);
       log.info("Successfully generated coverage report.");
     }
   }
 
-  private void generateReport(boolean plainText, Locale locale, CoverageReportResult result) {
-    if (plainText) {
-      getLog().info("");
+  private void generateReport(boolean silent, Locale locale, CoverageReportResult result) {
+    if (!silent) {
       printModulesSummary(getLog(), locale, result.getReport());
       printReportSummary(getLog(), locale, result.getReport());
     }
