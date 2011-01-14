@@ -225,6 +225,10 @@ public final class ErlUtils {
         command.add("-name");
         command.add(peer.node());
         command.add("-detached");
+        if (nodeCookie != null) {
+          command.add("-setcookie");
+          command.add(nodeCookie);
+        }
         Process process = new ProcessBuilder(command).start();
         if (process.waitFor() != 0) {
           throw new MojoExecutionException("Failed to start " + peer + ".");
