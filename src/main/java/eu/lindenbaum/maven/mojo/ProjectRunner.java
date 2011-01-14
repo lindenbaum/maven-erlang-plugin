@@ -79,7 +79,7 @@ public final class ProjectRunner extends ErlangMojo {
     Script<StartResult> startScript = new StartApplicationScript(codePaths, applications);
     StartResult startResult = MavenSelf.get(p.cookie()).exec(p.node(), startScript);
     if (startResult.startSucceeded()) {
-      String cookie = p.cookie() != null ? " -set_cookie " + p.cookie() + " " : "";
+      String cookie = p.cookie() != null ? " -setcookie " + p.cookie() + " " : "";
       String peer = new OtpPeer(p.node()).toString();
       log.info("Application started successfully on backend node.");
       log.info("To connect to the node use 'erl" + cookie + " -remsh " + peer + " -sname yournode'");
