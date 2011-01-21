@@ -13,24 +13,23 @@ Features (a detailed description)
 
 * Backend Node Usage
 
- The plug-in uses an erlang node as a backend to execute scripts via remote
- procedure calls. The backend node is started and stoppend automatically by the
- plug-in unless you configured it otherwise. The backend node can be reused (the
- plug-in can reconnect to it) if it is still running. To keep the backend node
+ The plug-in uses several erlang nodes as backends to execute scripts via remote
+ procedure calls. These backend node are started and stoppend automatically by
+ the plug-in unless you configured it otherwise, e.g. using the
+ <<<shutdownNode>>> property. The backend nodes can be reused (the plug-in can
+ reconnect to them) if they are still running. To keep the backend nodes
  up and running after a build set the plug-in parameter <<<shutdownNode>>> to
  <<<false>>>. The backend node can be specified using the <<<node>>> parameter.
- To be able to start in a clean environment the plug-in purges all currently
- loaded modules that are not <<<preloaded>>> or loaded from the backend node's
- library directory when a new build is started.
-
- Usually all dynamically loaded modules will be purged and all added code paths
- will be deleted after each script execution in order to keep the backend node
- clean. Allthough certain goals (e.g. <<<compile>>> or <<<run>>>) will leave all
- project and dependency modules loaded. This allows a better integration into
- the development process using Emacs/distel (see later sections for detailed
- information on that). Besides that you can assume that when a build has
- finished (either successful or with failures) the backend node will be
- regarding dynamically loaded modules or added code paths.
+ Each build will first purge all non <<<preloaded>>> modules loaded on the
+ backend nodes. This makes sure that removed modules disappear on the node as
+ soon as the user decides to rebuild. The plug-in also modifies the code paths
+ of the running backend nodes. These changes will not be reverted when starting
+ a new build.
+ 
+ After a build all newly compiled modules as well as the dependency modules are
+ available and loaded on the backend nodes. This allows a better integration
+ into the development process using Emacs/distel (see next section for
+ detailed information on that).
 
 * Emacs/distel Integration
 
@@ -40,7 +39,8 @@ Features (a detailed description)
  separate maven projects (or at least with a separate classifier). The plug-in
  will put all non-erlang dependency artifacts into the application project's
  target <<<priv>>> directory. The erlang application will be able to find this
- directory using <<<code:priv_dir/1>>>.
+ directory using <<<code:priv_dir/1>>> at runtime as well as during test
+ execution.
 
 * Dependency Management
 
@@ -57,7 +57,11 @@ Features (a detailed description)
 
  Release projects can be seen as packaging projects that do not contain code but
  manage a versioned set of versioned application dependencies. Application or
- releases <<must not>> have dependencies to other releases. 
+ releases <<must not>> have dependencies to other releases.
+ 
+ The plug-in also respects the dependency scopes test and provided. These
+ dependencies will not be packaged into the release and need not be contained
+ in the application resource or release file. 
 
 * Test-Run Applications
 
@@ -130,7 +134,7 @@ Features (a detailed description)
  To simplify the erlang release file the plug-in provides several release
  packaging variables that may be used in the release file. These will be
  replaced with sensible values on packaging time. For a list of available
- variables see the {{{./project-configuration.html}project configuration}} page.
+ variables see the {{{./plugin-configuration.html}plugin configuration}} page.
 
  On top of that the plug-in will generate the necessary scripts to package with
  the release (e.g. <<<.boot>>> file, ...). <<<.relup>>> files will not (yet) be
