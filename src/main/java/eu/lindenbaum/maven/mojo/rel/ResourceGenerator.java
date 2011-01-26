@@ -44,8 +44,8 @@ import org.apache.maven.plugin.logging.Log;
  * <ul>
  * <li><code>${ARTIFACT}</code>: the projects artifact id (atom)</li>
  * <li><code>${VERSION}</code>: the projects version (string)</li>
- * <li><code>${APPLICATIONS}</code>: a list of the project dependencies
- * application and version tuples</li>
+ * <li><code>${APPLICATIONS}</code>: a comma separated listing of the project
+ * dependencies application and version tuples</li>
  * <li><code>${<i>APPLICATION_NAME</i>}</code>: will be replaced by a string
  * representing the available application version on this host</li>
  * </ul>
@@ -118,24 +118,23 @@ public final class ResourceGenerator extends ErlangMojo {
   }
 
   /**
-   * Return list of application version tuples taken from the projects
-   * dependency section in the form of a valid erlang list. From is
-   * <code>[{"application", "version"}, ...]</code>.
+   * Returns a comma separated string of application version tuples taken from
+   * the projects dependency section. Result string will look like
+   * <code>{"app1", "version1"}, {"app2", "version2"}, ...</code>.
    */
   private static String getReleaseDependencies(List<Artifact> artifacts) {
-    int i = 0;
-    StringBuilder applications = new StringBuilder("[");
-    for (Artifact artifact : artifacts) {
-      if (i++ != 0) {
+    StringBuilder applications = new StringBuilder();
+    for (int i = 0; i < artifacts.size(); ++i) {
+      if (i != 0) {
         applications.append(",\n  ");
       }
+      Artifact artifact = artifacts.get(i);
       applications.append("{\'");
       applications.append(artifact.getArtifactId());
       applications.append("\', \"");
       applications.append(artifact.getVersion());
       applications.append("\"}");
     }
-    applications.append("]");
     return applications.toString();
   }
 }

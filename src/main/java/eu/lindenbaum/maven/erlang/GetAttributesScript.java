@@ -63,7 +63,7 @@ public class GetAttributesScript implements Script<String> {
       if (i != 0) {
         attributes.append(", ");
       }
-      attributes.append("'" + ErlUtils.cast(resultList.elementAt(i)) + "'");
+      attributes.append("'" + ErlUtils.toString(resultList.elementAt(i)) + "'");
     }
     attributes.append("]");
     return attributes.toString();

@@ -79,6 +79,10 @@ public final class TestRunner extends ErlangMojo {
         errors = true;
       }
     }
+    if (actual.get("kernel") == null || actual.get("stdlib") == null) {
+      log.error("The mandatory applications 'kernel' and 'stdlib' must be part of every release.");
+      errors = true;
+    }
     if (errors) {
       throw new MojoFailureException("Checking dependencies failed, see previous output for detailed description.");
     }

@@ -3,13 +3,14 @@ package eu.lindenbaum.maven.erlang;
 import java.io.File;
 import java.util.List;
 
-import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
 import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -102,20 +103,15 @@ public final class BeamCompilerScript implements Script<CompilerResult> {
       public void logOutput(Log log) {
         for (int i = 0; i < messages.arity(); ++i) {
           OtpErlangTuple messageTuple = (OtpErlangTuple) messages.elementAt(i);
-          OtpErlangAtom level = (OtpErlangAtom) messageTuple.elementAt(0);
-          if ("error".equals(level.atomValue())) {
-            log.error(ErlUtils.cast(messageTuple.elementAt(1)));
-          }
-          else {
-            log.warn(ErlUtils.cast(messageTuple.elementAt(1)));
-          }
+          LogLevel Level = LogLevel.fromString(ErlUtils.toString(messageTuple.elementAt(0)));
+          MavenUtils.logMultiLineString(log, Level, ErlUtils.toString(messageTuple.elementAt(1)));
         }
       }
 
       @Override
       public String getFailed() {
         if (failed instanceof OtpErlangString) {
-          String converted = ((OtpErlangString) failed).stringValue().trim();
+          String converted = ErlUtils.toString(failed);
           return converted.isEmpty() ? null : converted;
         }
         return null;

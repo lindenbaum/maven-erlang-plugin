@@ -141,15 +141,15 @@ public final class ErlUtils {
   }
 
   /**
-   * Converts an {@link OtpErlangAtom}, {@link OtpErlangString} or an empty
-   * {@link OtpErlangList} into a {@link String} using the object specific
-   * conversion function. If the object is neither the {@link String}
-   * {@code "undefined"} is returned.
+   * Converts an {@link OtpErlangObject} into a {@link String} using the object
+   * specific conversion function. If there is no specific string conversion
+   * function available the default {@link OtpErlangObject#toString()} is used.
+   * Empty {@link OtpErlangList}s will result in an empty {@link String}.
    * 
    * @param object to convert
    * @return a non-null, trimmed {@link String} object
    */
-  public static String cast(OtpErlangObject object) {
+  public static String toString(OtpErlangObject object) {
     if (object instanceof OtpErlangString) {
       return ((OtpErlangString) object).stringValue().trim();
     }
@@ -159,7 +159,7 @@ public final class ErlUtils {
     if (object instanceof OtpErlangList && ((OtpErlangList) object).arity() == 0) {
       return "";
     }
-    return "undefined";
+    return object.toString().trim();
   }
 
   /**

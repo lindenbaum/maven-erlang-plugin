@@ -76,7 +76,7 @@ public interface CoverageReportResult {
     private void parseResultList(OtpErlangList resultList) {
       for (int i = 0; i < resultList.arity(); ++i) {
         OtpErlangTuple row = (OtpErlangTuple) resultList.elementAt(i);
-        String type = ErlUtils.cast(row.elementAt(0));
+        String type = ErlUtils.toString(row.elementAt(0));
         if ("module".equals(type)) {
           OtpErlangObject module = row.elementAt(1);
           OtpErlangObject covered = row.elementAt(2);
@@ -215,7 +215,7 @@ public interface CoverageReportResult {
       private final int numberOfNotCoveredLines;
 
       public Module(OtpErlangObject name, OtpErlangObject covered, OtpErlangObject notCovered) {
-        this.moduleName = ErlUtils.cast(name);
+        this.moduleName = ErlUtils.toString(name);
         this.numberOfCoveredLines = ErlUtils.toInt(covered);
         this.numberOfNotCoveredLines = ErlUtils.toInt(notCovered);
         this.coverage = calculateCoverage(this.numberOfCoveredLines, this.numberOfNotCoveredLines);
@@ -291,8 +291,8 @@ public interface CoverageReportResult {
                       OtpErlangObject arity,
                       OtpErlangObject covered,
                       OtpErlangObject notCovered) {
-        this.moduleName = ErlUtils.cast(module);
-        this.functionName = ErlUtils.cast(name) + "/" + ErlUtils.toInt(arity);
+        this.moduleName = ErlUtils.toString(module);
+        this.functionName = ErlUtils.toString(name) + "/" + ErlUtils.toInt(arity);
         this.numberOfCoveredLines = ErlUtils.toInt(covered);
         this.numberOfNotCoveredLines = ErlUtils.toInt(notCovered);
         this.coverage = calculateCoverage(this.numberOfCoveredLines, this.numberOfNotCoveredLines);
@@ -342,8 +342,8 @@ public interface CoverageReportResult {
                     OtpErlangObject index,
                     OtpErlangObject covered,
                     OtpErlangObject notCovered) {
-        this.moduleName = ErlUtils.cast(module);
-        this.functionName = ErlUtils.cast(function) + "/" + ErlUtils.toInt(arity);
+        this.moduleName = ErlUtils.toString(module);
+        this.functionName = ErlUtils.toString(function) + "/" + ErlUtils.toInt(arity);
       }
 
       public String getFunctionName() {
@@ -364,7 +364,7 @@ public interface CoverageReportResult {
                   OtpErlangObject lineNumber,
                   OtpErlangObject covered,
                   OtpErlangObject notCovered) {
-        this.moduleName = ErlUtils.cast(module);
+        this.moduleName = ErlUtils.toString(module);
         this.lineNumber = ErlUtils.toInt(lineNumber);
         int cov = ErlUtils.toInt(covered);
         int not = ErlUtils.toInt(notCovered);
@@ -401,7 +401,7 @@ public interface CoverageReportResult {
      * Calculates and return a coverage, always rounded down, to whole percent.
      */
     static final int calculateCoverage(int covered, int notCovered) {
-      return (int) Math.floor(((double) covered / (covered + notCovered)) * 100);
+      return (int) Math.floor((double) covered / (covered + notCovered) * 100);
     }
   }
 }

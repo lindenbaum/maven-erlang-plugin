@@ -62,7 +62,7 @@ public class FilterForAttributeScript implements Script<String> {
       if (i != 0) {
         filtered.append(", ");
       }
-      filtered.append("'" + ErlUtils.cast(resultList.elementAt(i)) + "'");
+      filtered.append("'" + ErlUtils.toString(resultList.elementAt(i)) + "'");
     }
     filtered.append("]");
     return filtered.toString();

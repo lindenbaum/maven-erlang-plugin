@@ -65,17 +65,17 @@ public class CheckRelScript implements Script<CheckRelResult> {
     return new CheckRelResult() {
       @Override
       public String getName() {
-        return ErlUtils.cast(releaseName);
+        return ErlUtils.toString(releaseName);
       }
 
       @Override
       public String getReleaseVersion() {
-        return ErlUtils.cast(releaseVersion);
+        return ErlUtils.toString(releaseVersion);
       }
 
       @Override
       public String getErtsVersion() {
-        return ErlUtils.cast(ertsVersion);
+        return ErlUtils.toString(ertsVersion);
       }
 
       @Override
@@ -83,8 +83,8 @@ public class CheckRelScript implements Script<CheckRelResult> {
         Map<String, String> resultMap = new HashMap<String, String>();
         for (int i = 0; i < applications.arity(); ++i) {
           OtpErlangTuple appTuple = (OtpErlangTuple) applications.elementAt(i);
-          String application = ErlUtils.cast(appTuple.elementAt(0));
-          String version = ErlUtils.cast(appTuple.elementAt(1));
+          String application = ErlUtils.toString(appTuple.elementAt(0));
+          String version = ErlUtils.toString(appTuple.elementAt(1));
           resultMap.put(application, version);
         }
         return resultMap;

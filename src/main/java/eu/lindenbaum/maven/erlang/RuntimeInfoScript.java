@@ -37,12 +37,12 @@ public class RuntimeInfoScript implements Script<RuntimeInfo> {
     return new RuntimeInfo() {
       @Override
       public File getLibDirectory() {
-        return new File(ErlUtils.cast(resultTuple.elementAt(0)));
+        return new File(ErlUtils.toString(resultTuple.elementAt(0)));
       }
 
       @Override
       public String getVersion() {
-        return ErlUtils.cast(resultTuple.elementAt(1));
+        return ErlUtils.toString(resultTuple.elementAt(1));
       }
     };
   }

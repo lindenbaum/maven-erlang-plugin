@@ -7,6 +7,8 @@ import com.ericsson.otp.erlang.OtpErlangTuple;
 
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -23,9 +25,9 @@ public final class MakeScriptScript implements Script<SystoolsScriptResult> {
       "    ok -> {ok, \"\"};" + NL + //
       "    error -> {error, \"unknown\"};" + NL + //
       "    {ok, Module, Warnings} ->" + NL + //
-      "        {warn, Module:format_warning(Warnings)};" + NL + //
+      "        {warn, lists:flatten(Module:format_warning(Warnings))};" + NL + //
       "    {error, Module, Error} ->" + NL + //
-      "        {error, Module:format_error(Error)}" + NL + //
+      "        {error, lists:flatten(Module:format_error(Error))}" + NL + //
       "end." + NL;
 
   private final File releaseFile;
@@ -65,8 +67,8 @@ public final class MakeScriptScript implements Script<SystoolsScriptResult> {
   @Override
   public SystoolsScriptResult handle(OtpErlangObject result) {
     OtpErlangTuple resultTuple = (OtpErlangTuple) result;
-    final String level = ErlUtils.cast(resultTuple.elementAt(0));
-    final String messages = ErlUtils.cast(resultTuple.elementAt(1));
+    final String level = ErlUtils.toString(resultTuple.elementAt(0));
+    final String messages = ErlUtils.toString(resultTuple.elementAt(1));
     return new SystoolsScriptResult() {
       @Override
       public boolean success() {
@@ -76,14 +78,9 @@ public final class MakeScriptScript implements Script<SystoolsScriptResult> {
       @Override
       public void logOutput(Log log) {
         if (!messages.isEmpty()) {
-          String[] lines = messages.split("\r?\n");
-          for (String line : lines) {
-            if ("error".equals(level)) {
-              log.error(line);
-            }
-            if ("warn".equals(level)) {
-              log.warn(line);
-            }
+          LogLevel logLevel = LogLevel.fromString(level);
+          if (logLevel != LogLevel.INFO) {
+            MavenUtils.logMultiLineString(log, logLevel, messages);
           }
         }
       }

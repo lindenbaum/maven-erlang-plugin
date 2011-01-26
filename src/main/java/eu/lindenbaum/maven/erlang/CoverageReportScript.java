@@ -3,12 +3,13 @@ package eu.lindenbaum.maven.erlang;
 import java.io.File;
 import java.util.List;
 
-import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
 import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -99,24 +100,21 @@ public class CoverageReportScript implements Script<CoverageReportResult> {
   @Override
   public CoverageReportResult handle(OtpErlangObject output) {
     OtpErlangTuple resultTuple = (OtpErlangTuple) output;
-    final OtpErlangAtom result = (OtpErlangAtom) resultTuple.elementAt(0);
+    final String result = ErlUtils.toString(resultTuple.elementAt(0));
     final OtpErlangList resultList = (OtpErlangList) resultTuple.elementAt(1);
     return new CoverageReportResult() {
 
       @Override
       public boolean failed() {
-        return "error".equals(ErlUtils.cast(result));
+        return "error".equals(result);
       }
 
       @Override
       public void logOutput(Log log) {
         if (failed()) {
           for (int i = 0; i < resultList.arity(); ++i) {
-            String multiLine = ErlUtils.cast(resultList.elementAt(i));
-            String[] lines = multiLine.split("\r?\n");
-            for (String line : lines) {
-              log.error(line);
-            }
+            String message = ErlUtils.toString(resultList.elementAt(i));
+            MavenUtils.logMultiLineString(log, LogLevel.ERROR, message);
           }
         }
       }

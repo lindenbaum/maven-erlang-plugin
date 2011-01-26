@@ -59,6 +59,6 @@ public class EDocScript implements Script<Boolean> {
    */
   @Override
   public Boolean handle(OtpErlangObject result) {
-    return "ok".equals(ErlUtils.cast(result));
+    return "ok".equals(ErlUtils.toString(result));
   }
 }

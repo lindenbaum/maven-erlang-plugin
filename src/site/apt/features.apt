@@ -11,6 +11,17 @@ Features (a detailed description)
  documentation. Release projects have a flat directory layout because the only
  consist of a <<<pom.xml>>> and a release file per managed version.
 
+* No Project Archetype
+
+ Actually project archetypes make us feel like we could set up a project in 5
+ minutes. In most cases the truth is that after creating the archetype we end
+ up editing the project for half an hour to make it fit the needs. The plug-in
+ does not depend on any empty directories so users don't have to create them if
+ they don't use them (e.g. an empty <<<priv>>> directory). We therefore
+ recommend that user write their own <<<pom.xml>>> from the start using an
+ editor with assistance (e.g. {{{www.eclipse.org}Eclipse}} in combination with
+ the {{{http://m2eclipse.sonatype.org/}m2eclipse}} plug-in).
+
 * Backend Node Usage
 
  The plug-in uses several erlang nodes as backends to execute scripts via remote

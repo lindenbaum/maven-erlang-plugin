@@ -13,6 +13,7 @@ import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -24,6 +25,43 @@ import org.apache.maven.project.MavenProject;
 public final class MavenUtils {
   public static String SEPARATOR = "------------------------------------------------------------------------";
   public static String FAT_SEPARATOR = "========================================================================";
+
+  /**
+   * Corresponds to the log levels of {@link Log}. The mapping is:
+   * <ul>
+   * <li>{@link #DEBUG} will be logged using {@link Log#debug(CharSequence)}</li>
+   * <li>{@link #INFO} will be logged using {@link Log#info(CharSequence)}</li>
+   * <li>{@link #WARN} will be logged using {@link Log#warn(CharSequence)}</li>
+   * <li>{@link #ERROR} will be logged using {@link Log#error(CharSequence)}</li>
+   * </ul>
+   */
+  public enum LogLevel {
+    DEBUG,
+    INFO,
+    WARN,
+    ERROR;
+
+    /**
+     * Creates a {@link LogLevel} from a string.
+     * 
+     * @param level to convert into a {@link LogLevel} value
+     * @return "debug" will result in {@link #DEBUG}, "warn" will result in
+     *         {@link #WARN}, "error" will result in {@link #ERROR} else
+     *         {@link #INFO} is returned
+     */
+    public static LogLevel fromString(String level) {
+      if ("debug".equals(level)) {
+        return DEBUG;
+      }
+      if ("warn".equals(level)) {
+        return WARN;
+      }
+      if ("error".equals(level)) {
+        return ERROR;
+      }
+      return INFO;
+    }
+  }
 
   /**
    * Returns an (existing) file pointing to a plugin {@link Artifact} used by a
@@ -247,5 +285,33 @@ public final class MavenUtils {
     @SuppressWarnings("unchecked")
     Set<Artifact> artifacts = project.getArtifacts();
     return new ArrayList<Artifact>(artifacts);
+  }
+
+  /**
+   * Logs a multi line string containing either unix or windows style line
+   * breaks using a specific logger.
+   * 
+   * @param log logger to use.
+   * @param level priority to log the message
+   * @param multiLineString to log
+   */
+  public static void logMultiLineString(Log log, LogLevel level, String multiLineString) {
+    String[] lines = multiLineString.split("\r?\n");
+    for (String line : lines) {
+      switch (level) {
+        case DEBUG:
+          log.debug(line);
+          break;
+        case INFO:
+          log.info(line);
+          break;
+        case WARN:
+          log.warn(line);
+          break;
+        case ERROR:
+          log.error(line);
+          break;
+      }
+    }
   }
 }

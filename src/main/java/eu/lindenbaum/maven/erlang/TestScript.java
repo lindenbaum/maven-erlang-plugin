@@ -9,6 +9,8 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
 import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -76,21 +78,9 @@ public final class TestScript implements Script<TestResult> {
 
       @Override
       public void logOutput(Log log) {
-        String loglevel = level.atomValue();
+        LogLevel logLevel = LogLevel.fromString(level.atomValue());
         for (int i = 0; i < output.arity(); ++i) {
-          String multiLine = ErlUtils.cast(output.elementAt(i));
-          String[] lines = multiLine.split("\r?\n");
-          for (String line : lines) {
-            if ("info".equals(loglevel)) {
-              log.info(line);
-            }
-            else if ("warn".equals(loglevel)) {
-              log.warn(line);
-            }
-            else {
-              log.error(line);
-            }
-          }
+          MavenUtils.logMultiLineString(log, logLevel, ErlUtils.toString(output.elementAt(i)));
         }
       }
     };

@@ -67,17 +67,17 @@ public final class CheckAppScript implements Script<CheckAppResult> {
     return new CheckAppResult() {
       @Override
       public String getVersion() {
-        return ErlUtils.cast(version);
+        return ErlUtils.toString(version);
       }
 
       @Override
       public String getStartModule() {
-        return ErlUtils.cast(startModule);
+        return ErlUtils.toString(startModule);
       }
 
       @Override
       public String getName() {
-        return ErlUtils.cast(name);
+        return ErlUtils.toString(name);
       }
 
       @Override
@@ -85,7 +85,7 @@ public final class CheckAppScript implements Script<CheckAppResult> {
         List<String> r = new ArrayList<String>();
         OtpErlangList m = (OtpErlangList) modules;
         for (int i = 0; i < m.arity(); ++i) {
-          r.add(ErlUtils.cast(m.elementAt(i)));
+          r.add(ErlUtils.toString(m.elementAt(i)));
         }
         return r;
       }
@@ -95,7 +95,7 @@ public final class CheckAppScript implements Script<CheckAppResult> {
         List<String> r = new ArrayList<String>();
         OtpErlangList a = (OtpErlangList) applications;
         for (int i = 0; i < a.arity(); ++i) {
-          r.add(ErlUtils.cast(a.elementAt(i)));
+          r.add(ErlUtils.toString(a.elementAt(i)));
         }
         return r;
       }

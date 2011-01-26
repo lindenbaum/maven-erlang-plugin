@@ -9,6 +9,8 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
 import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -76,21 +78,18 @@ public class StartApplicationScript implements Script<StartResult> {
   @Override
   public StartResult handle(OtpErlangObject result) {
     OtpErlangTuple resultTuple = (OtpErlangTuple) result;
-    final OtpErlangObject sucess = resultTuple.elementAt(0);
+    final String resultMessage = ErlUtils.toString(resultTuple.elementAt(0));
     final OtpErlangList beforeList = (OtpErlangList) resultTuple.elementAt(1);
     return new StartResult() {
       @Override
       public boolean startSucceeded() {
-        return "ok".equals(ErlUtils.cast(sucess));
+        return "ok".equals(resultMessage);
       }
 
       @Override
       public void logError(Log log) {
         if (!startSucceeded()) {
-          String[] lines = sucess.toString().split("\r?\n");
-          for (String line : lines) {
-            log.error(line);
-          }
+          MavenUtils.logMultiLineString(log, LogLevel.ERROR, resultMessage);
         }
       }
 
@@ -98,7 +97,7 @@ public class StartApplicationScript implements Script<StartResult> {
       public List<String> getBeforeApplications() {
         ArrayList<String> resultList = new ArrayList<String>();
         for (int i = 0; i < beforeList.arity(); ++i) {
-          resultList.add(ErlUtils.cast(beforeList.elementAt(i)));
+          resultList.add(ErlUtils.toString(beforeList.elementAt(i)));
         }
         return resultList;
       }
