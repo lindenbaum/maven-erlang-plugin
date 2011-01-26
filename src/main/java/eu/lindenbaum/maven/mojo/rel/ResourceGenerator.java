@@ -50,7 +50,7 @@ import org.apache.maven.plugin.logging.Log;
  * <li><code>${AUTODEPS}</code>: an erlang list with all dependency applications
  * of the project including the standard applications <code>kernel</code>,
  * <code>stdlib</code> and the applications provided in the
- * {@link #additionalApplications} parameter</li>
+ * {@link #additionalAutoDependencies} parameter</li>
  * <li><code>${<i>APPLICATION_NAME</i>}</code>: will be replaced by a string
  * representing the available application version on this host</li>
  * </ul>
@@ -76,9 +76,9 @@ public final class ResourceGenerator extends ErlangMojo {
    * <code>kernel</code> and <code>stdlib</code>. These must not be added to
    * this additional list.
    * 
-   * @parameter expression="${additionalDependencies}"
+   * @parameter expression="${additionalAutoDependencies}"
    */
-  private String[] additionalApplications;
+  private String[] additionalAutoDependencies;
 
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
@@ -100,8 +100,8 @@ public final class ResourceGenerator extends ErlangMojo {
 
     List<Artifact> autoDeps = new ArrayList<Artifact>(artifacts);
     autoDeps.addAll(filter(otpArtifacts, Arrays.asList("kernel", "stdlib")));
-    if (this.additionalApplications != null) {
-      autoDeps.addAll(filter(otpArtifacts, Arrays.asList(this.additionalApplications)));
+    if (this.additionalAutoDependencies != null) {
+      autoDeps.addAll(filter(otpArtifacts, Arrays.asList(this.additionalAutoDependencies)));
     }
     replacements.put("${AUTODEPS}", "[" + getReleaseDependencies(autoDeps) + "]");
 
