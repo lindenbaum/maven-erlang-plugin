@@ -10,6 +10,7 @@ import eu.lindenbaum.maven.PackagingType;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -123,6 +124,25 @@ public final class MavenUtils {
     String type = from.getType();
     String classifier = from.getClassifier();
     ArtifactHandler artifactHandler = from.getArtifactHandler();
+    VersionRange versionRange = VersionRange.createFromVersion(version);
+    return new DefaultArtifact(groupId, artifactId, versionRange, scope, type, classifier, artifactHandler);
+  }
+
+  /**
+   * Returns an {@link Artifact} object with the given artifactId and version.
+   * Default groupId is <code>org.erlang</code>, scope will be
+   * <code>provided</code> and type will be <code>erlang-std</code>.
+   * 
+   * @param artifactId to set
+   * @param version to set
+   * @return a non-{@code null} {@link Artifact} object
+   */
+  public static Artifact getArtifact(String artifactId, String version) {
+    String groupId = "org.erlang";
+    String scope = "provided";
+    String type = "erlang-std";
+    String classifier = "";
+    ArtifactHandler artifactHandler = new DefaultArtifactHandler();
     VersionRange versionRange = VersionRange.createFromVersion(version);
     return new DefaultArtifact(groupId, artifactId, versionRange, scope, type, classifier, artifactHandler);
   }

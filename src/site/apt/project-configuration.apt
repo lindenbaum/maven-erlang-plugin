@@ -39,7 +39,11 @@ Project Configuration
  Only <<<erlang-rel>>>:
  
  * <<<$\{APPLICATIONS\}>>>: the project dependencies application and version
- tuples (list)
+ tuples (string)
+
+ * <<<$\{AUTODEPS\}>>>: the project dependencies application and version
+ tuples including the standard applications <<<kernel>>> and <<<sasl>>> as
+ available on the backend node(s) (list)
 
  * <<<$\{ERTS\}>>>: the version of <<<erts>>> as found in the backend node
 

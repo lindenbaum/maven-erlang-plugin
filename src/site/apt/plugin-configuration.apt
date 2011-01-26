@@ -77,3 +77,9 @@ Grouped Parameter Summary
  
  * <<<scriptOptions>>>: will be passed to <<<systools:make_script/2>>>,
  see {{http://www.erlang.org/doc/man/systools.html}}
+ 
+ * <<<additionalApplications>>>: all entries will be added to the list of
+ standard OTP dependencies for the release, this can be used when using the
+ $\{AUTODEPS\} project packaging variable and the release has more standard
+ dependencies than <<<kernel>>> and <<<stdlib>>> (e.g. <<<mnesia>>>, <<<sasl>>>,
+ ...)

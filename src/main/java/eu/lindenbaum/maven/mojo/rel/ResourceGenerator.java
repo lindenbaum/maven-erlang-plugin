@@ -4,6 +4,7 @@ import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,10 @@ import org.apache.maven.plugin.logging.Log;
  * <li><code>${VERSION}</code>: the projects version (string)</li>
  * <li><code>${APPLICATIONS}</code>: a comma separated listing of the project
  * dependencies application and version tuples</li>
+ * <li><code>${AUTODEPS}</code>: an erlang list with all dependency applications
+ * of the project including the standard applications <code>kernel</code>,
+ * <code>stdlib</code> and the applications provided in the
+ * {@link #additionalApplications} parameter</li>
  * <li><code>${<i>APPLICATION_NAME</i>}</code>: will be replaced by a string
  * representing the available application version on this host</li>
  * </ul>
@@ -53,6 +58,7 @@ import org.apache.maven.plugin.logging.Log;
  * @goal generate-release-resources
  * @phase generate-resources
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Greg Haskins <ghaskins@novell.com>
  */
 public final class ResourceGenerator extends ErlangMojo {
   /**
@@ -64,12 +70,24 @@ public final class ResourceGenerator extends ErlangMojo {
    */
   private String scriptOptions;
 
+  /**
+   * Additional applications that are dependencies for this release (e.g.
+   * <code>mnesia</code>). By default application dependencies are
+   * <code>kernel</code> and <code>stdlib</code>. These must not be added to
+   * this additional list.
+   * 
+   * @parameter expression="${additionalDependencies}"
+   */
+  private String[] additionalApplications;
+
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
     RuntimeInfoScript infoScript = new RuntimeInfoScript();
     RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).exec(p.node(), infoScript, new ArrayList<File>());
 
     List<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
+    List<Artifact> otpArtifacts = getOtpArtifacts(p, runtimeInfo.getLibDirectory());
+
     String releaseName = p.project().getArtifactId();
     String releaseVersion = p.project().getVersion();
     String relFileBaseName = releaseName + "-" + releaseVersion;
@@ -77,9 +95,19 @@ public final class ResourceGenerator extends ErlangMojo {
     Map<String, String> replacements = new HashMap<String, String>();
     replacements.put("${ARTIFACT}", "\"" + releaseName + "\"");
     replacements.put("${VERSION}", "\"" + releaseVersion + "\"");
-    replacements.putAll(getApplicationMappings(p, runtimeInfo.getLibDirectory()));
     replacements.put("${ERTS}", "\"" + runtimeInfo.getVersion() + "\"");
     replacements.put("${APPLICATIONS}", getReleaseDependencies(artifacts));
+
+    List<Artifact> autoDeps = new ArrayList<Artifact>(artifacts);
+    autoDeps.addAll(filter(otpArtifacts, Arrays.asList("kernel", "stdlib")));
+    if (this.additionalApplications != null) {
+      autoDeps.addAll(filter(otpArtifacts, Arrays.asList(this.additionalApplications)));
+    }
+    replacements.put("${AUTODEPS}", "[" + getReleaseDependencies(autoDeps) + "]");
+
+    List<Artifact> allApplications = new ArrayList<Artifact>(otpArtifacts);
+    allApplications.addAll(artifacts);
+    replacements.putAll(getApplicationMappings(allApplications));
 
     int resources = copyDirectory(p.ebin(), p.target(), FileUtils.REL_FILTER, replacements);
     log.debug("Copied " + resources + " release files.");
@@ -105,16 +133,41 @@ public final class ResourceGenerator extends ErlangMojo {
    * <code>${APP_NAME}</code> for all applications available in the local OTP
    * installation.
    */
-  private static Map<String, String> getApplicationMappings(Properties p, File libDirectory) throws MojoExecutionException {
-    HashMap<String, String> appMap = new HashMap<String, String>();
+  private static Map<String, String> getApplicationMappings(List<Artifact> artifacts) {
+    HashMap<String, String> mappings = new HashMap<String, String>();
+    for (Artifact artifact : artifacts) {
+      String key = "${" + artifact.getArtifactId().toUpperCase() + "}";
+      mappings.put(key, "\"" + artifact.getVersion() + "\"");
+    }
+    return mappings;
+  }
+
+  /**
+   * Returns a {@link Map} containing version mappings for all applications
+   * available in the local OTP installation.
+   */
+  private static List<Artifact> getOtpArtifacts(Properties p, File libDirectory) throws MojoExecutionException {
+    List<Artifact> artifacts = new ArrayList<Artifact>();
     for (File appFile : FileUtils.getFilesRecursive(libDirectory, ErlConstants.APP_SUFFIX)) {
       Script<CheckAppResult> script = new CheckAppScript(appFile);
       CheckAppResult result = MavenSelf.get(p.cookie()).exec(p.node(), script, new ArrayList<File>());
-      String appName = "${" + result.getName().toUpperCase() + "}";
-      String appVersion = "\"" + result.getVersion() + "\"";
-      appMap.put(appName, appVersion);
+      artifacts.add(MavenUtils.getArtifact(result.getName(), result.getVersion()));
     }
-    return appMap;
+    return artifacts;
+  }
+
+  /**
+   * Returns a {@link List} filtered for the {@link Artifact}s contained int the
+   * list of artifactIds.
+   */
+  private static List<Artifact> filter(List<Artifact> artifacts, List<String> artifactIds) {
+    List<Artifact> result = new ArrayList<Artifact>();
+    for (Artifact artifact : artifacts) {
+      if (artifactIds.contains(artifact.getArtifactId())) {
+        result.add(artifact);
+      }
+    }
+    return result;
   }
 
   /**
