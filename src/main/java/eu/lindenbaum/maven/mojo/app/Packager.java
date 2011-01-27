@@ -206,7 +206,7 @@ public final class Packager extends ErlangMojo {
       if (beamFile.isFile()) {
         List<File> list = Arrays.asList(beamFile);
         List<File> codePaths = Arrays.asList(p.targetEbin());
-        Script<String> behaviourScript = new GetAttributesScript(list, "behaviour");
+        Script<String> behaviourScript = new GetAttributesScript(list, "behaviour", "behavior");
         String behaviours = MavenSelf.get(p.cookie()).exec(p.node(), behaviourScript, codePaths);
         if (behaviours.contains("application")) {
           if (!r.getApplications().contains("sasl")) {

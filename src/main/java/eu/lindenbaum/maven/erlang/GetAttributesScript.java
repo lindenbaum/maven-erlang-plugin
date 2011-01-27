@@ -9,8 +9,8 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import eu.lindenbaum.maven.util.ErlUtils;
 
 /**
- * A {@link Script} that returns the found values for an attribute in a list of
- * modules.
+ * A {@link Script} that returns the found values for some attributes in a list
+ * of modules.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
@@ -21,30 +21,33 @@ public class GetAttributesScript implements Script<String> {
       "    lists:foldl(" + NL + //
       "      fun(Module, Acc) ->" + NL + //
       "              A = Module:module_info(attributes)," + NL + //
-      "              case proplists:get_value(%s, A) of" + NL + //
-      "                  undefined -> Acc;" + NL + //
-      "                  Attr -> [Attr | Acc]" + NL + //
-      "              end" + NL + //
+      "              lists:foldl(fun(Attr, InnerAcc) ->" + NL + //
+      "                  case proplists:get_value(Attr, A) of" + NL + //
+      "                      undefined -> InnerAcc;" + NL + //
+      "                      Value -> [Value | InnerAcc]" + NL + //
+      "                  end" + NL + //
+      "              end, Acc, %s)" + NL + //
       "      end, [], %s))." + NL;
 
   private final List<File> modules;
-  private final String attribute;
+  private final String[] attributes;
 
   /**
-   * Returns the attribute values for a specific attribute.
+   * Returns the attribute values for attributes.
    * 
    * @param modules to search for the attribute in
-   * @param attribute to look after
+   * @param attributes to look after
    */
-  public GetAttributesScript(List<File> modules, String attribute) {
+  public GetAttributesScript(List<File> modules, String... attributes) {
     this.modules = modules;
-    this.attribute = attribute;
+    this.attributes = attributes;
   }
 
   @Override
   public String get() {
     String modules = ErlUtils.toModuleList(this.modules, "'", "'");
-    return String.format(script, this.attribute, modules);
+    String attributeList = ErlUtils.toList(this.attributes, null, "'", "'");
+    return String.format(script, attributeList, modules);
   }
 
   /**

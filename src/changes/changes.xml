@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert" type="fix" issue="3166359" due-to="ghaskins">
+        Added support to recognise both British and American spelling of the
+        -behaviour tag.
+      </action>
       <action dev="schlagert, olle-t" type="update" issue="3166182" due-to="ghaskins">
         Improved application packaging by adding the customizable ${APPLICATIONS}
         packaging variable which expands to all application dependencies (except
