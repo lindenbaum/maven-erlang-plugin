@@ -24,7 +24,6 @@ import eu.lindenbaum.maven.util.MavenUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -45,7 +44,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class ProjectRunner extends ErlangMojo {
   @Override
-  protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
+  protected void execute(Log log, Properties p) throws MojoExecutionException {
     log.info(MavenUtils.SEPARATOR);
     log.info(" P R O J E C T - R U N N E R");
     log.info(MavenUtils.SEPARATOR);

@@ -14,9 +14,7 @@ import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.reporting.MavenReportException;
 
 /**
  * This {@link Mojo} will generate source code documentation for an application.
@@ -59,9 +57,7 @@ public class EDocReport extends ErlangReport {
   }
 
   @Override
-  protected void execute(Log log, Locale l, Properties p) throws MojoExecutionException,
-                                                         MojoFailureException,
-                                                         MavenReportException {
+  protected void execute(Log log, Locale l, Properties p) throws MojoExecutionException {
     log.info(MavenUtils.SEPARATOR);
     log.info(" E D O C");
     log.info(MavenUtils.SEPARATOR);

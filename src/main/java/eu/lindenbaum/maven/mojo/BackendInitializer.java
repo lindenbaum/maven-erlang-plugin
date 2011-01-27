@@ -6,7 +6,6 @@ import eu.lindenbaum.maven.util.ErlUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -30,7 +29,7 @@ public class BackendInitializer extends ErlangMojo {
   private volatile boolean shutdownNode = true;
 
   @Override
-  protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
+  protected void execute(Log log, Properties p) throws MojoExecutionException {
     ErlUtils.startBackend(log,
                           "erlang:initialize -DshutdownNode=true",
                           p.node(),

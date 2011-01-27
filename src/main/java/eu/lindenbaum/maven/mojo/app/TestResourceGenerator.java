@@ -13,7 +13,6 @@ import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -37,7 +36,7 @@ public final class TestResourceGenerator extends ErlangMojo {
   private boolean skipTests;
 
   @Override
-  protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
+  protected void execute(Log log, Properties p) throws MojoExecutionException {
     if (this.skipTests) {
       return;
     }

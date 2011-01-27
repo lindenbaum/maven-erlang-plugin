@@ -14,7 +14,6 @@ import eu.lindenbaum.maven.util.ErlConstants;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -88,7 +87,7 @@ public class Setup extends ErlangMojo {
   private volatile File plugin;
 
   @Override
-  protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
+  protected void execute(Log log, Properties p) throws MojoExecutionException {
     PackagingType packagingType = p.packagingType();
     if (packagingType != PackagingType.ERLANG_OTP && packagingType != PackagingType.ERLANG_STD) {
       log.info("--> There's nothing to do for packaging " + packagingType + ".");

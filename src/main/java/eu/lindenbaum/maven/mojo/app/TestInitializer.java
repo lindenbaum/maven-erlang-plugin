@@ -6,7 +6,6 @@ import eu.lindenbaum.maven.util.ErlUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -29,7 +28,7 @@ public class TestInitializer extends ErlangMojo {
   private boolean skipTests;
 
   @Override
-  protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
+  protected void execute(Log log, Properties p) throws MojoExecutionException {
     if (this.skipTests) {
       log.info("Test initialization is skipped.");
       return;
