@@ -4,6 +4,20 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert, olle-t" type="update" issue="3166182" due-to="ghaskins">
+        Improved application packaging by adding the customizable ${APPLICATIONS}
+        packaging variable which expands to all application dependencies (except
+        OTP standard ones).
+      </action>
+      <action dev="schlagert, olle-t" type="update" issue="3165497" due-to="ghaskins">
+        Improved release packaging by adding the customizable ${AUTODEPS}
+        packaging variable which expands to all release dependencies (except
+        OTP standard ones).
+      </action>
+      <action dev="schlagert, olle-t" type="update">
+        Introduced two backend nodes. One used for testing and another one for
+        compiling, packaging, running projects.
+      </action>
       <action dev="olle-t" type="add">
         Added plain text coverage report as optional output direct to stdout
         instead of saved coverage report.

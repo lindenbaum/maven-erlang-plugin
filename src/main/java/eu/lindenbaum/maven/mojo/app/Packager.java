@@ -58,6 +58,9 @@ import org.apache.maven.plugin.logging.Log;
  * <li><code>${REGISTERED}</code>: all registered names, based on the
  * {@code -registered(Names).} attribute retrieved from the compiled
  * {@code .beam} files (list)</li>
+ * <li><code>${APPLICATIONS}</code>: all dependency applications of the project
+ * including the applications provided in the {@link #otpDependencies} parameter
+ * (list)</li>
  * </ul>
  * <p>
  * The resulting application resource file as well as the application upgrade
@@ -68,6 +71,7 @@ import org.apache.maven.plugin.logging.Log;
  * @phase package
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Gregory Haskins <ghaskins@novell.com>
  */
 public final class Packager extends ErlangMojo {
   /**
@@ -78,14 +82,27 @@ public final class Packager extends ErlangMojo {
    */
   private boolean failOnUndeclaredModules;
 
+  /**
+   * Additional standard OTP applications that are dependencies for this
+   * application (e.g. <code>mnesia</code>).
+   * 
+   * @parameter expression="${otpDependencies}"
+   */
+  private String[] otpDependencies;
+
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
     log.info(MavenUtils.SEPARATOR);
     log.info(" P A C K A G E R");
     log.info(MavenUtils.SEPARATOR);
 
-    List<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
     String projectVersion = p.project().getVersion();
+
+    List<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
+    String[] otpDependencies = this.otpDependencies != null ? this.otpDependencies : new String[0];
+    for (String otpDependency : otpDependencies) {
+      dependencies.add(MavenUtils.getArtifact(otpDependency, "unused"));
+    }
 
     List<File> modules = getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
     Script<String> registeredScript = new GetAttributesScript(modules, "registered");
@@ -99,6 +116,7 @@ public final class Packager extends ErlangMojo {
     replacements.put("${VERSION}", "\"" + projectVersion + "\"");
     replacements.put("${MODULES}", ErlUtils.toModuleList(modules, "'", "'"));
     replacements.put("${REGISTERED}", registeredNames);
+    replacements.put("${APPLICATIONS}", ErlUtils.toArtifactIdList(dependencies));
 
     // copy application resource files
     p.targetEbin().mkdirs();

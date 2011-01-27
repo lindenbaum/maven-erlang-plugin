@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import com.ericsson.otp.erlang.OtpAuthException;
 import com.ericsson.otp.erlang.OtpErlangAtom;
@@ -22,7 +23,9 @@ import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.NodeShutdownHook;
 import eu.lindenbaum.maven.erlang.PurgeModulesScript;
 import eu.lindenbaum.maven.erlang.Script;
+import eu.lindenbaum.maven.mojo.app.ResourceGenerator;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
@@ -30,6 +33,7 @@ import org.apache.maven.plugin.logging.Log;
  * Containing utilities related to erlang code execution.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Gregory Haskins <ghaskins@novell.com>
  */
 public final class ErlUtils {
   /**
@@ -129,9 +133,8 @@ public final class ErlUtils {
           result.append(", ");
         }
         result.append(prefix);
-        result.append(file.getName()
-                          .replace(ErlConstants.BEAM_SUFFIX, "")
-                          .replace(ErlConstants.ERL_SUFFIX, ""));
+        String module = file.getName().replace(ErlConstants.BEAM_SUFFIX, "");
+        result.append(module.replace(ErlConstants.ERL_SUFFIX, ""));
         result.append(postfix);
         i++;
       }
@@ -187,6 +190,52 @@ public final class ErlUtils {
       // Ok
     }
     return 0;
+  }
+
+  /**
+   * Returns a comma separated string of application version tuples taken from
+   * the given {@link List} of artifacts. Result string will look like
+   * <code>{"app1", "version1"}, {"app2", "version2"}, ...</code>.
+   * 
+   * @param artifacts to convert into application version tuples
+   * @return a non-{@code null} {@link String} object
+   */
+  public static String toApplicationTuples(List<Artifact> artifacts) {
+    StringBuilder applications = new StringBuilder();
+    for (int i = 0; i < artifacts.size(); ++i) {
+      if (i != 0) {
+        applications.append(",\n  ");
+      }
+      Artifact artifact = artifacts.get(i);
+      applications.append("{\'");
+      applications.append(artifact.getArtifactId());
+      applications.append("\', \"");
+      applications.append(artifact.getVersion());
+      applications.append("\"}");
+    }
+    return applications.toString();
+  }
+
+  /**
+   * Generates a simple list of applications derived from the artifacts listed
+   * as dependencies. Intended to be used to fill in ${APPLICATIONS} in
+   * {@link ResourceGenerator}.
+   * 
+   * @param artifacts to convert into an artifactId list
+   * @return a non-{@code null} {@link String} containing a valid erlang list
+   */
+  public static String toArtifactIdList(List<Artifact> artifacts) {
+    StringBuilder applications = new StringBuilder("[");
+    int i = 0;
+    for (Artifact artifact : artifacts) {
+      if (i++ != 0) {
+        applications.append(", ");
+      }
+
+      applications.append(artifact.getArtifactId());
+    }
+    applications.append("]");
+    return applications.toString();
   }
 
   /**

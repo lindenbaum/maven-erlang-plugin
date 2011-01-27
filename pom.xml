@@ -46,6 +46,12 @@
       <url>http://sheyll.blogspot.com</url>
     </developer>
   </developers>
+  <contributors>
+    <contributor>
+      <name>Gregory Haskins</name>
+      <url>http://sourceforge.net/users/ghaskins</url>
+    </contributor>
+  </contributors>
   <licenses>
     <license>
       <name>LGPL (GNU Lesser General Public License)</name>

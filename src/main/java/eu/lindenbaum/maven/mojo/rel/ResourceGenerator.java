@@ -6,8 +6,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
@@ -20,6 +22,7 @@ import eu.lindenbaum.maven.erlang.RuntimeInfoScript;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.erlang.SystoolsScriptResult;
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 
@@ -50,7 +53,7 @@ import org.apache.maven.plugin.logging.Log;
  * <li><code>${AUTODEPS}</code>: an erlang list with all dependency applications
  * of the project including the standard applications <code>kernel</code>,
  * <code>stdlib</code> and the applications provided in the
- * {@link #additionalAutoDependencies} parameter</li>
+ * {@link #otpDependencies} parameter</li>
  * <li><code>${<i>APPLICATION_NAME</i>}</code>: will be replaced by a string
  * representing the available application version on this host</li>
  * </ul>
@@ -58,7 +61,7 @@ import org.apache.maven.plugin.logging.Log;
  * @goal generate-release-resources
  * @phase generate-resources
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
- * @author Greg Haskins <ghaskins@novell.com>
+ * @author Gregory Haskins <ghaskins@novell.com>
  */
 public final class ResourceGenerator extends ErlangMojo {
   /**
@@ -71,14 +74,13 @@ public final class ResourceGenerator extends ErlangMojo {
   private String scriptOptions;
 
   /**
-   * Additional applications that are dependencies for this release (e.g.
-   * <code>mnesia</code>). By default application dependencies are
-   * <code>kernel</code> and <code>stdlib</code>. These must not be added to
-   * this additional list.
+   * Additional standard OTP applications that are dependencies for this release
+   * (e.g. <code>mnesia</code>). By default application dependencies are
+   * <code>kernel</code> and <code>stdlib</code>.
    * 
-   * @parameter expression="${additionalAutoDependencies}"
+   * @parameter expression="${otpDependencies}"
    */
-  private String[] additionalAutoDependencies;
+  private String[] otpDependencies;
 
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
@@ -96,14 +98,14 @@ public final class ResourceGenerator extends ErlangMojo {
     replacements.put("${ARTIFACT}", "\"" + releaseName + "\"");
     replacements.put("${VERSION}", "\"" + releaseVersion + "\"");
     replacements.put("${ERTS}", "\"" + runtimeInfo.getVersion() + "\"");
-    replacements.put("${APPLICATIONS}", getReleaseDependencies(artifacts));
+    replacements.put("${APPLICATIONS}", ErlUtils.toApplicationTuples(artifacts));
 
+    HashSet<String> appsToInclude = new HashSet<String>(Arrays.asList("kernel", "stdlib"));
+    String[] dependencies = this.otpDependencies != null ? this.otpDependencies : new String[0];
+    appsToInclude.addAll(Arrays.asList(dependencies));
     List<Artifact> autoDeps = new ArrayList<Artifact>(artifacts);
-    autoDeps.addAll(filter(otpArtifacts, Arrays.asList("kernel", "stdlib")));
-    if (this.additionalAutoDependencies != null) {
-      autoDeps.addAll(filter(otpArtifacts, Arrays.asList(this.additionalAutoDependencies)));
-    }
-    replacements.put("${AUTODEPS}", "[" + getReleaseDependencies(autoDeps) + "]");
+    autoDeps.addAll(filter(otpArtifacts, appsToInclude));
+    replacements.put("${AUTODEPS}", "[" + ErlUtils.toApplicationTuples(autoDeps) + "]");
 
     List<Artifact> allApplications = new ArrayList<Artifact>(otpArtifacts);
     allApplications.addAll(artifacts);
@@ -160,7 +162,7 @@ public final class ResourceGenerator extends ErlangMojo {
    * Returns a {@link List} filtered for the {@link Artifact}s contained int the
    * list of artifactIds.
    */
-  private static List<Artifact> filter(List<Artifact> artifacts, List<String> artifactIds) {
+  private static List<Artifact> filter(List<Artifact> artifacts, Set<String> artifactIds) {
     List<Artifact> result = new ArrayList<Artifact>();
     for (Artifact artifact : artifacts) {
       if (artifactIds.contains(artifact.getArtifactId())) {
@@ -168,26 +170,5 @@ public final class ResourceGenerator extends ErlangMojo {
       }
     }
     return result;
-  }
-
-  /**
-   * Returns a comma separated string of application version tuples taken from
-   * the projects dependency section. Result string will look like
-   * <code>{"app1", "version1"}, {"app2", "version2"}, ...</code>.
-   */
-  private static String getReleaseDependencies(List<Artifact> artifacts) {
-    StringBuilder applications = new StringBuilder();
-    for (int i = 0; i < artifacts.size(); ++i) {
-      if (i != 0) {
-        applications.append(",\n  ");
-      }
-      Artifact artifact = artifacts.get(i);
-      applications.append("{\'");
-      applications.append(artifact.getArtifactId());
-      applications.append("\', \"");
-      applications.append(artifact.getVersion());
-      applications.append("\"}");
-    }
-    return applications.toString();
   }
 }

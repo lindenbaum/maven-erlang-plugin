@@ -70,6 +70,11 @@ Grouped Parameter Summary
  * <<<failOnUndeclaredModules>>>: will break the build when the application file
  does not contain all found modules
 
+ * <<<otpDependencies>>>: all entries will be added to the list of standard OTP
+ dependencies for the application, this can be used when using the
+ $\{APPLICATIONS\} project packaging variable and the application has
+ dependencies to e.g. <<<mnesia>>>, ...
+
 * Release Packaging
  
  * <<<tarOptions>>>: will be passed to <<<systools:make_tar/2>>>,
@@ -78,8 +83,7 @@ Grouped Parameter Summary
  * <<<scriptOptions>>>: will be passed to <<<systools:make_script/2>>>,
  see {{http://www.erlang.org/doc/man/systools.html}}
  
- * <<<additionalAutoDependencies>>>: all entries will be added to the list of
- standard OTP dependencies for the release, this can be used when using the
- $\{AUTODEPS\} project packaging variable and the release has more standard
- dependencies than <<<kernel>>> and <<<stdlib>>> (e.g. <<<mnesia>>>, <<<sasl>>>,
- ...)
+ * <<<otpDependencies>>>: all entries will be added to the list of standard OTP
+ dependencies for the release, this can be used when using the $\{AUTODEPS\}
+ project packaging variable and the release has more standard dependencies than
+ <<<kernel>>> and <<<stdlib>>> (e.g. <<<mnesia>>>, <<<sasl>>>, ...)
