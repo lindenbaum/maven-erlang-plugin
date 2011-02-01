@@ -200,13 +200,13 @@ public final class ErlUtils {
    * @param artifacts to convert into application version tuples
    * @return a non-{@code null} {@link String} object
    */
-  public static String toApplicationTuples(List<Artifact> artifacts) {
+  public static String toApplicationTuples(Collection<Artifact> artifacts) {
     StringBuilder applications = new StringBuilder();
-    for (int i = 0; i < artifacts.size(); ++i) {
-      if (i != 0) {
+    int i = 0;
+    for (Artifact artifact : artifacts) {
+      if (i++ != 0) {
         applications.append(",\n  ");
       }
-      Artifact artifact = artifacts.get(i);
       applications.append("{\'");
       applications.append(artifact.getArtifactId());
       applications.append("\', \"");
@@ -224,7 +224,7 @@ public final class ErlUtils {
    * @param artifacts to convert into an artifactId list
    * @return a non-{@code null} {@link String} containing a valid erlang list
    */
-  public static String toArtifactIdList(List<Artifact> artifacts) {
+  public static String toArtifactIdList(Collection<Artifact> artifacts) {
     StringBuilder applications = new StringBuilder("[");
     int i = 0;
     for (Artifact artifact : artifacts) {

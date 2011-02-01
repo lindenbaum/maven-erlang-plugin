@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -98,7 +99,7 @@ public final class Packager extends ErlangMojo {
 
     String projectVersion = p.project().getVersion();
 
-    List<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
+    Set<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
     String[] otpDependencies = this.otpDependencies != null ? this.otpDependencies : new String[0];
     for (String otpDependency : otpDependencies) {
       dependencies.add(MavenUtils.getArtifact(otpDependency, "unused"));
@@ -231,7 +232,7 @@ public final class Packager extends ErlangMojo {
    * Checks whether the modules to be packaged are declared in the erlang
    * application file.
    */
-  private void checkModules(Log log, List<File> expected, List<String> actual) throws MojoFailureException {
+  private void checkModules(Log log, Collection<File> expected, List<String> actual) throws MojoFailureException {
     Set<String> m = new HashSet<String>();
     for (File module : expected) {
       m.add(module.getName().replace(ErlConstants.BEAM_SUFFIX, "").replace(ErlConstants.ERL_SUFFIX, ""));
@@ -254,7 +255,7 @@ public final class Packager extends ErlangMojo {
    * project pom are correctly configured as application dependencies in the
    * application resource file.
    */
-  private static void checkApplications(Log log, List<Artifact> expected, List<String> actual) throws MojoFailureException {
+  private static void checkApplications(Log log, Collection<Artifact> expected, List<String> actual) throws MojoFailureException {
     boolean missingDependencies = false;
     for (Artifact artifact : expected) {
       String artifactId = artifact.getArtifactId();

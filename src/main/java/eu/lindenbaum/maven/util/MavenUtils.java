@@ -1,8 +1,7 @@
 package eu.lindenbaum.maven.util;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import eu.lindenbaum.maven.PackagingType;
@@ -166,10 +165,10 @@ public final class MavenUtils {
    * than {@code test} and {@code provided}.
    * 
    * @param project to get the dependencies for
-   * @return a non-{@code null} {@link List} of dependency artifacts
+   * @return a non-{@code null} {@link Set} of dependency artifacts
    */
-  public static List<Artifact> getErlangReleaseArtifacts(MavenProject project) {
-    ArrayList<Artifact> result = new ArrayList<Artifact>();
+  public static Set<Artifact> getErlangReleaseArtifacts(MavenProject project) {
+    Set<Artifact> result = new HashSet<Artifact>();
     for (Artifact artifact : getErlangArtifacts(project)) {
       String scope = artifact.getScope();
       if (!"test".equals(scope) && !"provided".equals(scope)) {
@@ -187,10 +186,10 @@ public final class MavenUtils {
    * than {@code test} and {@code provided}.
    * 
    * @param project to get the dependencies for
-   * @return a non-{@code null} {@link List} of dependency artifacts
+   * @return a non-{@code null} {@link Set} of dependency artifacts
    */
-  public static List<Artifact> getErlangDependenciesToPackage(MavenProject project) {
-    ArrayList<Artifact> result = new ArrayList<Artifact>();
+  public static Set<Artifact> getErlangDependenciesToPackage(MavenProject project) {
+    Set<Artifact> result = new HashSet<Artifact>();
     for (Artifact artifact : getErlangDependencies(project)) {
       String scope = artifact.getScope();
       if (!"test".equals(scope) && !"provided".equals(scope)) {
@@ -207,10 +206,10 @@ public final class MavenUtils {
    * packaged projects.
    * 
    * @param project to get the dependencies for
-   * @return a non-{@code null} {@link List} of dependency artifacts
+   * @return a non-{@code null} {@link Set} of dependency artifacts
    */
-  public static List<Artifact> getErlangArtifacts(MavenProject project) {
-    ArrayList<Artifact> result = new ArrayList<Artifact>();
+  public static Set<Artifact> getErlangArtifacts(MavenProject project) {
+    Set<Artifact> result = new HashSet<Artifact>();
     for (Artifact artifact : getArtifacts(project)) {
       String type = artifact.getType();
       if (PackagingType.ERLANG_OTP.isA(type) || PackagingType.ERLANG_STD.isA(type)) {
@@ -227,10 +226,10 @@ public final class MavenUtils {
    * packaged projects.
    * 
    * @param project to get the dependencies for
-   * @return a non-{@code null} {@link List} of dependency artifacts
+   * @return a non-{@code null} {@link Set} of dependency artifacts
    */
-  public static List<Artifact> getErlangDependencies(MavenProject project) {
-    ArrayList<Artifact> result = new ArrayList<Artifact>();
+  public static Set<Artifact> getErlangDependencies(MavenProject project) {
+    Set<Artifact> result = new HashSet<Artifact>();
     for (Artifact artifact : getDependencies(project)) {
       String type = artifact.getType();
       if (PackagingType.ERLANG_OTP.isA(type) || PackagingType.ERLANG_STD.isA(type)) {
@@ -247,10 +246,10 @@ public final class MavenUtils {
    * {@code test} and {@code provided}.
    * 
    * @param project to get the dependencies for
-   * @return a non-{@code null} {@link List} of dependency artifacts
+   * @return a non-{@code null} {@link Set} of dependency artifacts
    */
-  public static List<Artifact> getForeignDependenciesToPackage(MavenProject project) {
-    ArrayList<Artifact> result = new ArrayList<Artifact>();
+  public static Set<Artifact> getForeignDependenciesToPackage(MavenProject project) {
+    Set<Artifact> result = new HashSet<Artifact>();
     for (Artifact artifact : getForeignDependencies(project)) {
       String scope = artifact.getScope();
       if (!"test".equals(scope) && !"provided".equals(scope)) {
@@ -266,10 +265,10 @@ public final class MavenUtils {
    * filtered out.
    * 
    * @param project to get the dependencies for
-   * @return a non-{@code null} {@link List} of dependency artifacts
+   * @return a non-{@code null} {@link Set} of dependency artifacts
    */
-  public static List<Artifact> getForeignDependencies(MavenProject project) {
-    ArrayList<Artifact> result = new ArrayList<Artifact>();
+  public static Set<Artifact> getForeignDependencies(MavenProject project) {
+    Set<Artifact> result = new HashSet<Artifact>();
     for (Artifact artifact : getDependencies(project)) {
       String type = artifact.getType();
       if (!PackagingType.ERLANG_OTP.isA(type) //
@@ -286,12 +285,12 @@ public final class MavenUtils {
    * {@link MavenProject#getDependencyArtifacts()}.
    * 
    * @param project to get the dependencies for
-   * @return a non-{@code null} {@link List} of dependency artifacts
+   * @return a non-{@code null} {@link Set} of dependency artifacts
    */
-  public static List<Artifact> getDependencies(MavenProject project) {
+  public static Set<Artifact> getDependencies(MavenProject project) {
     @SuppressWarnings("unchecked")
     Set<Artifact> artifacts = project.getDependencyArtifacts();
-    return new ArrayList<Artifact>(artifacts);
+    return new HashSet<Artifact>(artifacts);
   }
 
   /**
@@ -299,12 +298,12 @@ public final class MavenUtils {
    * {@link MavenProject#getArtifacts()}.
    * 
    * @param project to get the dependencies for
-   * @return a non-{@code null} {@link List} of dependency artifacts
+   * @return a non-{@code null} {@link Set} of dependency artifacts
    */
-  public static List<Artifact> getArtifacts(MavenProject project) {
+  public static Set<Artifact> getArtifacts(MavenProject project) {
     @SuppressWarnings("unchecked")
     Set<Artifact> artifacts = project.getArtifacts();
-    return new ArrayList<Artifact>(artifacts);
+    return new HashSet<Artifact>(artifacts);
   }
 
   /**

@@ -5,6 +5,7 @@ import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -87,8 +88,8 @@ public final class ResourceGenerator extends ErlangMojo {
     RuntimeInfoScript infoScript = new RuntimeInfoScript();
     RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).exec(p.node(), infoScript, new ArrayList<File>());
 
-    List<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
-    List<Artifact> otpArtifacts = getOtpArtifacts(p, runtimeInfo.getLibDirectory());
+    Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
+    Set<Artifact> otpArtifacts = getOtpArtifacts(p, runtimeInfo.getLibDirectory());
 
     String releaseName = p.project().getArtifactId();
     String releaseVersion = p.project().getVersion();
@@ -100,14 +101,14 @@ public final class ResourceGenerator extends ErlangMojo {
     replacements.put("${ERTS}", "\"" + runtimeInfo.getVersion() + "\"");
     replacements.put("${APPLICATIONS}", ErlUtils.toApplicationTuples(artifacts));
 
-    HashSet<String> appsToInclude = new HashSet<String>(Arrays.asList("kernel", "stdlib"));
+    Set<String> appsToInclude = new HashSet<String>(Arrays.asList("kernel", "stdlib"));
     String[] dependencies = this.otpDependencies != null ? this.otpDependencies : new String[0];
     appsToInclude.addAll(Arrays.asList(dependencies));
-    List<Artifact> autoDeps = new ArrayList<Artifact>(artifacts);
+    Set<Artifact> autoDeps = new HashSet<Artifact>(artifacts);
     autoDeps.addAll(filter(otpArtifacts, appsToInclude));
     replacements.put("${AUTODEPS}", "[" + ErlUtils.toApplicationTuples(autoDeps) + "]");
 
-    List<Artifact> allApplications = new ArrayList<Artifact>(otpArtifacts);
+    Set<Artifact> allApplications = new HashSet<Artifact>(otpArtifacts);
     allApplications.addAll(artifacts);
     replacements.putAll(getApplicationMappings(allApplications));
 
@@ -135,7 +136,7 @@ public final class ResourceGenerator extends ErlangMojo {
    * <code>${APP_NAME}</code> for all applications available in the local OTP
    * installation.
    */
-  private static Map<String, String> getApplicationMappings(List<Artifact> artifacts) {
+  private static Map<String, String> getApplicationMappings(Collection<Artifact> artifacts) {
     HashMap<String, String> mappings = new HashMap<String, String>();
     for (Artifact artifact : artifacts) {
       String key = "${" + artifact.getArtifactId().toUpperCase() + "}";
@@ -148,8 +149,8 @@ public final class ResourceGenerator extends ErlangMojo {
    * Returns a {@link Map} containing version mappings for all applications
    * available in the local OTP installation.
    */
-  private static List<Artifact> getOtpArtifacts(Properties p, File libDirectory) throws MojoExecutionException {
-    List<Artifact> artifacts = new ArrayList<Artifact>();
+  private static Set<Artifact> getOtpArtifacts(Properties p, File libDirectory) throws MojoExecutionException {
+    Set<Artifact> artifacts = new HashSet<Artifact>();
     for (File appFile : FileUtils.getFilesRecursive(libDirectory, ErlConstants.APP_SUFFIX)) {
       Script<CheckAppResult> script = new CheckAppScript(appFile);
       CheckAppResult result = MavenSelf.get(p.cookie()).exec(p.node(), script, new ArrayList<File>());
@@ -159,11 +160,11 @@ public final class ResourceGenerator extends ErlangMojo {
   }
 
   /**
-   * Returns a {@link List} filtered for the {@link Artifact}s contained int the
+   * Returns a {@link Set} filtered for the {@link Artifact}s contained int the
    * list of artifactIds.
    */
-  private static List<Artifact> filter(List<Artifact> artifacts, Set<String> artifactIds) {
-    List<Artifact> result = new ArrayList<Artifact>();
+  private static Set<Artifact> filter(Collection<Artifact> artifacts, Set<String> artifactIds) {
+    Set<Artifact> result = new HashSet<Artifact>();
     for (Artifact artifact : artifacts) {
       if (artifactIds.contains(artifact.getArtifactId())) {
         result.add(artifact);

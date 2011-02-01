@@ -2,8 +2,9 @@ package eu.lindenbaum.maven.mojo.rel;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
@@ -47,7 +48,7 @@ public final class TestRunner extends ErlangMojo {
       return;
     }
 
-    List<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
+    Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
     String releaseName = p.project().getArtifactId();
     String releaseVersion = p.project().getVersion();
     String relFileBaseName = releaseName + "-" + releaseVersion;
@@ -66,7 +67,7 @@ public final class TestRunner extends ErlangMojo {
    * Checks whether all project dependencies are declared in the .rel file and
    * whether the versions match.
    */
-  private static void checkDependencies(Log log, List<Artifact> expected, Map<String, String> actual) throws MojoFailureException {
+  private static void checkDependencies(Log log, Collection<Artifact> expected, Map<String, String> actual) throws MojoFailureException {
     boolean errors = false;
     for (Artifact artifact : expected) {
       String version = actual.get(artifact.getArtifactId());
