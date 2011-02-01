@@ -108,7 +108,8 @@ Features (a detailed description)
  Unless specified otherwise the plugin executes all modules with the suffix
  <<<_test>>> or <<<_tests>>> as <<<eunit>>> tests. Tests may be skipped using
  the <<<skipTests>>> paramter. To execute only a specific test the parameter
- <<<test>>> can be used.
+ <<<test>>> can be used (in fact the plug-in even executes test modules placed
+ in the application's main source directory).
 
 * Mock Framework
 

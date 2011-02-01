@@ -76,14 +76,6 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class Packager extends ErlangMojo {
   /**
-   * Setting this to {@code true} will break the build when the application file
-   * does not contain all found modules.
-   * 
-   * @parameter default-value="true"
-   */
-  private boolean failOnUndeclaredModules;
-
-  /**
    * Additional standard OTP applications that are dependencies for this
    * application (e.g. <code>mnesia</code>).
    * 
@@ -232,7 +224,7 @@ public final class Packager extends ErlangMojo {
    * Checks whether the modules to be packaged are declared in the erlang
    * application file.
    */
-  private void checkModules(Log log, Collection<File> expected, List<String> actual) throws MojoFailureException {
+  private static void checkModules(Log log, Collection<File> expected, List<String> actual) throws MojoFailureException {
     Set<String> m = new HashSet<String>();
     for (File module : expected) {
       m.add(module.getName().replace(ErlConstants.BEAM_SUFFIX, "").replace(ErlConstants.ERL_SUFFIX, ""));
@@ -240,13 +232,11 @@ public final class Packager extends ErlangMojo {
     if (!m.containsAll(actual) || !actual.containsAll(m)) {
       Set<String> undeclared = new HashSet<String>(m);
       undeclared.removeAll(actual);
-      log.warn("Undeclared modules (not in .app file): " + undeclared.toString());
+      log.error("Undeclared modules (not in .app file): " + undeclared.toString());
       Set<String> unbacked = new HashSet<String>(actual);
       unbacked.removeAll(m);
-      log.warn("Unbacked modules (no .beam file): " + unbacked.toString());
-      if (this.failOnUndeclaredModules) {
-        throw new MojoFailureException("Module mismatch found.");
-      }
+      log.error("Unbacked modules (no .beam file): " + unbacked.toString());
+      throw new MojoFailureException("Module mismatch found, see previous output for details.");
     }
   }
 

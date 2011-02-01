@@ -67,9 +67,6 @@ Grouped Parameter Summary
 
 * Application Packaging
 
- * <<<failOnUndeclaredModules>>>: will break the build when the application file
- does not contain all found modules
-
  * <<<otpDependencies>>>: all entries will be added to the list of standard OTP
  dependencies for the application, this can be used when using the
  $\{APPLICATIONS\} project packaging variable and the application has
