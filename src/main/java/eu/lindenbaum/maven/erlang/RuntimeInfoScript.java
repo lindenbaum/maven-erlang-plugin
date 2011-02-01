@@ -14,7 +14,10 @@ import eu.lindenbaum.maven.util.ErlUtils;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public class RuntimeInfoScript implements Script<RuntimeInfo> {
-  private static final String script = "{code:lib_dir(), erlang:system_info(version)}.";
+  private static final String script = //
+  NL + "{code:lib_dir()," + NL + // 
+      "erlang:system_info(version) + NL +" + //
+      "erlang:system_info(otp_release)}.";
 
   public RuntimeInfoScript() {
     // ignored
@@ -43,6 +46,11 @@ public class RuntimeInfoScript implements Script<RuntimeInfo> {
       @Override
       public String getVersion() {
         return ErlUtils.toString(resultTuple.elementAt(1));
+      }
+
+      @Override
+      public String getOtpRelease() {
+        return ErlUtils.toString(resultTuple.elementAt(2));
       }
     };
   }

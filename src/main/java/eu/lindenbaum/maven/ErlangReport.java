@@ -125,8 +125,8 @@ public abstract class ErlangReport extends AbstractMavenReport {
    */
   @Override
   protected final void executeReport(Locale locale) throws MavenReportException {
-    Properties properties = getProperties();
     try {
+      Properties properties = getProperties();
       execute(getLog(), locale, properties);
     }
     catch (MojoExecutionException e) {
@@ -134,6 +134,9 @@ public abstract class ErlangReport extends AbstractMavenReport {
     }
     catch (MojoFailureException e) {
       throw new MavenReportException(e.getMessage());
+    }
+    catch (IllegalArgumentException e) {
+      // unsupported project type
     }
   }
 

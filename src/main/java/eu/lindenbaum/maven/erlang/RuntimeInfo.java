@@ -23,4 +23,12 @@ public interface RuntimeInfo {
    * @return The erlang runtime's system version.
    */
   public String getVersion();
+
+  /**
+   * Returns the erlang OTP release version of the backend node as returned by
+   * <code>erlang:system_info(otp_release)</code>.
+   * 
+   * @return The erlang OTP release version string.
+   */
+  public String getOtpRelease();
 }

@@ -52,8 +52,13 @@ public class EDocReport extends ErlangReport {
    */
   @Override
   public boolean canGenerateReport() {
-    PackagingType type = PackagingType.fromString(getProject().getPackaging());
-    return type == PackagingType.ERLANG_OTP || type == PackagingType.ERLANG_STD;
+    try {
+      PackagingType type = PackagingType.fromString(getProject().getPackaging());
+      return type == PackagingType.ERLANG_OTP || type == PackagingType.ERLANG_STD;
+    }
+    catch (IllegalArgumentException e) {
+      return false;
+    }
   }
 
   @Override

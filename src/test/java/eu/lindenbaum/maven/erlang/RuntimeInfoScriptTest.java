@@ -24,12 +24,14 @@ public class RuntimeInfoScriptTest {
   public void testHandle() {
     OtpErlangString path = new OtpErlangString("/path");
     OtpErlangString version = new OtpErlangString("version");
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ path, version });
+    OtpErlangString release = new OtpErlangString("release");
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ path, version, release });
 
     RuntimeInfoScript script = new RuntimeInfoScript();
     RuntimeInfo info = script.handle(result);
     assertNotNull(info);
     assertEquals("path", info.getLibDirectory().getName());
     assertEquals("version", info.getVersion());
+    assertEquals("release", info.getOtpRelease());
   }
 }
