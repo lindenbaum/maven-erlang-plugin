@@ -16,7 +16,7 @@ import eu.lindenbaum.maven.util.ErlUtils;
 public class RuntimeInfoScript implements Script<RuntimeInfo> {
   private static final String script = //
   NL + "{code:lib_dir()," + NL + // 
-      "erlang:system_info(version) + NL +" + //
+      "erlang:system_info(version)," + NL + //
       "erlang:system_info(otp_release)}.";
 
   public RuntimeInfoScript() {
