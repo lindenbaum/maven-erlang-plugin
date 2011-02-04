@@ -25,9 +25,9 @@ public final class CheckAppScript implements Script<CheckAppResult> {
       "        S = proplists:get_value(mod, Props, omitted)," + NL + //
       "        M = proplists:get_value(modules, Props, [])," + NL + //
       "        D = proplists:get_value(applications, Props, [])," + NL + //
-      "        case S of {Module, _} -> {A, V, Module, M, D}; _ -> {A, V, S, M, D} end;" + NL + //
+      "        case S of {Module, _} -> {ok, A, V, Module, M, D}; _ -> {ok, A, V, S, M, D} end;" + NL + //
       "    _ ->" + NL + //
-      "        {undefined, undefined, undefined, [], []}" + NL + //
+      "        {error, undefined, undefined, undefined, [], []}" + NL + //
       "end." + NL;
 
   private final File appFile;
@@ -59,12 +59,18 @@ public final class CheckAppScript implements Script<CheckAppResult> {
   @Override
   public CheckAppResult handle(OtpErlangObject result) {
     OtpErlangTuple resultTuple = (OtpErlangTuple) result;
-    final OtpErlangObject name = resultTuple.elementAt(0);
-    final OtpErlangObject version = resultTuple.elementAt(1);
-    final OtpErlangObject startModule = resultTuple.elementAt(2);
-    final OtpErlangObject modules = resultTuple.elementAt(3);
-    final OtpErlangObject applications = resultTuple.elementAt(4);
+    final OtpErlangObject success = resultTuple.elementAt(0);
+    final OtpErlangObject name = resultTuple.elementAt(1);
+    final OtpErlangObject version = resultTuple.elementAt(2);
+    final OtpErlangObject startModule = resultTuple.elementAt(3);
+    final OtpErlangObject modules = resultTuple.elementAt(4);
+    final OtpErlangObject applications = resultTuple.elementAt(5);
     return new CheckAppResult() {
+      @Override
+      public boolean success() {
+        return "ok".equals(ErlUtils.toString(success));
+      }
+
       @Override
       public String getVersion() {
         return ErlUtils.toString(version);
@@ -98,6 +104,11 @@ public final class CheckAppScript implements Script<CheckAppResult> {
           r.add(ErlUtils.toString(a.elementAt(i)));
         }
         return r;
+      }
+
+      @Override
+      public String toString() {
+        return getName() + "::" + getVersion();
       }
     };
   }

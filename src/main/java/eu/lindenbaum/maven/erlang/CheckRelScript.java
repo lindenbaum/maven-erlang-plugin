@@ -21,13 +21,13 @@ public class CheckRelScript implements Script<CheckRelResult> {
   private static final String script = //
   NL + "case file:consult(\"%s\") of" + NL + //
       "    {ok, [{release, {N, V}, {erts, E}, Apps}]} ->" + NL + //
-      "        {N, V, E, lists:map(" + NL + //
+      "        {ok, N, V, E, lists:map(" + NL + //
       "                    fun({App, Vsn}) -> {App, Vsn};" + NL + //
       "                       ({App, Vsn, _}) -> {App, Vsn};" + NL + //
       "                       ({App, Vsn, _, _}) -> {App, Vsn}" + NL + //
       "                    end, Apps)};" + NL + //
       "    _ ->" + NL + //
-      "        {undefined, undefined, undefined, []} " + NL + // do not remove the trailing whitespace!
+      "        {error, undefined, undefined, undefined, []} " + NL + // do not remove the trailing whitespace!
       "end." + NL;
 
   private final File relFile;
@@ -58,11 +58,17 @@ public class CheckRelScript implements Script<CheckRelResult> {
   @Override
   public CheckRelResult handle(OtpErlangObject result) {
     OtpErlangTuple resultTuple = (OtpErlangTuple) result;
-    final OtpErlangObject releaseName = resultTuple.elementAt(0);
-    final OtpErlangObject releaseVersion = resultTuple.elementAt(1);
-    final OtpErlangObject ertsVersion = resultTuple.elementAt(2);
-    final OtpErlangList applications = (OtpErlangList) resultTuple.elementAt(3);
+    final OtpErlangObject success = resultTuple.elementAt(0);
+    final OtpErlangObject releaseName = resultTuple.elementAt(1);
+    final OtpErlangObject releaseVersion = resultTuple.elementAt(2);
+    final OtpErlangObject ertsVersion = resultTuple.elementAt(3);
+    final OtpErlangList applications = (OtpErlangList) resultTuple.elementAt(4);
     return new CheckRelResult() {
+      @Override
+      public boolean success() {
+        return "ok".equals(ErlUtils.toString(success));
+      }
+
       @Override
       public String getName() {
         return ErlUtils.toString(releaseName);
@@ -88,6 +94,11 @@ public class CheckRelScript implements Script<CheckRelResult> {
           resultMap.put(application, version);
         }
         return resultMap;
+      }
+
+      @Override
+      public String toString() {
+        return getName() + "::" + getReleaseVersion();
       }
     };
   }

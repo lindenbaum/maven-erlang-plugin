@@ -9,6 +9,13 @@ import java.util.List;
  */
 public interface CheckAppResult {
   /**
+   * Returns whether script execution was successfull.
+   * 
+   * @return {@code true} if script succeeded, {@code false} otherwise.
+   */
+  public boolean success();
+
+  /**
    * Returns the application name as stated in the {@code .app} file.
    * 
    * @return The application name or {@code "undefined"} if not present.

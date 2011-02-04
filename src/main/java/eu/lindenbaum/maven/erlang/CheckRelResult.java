@@ -4,6 +4,13 @@ import java.util.Map;
 
 public interface CheckRelResult {
   /**
+   * Returns whether script execution was successfull.
+   * 
+   * @return {@code true} if script succeeded, {@code false} otherwise.
+   */
+  public boolean success();
+
+  /**
    * Returns the release name as stated in the {@code .rel} file.
    * 
    * @return The release name or {@code "undefined"} if not present.

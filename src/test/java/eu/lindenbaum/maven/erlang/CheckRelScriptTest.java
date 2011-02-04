@@ -32,9 +32,10 @@ public class CheckRelScriptTest {
   public void testHandleDefault() {
     File relFile = new File("relFile");
 
+    OtpErlangAtom error = new OtpErlangAtom("error");
     OtpErlangAtom undef = new OtpErlangAtom("undefined");
     OtpErlangList nil = new OtpErlangList();
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ undef, undef, undef, nil });
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ error, undef, undef, undef, nil });
 
     CheckRelScript script = new CheckRelScript(relFile);
     CheckRelResult relResult = script.handle(result);
@@ -48,6 +49,7 @@ public class CheckRelScriptTest {
   public void testHandle() {
     File relFile = new File("relFile");
 
+    OtpErlangAtom ok = new OtpErlangAtom("ok");
     OtpErlangAtom name = new OtpErlangAtom("name");
     OtpErlangString releaseVersion = new OtpErlangString("1.0.0-SNAPSHOT");
     OtpErlangAtom ertsVersion = new OtpErlangAtom("5.8");
@@ -59,7 +61,7 @@ public class CheckRelScriptTest {
     OtpErlangTuple app3 = new OtpErlangTuple(new OtpErlangObject[]{ new OtpErlangAtom("custom"),
                                                                    new OtpErlangString("3.0") });
     OtpErlangList applications = new OtpErlangList(new OtpErlangObject[]{ app1, app2, app3 });
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ name, releaseVersion, ertsVersion,
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ ok, name, releaseVersion, ertsVersion,
                                                                      applications });
 
     CheckRelScript script = new CheckRelScript(relFile);
