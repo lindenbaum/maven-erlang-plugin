@@ -1,6 +1,7 @@
 package eu.lindenbaum.maven.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Containing utilities related to maven plugins/projects.
@@ -304,6 +306,24 @@ public final class MavenUtils {
     @SuppressWarnings("unchecked")
     Set<Artifact> artifacts = project.getArtifacts();
     return new HashSet<Artifact>(artifacts);
+  }
+
+  /**
+   * Logs the absolute path of a file along with its content using a specific
+   * logger.
+   * 
+   * @param log logger to use
+   * @param level priority to log the file
+   * @param file to read the content from
+   */
+  public static void logContent(Log log, LogLevel level, File file) {
+    logMultiLineString(log, level, file.getAbsolutePath() + " with content:");
+    try {
+      logMultiLineString(log, level, FileUtils.fileRead(file));
+    }
+    catch (IOException e) {
+      logMultiLineString(log, level, e.getMessage());
+    }
   }
 
   /**
