@@ -6,7 +6,6 @@ import static eu.lindenbaum.maven.util.ErlConstants.BEAM_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.HRL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.REL_SUFFIX;
-import static org.codehaus.plexus.util.FileUtils.copyFile;
 import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
 import static org.codehaus.plexus.util.FileUtils.fileRead;
 import static org.codehaus.plexus.util.FileUtils.fileWrite;
@@ -266,7 +265,7 @@ public final class FileUtils {
         }
         else {
           try {
-            copyFile(src, dest);
+            org.codehaus.plexus.util.FileUtils.copyFile(src, dest);
             copied++;
           }
           catch (IOException e) {
@@ -312,22 +311,8 @@ public final class FileUtils {
           dest.mkdirs();
         }
         else {
-          try {
-            String content = fileRead(src, "UTF-8");
-            for (Entry<String, String> replacement : replacements.entrySet()) {
-              String value = replacement.getValue() == null ? "" : replacement.getValue();
-              content = content.replace(replacement.getKey(), value);
-            }
-            File parent = dest.getParentFile();
-            if (parent != null) {
-              parent.mkdirs();
-            }
-            fileWrite(dest.getAbsolutePath(), "UTF-8", content);
-            copied++;
-          }
-          catch (IOException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-          }
+          copyFile(src, dest, replacements);
+          copied++;
         }
       }
       for (File src : toCopy) {
@@ -338,6 +323,36 @@ public final class FileUtils {
       }
     }
     return copied;
+  }
+
+  /**
+   * Copies the content of a file into another file (previous content will be
+   * overwritten). The source file must exist. All missing directories including
+   * the destination folder will be created if necessary. The given replacements
+   * will be applied to the content of the source file. It is assumed that the
+   * file is {@code UTF-8} encoded.
+   * 
+   * @param from file to copy the content from
+   * @param to file to copy the content into
+   * @param replacements a {@link Map} of {@link String} patterns to be replaced
+   * @throws IOException
+   */
+  public static void copyFile(File from, File to, Map<String, String> replacements) throws MojoExecutionException {
+    try {
+      String content = fileRead(from, "UTF-8");
+      for (Entry<String, String> replacement : replacements.entrySet()) {
+        String value = replacement.getValue() == null ? "" : replacement.getValue();
+        content = content.replace(replacement.getKey(), value);
+      }
+      File parent = to.getParentFile();
+      if (parent != null) {
+        parent.mkdirs();
+      }
+      fileWrite(to.getAbsolutePath(), "UTF-8", content);
+    }
+    catch (IOException e) {
+      throw new MojoExecutionException(e.getMessage(), e);
+    }
   }
 
   /**
