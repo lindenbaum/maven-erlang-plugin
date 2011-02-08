@@ -121,7 +121,8 @@ public abstract class ErlangReport extends AbstractMavenReport {
 
   /**
    * Injects the needed {@link Properties} into the abstract
-   * {@link #execute(Log, Properties)} method to be implemented by subclasses.
+   * {@link #execute(Log, Locale, Properties)} method to be implemented by
+   * subclasses.
    */
   @Override
   protected final void executeReport(Locale locale) throws MavenReportException {

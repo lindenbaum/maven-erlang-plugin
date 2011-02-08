@@ -41,7 +41,7 @@ public class StopApplicationScript implements Script<Void> {
   /**
    * The result of the {@link Script} execution is ignored.
    * 
-   * @param the result term of the {@link Script} execution
+   * @param result the result term of the {@link Script} execution
    * @return Always {@code null}.
    */
   @Override

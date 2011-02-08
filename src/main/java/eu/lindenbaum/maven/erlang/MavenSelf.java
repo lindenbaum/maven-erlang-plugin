@@ -26,9 +26,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * A wrapper around an {@link OtpSelf} node that acts as a connection cache for
  * destination erlang nodes. Instantiation is guarded by the singleton pattern.
- * To retrieve an instance call {@link MavenSelf#get()}. Connections retrieved
- * by {@link MavenSelf#connect(OtpPeer)} are cached in order to return an
- * already established connection. Thus this method can be called multiple
+ * To retrieve an instance call {@link MavenSelf#get(String)}. Connections
+ * retrieved by {@link MavenSelf#connect(String)} are cached in order to return
+ * an already established connection. Thus this method can be called multiple
  * times.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
@@ -53,7 +53,7 @@ public final class MavenSelf {
    * Returns a unique instance of {@link MavenSelf} per cookie using the
    * singleton pattern.
    * 
-   * @param c the cookie to use for this java node
+   * @param cookie the cookie to use for this java node
    * @return an instance of {@link MavenSelf}, never {@code null}
    * @throws MojoExecutionException in case the instance cannot be created
    */

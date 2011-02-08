@@ -54,7 +54,7 @@ public class EDocScript implements Script<Boolean> {
    * Converts the result of the {@link Script} execution into a {@link Boolean}
    * indicating success.
    * 
-   * @param the result term of the {@link Script} execution
+   * @param result the result term of the {@link Script} execution
    * @return {@code true} on success, {@code false} otherwise
    */
   @Override
