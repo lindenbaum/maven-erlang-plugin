@@ -1,0 +1,198 @@
+
+Frequently Asked Questions
+
+* What project directory layouts does the plug-in support?
+
+ For application projects there are two possible directory layouts. The
+ <<<erlang-otp>>> packaging type assumes the standard maven directory layout
+ while the <<<erlang-std>>> packaging type assumes the erlang/OTP standard
+ directory layout. Release projects don't have a specific directory layout (flat
+ top level directory) since they only consist of a <<<pom.xml>>> and a
+ release/release upgrade files.
+
+ For an exact listing of directories and the supported content types please
+ refer to the {{{./apidocs/eu/lindenbaum/maven/PackagingType.html}PackagingType}}
+ documentation.
+
+* Is there a project archetype for erlang projects?
+
+ Actually project archetypes make us feel like we could set up a project in 5
+ minutes. In most cases the truth is that after creating the archetype we end
+ up editing the project for half an hour to make it fit the needs.
+ 
+ The plug-in does not depend on any empty directories so users don't have to
+ create them if they don't use them (e.g. an empty <<<priv>>> directory). We
+ therefore recommend that users write their own <<<pom.xml>>> from the start
+ using an editor with assistance (e.g. {{{www.eclipse.org}Eclipse}} in
+ combination with the {{{http://m2eclipse.sonatype.org/}m2eclipse}} plug-in).
+
+* How does the plug-in work?
+
+ The plug-in uses several erlang nodes as backends to execute scripts via remote
+ procedure calls. These backend node are started and stoppend automatically by
+ the plug-in unless you configured it otherwise, e.g. using the
+ <<<shutdownNode>>> property. The backend nodes can be reused (the plug-in can
+ reconnect to them) if they are still running. To keep the backend nodes
+ up and running after a build set the plug-in parameter <<<shutdownNode>>> to
+ <<<false>>>. The backend node can be specified using the <<<node>>> parameter.
+ Each build will first purge all non <<<preloaded>>> modules loaded on the
+ backend nodes. This makes sure that removed modules disappear on the node as
+ soon as the user decides to rebuild. The plug-in also modifies the code paths
+ of the running backend nodes. These changes will not be reverted when starting
+ a new build.
+ 
+ After a build all newly compiled modules as well as the dependency modules are
+ available and loaded on the backend nodes. This allows a better integration
+ into the development process using Emacs/distel (see next section for
+ detailed information on that).
+
+* Can I integrate the plug-in in my emacs/distel workflow?
+
+ TODO document me
+
+* How do I manage non-erlang source code/artifacts?
+
+ It is recommended to organize your project's non-erlang dependencies in
+ separate maven projects (or at least with a separate classifier). The plug-in
+ will put all non-erlang dependency artifacts into the application project's
+ target <<<priv>>> directory. The erlang application will be able to find this
+ directory using <<<code:priv_dir/1>>> at runtime as well as during test
+ execution.
+
+* How does dependency management work (roughly)?
+
+ The plug-in manages the dependencies to other erlang projects packaged by
+ this plugin. This supports modular architectures/releases featuring a whole
+ bunch of custom applications dependening on each other. The plug-in also does
+ not care whether your projects use different application packaging type. The
+ available application types may be mixed up in a release or in an application's
+ dependencies.
+
+ The plug-in is <<not>> intendended to manage standard erlang/OTP application
+ dependencies. When packaging a release it is assumed that this code is
+ automatically available to the backend node. This is guaranteed by checking the
+ erlang/OTP release version running on the backend node against the required
+ erlang/OTP release version of a release as configured in its <<<pom.xml>>>.
+
+ Release projects can be seen as packaging projects that do not contain code but
+ manage a versioned set of versioned application dependencies. Applications or
+ releases <<must not>> have dependencies to other releases. Read more on this in
+ the release packaging section.
+ 
+ The plug-in also respects the dependency scopes test and provided. These
+ dependencies will not be packaged into the release and need not be contained
+ in the application resource or release file. 
+
+* Can the plug-in run my application (and its dependencies) for testing
+  purposes?
+
+ Yes, the {{{./run-mojo.html}run}} mojo provides a convenient way to run an
+ application project (with all dependency applications) for basic testing
+ purposes. The only configuration available will be the configuration specified
+ in the specific application resource files. The mojo will pause the build (by
+ waiting for user input) after all applications have been started successfully.
+ The plug-in will give an advice about how to connect to the backend node to
+ interact with the started applications remotely. When finishing the build all
+ applications started by the plug-in will be stopped and unloaded. All modules
+ will be left loaded (but will be purged when the next build starts). 
+
+* Does the plug-in suppport structured source directories?
+
+ Yes, the plug-in supports structured source directories. All recursively found
+ modules will be compiled and the resulting <<<.beam>>> objects will be put
+ flattened into the targets <<<ebin>>> directory.
+
+* Does the plug-in support private include files (that won't be shipped)?
+
+ Yes, the root source folder of a project is added to the include path during
+ compilation. This may be used for private header files (e.g. testing purposes)
+ that will not be packaged along.
+
+* How does the plug-in deal with resources and test resources?
+
+ The plug-in supports random resources that will be put into the target
+ <<<priv>>> directory. Resources from the test priv directory will override the
+ default resources in the test phase. The <<<priv>>> directory can be obtained
+ at test runtime using <<<code:priv_dir(APPNAME)>>>. 
+
+* How does the plug-in support unit testing?
+
+ Unless specified otherwise the plugin executes all modules with the suffix
+ <<<_test>>> or <<<_tests>>> as <<<eunit>>> tests. Tests may be skipped using
+ the <<<skipTests>>> paramter. To execute only a specific test the parameter
+ <<<test>>> can be used (in fact the plug-in even executes test modules placed
+ in the application's main source directory).
+
+ When test execution was successful the plugin provides surefire compatible
+ reports about test runs that will automatically be found by the maven surefire
+ plugin on site generation.
+
+ The plug-in also provides the possibility to generate test coverage reports
+ with annotated source code listing (as you may know them from tools like
+ {{{http://www.eclemma.org/}eclemma}}) and/or with console output. See the
+ {{{./examples/coverage.html}coverage}} example page for further information
+ about that.
+
+* How does application packaging of <<<erlang-otp>>> and <<<erlang-std>>>
+  projects work?
+  
+ TODO document me
+
+* How does release packaging of <<<erlang-rel>>> projects work?
+
+ The plug-in will package your release according to the OTP design principles
+ into a <<<.tar.gz>>> package that can be installed by the erlang release
+ handler. The needed erlang release file can/should be written by the user but
+ the plug-in may support the user by providing release packaging variables that
+ will expand to sensible values when building the release.
+
+ Because dependencies to applications have to be resolved (to versions) at this
+ point the release must be built on a backend node that can deliver the
+ required versions of applications. The maven dependencies (applications
+ packaged by the plug-in) will be put into the code paths automatically by the
+ plug-in. Standard erlang/OTP applications will be taken from the backend nodes
+ default code paths.
+ 
+ The <<<${APPLICATIONS}>>> variable will expand to a comma separated listing of
+ transitive maven dependencies as required by the release files applications
+ section. The <<<${AUTODEPS}>>> variable will also put in the required transitive
+ dependencies to standard erlang/OTP applications (e.g. mnesia, sasl, ...). The
+ version of the standard applications are those available to the backend node.
+ To achieve a correct dependency management a release project must configure
+ what erlang/OTP release should be used as release base (the standard
+ application version's will then be taken from this release). The build will
+ fail if either the OTP release base variable (<<<otpRelease>>>) is not
+ configured or the backend node does not run the configured release.
+ 
+ To be able to make a test build with another OTP release version the user may
+ specify the <<<skipReleaseTest>>> parameter to skip the OTP release
+ verification. The release will then pull in the standard erlang applications
+ from another OTP release (that is currently run by the backend node).
+ 
+ In summary, this means that if you decide to create your release based on the
+ applications of <<<R13B04>>> your backend node must actually run this version
+ of erlang. This can be achieved by building your release on a central build
+ server like {{{http://jenkins-ci.org/}jenkins/hudson}} or by having the
+ suitable release installed locally.
+ 
+ For a list of available variables see the
+ {{{./plugin-configuration.html}plugin configuration}} page.
+
+ In case the plug-in support is disclaimed the user has to take care of the
+ availability of the required versions of standard applications. This can be
+ achieved by specifying the <<<skipReleaseTest>>> parameter and adding the
+ needed applications to the code path of the backend node manually.
+
+ On top of that the plug-in will generate the necessary scripts to package with
+ the release (e.g. <<<.boot>>> file, ...). <<<.relup>>> files will not (yet) be
+ generated but will be packaged when provided. Finally the plug-in checks the
+ resulting release file for plausability (e.g. whether all application
+ dependencies are present, ...).
+
+* Does the plug-in support the edoc application overview file?
+
+ The EDoc application overview is supported by the edoc report mojo. The file
+ <<<overview.edoc>>> has to be located in the <<<src/site>>> directory. The
+ packaging variables <<<$\{ARTIFACT\}>>>, <<<$\{DESCRIPTION\}>>>, <<<$\{ID\}>>>
+ and <<<$\{VERSION\}>>> are available to the overview file and may be used
+ accordingly.

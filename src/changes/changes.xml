@@ -4,9 +4,27 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert" type="update" issue="3166835">
+        Changed semantics of ${APPLICATIONS} for erlang-otp/erlang-std projects.
+        This will now expand to a comma separated listing instead of an erlang
+        list.
+      </action>
+      <action dev="schlagert" type="update" >
+        Release and release upgrade files of erlang-rel projects must now be of
+        the form [ARTIFACTID].rel / [ARTIFACTID].relup. This allows usage of the
+        maven-release-plugin that changes the effective project version in the
+        pom while building. Though, generated release artifacts will retain the
+        version information in the filenames.  
+      </action>
       <action dev="schlagert" type="fix" issue="3166359" due-to="ghaskins">
         Added support to recognise both British and American spelling of the
         -behaviour tag.
+      </action>
+      <action dev="schlagert, olle-t" type="update" issue="3166835" due-to="ghaskins">
+        Refined dependency management of releases by choosing the standard
+        erlang/OTP application versions from a specific OTP release.
+        Availability of the required release is checked (but may be skipped for
+        testing purposes).
       </action>
       <action dev="schlagert, olle-t" type="update" issue="3166182" due-to="ghaskins">
         Improved application packaging by adding the customizable ${APPLICATIONS}

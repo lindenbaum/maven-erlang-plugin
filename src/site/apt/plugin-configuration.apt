@@ -29,7 +29,7 @@ Grouped Parameter Summary
   * <<<node>>>: specifies the node to use as backend node (will be started
   automatically if not running)
 
-  * <<<cookie>>>: specifies the cookie used for the java and the backend node
+  * <<<cookie>>>: specifies the cookie used for the backend node
 
   * <<<shutdownNode>>>: specifies whether to shutdown the backend node after
   a build has completed (set this to false to reuse the backend node for
@@ -56,7 +56,7 @@ Grouped Parameter Summary
  * <<<dialyzerWithDependencies>>>: will include the projects dependencies into
  the <<<dialyzer>>> run. Only for packaging erlang-otp.
 
-* Testing
+* Application Testing
  
  * <<<test>>>: will only run this module (using <<<eunit>>>) 
  
@@ -65,22 +65,30 @@ Grouped Parameter Summary
  * <<<failIfNoTests>>>: will break the build if no eunit tests are found in the
  project
 
-* Application Packaging
+ * <<<testNode>>>: specifies the node to use as backend node (will be started
+ automatically if not running) for tests
 
- * <<<otpDependencies>>>: all entries will be added to the list of standard OTP
- dependencies for the application, this can be used when using the
- $\{APPLICATIONS\} project packaging variable and the application has
- dependencies to e.g. <<<mnesia>>>, ...
+ * <<<testCookie>>>: specifies the cookie used for the test backend node
+
+ * <<<shutdownTestNode>>>: specifies whether to shutdown the test backend node
+ after a test runs have completed (set this to false to reuse the test backend
+ node for subsequent tests)
 
 * Release Packaging
- 
+
  * <<<tarOptions>>>: will be passed to <<<systools:make_tar/2>>>,
  see {{http://www.erlang.org/doc/man/systools.html}}
- 
+
  * <<<scriptOptions>>>: will be passed to <<<systools:make_script/2>>>,
  see {{http://www.erlang.org/doc/man/systools.html}}
  
- * <<<otpDependencies>>>: all entries will be added to the list of standard OTP
- dependencies for the release, this can be used when using the $\{AUTODEPS\}
- project packaging variable and the release has more standard dependencies than
- <<<kernel>>> and <<<stdlib>>> (e.g. <<<mnesia>>>, <<<sasl>>>, ...)
+ * <<<otpRelease>>>: mandatory parameter that must be set to the erlang/OTP
+ release version (as returned by <<<erlang:system_info(otp_release)>>>) the
+ required erlang/OTP standard applications will be included from (by version).
+ Note: The backend node as to run this version of erlang/OTP to be able to find
+ the needed versions of the erlang/OTP standard applications.
+
+ * <<<skipReleaseTest>>>: will skip the check for the required erlang/OTP
+ release version the build will be based on. Skipping this check will include
+ the standard erlang/OTP applications in the version available on the backend
+ node regardless if these versions are suitable for your own applications.

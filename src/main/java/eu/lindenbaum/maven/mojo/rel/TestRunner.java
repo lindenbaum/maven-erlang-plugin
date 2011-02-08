@@ -11,8 +11,11 @@ import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.CheckRelResult;
 import eu.lindenbaum.maven.erlang.CheckRelScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
+import eu.lindenbaum.maven.erlang.RuntimeInfo;
+import eu.lindenbaum.maven.erlang.RuntimeInfoScript;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
@@ -31,11 +34,34 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class TestRunner extends ErlangMojo {
   /**
-   * Setting this to {@code true will} will skip the test compilation.
+   * Setting this to {@code true will} will skip comparison of the OTP release
+   * version against the required OTP version. The release build will fail if
+   * the backend node doesn't run the required erlang/OTP release specified by
+   * {@link #otpRelease}.
    * 
-   * @parameter expression="${skipTests}" default-value=false
+   * @parameter expression="${skipReleaseTest}" default-value=false
+   * @see #otpRelease
    */
-  private boolean skipTests;
+  private boolean skipReleaseTest;
+
+  /**
+   * <p>
+   * This <b>must</b> be set to the erlang/OTP release version this release has
+   * to be based on. The version must be given as it would be returned by
+   * <code>erlang:system_info(otp_release)</code>. All standard OTP dependencies
+   * like {@code kernel}, {@code stdlib}, ... will be configured to the version
+   * of the configured erlang/OTP release.
+   * </p>
+   * <p>
+   * In order to do this the executing backend node has to run the required OTP
+   * release. Release packaging will fail if the backend node doesn't do so
+   * unless the {@link #skipReleaseTest} parameter is specified.
+   * </p>
+   * 
+   * @parameter expression="${otpRelease}"
+   * @required
+   */
+  private String otpRelease;
 
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
@@ -43,24 +69,50 @@ public final class TestRunner extends ErlangMojo {
     log.info(" T E S T - R U N N E R");
     log.info(MavenUtils.SEPARATOR);
 
-    if (this.skipTests) {
-      log.info("Tests are skipped.");
-      return;
+    RuntimeInfoScript infoScript = new RuntimeInfoScript();
+    RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).exec(p.node(), infoScript, new ArrayList<File>());
+
+    if (!this.skipReleaseTest) {
+      checkOtpReleaseVersion(log, this.otpRelease, runtimeInfo.getOtpRelease());
+    }
+    else {
+      log.warn("erlang/OTP release version check is skipped.");
+      log.warn("Standard erlang/OTP applications will be included from release '"
+               + runtimeInfo.getOtpRelease() + "'.");
     }
 
-    Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
     String releaseName = p.project().getArtifactId();
     String releaseVersion = p.project().getVersion();
     String relFileBaseName = releaseName + "-" + releaseVersion;
+    Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
 
     File relFile = new File(p.target(), relFileBaseName + ErlConstants.REL_SUFFIX);
     CheckRelScript relScript = new CheckRelScript(relFile);
     CheckRelResult relResult = MavenSelf.get(p.cookie()).exec(p.node(), relScript, new ArrayList<File>());
-    checkReleaseName(log, releaseName, relResult.getName());
-    checkReleaseVersion(log, releaseVersion, relResult.getReleaseVersion());
+    if (!relResult.success()) {
+      log.error("Failed to consult file");
+      MavenUtils.logContent(log, LogLevel.ERROR, relFile);
+      throw new MojoFailureException("Failed to consult .rel file.");
+    }
+
+    checkReleaseName(log, relFile, releaseName, relResult.getName());
+    checkReleaseVersion(log, relFile, releaseVersion, relResult.getReleaseVersion());
     checkDependencies(log, artifacts, relResult.getApplications());
 
     log.info("All tests passed.");
+  }
+
+  /**
+   * Checks whether the required erlang/OTP release version needed to build the
+   * release is actually available to the backend node.
+   */
+  private static void checkOtpReleaseVersion(Log log, String expected, String actual) throws MojoFailureException {
+    if (!actual.equals(expected)) {
+      log.error("Backend node does not run the required erlang/OTP release.");
+      log.error("Required release is '" + expected + "' while backend node runs '" + actual + "'.");
+      String msg = "Required erlang/OTP release not available " + expected + " != " + actual + ".";
+      throw new MojoFailureException(msg);
+    }
   }
 
   /**
@@ -93,10 +145,11 @@ public final class TestRunner extends ErlangMojo {
    * Checks whether the release files release name equals the projects release
    * name.
    */
-  private static void checkReleaseName(Log log, String expected, String actual) throws MojoFailureException {
+  private static void checkReleaseName(Log log, File relFile, String expected, String actual) throws MojoFailureException {
     if (!expected.equals(actual)) {
       log.error("Release name mismatch.");
       log.error("Project release name is " + expected + " while .rel name is " + actual);
+      MavenUtils.logContent(log, LogLevel.ERROR, relFile);
       throw new MojoFailureException("Release name mismatch " + expected + " != " + actual + ".");
     }
   }
@@ -105,10 +158,11 @@ public final class TestRunner extends ErlangMojo {
    * Checks whether the release files release version equals the projects
    * version.
    */
-  private static void checkReleaseVersion(Log log, String expected, String actual) throws MojoFailureException {
+  private static void checkReleaseVersion(Log log, File relFile, String expected, String actual) throws MojoFailureException {
     if (!expected.equals(actual)) {
       log.error("Release version mismatch.");
       log.error("Project release version is " + expected + " while .rel version is " + actual);
+      MavenUtils.logContent(log, LogLevel.ERROR, relFile);
       throw new MojoFailureException("Release version mismatch " + expected + " != " + actual + ".");
     }
   }

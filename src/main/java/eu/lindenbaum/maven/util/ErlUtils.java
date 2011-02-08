@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import com.ericsson.otp.erlang.OtpAuthException;
 import com.ericsson.otp.erlang.OtpErlangAtom;
@@ -19,6 +18,7 @@ import com.ericsson.otp.erlang.OtpErlangUInt;
 import com.ericsson.otp.erlang.OtpPeer;
 import com.ericsson.otp.erlang.OtpSelf;
 
+import eu.lindenbaum.maven.erlang.CheckAppResult;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.NodeShutdownHook;
 import eu.lindenbaum.maven.erlang.PurgeModulesScript;
@@ -194,13 +194,13 @@ public final class ErlUtils {
 
   /**
    * Returns a comma separated string of application version tuples taken from
-   * the given {@link List} of artifacts. Result string will look like
+   * the given array of artifacts. Result string will look like
    * <code>{"app1", "version1"}, {"app2", "version2"}, ...</code>.
    * 
    * @param artifacts to convert into application version tuples
    * @return a non-{@code null} {@link String} object
    */
-  public static String toApplicationTuples(Collection<Artifact> artifacts) {
+  public static String toApplicationTuples(Artifact... artifacts) {
     StringBuilder applications = new StringBuilder();
     int i = 0;
     for (Artifact artifact : artifacts) {
@@ -217,15 +217,39 @@ public final class ErlUtils {
   }
 
   /**
-   * Generates a simple list of applications derived from the artifacts listed
-   * as dependencies. Intended to be used to fill in ${APPLICATIONS} in
-   * {@link ResourceGenerator}.
+   * Returns a comma separated string of application version tuples taken from
+   * the given array of {@link CheckAppResult}s. Result string will look like
+   * <code>{"app1", "version1"}, {"app2", "version2"}, ...</code>.
    * 
-   * @param artifacts to convert into an artifactId list
+   * @param applicationInfos to convert into application version tuples
+   * @return a non-{@code null} {@link String} object
+   */
+  public static String toApplicationTuples(CheckAppResult... applicationInfos) {
+    StringBuilder applications = new StringBuilder();
+    int i = 0;
+    for (CheckAppResult applicationInfo : applicationInfos) {
+      if (i++ != 0) {
+        applications.append(",\n  ");
+      }
+      applications.append("{\'");
+      applications.append(applicationInfo.getName());
+      applications.append("\', \"");
+      applications.append(applicationInfo.getVersion());
+      applications.append("\"}");
+    }
+    return applications.toString();
+  }
+
+  /**
+   * Generates a simple comma separated list of applications derived from the
+   * artifacts listed as dependencies. Intended to be used to fill in
+   * ${APPLICATIONS} in {@link ResourceGenerator}.
+   * 
+   * @param artifacts to convert into an artifactId listing
    * @return a non-{@code null} {@link String} containing a valid erlang list
    */
-  public static String toArtifactIdList(Collection<Artifact> artifacts) {
-    StringBuilder applications = new StringBuilder("[");
+  public static String toArtifactIdListing(Collection<Artifact> artifacts) {
+    StringBuilder applications = new StringBuilder();
     int i = 0;
     for (Artifact artifact : artifacts) {
       if (i++ != 0) {
@@ -234,7 +258,6 @@ public final class ErlUtils {
 
       applications.append(artifact.getArtifactId());
     }
-    applications.append("]");
     return applications.toString();
   }
 

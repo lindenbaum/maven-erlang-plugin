@@ -1,15 +1,15 @@
 package eu.lindenbaum.maven.mojo.rel;
 
-import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -50,11 +50,10 @@ import org.apache.maven.plugin.logging.Log;
  * <li><code>${ARTIFACT}</code>: the projects artifact id (atom)</li>
  * <li><code>${VERSION}</code>: the projects version (string)</li>
  * <li><code>${APPLICATIONS}</code>: a comma separated listing of the project
- * dependencies application and version tuples</li>
- * <li><code>${AUTODEPS}</code>: an erlang list with all dependency applications
- * of the project including the standard applications <code>kernel</code>,
- * <code>stdlib</code> and the applications provided in the
- * {@link #otpDependencies} parameter</li>
+ * dependencies application and version tuples as configured in the project's
+ * {@code pom.xml}</li>
+ * <li><code>${AUTODEPS}</code>: an erlang list with all transitive dependency
+ * applications of the project</li>
  * <li><code>${<i>APPLICATION_NAME</i>}</code>: will be replaced by a string
  * representing the available application version on this host</li>
  * </ul>
@@ -74,56 +73,51 @@ public final class ResourceGenerator extends ErlangMojo {
    */
   private String scriptOptions;
 
-  /**
-   * Additional standard OTP applications that are dependencies for this release
-   * (e.g. <code>mnesia</code>). By default application dependencies are
-   * <code>kernel</code> and <code>stdlib</code>.
-   * 
-   * @parameter expression="${otpDependencies}"
-   */
-  private String[] otpDependencies;
-
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
     RuntimeInfoScript infoScript = new RuntimeInfoScript();
     RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).exec(p.node(), infoScript, new ArrayList<File>());
+    File otpLibDirectory = runtimeInfo.getLibDirectory();
 
     Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
-    Set<Artifact> otpArtifacts = getOtpArtifacts(p, runtimeInfo.getLibDirectory());
 
     String releaseName = p.project().getArtifactId();
     String releaseVersion = p.project().getVersion();
-    String relFileBaseName = releaseName + "-" + releaseVersion;
+    String releaseFileBase = releaseName + "-" + releaseVersion;
 
     Map<String, String> replacements = new HashMap<String, String>();
     replacements.put("${ARTIFACT}", "\"" + releaseName + "\"");
     replacements.put("${VERSION}", "\"" + releaseVersion + "\"");
     replacements.put("${ERTS}", "\"" + runtimeInfo.getVersion() + "\"");
-    replacements.put("${APPLICATIONS}", ErlUtils.toApplicationTuples(artifacts));
+    replacements.put("${APPLICATIONS}", ErlUtils.toApplicationTuples(artifacts.toArray(new Artifact[0])));
 
-    Set<String> appsToInclude = new HashSet<String>(Arrays.asList("kernel", "stdlib"));
-    String[] dependencies = this.otpDependencies != null ? this.otpDependencies : new String[0];
-    appsToInclude.addAll(Arrays.asList(dependencies));
-    Set<Artifact> autoDeps = new HashSet<Artifact>(artifacts);
-    autoDeps.addAll(filter(otpArtifacts, appsToInclude));
-    replacements.put("${AUTODEPS}", "[" + ErlUtils.toApplicationTuples(autoDeps) + "]");
+    Map<String, CheckAppResult> appInfos = getAppInfos(p, p.targetLib(), otpLibDirectory);
+    Set<CheckAppResult> autoDependencies = getDependencies(getArtifactIdCollection(artifacts), appInfos);
 
-    Set<Artifact> allApplications = new HashSet<Artifact>(otpArtifacts);
-    allApplications.addAll(artifacts);
-    replacements.putAll(getApplicationMappings(allApplications));
+    log.debug("Found dependencies: " + autoDependencies);
 
-    int resources = copyDirectory(p.ebin(), p.target(), FileUtils.REL_FILTER, replacements);
-    log.debug("Copied " + resources + " release files.");
+    CheckAppResult[] autoDependenciesArray = autoDependencies.toArray(new CheckAppResult[0]);
+    replacements.put("${AUTODEPS}", "[" + ErlUtils.toApplicationTuples(autoDependenciesArray) + "]");
+    replacements.putAll(getApplicationMappings(appInfos));
 
-    File relFile = new File(p.target(), relFileBaseName + ErlConstants.REL_SUFFIX);
-    if (!relFile.isFile()) {
-      throw new MojoFailureException("Could not find release file " + relFile.getName() + ".");
+    log.debug("Created mappings: " + replacements);
+
+    File srcRelFile = new File(p.ebin(), releaseName + ErlConstants.REL_SUFFIX);
+    File destRelFile = new File(p.target(), releaseFileBase + ErlConstants.REL_SUFFIX);
+    FileUtils.copyFile(srcRelFile, destRelFile, replacements);
+    log.debug("Copied release file to " + destRelFile + " .");
+
+    File srcRelupFile = new File(p.ebin(), releaseName + ErlConstants.RELUP_SUFFIX);
+    if (srcRelupFile.isFile()) {
+      File destRelupFile = new File(p.target(), releaseFileBase + ErlConstants.RELUP_SUFFIX);
+      FileUtils.copyFile(srcRelupFile, destRelupFile, replacements);
+      log.debug("Copied release upgrade file to " + destRelupFile + " .");
     }
 
     List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
     codePaths.add(p.target());
 
-    Script<SystoolsScriptResult> script = new MakeScriptScript(relFile, p.target(), this.scriptOptions);
+    Script<SystoolsScriptResult> script = new MakeScriptScript(destRelFile, p.target(), this.scriptOptions);
     SystoolsScriptResult makeScriptResult = MavenSelf.get(p.cookie()).exec(p.node(), script, codePaths);
     makeScriptResult.logOutput(log);
     if (!makeScriptResult.success()) {
@@ -136,40 +130,78 @@ public final class ResourceGenerator extends ErlangMojo {
    * <code>${APP_NAME}</code> for all applications available in the local OTP
    * installation.
    */
-  private static Map<String, String> getApplicationMappings(Collection<Artifact> artifacts) {
+  private static Map<String, String> getApplicationMappings(Map<String, CheckAppResult> appInfos) {
     HashMap<String, String> mappings = new HashMap<String, String>();
-    for (Artifact artifact : artifacts) {
-      String key = "${" + artifact.getArtifactId().toUpperCase() + "}";
-      mappings.put(key, "\"" + artifact.getVersion() + "\"");
+    for (Entry<String, CheckAppResult> entry : appInfos.entrySet()) {
+      CheckAppResult appResult = entry.getValue();
+      String key = "${" + appResult.getName().toUpperCase() + "}";
+      mappings.put(key, "\"" + appResult.getVersion() + "\"");
     }
     return mappings;
   }
 
   /**
-   * Returns a {@link Map} containing version mappings for all applications
-   * available in the local OTP installation.
+   * Returns a {@link Map} containing {@link CheckAppResult} mappings for all
+   * applications available in the given lib directories installation.
    */
-  private static Set<Artifact> getOtpArtifacts(Properties p, File libDirectory) throws MojoExecutionException {
-    Set<Artifact> artifacts = new HashSet<Artifact>();
-    for (File appFile : FileUtils.getFilesRecursive(libDirectory, ErlConstants.APP_SUFFIX)) {
-      Script<CheckAppResult> script = new CheckAppScript(appFile);
-      CheckAppResult result = MavenSelf.get(p.cookie()).exec(p.node(), script, new ArrayList<File>());
-      artifacts.add(MavenUtils.getArtifact(result.getName(), result.getVersion()));
+  private static Map<String, CheckAppResult> getAppInfos(Properties p, File... libDirectories) throws MojoExecutionException {
+    Map<String, CheckAppResult> applications = new HashMap<String, CheckAppResult>();
+    for (File libDirectory : libDirectories) {
+      for (File appFile : FileUtils.getFilesRecursive(libDirectory, ErlConstants.APP_SUFFIX)) {
+        Script<CheckAppResult> script = new CheckAppScript(appFile);
+        CheckAppResult result = MavenSelf.get(p.cookie()).exec(p.node(), script, new ArrayList<File>());
+        applications.put(result.getName(), result);
+      }
     }
-    return artifacts;
+    return applications;
   }
 
   /**
-   * Returns a {@link Set} filtered for the {@link Artifact}s contained int the
-   * list of artifactIds.
+   * Converts a {@link Collection} of {@link Artifact}s into a
+   * {@link Collection} containing their artifactIds.
    */
-  private static Set<Artifact> filter(Collection<Artifact> artifacts, Set<String> artifactIds) {
-    Set<Artifact> result = new HashSet<Artifact>();
+  private static Collection<String> getArtifactIdCollection(Collection<Artifact> artifacts) {
+    Collection<String> result = new ArrayList<String>();
     for (Artifact artifact : artifacts) {
-      if (artifactIds.contains(artifact.getArtifactId())) {
-        result.add(artifact);
-      }
+      result.add(artifact.getArtifactId());
     }
     return result;
+  }
+
+  /**
+   * Returns the {@link CheckAppResult} for a specific application/artifactId.
+   * In case the {@link Map} does not contain a matching {@link CheckAppResult}
+   * an {@link IllegalStateException} will be thrown.
+   */
+  private static CheckAppResult resolve(String application, Map<String, CheckAppResult> appInfos) {
+    CheckAppResult result = appInfos.get(application);
+    if (result == null) {
+      throw new IllegalStateException("Can't resolve application '" + application + "'.");
+    }
+    return result;
+  }
+
+  /**
+   * Returns a {@link Set} containing the transitive dependencies for a list of
+   * erlang artifactIds/applications. This will at least contain the 'kernel'
+   * and 'stdlib' applications.
+   */
+  private static Set<CheckAppResult> getDependencies(Collection<String> artifactIds,
+                                                     Map<String, CheckAppResult> appInfos) {
+    LinkedList<String> todo = new LinkedList<String>(artifactIds);
+    todo.addAll(Arrays.asList("kernel", "stdlib"));
+
+    Set<String> done = new HashSet<String>();
+    Set<CheckAppResult> dependencies = new HashSet<CheckAppResult>();
+    while (!todo.isEmpty()) {
+      String dependency = todo.removeFirst();
+      if (!done.contains(dependency)) {
+        done.add(dependency);
+        CheckAppResult appResult = resolve(dependency, appInfos);
+        todo.addAll(appResult.getApplications());
+        dependencies.add(appResult);
+      }
+    }
+    return dependencies;
   }
 }

@@ -36,9 +36,8 @@ Project Configuration
  <<<-registered(Names).>>> attribute retrieved from the compiled <<<.beam>>>
  files (list)
 
- * <<<$\{APPLICATIONS\}>>>: all dependency applications of the project
- including the applications provided in the <<<otpDependencies>>> parameter
- (list)
+ * <<<$\{APPLICATIONS\}>>>: all dependency applications of the project as
+ configured in the project's <<<pom.xml>>> (string)
 
  Only <<<erlang-rel>>>:
  
@@ -46,9 +45,8 @@ Project Configuration
  tuples (string)
 
  * <<<$\{AUTODEPS\}>>>: the project dependencies application and version
- tuples including the standard applications <<<kernel>>> and <<<sasl>>> as well
- as the applications provided in the <<<otpDependencies>>> parameter as
- available on the backend node(s) (list)
+ tuples including all transitive application dependencies as available to
+ the backend node(s) (list)
 
  * <<<$\{ERTS\}>>>: the version of <<<erts>>> as found in the backend node
 
@@ -93,3 +91,5 @@ Project Configuration
  * consistency of release file and pom project version
 
  * consistency of configured application dependencies
+
+ * consistency of required erlang/OTP release the release will be based on

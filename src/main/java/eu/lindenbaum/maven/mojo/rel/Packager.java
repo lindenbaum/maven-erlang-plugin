@@ -44,8 +44,7 @@ public final class Packager extends ErlangMojo {
     log.info(MavenUtils.SEPARATOR);
 
     String releaseName = p.project().getArtifactId();
-    String releaseVersion = p.project().getVersion();
-    String relFileBaseName = releaseName + "-" + releaseVersion;
+    String relFileBaseName = releaseName + "-" + p.project().getVersion();
 
     File relFile = new File(p.target(), relFileBaseName + ErlConstants.REL_SUFFIX);
     List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);

@@ -1,8 +1,8 @@
 
-Setting up a new Erlang/OTP project
+Setting up a new Erlang/OTP application project
 
- Instead of an archetype for erlang-otp projects, the setup goal can be used
- to create some common default resources for your project.
+ Instead of an archetype for erlang-otp/erlang-std projects, the setup goal can
+ be used to create some common default resources for your project.
  
  When starting a new project, define a minimal POM with the following
  properties:
@@ -52,3 +52,47 @@ Setting up a new Erlang/OTP project
  Note that you can, at any time, run the goal again. Only missing files will be
  created an never replaced or overwritten.
  
+ After default project setup customizing of the created <<<.app>>> and
+ <<<.appup>>> files has to be done. Allthough the default files already contain
+ some common packaging variables <<<$\{...\}>>> the plug-in can do more. In case
+ the project has other erlang-otp/erlang-std dependencies the
+ <<<$\{APPLICATIONS\}>>> variable could be useful because it expands to a comma
+ separated listing of all erlang-otp/erlang-std dependencies specified in the
+ <<<pom.xml>>>.
+
+ Assuming the following dependencies
+
++--
+  ...
+  <dependencies>
+    <dependency>
+      <artifactId>dependency1</artifactId>
+      <groupId>some.group</groupId>
+      <version>1.0.0</version>
+      <type>erlang-otp</type>
+    </dependency>
+   <dependency>
+      <artifactId>dependency2</artifactId>
+      <groupId>some.group</groupId>
+      <version>2.0.0</version>
+      <type>erlang-std</type>
+    </dependency>
+  </dependencies>
+  ...
++--
+
+ in the application resource file the term
+
++--
+  ...
+  {applications, [kernel, stdlib, ${APPLICATIONS}]},
+  ...
++-- 
+
+ would expand to
+
++--
+  ...
+  {applications, [kernel, stdlib, dependency1, dependency2]},
+  ...
++-- 

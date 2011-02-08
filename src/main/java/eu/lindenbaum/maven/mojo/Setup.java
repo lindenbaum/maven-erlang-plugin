@@ -52,7 +52,7 @@ import org.codehaus.plexus.util.FileUtils;
  *    {maxT, infinity},
  *    {registered, ${REGISTERED}},
  *    {included_applications, []},
- *    {applications, []},
+ *    {applications, [kernel, stdlib]},
  *    {env, []}, 
  *    {start_phases, []}]}.
  * </pre>

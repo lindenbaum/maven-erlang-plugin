@@ -28,6 +28,7 @@ import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
@@ -60,8 +61,7 @@ import org.apache.maven.plugin.logging.Log;
  * {@code -registered(Names).} attribute retrieved from the compiled
  * {@code .beam} files (list)</li>
  * <li><code>${APPLICATIONS}</code>: all dependency applications of the project
- * including the applications provided in the {@link #otpDependencies} parameter
- * (list)</li>
+ * as configured in the project's {@code pom.xml} (string)</li>
  * </ul>
  * <p>
  * The resulting application resource file as well as the application upgrade
@@ -75,14 +75,6 @@ import org.apache.maven.plugin.logging.Log;
  * @author Gregory Haskins <ghaskins@novell.com>
  */
 public final class Packager extends ErlangMojo {
-  /**
-   * Additional standard OTP applications that are dependencies for this
-   * application (e.g. <code>mnesia</code>).
-   * 
-   * @parameter expression="${otpDependencies}"
-   */
-  private String[] otpDependencies;
-
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
     log.info(MavenUtils.SEPARATOR);
@@ -92,11 +84,6 @@ public final class Packager extends ErlangMojo {
     String projectVersion = p.project().getVersion();
 
     Set<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
-    String[] otpDependencies = this.otpDependencies != null ? this.otpDependencies : new String[0];
-    for (String otpDependency : otpDependencies) {
-      dependencies.add(MavenUtils.getArtifact(otpDependency, "unused"));
-    }
-
     List<File> modules = getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
     Script<String> registeredScript = new GetAttributesScript(modules, "registered");
     List<File> codePaths = Arrays.asList(p.targetEbin());
@@ -109,7 +96,7 @@ public final class Packager extends ErlangMojo {
     replacements.put("${VERSION}", "\"" + projectVersion + "\"");
     replacements.put("${MODULES}", ErlUtils.toModuleList(modules, "'", "'"));
     replacements.put("${REGISTERED}", registeredNames);
-    replacements.put("${APPLICATIONS}", ErlUtils.toArtifactIdList(dependencies));
+    replacements.put("${APPLICATIONS}", ErlUtils.toArtifactIdListing(dependencies));
 
     // copy application resource files
     p.targetEbin().mkdirs();
@@ -126,11 +113,17 @@ public final class Packager extends ErlangMojo {
     // parse .app file
     Script<CheckAppResult> appScript = new CheckAppScript(appFile);
     CheckAppResult appResult = MavenSelf.get(p.cookie()).exec(p.node(), appScript, new ArrayList<File>());
-    checkApplicationName(log, p.project().getArtifactId(), appResult.getName());
-    checkApplicationVersion(log, projectVersion, appResult.getVersion());
-    checkStartModule(log, p, appResult);
+    if (!appResult.success()) {
+      log.error("Failed to consult file");
+      MavenUtils.logContent(log, LogLevel.ERROR, appFile);
+      throw new MojoFailureException("Failed to consult .app file.");
+    }
+
+    checkApplicationName(log, appFile, p.project().getArtifactId(), appResult.getName());
+    checkApplicationVersion(log, appFile, projectVersion, appResult.getVersion());
     checkModules(log, modules, appResult.getModules());
     checkApplications(log, dependencies, appResult.getApplications());
+    checkStartModule(log, p, appResult);
 
     File appUpFile = new File(p.targetEbin(), p.project().getArtifactId() + ErlConstants.APPUP_SUFFIX);
     if (!appUpFile.exists()) {
@@ -142,8 +135,8 @@ public final class Packager extends ErlangMojo {
       Script<String> appUpScript = new CheckAppUpScript(appUpFile, projectVersion);
       String error = MavenSelf.get(p.cookie()).exec(p.node(), appUpScript, new ArrayList<File>());
       if (error != null) {
-        log.error(appUpFile.getAbsolutePath() + ":");
-        log.error(error);
+        MavenUtils.logMultiLineString(log, LogLevel.ERROR, error);
+        MavenUtils.logContent(log, LogLevel.ERROR, appUpFile);
         throw new MojoFailureException("Failed to verify .appup file.");
       }
     }
@@ -166,10 +159,11 @@ public final class Packager extends ErlangMojo {
    * Checks whether the application resource files application name equals the
    * projects artifact id.
    */
-  private static void checkApplicationName(Log log, String expected, String actual) throws MojoFailureException {
+  private static void checkApplicationName(Log log, File appFile, String expected, String actual) throws MojoFailureException {
     if (!expected.equals(actual)) {
       log.error("Name mismatch.");
       log.error("Project name is " + expected + " while .app name is " + actual);
+      MavenUtils.logContent(log, LogLevel.ERROR, appFile);
       throw new MojoFailureException("Name mismatch " + expected + " != " + actual + ".");
     }
   }
@@ -178,10 +172,11 @@ public final class Packager extends ErlangMojo {
    * Checks whether the application resource files application version equals
    * the projects version.
    */
-  private static void checkApplicationVersion(Log log, String expected, String actual) throws MojoFailureException {
+  private static void checkApplicationVersion(Log log, File appFile, String expected, String actual) throws MojoFailureException {
     if (!expected.equals(actual)) {
       log.error("Version mismatch.");
       log.error("Project version is " + expected + " while .app version is " + actual);
+      MavenUtils.logContent(log, LogLevel.ERROR, appFile);
       throw new MojoFailureException("Version mismatch " + expected + " != " + actual + ".");
     }
   }
@@ -253,6 +248,10 @@ public final class Packager extends ErlangMojo {
         log.error("Application dependency to '" + artifactId + "' is missing in .app file.");
         missingDependencies = true;
       }
+    }
+    if (!actual.containsAll(Arrays.asList("kernel", "stdlib"))) {
+      log.error("Vital application dependency to either 'kernel' or 'stdlib' is missing in .app file.");
+      missingDependencies = true;
     }
     if (missingDependencies) {
       throw new MojoFailureException("Missing application dependencies.");

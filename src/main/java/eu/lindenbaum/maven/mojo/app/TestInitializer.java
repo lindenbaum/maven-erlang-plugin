@@ -27,12 +27,20 @@ public class TestInitializer extends ErlangMojo {
    */
   private boolean skipTests;
 
+  /**
+   * Setting this to {@code false} will leave the plugins test backend node up
+   * and running even if the executing jvm exits.
+   * 
+   * @parameter expression="${shutdownTestNode}" default-value=true
+   */
+  private volatile boolean shutdownTestNode = true;
+
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
     if (this.skipTests) {
       log.info("Test initialization is skipped.");
       return;
     }
-    ErlUtils.startBackend(log, "", p.testNode(), p.testCookie(), true);
+    ErlUtils.startBackend(log, "", p.testNode(), p.testCookie(), this.shutdownTestNode);
   }
 }

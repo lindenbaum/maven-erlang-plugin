@@ -78,6 +78,17 @@ public final class Dialyzer extends ErlangMojo {
       List<File> sources = Arrays.asList(new File[]{ p.targetLib() });
       List<File> includes = getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX);
 
+      String[] dependenciesToAnalyze = p.targetLib().list();
+      if (dependenciesToAnalyze == null || dependenciesToAnalyze.length == 0) {
+        if (this.dialyzerWarningsAreErrors) {
+          throw new MojoFailureException("No sources to analyze.");
+        }
+        else {
+          log.warn("No sources to analyze.");
+        }
+        return;
+      }
+
       DialyzerScript script = new DialyzerScript(sources, includes, this.dialyzerOptions);
       String[] warnings = MavenSelf.get(p.cookie()).exec(p.node(), script, new ArrayList<File>());
       for (String warning : warnings) {
