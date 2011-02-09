@@ -163,6 +163,21 @@ Frequently Asked Questions
 
  TODO document me
 
+* How does the plug-in deal with library applications?
+
+ It simply doesn't do anything special with them. Library applications are
+ packaged like any other application project since the only difference
+ to other applications is that the <<<mod>>> tuple in its application resource
+ file is omitted. The <<<sasl>>> application can handle that so calls to
+ <<<application:start/1>>> and <<<application:stop/1>>> can be made without any
+ problems.
+
+ We've heard of people recommending to put library dependencies into the
+ <<<included_application>>> tuple and package the code along with the using
+ application. That doesn't really make sense and couldn't easily be handled by
+ the plug-in at all. We recommend to separate your applications properly and
+ write correct, simple application resource files.
+
 * How does release packaging of <<<erlang-rel>>> projects work?
 
  The plug-in will package your release according to the OTP design principles
