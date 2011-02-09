@@ -59,7 +59,7 @@ Frequently Asked Questions
  directory using <<<code:priv_dir/1>>> at runtime as well as during test
  execution.
 
-* How does dependency management work (roughly)?
+* How does the plug-in's dependency management work (roughly)?
 
  The plug-in manages the dependencies to other erlang projects packaged by
  this plugin. This supports modular architectures/releases featuring a whole
@@ -133,9 +133,34 @@ Frequently Asked Questions
  {{{./examples/coverage.html}coverage}} example page for further information
  about that.
 
+* How to debug a broken unit test?
+
+ In order to debug a unit test it is recommended to start a test backend node
+ before issuing a build in a separate shell manually. By default the plug-in
+ tries to attach to the node <<<'maven-erlang-plugin-test-backend'>>> and run
+ the unit tests on this node. The name of this node can of course be changed to
+ any other name using the <<<testNode>>> parameter (on the command line). Since
+ the user then has command line access to the test node all possible debug
+ features of erlang/OTP can be used to debug the unit test.
+ 
+ To reuse the test node for subsequent builds the <<<shutdownTestNode>>>
+ parameter can be specified so the node doesn't get halted after the test run.
+ 
+ To run only a single test module the <<<test>>> parameter can be set to a
+ specific test module.
+
 * How does application packaging of <<<erlang-otp>>> and <<<erlang-std>>>
   projects work?
   
+ The plug-in will package your application according to the OTP design
+ principles (e.g. the package will make use of the OTP directory layout). This
+ can be seen when inspecting the <<<target>>> directory after a run of
+ <<<mvn package>>>. The dependency artifacts are <<<.tar.gz>>> packages of the
+ created directory structure. The needed erlang application file can/should be
+ written by the user but the plug-in may support the user by providing
+ application packaging variables that will expand to sensible values when
+ packaging the application.
+
  TODO document me
 
 * How does release packaging of <<<erlang-rel>>> projects work?

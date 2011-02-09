@@ -22,7 +22,8 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class BeamCompilerScript implements Script<CompilerResult> {
   private static final String script = //
-  NL + "Options = [return, {outdir, \"%s\"}] ++ %s ++ %s," + NL + //
+  NL + "OutDir = \"%s\"," + NL + //
+      "Options = [return, {outdir, OutDir}] ++ %s ++ %s," + NL + //
       "lists:foldl(" + NL + //
       "  fun(ToCompile, {\"\", Reports}) ->" + NL + //
       "          {Fail, Messages} = case compile:file(ToCompile, Options) of" + NL + //
@@ -30,7 +31,9 @@ public final class BeamCompilerScript implements Script<CompilerResult> {
       "                                   {ToCompile," + NL + //
       "                                    lists:map(fun(Elem) -> {error, Elem} end, E)" + NL + //
       "                                    ++ lists:map(fun(Elem) -> {warn, Elem} end, W)};" + NL + //
-      "                               {ok, _, W} ->" + NL + //
+      "                               {ok, M, W} ->" + NL + //
+      "                                   Mod = atom_to_list(M)," + NL + //
+      "                                   code:load_abs(filename:join([OutDir, Mod]))," + NL + //
       "                                   {\"\"," + NL + //
       "                                    lists:map(fun(Elem) -> {warn, Elem} end, W)}" + NL + //
       "                             end," + NL + //

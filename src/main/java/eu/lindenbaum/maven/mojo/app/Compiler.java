@@ -52,6 +52,12 @@ public final class Compiler extends ErlangMojo {
     int removed = FileUtils.removeFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
     log.debug("Removed " + removed + " stale " + ErlConstants.BEAM_SUFFIX + "-files from " + p.targetEbin());
 
+    List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
+    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
+    Script<Integer> loadScript = new LoadModulesScript(modules);
+    Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript, codePaths);
+    log.debug("Successfully loaded " + loaded + " .beam file(s) from dependencies.");
+
     List<File> files = FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX);
     if (!files.isEmpty()) {
       List<File> includes = new ArrayList<File>();
@@ -67,8 +73,6 @@ public final class Compiler extends ErlangMojo {
       }
 
       Script<CompilerResult> script = new BeamCompilerScript(files, p.targetEbin(), includes, options);
-      List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-      codePaths.add(p.targetEbin());
       CompilerResult result = MavenSelf.get(p.cookie()).exec(p.node(), script, codePaths);
       result.logOutput(log);
       String failedCompilationUnit = result.getFailed();
@@ -77,11 +81,6 @@ public final class Compiler extends ErlangMojo {
       }
       log.info("Successfully compiled " + files.size() + " source file(s).");
 
-      List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-      modules.addAll(FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX));
-      Script<Integer> loadScript = new LoadModulesScript(modules);
-      Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript, codePaths);
-      log.debug("Successfully loaded " + loaded + " .beam file(s).");
     }
     else {
       log.info("No source files to compile.");

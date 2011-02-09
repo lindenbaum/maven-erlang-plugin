@@ -14,9 +14,11 @@ import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.BeamCompilerScript;
 import eu.lindenbaum.maven.erlang.CompilerResult;
+import eu.lindenbaum.maven.erlang.LoadModulesScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.plugin.Mojo;
@@ -72,6 +74,12 @@ public final class TestCompiler extends ErlangMojo {
     log.debug("Removed " + removed + " stale " + ErlConstants.BEAM_SUFFIX + "-files from "
               + p.targetTestEbin());
 
+    List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
+    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
+    Script<Integer> loadScript = new LoadModulesScript(modules);
+    Integer loaded = MavenSelf.get(p.testCookie()).exec(p.testNode(), loadScript, codePaths);
+    log.debug("Successfully loaded " + loaded + " .beam file(s) from dependencies.");
+
     log.debug("Looking up test sources under " + p.test_src() + " with file suffix "
               + ErlConstants.ERL_SUFFIX);
     List<File> files = getFilesRecursive(p.test_src(), ErlConstants.ERL_SUFFIX);
@@ -102,7 +110,6 @@ public final class TestCompiler extends ErlangMojo {
       }
 
       Script<CompilerResult> script = new BeamCompilerScript(files, p.targetTestEbin(), includes, options);
-      List<File> codePaths = getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
       CompilerResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script, codePaths);
       result.logOutput(log);
       String failedCompilationUnit = result.getFailed();
@@ -118,7 +125,7 @@ public final class TestCompiler extends ErlangMojo {
     }
   }
 
-  private List<File> getTestSupportFiles(Properties p) {
+  private static List<File> getTestSupportFiles(Properties p) {
     List<File> supportFiles = new ArrayList<File>();
     supportFiles.add(new File(p.targetTestEbin(), "mock.erl"));
     supportFiles.add(new File(p.targetTestEbin(), "surefire.erl"));
