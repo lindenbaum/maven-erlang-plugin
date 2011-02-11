@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert" type="update">
+        Changed semantics of the ${APPLICATION_NAME} release packaging
+        variables to expand to the complete application name, version tuple as
+        required by the release file's applications section.
+      </action>
       <action dev="schlagert" type="update" issue="3166835">
         Changed semantics of ${APPLICATIONS} for erlang-otp/erlang-std projects.
         This will now expand to a comma separated listing instead of an erlang
@@ -33,8 +38,13 @@
       </action>
       <action dev="schlagert, olle-t" type="update" issue="3165497" due-to="ghaskins">
         Improved release packaging by adding the customizable ${AUTODEPS}
-        packaging variable which expands to all release dependencies (except
+        packaging variable which expands to all release dependencies (including
         OTP standard ones).
+      </action>
+      <action dev="schlagert" type="update" issue="3165497" due-to="ghaskins">
+        Changed the ${APPLICATIONS} release packaging variable to expand to a
+        comma separated listing of all release dependencies (including OTP
+        standard ones).
       </action>
       <action dev="schlagert, olle-t" type="update">
         Introduced two backend nodes. One used for testing and another one for

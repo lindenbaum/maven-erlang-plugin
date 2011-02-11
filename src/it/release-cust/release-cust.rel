@@ -1,0 +1,5 @@
+{release,
+ {${ARTIFACT}, ${VERSION}},
+ {erts, ${ERTS}},
+ [${APPLICATIONS},
+  ${SASL}]}.

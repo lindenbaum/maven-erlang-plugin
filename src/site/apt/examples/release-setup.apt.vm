@@ -80,9 +80,9 @@ Setting up a new Erlang/OTP release project
 {release,
  {${ARTIFACT}, ${VERSION}}, % will expand to the projects artifactId annd version
  {erts, ${ERTS}}, % will expand to the version of erts available on the backend node
- [${APPLICATIONS}, % will expand to transitive maven-only dependencies
-  {kernel, ${KERNEL}}, % will expand to the version of kernel available on the backend node
-  {stdlib, ${STDLIB}}, % will expand to the version of stdlib available on the backend node
+ [${APPLICATIONS}, % will expand to all transitive dependencies
+  ${APPMON}, % will expand to {appmon, APPMON_VERSION} with the version of appmon available on the backend node
+  ${TV}, % will expand to {tv, TV_VERSION} with the version of tv available on the backend node
   ...
  ]}.
 +--

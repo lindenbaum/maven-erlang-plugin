@@ -49,13 +49,13 @@ import org.apache.maven.plugin.logging.Log;
  * <ul>
  * <li><code>${ARTIFACT}</code>: the projects artifact id (atom)</li>
  * <li><code>${VERSION}</code>: the projects version (string)</li>
- * <li><code>${APPLICATIONS}</code>: a comma separated listing of the project
- * dependencies application and version tuples as configured in the project's
- * {@code pom.xml}</li>
+ * <li><code>${APPLICATIONS}</code>: a comma separated listing with all
+ * transitive dependency applications of the project</li>
  * <li><code>${AUTODEPS}</code>: an erlang list with all transitive dependency
  * applications of the project</li>
- * <li><code>${<i>APPLICATION_NAME</i>}</code>: will be replaced by a string
- * representing the available application version on this host</li>
+ * <li><code>${<i>APPLICATION_NAME</i>}</code>: will be replaced by the tuple
+ * <code>{'APPLICATION_NAME', "APPLICATION_VERSION"}</code> with the version
+ * available on the backend node</li>
  * </ul>
  * 
  * @goal generate-release-resources
@@ -79,8 +79,6 @@ public final class ResourceGenerator extends ErlangMojo {
     RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).exec(p.node(), infoScript, new ArrayList<File>());
     File otpLibDirectory = runtimeInfo.getLibDirectory();
 
-    Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
-
     String releaseName = p.project().getArtifactId();
     String releaseVersion = p.project().getVersion();
     String releaseFileBase = releaseName + "-" + releaseVersion;
@@ -89,15 +87,16 @@ public final class ResourceGenerator extends ErlangMojo {
     replacements.put("${ARTIFACT}", "\"" + releaseName + "\"");
     replacements.put("${VERSION}", "\"" + releaseVersion + "\"");
     replacements.put("${ERTS}", "\"" + runtimeInfo.getVersion() + "\"");
-    replacements.put("${APPLICATIONS}", ErlUtils.toApplicationTuples(artifacts.toArray(new Artifact[0])));
 
+    Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
     Map<String, CheckAppResult> appInfos = getAppInfos(p, p.targetLib(), otpLibDirectory);
     Set<CheckAppResult> autoDependencies = getDependencies(getArtifactIdCollection(artifacts), appInfos);
 
     log.debug("Found dependencies: " + autoDependencies);
 
-    CheckAppResult[] autoDependenciesArray = autoDependencies.toArray(new CheckAppResult[0]);
-    replacements.put("${AUTODEPS}", "[" + ErlUtils.toApplicationTuples(autoDependenciesArray) + "]");
+    String applicationTuples = ErlUtils.toApplicationTuples(autoDependencies.toArray(new CheckAppResult[0]));
+    replacements.put("${APPLICATIONS}", applicationTuples);
+    replacements.put("${AUTODEPS}", "[" + applicationTuples + "]");
     replacements.putAll(getApplicationMappings(appInfos));
 
     log.debug("Created mappings: " + replacements);
@@ -135,7 +134,7 @@ public final class ResourceGenerator extends ErlangMojo {
     for (Entry<String, CheckAppResult> entry : appInfos.entrySet()) {
       CheckAppResult appResult = entry.getValue();
       String key = "${" + appResult.getName().toUpperCase() + "}";
-      mappings.put(key, "\"" + appResult.getVersion() + "\"");
+      mappings.put(key, "{'" + appResult.getName() + "',\"" + appResult.getVersion() + "\"}");
     }
     return mappings;
   }

@@ -42,7 +42,8 @@ Project Configuration
  Only <<<erlang-rel>>>:
  
  * <<<$\{APPLICATIONS\}>>>: the project dependencies application and version
- tuples (string)
+ tuples including all transitive application dependencies as available to
+ the backend node(s) (string)
 
  * <<<$\{AUTODEPS\}>>>: the project dependencies application and version
  tuples including all transitive application dependencies as available to
@@ -50,8 +51,8 @@ Project Configuration
 
  * <<<$\{ERTS\}>>>: the version of <<<erts>>> as found in the backend node
 
- * <<<$\{APPLICATION_NAME\}>>>: will be replaced by a string representing
- the available version of the application denoted by <<<APPLICATION_NAME>>> on
+ * <<<$\{APPLICATION_NAME\}>>>: will be replaced by the tuple
+ <<<{'APPLICATION_NAME', "APPLICATION_VERSION"}>>> with the version available on
  the backend node
 
 ** File Generation

@@ -161,7 +161,20 @@ Frequently Asked Questions
  application packaging variables that will expand to sensible values when
  packaging the application.
 
- TODO document me
+ The <<<${MODULES}>>> variable for example expands to a list of modules the
+ application delivers. This us useful for the <<<modules>>> tuple in the
+ application resource file inspected by the erlang release handler.
+ 
+ Another example is the <<<${REGISTERED}>>> variable. This will interact with
+ the <<<-registered([...]).>>> attribute and expand to a list of names
+ registered by an application at runtime.
+ 
+ The <<<${APPLICATIONS}>>> variable will expand to a listing of (transitive)
+ application dependencies an application has based on the specified maven
+ dependencies.
+ 
+ For a list of available application packaging variables see the
+ {{{./plugin-configuration.html}plugin configuration}} page.
 
 * How does the plug-in deal with library applications?
 
@@ -174,9 +187,10 @@ Frequently Asked Questions
 
  We've heard of people recommending to put library dependencies into the
  <<<included_application>>> tuple and package the code along with the using
- application. That doesn't really make sense and couldn't easily be handled by
- the plug-in at all. We recommend to separate your applications properly and
- write correct, simple application resource files.
+ application. The <<<included_application>>> tuple is intended only for
+ applications that will be included in another applications supervision tree
+ manually. We recommend to separate your applications properly and write
+ correct, simple application resource files.
 
 * How does release packaging of <<<erlang-rel>>> projects work?
 
@@ -193,16 +207,16 @@ Frequently Asked Questions
  plug-in. Standard erlang/OTP applications will be taken from the backend nodes
  default code paths.
  
- The <<<${APPLICATIONS}>>> variable will expand to a comma separated listing of
+ The <<<${APPLICATIONS}>>> and <<<${AUTODEPS}>>> variables expand to all
  transitive maven dependencies as required by the release files applications
- section. The <<<${AUTODEPS}>>> variable will also put in the required transitive
- dependencies to standard erlang/OTP applications (e.g. mnesia, sasl, ...). The
- version of the standard applications are those available to the backend node.
- To achieve a correct dependency management a release project must configure
- what erlang/OTP release should be used as release base (the standard
- application version's will then be taken from this release). The build will
- fail if either the OTP release base variable (<<<otpRelease>>>) is not
- configured or the backend node does not run the configured release.
+ section and will also put in the required transitive dependencies to standard
+ erlang/OTP applications (e.g. mnesia, sasl, ...). The version of the standard
+ applications are those available to the backend node. To achieve a correct
+ dependency management a release project must configure what erlang/OTP release
+ should be used as release base (the standard application version's will then
+ be taken from this release). The build will fail if either the OTP release
+ base variable (<<<otpRelease>>>) is not configured or the backend node does not
+ run the configured release.
  
  To be able to make a test build with another OTP release version the user may
  specify the <<<skipReleaseTest>>> parameter to skip the OTP release
@@ -215,7 +229,7 @@ Frequently Asked Questions
  server like {{{http://jenkins-ci.org/}jenkins/hudson}} or by having the
  suitable release installed locally.
  
- For a list of available variables see the
+ For a list of available release packaging variables see the
  {{{./plugin-configuration.html}plugin configuration}} page.
 
  In case the plug-in support is disclaimed the user has to take care of the
