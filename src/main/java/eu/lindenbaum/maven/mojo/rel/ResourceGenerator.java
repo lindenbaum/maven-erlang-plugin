@@ -49,13 +49,16 @@ import org.apache.maven.plugin.logging.Log;
  * <ul>
  * <li><code>${ARTIFACT}</code>: the projects artifact id (atom)</li>
  * <li><code>${VERSION}</code>: the projects version (string)</li>
+ * <li><code>${ERTS}</code>: expands to the tuple
+ * <code>{erts, "ERTS_VERSION"}</code> with the version of erts available on the
+ * backend node (tuple)</li>
  * <li><code>${APPLICATIONS}</code>: a comma separated listing with all
- * transitive dependency applications of the project</li>
+ * transitive dependency applications of the project (tuple listing)</li>
  * <li><code>${AUTODEPS}</code>: an erlang list with all transitive dependency
- * applications of the project</li>
+ * applications of the project (list)</li>
  * <li><code>${<i>APPLICATION_NAME</i>}</code>: will be replaced by the tuple
  * <code>{'APPLICATION_NAME', "APPLICATION_VERSION"}</code> with the version
- * available on the backend node</li>
+ * available on the backend node (tuple)</li>
  * </ul>
  * 
  * @goal generate-release-resources
@@ -86,7 +89,7 @@ public final class ResourceGenerator extends ErlangMojo {
     Map<String, String> replacements = new HashMap<String, String>();
     replacements.put("${ARTIFACT}", "\"" + releaseName + "\"");
     replacements.put("${VERSION}", "\"" + releaseVersion + "\"");
-    replacements.put("${ERTS}", "\"" + runtimeInfo.getVersion() + "\"");
+    replacements.put("${ERTS}", "{erts, \"" + runtimeInfo.getVersion() + "\"}");
 
     Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
     Map<String, CheckAppResult> appInfos = getAppInfos(p, p.targetLib(), otpLibDirectory);

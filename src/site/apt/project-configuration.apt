@@ -43,17 +43,18 @@ Project Configuration
  
  * <<<$\{APPLICATIONS\}>>>: the project dependencies application and version
  tuples including all transitive application dependencies as available to
- the backend node(s) (string)
+ the backend node(s) (tuple listing)
 
  * <<<$\{AUTODEPS\}>>>: the project dependencies application and version
  tuples including all transitive application dependencies as available to
  the backend node(s) (list)
 
- * <<<$\{ERTS\}>>>: the version of <<<erts>>> as found in the backend node
+ * <<<$\{ERTS\}>>>: expands to the tuple <<<\{erts, "ERTS_VERSION"\}>>> with the
+ version of erts available on the backend node (tuple)
 
  * <<<$\{APPLICATION_NAME\}>>>: will be replaced by the tuple
- <<<{'APPLICATION_NAME', "APPLICATION_VERSION"}>>> with the version available on
- the backend node
+ <<<\{'APPLICATION_NAME', "APPLICATION_VERSION"\}>>> with the version available on
+ the backend node (tuple)
 
 ** File Generation
 

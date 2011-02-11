@@ -4,6 +4,15 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert, olle-t" type="update">
+        Changed semantics of the ${ERTS} release packaging variables to expand
+        to the complete erts version tuple as required by the release file's
+        erts section.
+      </action>
+      <action dev="schlagert" type="add">
+        Added goal to upload the compiled modules of an application project onto
+        a remote erlang node.
+      </action>
       <action dev="schlagert" type="update">
         Changed semantics of the ${APPLICATION_NAME} release packaging
         variables to expand to the complete application name, version tuple as

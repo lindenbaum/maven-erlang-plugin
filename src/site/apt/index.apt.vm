@@ -202,3 +202,13 @@ Maven Erlang Plug-In
  More information:
  
  * {{{./run-mojo.html}run}}
+
+** Upload
+
+ The upload goal will compile the sources of an application project and upload
+ them on a remote node. The dependencies of the project will only be uploaded
+ when specifying the <<<withDependencies>>> parameter. 
+ 
+ More information:
+
+ * {{{./upload-mojo.html}upload}}
