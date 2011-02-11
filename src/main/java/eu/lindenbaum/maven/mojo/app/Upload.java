@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
+import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
@@ -52,6 +53,12 @@ public final class Upload extends ErlangMojo {
     log.info(MavenUtils.SEPARATOR);
     log.info(" U P L O A D");
     log.info(MavenUtils.SEPARATOR);
+
+    PackagingType packagingType = p.packagingType();
+    if (PackagingType.ERLANG_OTP != packagingType && PackagingType.ERLANG_STD != packagingType) {
+      log.info("Nothing to do for packaging " + packagingType + ".");
+      return;
+    }
 
     List<File> modules = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
     if (this.withDependencies) {
