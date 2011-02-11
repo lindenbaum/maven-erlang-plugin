@@ -10,10 +10,9 @@ import com.ericsson.otp.erlang.OtpErlangRangeException;
 import eu.lindenbaum.maven.util.ErlUtils;
 
 /**
- * A {@link Script} that loads a list of modules located in the provided code
+ * A {@link Script} that loads a list of modules located in the current code
  * paths. All modules will be purged before loading to prevent module version
- * conflicts. The provided code paths will be removed from the backend path
- * after module loading.
+ * conflicts.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
