@@ -33,7 +33,7 @@ public final class Packager extends ErlangMojo {
    * Additional options for {@code systools:make_tar/2} (comma separated). Note:
    * The <code>silent</code> option is passed by the plugin, do not overwrite.
    * 
-   * @parameter expression="${scriptOptions}"
+   * @parameter expression="${tarOptions}"
    */
   private String tarOptions;
 
