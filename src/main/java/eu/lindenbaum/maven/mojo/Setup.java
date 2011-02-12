@@ -36,9 +36,9 @@ import org.codehaus.plexus.util.FileUtils;
  * <li>test source folder</li>
  * <li>test include folder</li>
  * <li>test priv folder</li>
- * <li>site folder with <code>site.xml</code></li>
- * <li>apt source folder with <code>index.apt[.vm]</code></li>
- * <li>changelog folder with <code>changes.xml</code></li>
+ * <li>site folder with <code>site.xml</code> (extras)</li>
+ * <li>apt source folder with <code>index.apt[.vm]</code> (extras)</li>
+ * <li>changelog folder with <code>changes.xml</code> (extras)</li>
  * </ul>
  * <p>
  * The default application resource file will look like:
@@ -70,19 +70,20 @@ import org.codehaus.plexus.util.FileUtils;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public class Setup extends ErlangMojo {
-  /**
-   * @parameter expression="site.xml"
-   * @required
-   * @readonly
-   */
-  private String siteXmlFileName;
+  private static final String siteXmlFileName = "site.xml";
+  private static final String changesXmlFile = "changes.xml";
 
   /**
-   * @parameter expression="changes.xml"
-   * @required
-   * @readonly
+   * Setting this to {@code false} will skip generation of the project resources
+   * considered best-practice <em>extras</em> - such as Maven site definition
+   * XML document, an index APT page and a changes XML document for the
+   * maven-changes-plugin. It is of course encouraged to leave this as defined
+   * by default.
+   * 
+   * @parameter expression="${withExtras}" default-value=true
+   * @since 2.0.0
    */
-  private String changesXmlFile;
+  private boolean withExtras;
 
   private volatile File plugin;
 
@@ -97,6 +98,19 @@ public class Setup extends ErlangMojo {
 
     this.plugin = getPluginFile("maven-erlang-plugin", p.project(), p.repository());
 
+    setupDefaults(p);
+    log.info("-->");
+
+    if (this.withExtras) {
+      setupExtras(p);
+      log.info("--> Checking dependencies...");
+      checkIfProjectHasDependentArtifact(p, "maven-changes-plugin");
+    }
+
+    log.info("--> Done!");
+  }
+
+  private void setupExtras(Properties p) throws MojoExecutionException {
     if (noSite(p)) {
       createDefaultSite(p);
     }
@@ -117,7 +131,9 @@ public class Setup extends ErlangMojo {
     else {
       logSkipping();
     }
+  }
 
+  private void setupDefaults(Properties p) throws MojoExecutionException {
     if (noSourceFolder(p)) {
       createSourceFolder(p);
     }
@@ -180,11 +196,6 @@ public class Setup extends ErlangMojo {
     else {
       logSkipping();
     }
-
-    log.info("-->");
-    log.info("--> Checking dependencies...");
-    checkIfProjectHasDependentArtifact(p, "maven-changes-plugin");
-    log.info("--> Done!");
   }
 
   private void checkIfProjectHasDependentArtifact(Properties p, String artifactId) {
@@ -347,25 +358,25 @@ public class Setup extends ErlangMojo {
   }
 
   private boolean noSite(Properties p) {
-    boolean exists = new File(p.site(), this.siteXmlFileName).isFile();
+    boolean exists = new File(p.site(), Setup.siteXmlFileName).isFile();
     logCheckingIf("site section", exists);
     return !exists;
   }
 
   private void createDefaultSite(Properties p) throws MojoExecutionException {
     logGeneratingDefault("site section");
-    extractFilesFromJar(this.plugin, this.siteXmlFileName, p.site());
+    extractFilesFromJar(this.plugin, Setup.siteXmlFileName, p.site());
   }
 
   private boolean noChangelog(Properties p) {
-    boolean exists = new File(p.changes(), this.changesXmlFile).isFile();
+    boolean exists = new File(p.changes(), Setup.changesXmlFile).isFile();
     logCheckingIf("changelog", exists);
     return !exists;
   }
 
   private void createDefaultChangelog(Properties p) throws MojoExecutionException {
     logGeneratingDefault("changelog");
-    extractFilesFromJar(this.plugin, this.changesXmlFile, p.changes());
+    extractFilesFromJar(this.plugin, Setup.changesXmlFile, p.changes());
   }
 
   private void logCheckingIf(String string, boolean exists) {
