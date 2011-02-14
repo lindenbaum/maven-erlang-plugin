@@ -27,6 +27,7 @@ import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
@@ -99,7 +100,7 @@ public final class Packager extends ErlangMojo {
     replacements.put("${APPLICATIONS}", ErlUtils.toArtifactIdListing(dependencies));
 
     // copy application resource files
-    p.targetEbin().mkdirs();
+    FileUtils.ensureDirectory(p.targetEbin());
     int copied = copyDirectory(p.ebin(), p.targetEbin(), APP_FILTER, replacements);
     log.debug("Copied " + copied + " application resource files");
 

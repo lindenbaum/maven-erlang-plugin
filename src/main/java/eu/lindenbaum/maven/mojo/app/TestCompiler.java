@@ -69,7 +69,7 @@ public final class TestCompiler extends ErlangMojo {
       return;
     }
 
-    p.targetTestEbin().mkdirs();
+    FileUtils.ensureDirectory(p.targetTestEbin());
     int removed = removeFilesRecursive(p.targetTestEbin(), ErlConstants.BEAM_SUFFIX);
     log.debug("Removed " + removed + " stale " + ErlConstants.BEAM_SUFFIX + "-files from "
               + p.targetTestEbin());

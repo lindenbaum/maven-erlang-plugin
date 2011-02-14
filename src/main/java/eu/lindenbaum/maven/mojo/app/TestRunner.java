@@ -83,7 +83,7 @@ public final class TestRunner extends ErlangMojo {
         return;
       }
     }
-    p.targetSurefireReports().mkdirs();
+    FileUtils.ensureDirectory(p.targetSurefireReports());
 
     List<File> testCodePaths = new ArrayList<File>();
     testCodePaths.add(p.targetTestEbin());

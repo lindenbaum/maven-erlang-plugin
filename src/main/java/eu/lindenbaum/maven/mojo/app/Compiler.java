@@ -48,7 +48,7 @@ public final class Compiler extends ErlangMojo {
     log.info(" C O M P I L E R");
     log.info(MavenUtils.SEPARATOR);
 
-    p.targetEbin().mkdirs();
+    FileUtils.ensureDirectory(p.targetEbin());
     int removed = FileUtils.removeFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
     log.debug("Removed " + removed + " stale " + ErlConstants.BEAM_SUFFIX + "-files from " + p.targetEbin());
 

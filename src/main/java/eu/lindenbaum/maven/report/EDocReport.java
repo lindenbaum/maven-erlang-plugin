@@ -10,6 +10,7 @@ import eu.lindenbaum.maven.erlang.EDocScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.plugin.Mojo;
@@ -76,7 +77,7 @@ public class EDocReport extends ErlangReport {
     File outdir = new File(getReportOutputDirectory(), "edoc");
     File overview = new File(p.target(), ErlConstants.OVERVIEW_EDOC);
 
-    outdir.mkdirs();
+    FileUtils.ensureDirectory(outdir);
     Script<Boolean> script = new EDocScript(application, p.src(), outdir, overview);
     Boolean success = MavenSelf.get(p.cookie()).exec(p.node(), script);
     if (!success) {

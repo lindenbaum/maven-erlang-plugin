@@ -7,6 +7,7 @@ import java.util.Set;
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.archiver.TarGzUnarchiver;
+import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.artifact.Artifact;
@@ -29,7 +30,7 @@ public final class DependencyExtracter extends ErlangMojo {
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
     File targetLib = p.targetLib();
-    targetLib.mkdirs();
+    FileUtils.ensureDirectory(targetLib);
     TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), targetLib);
     Set<Artifact> artifacts = MavenUtils.getErlangArtifacts(p.project());
     log.debug("found artifacts " + artifacts);
