@@ -6,6 +6,7 @@ import static eu.lindenbaum.maven.util.ErlConstants.BEAM_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.HRL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.REL_SUFFIX;
+import static eu.lindenbaum.maven.util.ErlConstants.SRC_SUFFIX;
 import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
 import static org.codehaus.plexus.util.FileUtils.fileRead;
 import static org.codehaus.plexus.util.FileUtils.fileWrite;
@@ -62,6 +63,11 @@ public final class FileUtils {
    * accepted.
    */
   public static final FileFilter REL_FILTER = getSuffixFilter(new String[]{ REL_SUFFIX });
+
+  /**
+   * Filename filter to filter .src files. Directories are always accepted.
+   */
+  public static final FileFilter SRC_FILTER = getSuffixFilter(new String[]{ SRC_SUFFIX });
 
   /**
    * a {@link FileFilter} accepting all input
@@ -156,14 +162,8 @@ public final class FileUtils {
    * @return the number of removed files
    */
   public static int removeFilesRecursive(File root, String suffix) {
-    int removed = 0;
     List<File> files = getFilesRecursive(root, suffix);
-    for (File file : files) {
-      if (file.exists() && file.delete()) {
-        removed++;
-      }
-    }
-    return removed;
+    return removeFiles(files.toArray(new File[0]));
   }
 
   /**
@@ -177,6 +177,49 @@ public final class FileUtils {
     }
     catch (IOException e) {
       // ignore
+    }
+  }
+
+  /**
+   * Removes the specific files from the file system. Returns the number of
+   * files removed. Directories are skipped.
+   * 
+   * @param files to remove.
+   * @return The number of files actually removed.
+   */
+  public static int removeFiles(File... files) {
+    int removed = 0;
+    for (File file : files) {
+      if (file.isFile()) {
+        file.delete();
+        if (!file.isFile()) {
+          removed++;
+        }
+      }
+    }
+    return removed;
+  }
+
+  /**
+   * Renames a list of files by replacing the given string suffix from the
+   * current file name. Directories will be skipped.
+   * 
+   * @param suffix to remove
+   * @param files to remove the filename suffix from
+   * @throws MojoExecutionException in case renaming fails
+   */
+  public static void removeFileNameSuffix(String suffix, File... files) throws MojoExecutionException {
+    for (File file : files) {
+      if (file.isFile()) {
+        String newFileName = file.getName().replace(suffix, "");
+        File dest = new File(file.getParentFile(), newFileName);
+        try {
+          org.codehaus.plexus.util.FileUtils.rename(file, dest);
+        }
+        catch (IOException e) {
+          throw new MojoExecutionException("Failed to rename " + file + ".");
+        }
+      }
     }
   }
 
@@ -261,7 +304,7 @@ public final class FileUtils {
       for (File src : toCopy) {
         File dest = new File(to, src.getAbsolutePath().replace(from.getAbsolutePath(), ""));
         if (src.isDirectory()) {
-          dest.mkdirs();
+          ensureDirectory(dest);
         }
         else {
           try {
@@ -308,7 +351,7 @@ public final class FileUtils {
       for (File src : toCopy) {
         File dest = new File(to, src.getAbsolutePath().replace(from.getAbsolutePath(), ""));
         if (src.isDirectory()) {
-          dest.mkdirs();
+          ensureDirectory(dest);
         }
         else {
           copyFile(src, dest, replacements);
@@ -346,12 +389,56 @@ public final class FileUtils {
       }
       File parent = to.getParentFile();
       if (parent != null) {
-        parent.mkdirs();
+        ensureDirectory(parent);
       }
       fileWrite(to.getAbsolutePath(), "UTF-8", content);
     }
     catch (IOException e) {
       throw new MojoExecutionException(e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Copies the given files to a specific destination directory. The destination
+   * directory will be created if necessary.
+   * 
+   * @param destination directory to copy the files into
+   * @param files to copy
+   * @throws MojoExecutionException in case a file could not be copied
+   */
+  public static void copyFiles(File destination, File... files) throws MojoExecutionException {
+    ensureDirectory(destination);
+    for (File file : files) {
+      File dest = new File(destination, file.getName());
+      try {
+        org.codehaus.plexus.util.FileUtils.copyFile(file, dest);
+      }
+      catch (IOException e) {
+        throw new MojoExecutionException("Failed to copy " + file + ".");
+      }
+    }
+  }
+
+  /**
+   * Ensures that the directory denoted by the given file exists and is a
+   * directory. If the directory does not exist the function will try to create
+   * it (with parent directories).
+   * 
+   * @param dir to create/assure.
+   * @throws MojoExecutionException in case directory denotes a file or
+   *           directory could not be created
+   */
+  public static void ensureDirectory(File dir) throws MojoExecutionException {
+    if (!dir.isDirectory()) {
+      if (dir.isFile()) {
+        throw new MojoExecutionException("Failed to create directory " + dir + " (is a file).");
+      }
+      else {
+        dir.mkdirs();
+        if (!dir.isDirectory()) {
+          throw new MojoExecutionException("Failed to create directory " + dir + ".");
+        }
+      }
     }
   }
 
@@ -388,7 +475,7 @@ public final class FileUtils {
    * @throws MojoExecutionException
    */
   public static void extractFilesFromJar(File archive, String suffix, File destDir) throws MojoExecutionException {
-    destDir.mkdirs();
+    ensureDirectory(destDir);
     if (destDir.isDirectory()) {
       try {
         JarFile jarFile = new JarFile(archive);
