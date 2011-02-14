@@ -2,6 +2,7 @@ package eu.lindenbaum.maven.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -146,6 +147,21 @@ public final class MavenUtils {
     ArtifactHandler artifactHandler = new DefaultArtifactHandler();
     VersionRange versionRange = VersionRange.createFromVersion(version);
     return new DefaultArtifact(groupId, artifactId, versionRange, scope, type, classifier, artifactHandler);
+  }
+
+  /**
+   * Converts a {@link Collection} of {@link Artifact}s into a {@link Set}
+   * containing their artifactIds.
+   * 
+   * @param artifacts to get the artifactIds from
+   * @return a non-{@code null} {@link Set} object containing artifactIds.
+   */
+  public static Set<String> getArtifactIds(Collection<Artifact> artifacts) {
+    Set<String> result = new HashSet<String>();
+    for (Artifact artifact : artifacts) {
+      result.add(artifact.getArtifactId());
+    }
+    return result;
   }
 
   /**

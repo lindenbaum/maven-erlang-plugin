@@ -17,6 +17,14 @@ public interface RuntimeInfo {
   public File getLibDirectory();
 
   /**
+   * Returns the erlang runtime's root directory as returned by
+   * <code>code:root_dir()</code>.
+   * 
+   * @return The erlang runtime's root directory.
+   */
+  public File getRootDirectory();
+
+  /**
    * Returns the erlang runtime version (ERTS version) of the backend node as
    * returned by <code>erlang:system_info(version)</code>.
    * 

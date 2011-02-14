@@ -92,8 +92,10 @@ public final class ResourceGenerator extends ErlangMojo {
     replacements.put("${ERTS}", "{erts, \"" + runtimeInfo.getVersion() + "\"}");
 
     Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
+    Set<String> artifactIds = MavenUtils.getArtifactIds(artifacts);
+    artifactIds.addAll(Arrays.asList("kernel", "stdlib", "sasl"));
     Map<String, CheckAppResult> appInfos = getAppInfos(p, p.targetLib(), otpLibDirectory);
-    Set<CheckAppResult> autoDependencies = getDependencies(getArtifactIdCollection(artifacts), appInfos);
+    Set<CheckAppResult> autoDependencies = getDependencies(artifactIds, appInfos);
 
     log.debug("Found dependencies: " + autoDependencies);
 
@@ -159,18 +161,6 @@ public final class ResourceGenerator extends ErlangMojo {
   }
 
   /**
-   * Converts a {@link Collection} of {@link Artifact}s into a
-   * {@link Collection} containing their artifactIds.
-   */
-  private static Collection<String> getArtifactIdCollection(Collection<Artifact> artifacts) {
-    Collection<String> result = new ArrayList<String>();
-    for (Artifact artifact : artifacts) {
-      result.add(artifact.getArtifactId());
-    }
-    return result;
-  }
-
-  /**
    * Returns the {@link CheckAppResult} for a specific application/artifactId.
    * In case the {@link Map} does not contain a matching {@link CheckAppResult}
    * an {@link IllegalStateException} will be thrown.
@@ -190,10 +180,8 @@ public final class ResourceGenerator extends ErlangMojo {
    */
   private static Set<CheckAppResult> getDependencies(Collection<String> artifactIds,
                                                      Map<String, CheckAppResult> appInfos) {
-    LinkedList<String> todo = new LinkedList<String>(artifactIds);
-    todo.addAll(Arrays.asList("kernel", "stdlib"));
-
     Set<String> done = new HashSet<String>();
+    LinkedList<String> todo = new LinkedList<String>(artifactIds);
     Set<CheckAppResult> dependencies = new HashSet<CheckAppResult>();
     while (!todo.isEmpty()) {
       String dependency = todo.removeFirst();

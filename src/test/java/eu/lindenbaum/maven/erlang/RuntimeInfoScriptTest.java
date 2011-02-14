@@ -22,15 +22,17 @@ public class RuntimeInfoScriptTest {
 
   @Test
   public void testHandle() {
-    OtpErlangString path = new OtpErlangString("/path");
+    OtpErlangString path1 = new OtpErlangString("/path1");
+    OtpErlangString path2 = new OtpErlangString("/path2");
     OtpErlangString version = new OtpErlangString("version");
     OtpErlangString release = new OtpErlangString("release");
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ path, version, release });
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ path1, path2, version, release });
 
     RuntimeInfoScript script = new RuntimeInfoScript();
     RuntimeInfo info = script.handle(result);
     assertNotNull(info);
-    assertEquals("path", info.getLibDirectory().getName());
+    assertEquals("path1", info.getLibDirectory().getName());
+    assertEquals("path2", info.getRootDirectory().getName());
     assertEquals("version", info.getVersion());
     assertEquals("release", info.getOtpRelease());
   }

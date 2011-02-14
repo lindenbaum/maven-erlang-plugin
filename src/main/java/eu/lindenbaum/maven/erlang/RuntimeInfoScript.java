@@ -15,7 +15,8 @@ import eu.lindenbaum.maven.util.ErlUtils;
  */
 public class RuntimeInfoScript implements Script<RuntimeInfo> {
   private static final String script = //
-  NL + "{code:lib_dir()," + NL + // 
+  NL + "{code:lib_dir()," + NL + //
+      "code:root_dir()," + NL + //
       "erlang:system_info(version)," + NL + //
       "erlang:system_info(otp_release)}.";
 
@@ -44,13 +45,18 @@ public class RuntimeInfoScript implements Script<RuntimeInfo> {
       }
 
       @Override
+      public File getRootDirectory() {
+        return new File(ErlUtils.toString(resultTuple.elementAt(1)));
+      }
+
+      @Override
       public String getVersion() {
-        return ErlUtils.toString(resultTuple.elementAt(1));
+        return ErlUtils.toString(resultTuple.elementAt(2));
       }
 
       @Override
       public String getOtpRelease() {
-        return ErlUtils.toString(resultTuple.elementAt(2));
+        return ErlUtils.toString(resultTuple.elementAt(3));
       }
     };
   }
