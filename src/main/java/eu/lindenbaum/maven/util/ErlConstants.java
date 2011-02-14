@@ -49,6 +49,11 @@ public interface ErlConstants {
   public static final String RELUP_SUFFIX = ".relup";
 
   /**
+   * Suffix for src files, like erl.src, start.src, etc.
+   */
+  public static final String SRC_SUFFIX = ".src";
+
+  /**
    * Suffix for tar gzipped files.
    */
   public static final String TARGZ_SUFFIX = ".tar.gz";
