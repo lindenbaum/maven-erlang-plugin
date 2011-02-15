@@ -136,9 +136,6 @@ public abstract class ErlangReport extends AbstractMavenReport {
     catch (MojoFailureException e) {
       throw new MavenReportException(e.getMessage());
     }
-    catch (IllegalArgumentException e) {
-      // unsupported project type
-    }
   }
 
   /**
@@ -171,4 +168,16 @@ public abstract class ErlangReport extends AbstractMavenReport {
   protected abstract void execute(Log log, Locale l, Properties p) throws MojoExecutionException,
                                                                   MojoFailureException,
                                                                   MavenReportException;
+
+  /**
+   * Returns whether this report can generate any output.
+   * 
+   * @return {@code true} if the project is an Erlang application or library
+   *         application, {@code false} otherwise
+   */
+  @Override
+  public final boolean canGenerateReport() {
+    PackagingType type = PackagingType.fromString(getProject().getPackaging());
+    return type == PackagingType.ERLANG_OTP || type == PackagingType.ERLANG_STD;
+  }
 }

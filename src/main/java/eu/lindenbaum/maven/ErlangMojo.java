@@ -94,6 +94,10 @@ public abstract class ErlangMojo extends AbstractMojo {
   @Override
   public final void execute() throws MojoExecutionException, MojoFailureException {
     PackagingType type = PackagingType.fromString(this.project.getPackaging());
+    if (type == PackagingType.UNSUPPORTED) {
+      getLog().info("Skipping invocation for packaging type: " + this.project.getPackaging());
+      return;
+    }
     execute(getLog(), new PropertiesImpl(type,
                                          this.project,
                                          this.repository,

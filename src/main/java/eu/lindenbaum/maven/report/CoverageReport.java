@@ -72,21 +72,21 @@ public class CoverageReport extends ErlangReport {
   }
 
   @Override
-  public boolean canGenerateReport() {
-    Properties p = getProperties();
-    File targetTestEbin = p.targetTestEbin();
-    return targetTestEbin.exists() && targetTestEbin.listFiles(FileUtils.BEAM_FILTER).length > 0;
-  }
-
-  @Override
   protected void execute(Log log, Locale locale, Properties p) throws MojoExecutionException {
     log.info(MavenUtils.SEPARATOR);
     log.info(" C O V E R A G E");
-    log.info(MavenUtils.SEPARATOR);
-
-    if (!canGenerateReport()) {
+    log.info(MavenUtils.SEPARATOR);    
+    
+    if (!p.targetTestEbin().exists()) {
       log.info("Nothing to do.");
       return;
+    }
+    else {
+      File[] testFiles = p.targetTestEbin().listFiles(FileUtils.BEAM_FILTER);
+      if (testFiles == null || testFiles.length == 0) {
+        log.info("Nothing to do.");
+        return;
+      }
     }
 
     File targetTestEbin = p.targetTestEbin();

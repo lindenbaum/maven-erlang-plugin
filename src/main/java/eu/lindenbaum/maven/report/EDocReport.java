@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Locale;
 
 import eu.lindenbaum.maven.ErlangReport;
-import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.EDocScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
@@ -43,23 +42,6 @@ public class EDocReport extends ErlangReport {
   @Override
   public boolean isExternalReport() {
     return true;
-  }
-
-  /**
-   * Returns whether this report can generate any output.
-   * 
-   * @return {@code true} if the project is an application, {@code false}
-   *         otherwise
-   */
-  @Override
-  public boolean canGenerateReport() {
-    try {
-      PackagingType type = PackagingType.fromString(getProject().getPackaging());
-      return type == PackagingType.ERLANG_OTP || type == PackagingType.ERLANG_STD;
-    }
-    catch (IllegalArgumentException e) {
-      return false;
-    }
   }
 
   @Override

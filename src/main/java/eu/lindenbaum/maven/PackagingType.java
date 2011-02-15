@@ -11,6 +11,7 @@ package eu.lindenbaum.maven;
  * </ul>
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
+ * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public enum PackagingType {
   /**
@@ -67,7 +68,14 @@ public enum PackagingType {
    *    +-- *.relup
    * </pre>
    */
-  ERLANG_REL("erlang-rel");
+  ERLANG_REL("erlang-rel"),
+  /**
+   * Packaging is unsupported meaning it is most certain <b>not</b> an
+   * Erlang/OTP packaging type at all.
+   * 
+   * @since 2.0.0
+   */
+  UNSUPPORTED(null);
 
   private final String id;
 
@@ -96,7 +104,6 @@ public enum PackagingType {
    * 
    * @param id used to instantiate a {@link PackagingType}
    * @return the matching packaging type
-   * @throws IllegalArgumentException if no packaging type matches
    */
   public static PackagingType fromString(String id) {
     if (ERLANG_OTP.id.equals(id)) {
@@ -109,7 +116,7 @@ public enum PackagingType {
       return ERLANG_REL;
     }
     else {
-      throw new IllegalArgumentException("unsupported packaging type " + id);
+      return UNSUPPORTED;
     }
   }
 }
