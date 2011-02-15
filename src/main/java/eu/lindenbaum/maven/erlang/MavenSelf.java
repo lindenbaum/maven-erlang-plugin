@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 import com.ericsson.otp.erlang.OtpAuthException;
 import com.ericsson.otp.erlang.OtpConnection;
@@ -35,10 +34,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 public final class MavenSelf {
   private static final int MAX_RETRIES = 10;
-
   private static final String execScript = NL + "code:add_pathsa(%s)," + NL + "%s";
-
-  private static final AtomicLong serial = new AtomicLong(0L);
   private static final Map<String, MavenSelf> instances = new HashMap<String, MavenSelf>();
 
   private final OtpSelf self;
@@ -62,7 +58,7 @@ public final class MavenSelf {
     MavenSelf self = instances.get(c);
     if (self == null) {
       try {
-        String name = "maven-erlang-plugin-frontend-" + serial.getAndIncrement();
+        String name = "maven-erlang-plugin-frontend-" + System.nanoTime();
         OtpSelf otpSelf = c.isEmpty() ? new OtpSelf(name) : new OtpSelf(name, c);
         self = new MavenSelf(otpSelf);
         instances.put(c, self);
