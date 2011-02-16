@@ -81,7 +81,12 @@ Grouped Parameter Summary
 
  * <<<scriptOptions>>>: will be passed to <<<systools:make_script/2>>>,
  see {{http://www.erlang.org/doc/man/systools.html}}
- 
+
+ * <<<targetSystem>>>: will package the release as a target system (including) a
+ system dependent erlang emulator taken from the backend nodes erlang
+ installation (experimental). For further information see
+ {{./package-release-mojo.html}}.
+
  * <<<otpRelease>>>: mandatory parameter that must be set to the erlang/OTP
  release version (as returned by <<<erlang:system_info(otp_release)>>>) the
  required erlang/OTP standard applications will be included from (by version).

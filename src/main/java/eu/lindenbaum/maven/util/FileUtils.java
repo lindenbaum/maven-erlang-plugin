@@ -7,9 +7,6 @@ import static eu.lindenbaum.maven.util.ErlConstants.ERL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.HRL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.REL_SUFFIX;
 import static eu.lindenbaum.maven.util.ErlConstants.SRC_SUFFIX;
-import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
-import static org.codehaus.plexus.util.FileUtils.fileRead;
-import static org.codehaus.plexus.util.FileUtils.fileWrite;
 import static org.codehaus.plexus.util.FileUtils.getDefaultExcludes;
 
 import java.io.BufferedInputStream;
@@ -173,7 +170,7 @@ public final class FileUtils {
    */
   public static void removeDirectory(File directory) {
     try {
-      deleteDirectory(directory);
+      org.codehaus.plexus.util.FileUtils.deleteDirectory(directory);
     }
     catch (IOException e) {
       // ignore
@@ -382,7 +379,7 @@ public final class FileUtils {
    */
   public static void copyFile(File from, File to, Map<String, String> replacements) throws MojoExecutionException {
     try {
-      String content = fileRead(from, "UTF-8");
+      String content = org.codehaus.plexus.util.FileUtils.fileRead(from, "UTF-8");
       for (Entry<String, String> replacement : replacements.entrySet()) {
         String value = replacement.getValue() == null ? "" : replacement.getValue();
         content = content.replace(replacement.getKey(), value);
@@ -391,7 +388,7 @@ public final class FileUtils {
       if (parent != null) {
         ensureDirectory(parent);
       }
-      fileWrite(to.getAbsolutePath(), "UTF-8", content);
+      writeFile(to, content);
     }
     catch (IOException e) {
       throw new MojoExecutionException(e.getMessage(), e);
@@ -416,6 +413,23 @@ public final class FileUtils {
       catch (IOException e) {
         throw new MojoExecutionException("Failed to copy " + file + ".");
       }
+    }
+  }
+
+  /**
+   * Writes data to a destination file. The file will be created if it doesn't
+   * exist.
+   * 
+   * @param destination to write to
+   * @param data to write
+   * @throws MojoExecutionException
+   */
+  public static void writeFile(File destination, String data) throws MojoExecutionException {
+    try {
+      org.codehaus.plexus.util.FileUtils.fileWrite(destination.getAbsolutePath(), "UTF-8", data);
+    }
+    catch (IOException e) {
+      throw new MojoExecutionException("Failed to write " + destination + ": " + e.getMessage());
     }
   }
 
