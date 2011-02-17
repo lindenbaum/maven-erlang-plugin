@@ -134,6 +134,16 @@ public final class Packager extends ErlangMojo {
     File bin = new File(tmp, "bin");
     FileUtils.ensureDirectory(bin);
 
+    File log = new File(tmp, "log");
+    FileUtils.ensureDirectory(log);
+
+    {
+      // write dummy file to guard to log directory
+      File readme = new File(log, "README_NOT");
+      String data = "README\n\nIf this directory does not exist 'start' will fail silently.\n";
+      FileUtils.writeFile(readme, data);
+    }
+
     String releaseName = p.project().getArtifactId();
     String releaseFileBaseName = releaseName + "-" + p.project().getVersion();
     String releaseFileName = releaseFileBaseName + ErlConstants.REL_SUFFIX;
@@ -210,6 +220,7 @@ public final class Packager extends ErlangMojo {
     try {
       TarGzArchiver archiver = new TarGzArchiver(p.node(), p.cookie(), targetSystemTarGz);
       archiver.addFile(bin);
+      archiver.addFile(log);
       archiver.addFile(erts);
       archiver.addFile(lib);
       archiver.addFile(releases);
