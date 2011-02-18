@@ -212,3 +212,16 @@ Maven Erlang Plug-In
  More information:
 
  * {{{./upload-mojo.html}upload}}
+
+** Target-System
+
+ The target-system goal will package a release as a startable target system
+ according to the official documentation on
+ {{{http://www.erlang.org/doc/system_principles/create_target.html}erlang.org}}.
+ Please note that a target system is highly system dependent since the runtime
+ of the current backend node (binaries) is packaged along with the target
+ system.
+ 
+ More information:
+
+ * {{{./target-system-mojo.html}target-system}}

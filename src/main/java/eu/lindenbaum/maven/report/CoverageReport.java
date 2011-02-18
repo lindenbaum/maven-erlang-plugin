@@ -38,7 +38,7 @@ import org.apache.maven.plugin.logging.Log;
  * </p>
  * 
  * @goal coverage
- * @execute phase="test" lifecycle="coverage"
+ * @execute phase="test"
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public class CoverageReport extends ErlangReport {
@@ -75,8 +75,8 @@ public class CoverageReport extends ErlangReport {
   protected void execute(Log log, Locale locale, Properties p) throws MojoExecutionException {
     log.info(MavenUtils.SEPARATOR);
     log.info(" C O V E R A G E");
-    log.info(MavenUtils.SEPARATOR);    
-    
+    log.info(MavenUtils.SEPARATOR);
+
     if (!p.targetTestEbin().exists()) {
       log.info("Nothing to do.");
       return;

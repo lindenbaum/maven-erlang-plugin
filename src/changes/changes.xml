@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert" type="add">
+        Added experimental goal to create a startable target system from a
+        release project (according to the official erlang documentation).
+      </action>
       <action dev="schlagert, olle-t" type="update">
         Changed semantics of the ${ERTS} release packaging variables to expand
         to the complete erts version tuple as required by the release file's

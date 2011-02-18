@@ -1,11 +1,11 @@
 <lifecycles>
   <lifecycle>
-    <id>coverage</id>
+    <id>targetSystem</id>
     <phases>
       <phase>
-        <id>test</id>
+        <id>package</id>
         <configuration>
-          <testFailureIgnore>true</testFailureIgnore>
+          <includeErts>true</includeErts>
         </configuration>
       </phase>
     </phases>
