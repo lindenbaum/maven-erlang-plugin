@@ -15,6 +15,8 @@ public final class PurgeModulesScript implements Script<Void> {
       "lists:foreach(" + NL + //
       "  fun({_, preloaded}) ->" + NL + //
       "        ok;" + NL + //
+      "     ({distel, _}) ->" + NL + //
+      "        ok;" + NL + //
       "     ({Module, Path}) when is_list(Path) ->" + NL + //
       "        case string:str(Path, LibDir) of" + NL + //
       "             1 ->" + NL + //
