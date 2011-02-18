@@ -41,6 +41,10 @@ public class TestInitializer extends ErlangMojo {
       log.info("Test initialization is skipped.");
       return;
     }
-    ErlUtils.startBackend(log, "", p.testNode(), p.testCookie(), this.shutdownTestNode);
+    ErlUtils.startBackend(log,
+                          "erlang:test-initialize -DshutdownNode=true",
+                          p.testNode(),
+                          p.testCookie(),
+                          this.shutdownTestNode);
   }
 }
