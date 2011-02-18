@@ -5,7 +5,8 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 /**
  * A {@link Script} that purges all modules currently loaded except the ones
  * loaded directly from the backends lib directory retrieved using
- * <code>code:lib_dir/0</code>.
+ * <code>code:lib_dir/0</code> or belonging to the <code>Emacs/distel</code>
+ * project.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
@@ -15,7 +16,10 @@ public final class PurgeModulesScript implements Script<Void> {
       "lists:foreach(" + NL + //
       "  fun({_, preloaded}) ->" + NL + //
       "        ok;" + NL + //
-      "     ({distel, _}) ->" + NL + //
+      "     ({M, _}) when M =:= distel" + NL + //
+      "                   orelse M =:= distel_ie" + NL + //
+      "                   orelse M =:= fdoc" + NL + //
+      "                   orelse M =:= otp_doc ->" + NL + //
       "        ok;" + NL + //
       "     ({Module, Path}) when is_list(Path) ->" + NL + //
       "        case string:str(Path, LibDir) of" + NL + //
