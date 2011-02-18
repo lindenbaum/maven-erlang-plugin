@@ -42,7 +42,7 @@ public class TestInitializer extends ErlangMojo {
       return;
     }
     ErlUtils.startBackend(log,
-                          "erlang:test-initialize -DshutdownNode=true",
+                          "erlang:test-initialize -DshutdownTestNode=true",
                           p.testNode(),
                           p.testCookie(),
                           this.shutdownTestNode);
