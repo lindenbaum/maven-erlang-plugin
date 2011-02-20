@@ -29,14 +29,20 @@ Frequently Asked Questions
 * How does the plug-in work?
 
  The plug-in uses several erlang nodes as backends to execute scripts via remote
- procedure calls. These backend node are started and stoppend automatically by
- the plug-in unless you configured it otherwise, e.g. using the
- <<<shutdownNode>>> property. The backend nodes can be reused (the plug-in can
- reconnect to them) if they are still running. To keep the backend nodes
- up and running after a build set the plug-in parameter <<<shutdownNode>>> to
- <<<false>>>. The backend node can be specified using the <<<node>>> parameter.
+ procedure calls. The backend node will not be altered by the plug-in except for
+ the extension of code paths. The plug-in does not need write access to the
+ backend node's installation directory.
+
+ A backend node is started and stoppend by the plug-in automatically as needed
+ unless configured otherwise, e.g. using the <<<shutdownNode>>> and
+ <<<shutdownTestNode>>> properties. The plug-in will re-use still/already
+ running backend nodes by connecting/reconnecting to the specific node. The 
+ backend nodes can be specified using the <<<node>>> and/or <<<testNode>>>
+ parameter.
+
  Each build will first purge all non <<<preloaded>>> modules loaded on the
- backend nodes. This makes sure that removed modules disappear on the node as
+ backend nodes (modules needed by the Emacs/distel mode will also be left
+ unpurged). This makes sure that removed modules disappear on the node as
  soon as the user decides to rebuild. The plug-in also modifies the code paths
  of the running backend nodes. These changes will not be reverted when starting
  a new build.
