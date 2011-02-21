@@ -25,6 +25,9 @@ public class UploadModulesScript implements Script<String> {
       "                  case file:read_file(BeamFile) of" + NL + //
       "                      {ok, Binary} ->" + NL + //
       "                          rpc:eval_everywhere(" + NL + //
+      "                            [Node], code, purge," + NL + //
+      "                            [list_to_atom(Module)])," + NL + //
+      "                          rpc:eval_everywhere(" + NL + //
       "                            [Node], code, load_binary," + NL + //
       "                            [list_to_atom(Module), BeamFile, Binary])," + NL + //
       "                          ok;" + NL + //
