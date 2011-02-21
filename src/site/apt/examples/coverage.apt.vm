@@ -1,49 +1,42 @@
 
 Generate Test Coverage Report
 
- Test coverage reports can be easily added to the set of reports that are
- generated for your site documentation. To enable the coverage report must add
- the plugin to your reporting configuration:
+ Test coverage reports are available as both direct console output as well as
+ a report for your site documentation. To add the coverage report to the
+ generated site, add the following to your reporting configuration:
   
 +--
-<project>
-  ...
-  <packaging>erlang-otp</packaging>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>${project.artifactId}</artifactId>
-        <version>${project.version}</version>
-        <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>${project.artifactId}</artifactId>
-        <version>${project.version}</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>coverage</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>  
-  ...
-</project>
+<reporting>
+  <plugins>
+    ...
+    <plugin>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>${project.artifactId}</artifactId>
+      <version>${project.version}</version>
+      <reportSets>
+        <reportSet>
+          <reports>
+            <report>coverage</report>
+          </reports>
+        </reportSet>
+      </reportSets>
+    </plugin>
+    ...
+  </plugins>
+</reporting>  
 +--
  
- This will add <<only>> the test coverage report to your site documentation, 
- generated as the file <<<erlang-coverage-report.html>>>, and added to the 
- reports in the generated site reports menu.
+ This will add <<only>> the test coverage report to your site, generated as the
+ file <<<erlang-coverage-report.html>>>, and added to the reports in the 
+ generated site reports menu.
  
  NOTE: by default both EDoc and test coverage reports are generated when adding
  the plugin without specific <<<reportSets>>> to the <<<reporting>>> section of
  your pom.
+
+ If you want you may also get a coverage report generated directly in the
+ console. Simply call the coverage mojo using <<<mvn erlang:coverage>>> and
+ a report will be generated. Here is an example of what the output might look
+ like:
+
+[../erlang-coverage-example.png] Console coverage output.
