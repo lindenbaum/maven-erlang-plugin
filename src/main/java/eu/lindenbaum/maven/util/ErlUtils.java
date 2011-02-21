@@ -19,10 +19,7 @@ import com.ericsson.otp.erlang.OtpPeer;
 import com.ericsson.otp.erlang.OtpSelf;
 
 import eu.lindenbaum.maven.erlang.CheckAppResult;
-import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.NodeShutdownHook;
-import eu.lindenbaum.maven.erlang.PurgeModulesScript;
-import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.mojo.app.ResourceGenerator;
 
 import org.apache.maven.artifact.Artifact;
@@ -319,10 +316,6 @@ public final class ErlUtils {
         log.info("Node " + peer + " will not be shutdown automatically.");
         log.info("To shutdown the node run 'mvn " + shutdownGoal + "'");
       }
-
-      // clean up dynamically loaded modules on backend from previous runs
-      Script<Void> purgeScript = new PurgeModulesScript();
-      MavenSelf.get(nodeCookie).exec(nodeName, purgeScript);
     }
     catch (IOException e) {
       throw new MojoExecutionException("Failed to start " + peer + ".", e);

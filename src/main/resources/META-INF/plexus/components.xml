@@ -27,13 +27,13 @@
               <validate></validate>
               <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
-              <process-sources></process-sources>
+              <process-sources>eu.lindenbaum:maven-erlang-plugin:reload-dependencies</process-sources>
               <generate-resources>eu.lindenbaum:maven-erlang-plugin:generate-resources</generate-resources>
               <process-resources></process-resources>
               <compile>eu.lindenbaum:maven-erlang-plugin:compile</compile>
               <process-classes></process-classes>
               <generate-test-sources>eu.lindenbaum:maven-erlang-plugin:test-initialize</generate-test-sources>
-              <process-test-sources></process-test-sources>
+              <process-test-sources>eu.lindenbaum:maven-erlang-plugin:reload-test-dependencies</process-test-sources>
               <generate-test-resources>eu.lindenbaum:maven-erlang-plugin:generate-test-resources</generate-test-resources>
               <process-test-resources></process-test-resources>
               <test-compile>eu.lindenbaum:maven-erlang-plugin:test-compile</test-compile>
@@ -76,13 +76,13 @@
               <validate></validate>
               <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
-              <process-sources></process-sources>
+              <process-sources>eu.lindenbaum:maven-erlang-plugin:reload-dependencies</process-sources>
               <generate-resources>eu.lindenbaum:maven-erlang-plugin:generate-resources</generate-resources>
               <process-resources></process-resources>
               <compile>eu.lindenbaum:maven-erlang-plugin:compile</compile>
               <process-classes></process-classes>
               <generate-test-sources>eu.lindenbaum:maven-erlang-plugin:test-initialize</generate-test-sources>
-              <process-test-sources></process-test-sources>
+              <process-test-sources>eu.lindenbaum:maven-erlang-plugin:reload-test-dependencies</process-test-sources>
               <generate-test-resources>eu.lindenbaum:maven-erlang-plugin:generate-test-resources</generate-test-resources>
               <process-test-resources></process-test-resources>
               <test-compile>eu.lindenbaum:maven-erlang-plugin:test-compile</test-compile>
@@ -125,7 +125,7 @@
               <validate></validate>
               <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
-              <process-sources></process-sources>
+              <process-sources>eu.lindenbaum:maven-erlang-plugin:reload-dependencies</process-sources>
               <generate-resources>eu.lindenbaum:maven-erlang-plugin:generate-release-resources</generate-resources>
               <process-resources></process-resources>
               <compile>eu.lindenbaum:maven-erlang-plugin:dialyzer-release</compile>
@@ -145,6 +145,13 @@
           </lifecycle>
         </lifecycles>
       </configuration>
+    </component>
+    <component>
+      <role>org.codehaus.plexus.archiver.UnArchiver</role>
+      <role-hint>erlang-rel</role-hint>
+      <!-- there is no implementaion of ErlangRelUnArchiver, but TarGZipUnArchive will do the job -->
+      <implementation>org.codehaus.plexus.archiver.tar.TarGZipUnArchiver</implementation>
+      <instantiation-strategy>per-lookup</instantiation-strategy>
     </component>
   </components>
 </component-set>

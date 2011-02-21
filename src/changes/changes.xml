@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="ghaskins", type="add">
+       Added UnArchiver support to erlang-rel artifacts. This allows other
+       projects to consume these artifacts, e.g. rpm-maven-plugin based
+       artifacts.
+     </action>
       <action dev="schlagert" type="remove">
         Removed built-in mock library support. Use external library instead.
         E.g. 'erlymock' by Sven Heyll (https://github.com/sheyll/erlymock).

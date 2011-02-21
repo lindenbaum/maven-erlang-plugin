@@ -11,7 +11,6 @@ import com.ericsson.otp.erlang.OtpPeer;
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
-import eu.lindenbaum.maven.erlang.LoadModulesScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.erlang.StartApplicationScript;
@@ -59,22 +58,16 @@ public final class ProjectRunner extends ErlangMojo {
   }
 
   private static void runApplication(Log log, Properties p) throws MojoExecutionException {
-    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    codePaths.add(p.targetEbin());
-
-    List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    modules.addAll(FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX));
-
-    LoadModulesScript loadScript = new LoadModulesScript(modules);
-    Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript, codePaths);
-    log.info("Successfully loaded " + loaded + " .beam file(s) into backend node.");
-
     List<String> applications = new ArrayList<String>();
     applications.add(p.project().getArtifactId());
     for (Artifact artifact : MavenUtils.getErlangReleaseArtifacts(p.project())) {
       applications.add(artifact.getArtifactId());
     }
     Collections.reverse(applications);
+
+    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
+    codePaths.add(p.targetEbin());
+
     Script<StartResult> startScript = new StartApplicationScript(codePaths, applications);
     StartResult startResult = MavenSelf.get(p.cookie()).exec(p.node(), startScript);
     if (startResult.startSucceeded()) {
