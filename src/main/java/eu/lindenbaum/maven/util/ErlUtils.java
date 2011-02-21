@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import eu.lindenbaum.maven.erlang.CheckAppResult;
+import eu.lindenbaum.maven.erlang.NodeShutdownHook;
+import eu.lindenbaum.maven.mojo.app.ResourceGenerator;
+
 import com.ericsson.otp.erlang.OtpAuthException;
 import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangInt;
@@ -17,10 +21,6 @@ import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangUInt;
 import com.ericsson.otp.erlang.OtpPeer;
 import com.ericsson.otp.erlang.OtpSelf;
-
-import eu.lindenbaum.maven.erlang.CheckAppResult;
-import eu.lindenbaum.maven.erlang.NodeShutdownHook;
-import eu.lindenbaum.maven.mojo.app.ResourceGenerator;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;

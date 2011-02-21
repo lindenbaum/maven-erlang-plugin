@@ -53,11 +53,7 @@ public final class Compiler extends ErlangMojo {
 
     List<File> files = FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX);
     if (!files.isEmpty()) {
-      List<File> includes = new ArrayList<File>();
-      includes.addAll(FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX));
-      includes.add(p.include());
-      includes.add(p.targetInclude());
-      includes.add(p.src());
+      List<File> includes = FileUtils.getIncludeDirs(p);
 
       List<String> options = new ArrayList<String>();
       if (this.compilerOptions != null && !this.compilerOptions.isEmpty()) {

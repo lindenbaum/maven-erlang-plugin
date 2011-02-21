@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import eu.lindenbaum.maven.Properties;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.SelectorUtils;
 
@@ -525,5 +527,25 @@ public final class FileUtils {
     else {
       throw new MojoExecutionException("directory " + destDir + " cannot be created");
     }
+  }
+
+  /**
+   * Gathers a complete list of directories that may contain erlang header
+   * (".hrl") files.
+   * 
+   * @param p a the properties object containing some of the include
+   *          directories.
+   * @return a list of directories that must be considered when resolving erlang
+   *         header files.
+   * @since 2.0.0
+   * @author Sven Heyll <sven.heyll@gmail.com>
+   */
+  public static List<File> getIncludeDirs(Properties p) {
+    List<File> includes = new ArrayList<File>();
+    includes.addAll(getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX));
+    includes.add(p.include());
+    includes.add(p.targetInclude());
+    includes.add(p.src());
+    return includes;
   }
 }
