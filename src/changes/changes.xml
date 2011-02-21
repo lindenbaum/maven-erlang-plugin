@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert" type="remove">
+        Removed built-in mock library support. Use external library instead.
+        E.g. 'erlymock' by Sven Heyll (https://github.com/sheyll/erlymock).
+      </action>
       <action dev="schlagert" type="add">
         Added experimental goal to create a startable target system from a
         release project (according to the official erlang documentation).

@@ -127,7 +127,6 @@ public final class TestCompiler extends ErlangMojo {
 
   private static List<File> getTestSupportFiles(Properties p) {
     List<File> supportFiles = new ArrayList<File>();
-    supportFiles.add(new File(p.targetTestEbin(), "mock.erl"));
     supportFiles.add(new File(p.targetTestEbin(), "surefire.erl"));
     supportFiles.add(new File(p.targetTestEbin(), "cover2.erl"));
     supportFiles.add(new File(p.targetTestEbin(), "ttycapture.erl"));
