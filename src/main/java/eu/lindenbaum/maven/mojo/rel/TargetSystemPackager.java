@@ -46,13 +46,13 @@ import org.apache.maven.plugin.logging.Log;
  * </p>
  * <ul>
  * <li>FIXME binary names on windows may not be covered by this implementation</li>
- * <li>FIXME sys.config file will not (yet) be packaged along</li>
  * </ul>
  * 
  * @goal target-system
  * @execute phase="package" lifecycle="targetSystem"
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
- * @see http://www.erlang.org/doc/system_principles/create_target.html
+ * @see <a
+ *      href="http://www.erlang.org/doc/system_principles/create_target.html">http://www.erlang.org/doc/system_principles/create_target.html</a>
  */
 public final class TargetSystemPackager extends ErlangMojo {
   @Override
@@ -111,15 +111,6 @@ public final class TargetSystemPackager extends ErlangMojo {
       File startErlData = new File(releases, "start_erl.data");
       String data = runtimeInfo.getVersion() + " " + p.project().getVersion();
       FileUtils.writeFile(startErlData, data);
-    }
-
-    {
-      // write default sys.config file
-      File sysConfig = new File(releasesVersion, ErlConstants.SYS_CONFIG);
-      if (!sysConfig.isFile()) {
-        String data = "[].";
-        FileUtils.writeFile(sysConfig, data);
-      }
     }
 
     // copy epmd, run_erl, start_erl & start.boot to top level bin directory

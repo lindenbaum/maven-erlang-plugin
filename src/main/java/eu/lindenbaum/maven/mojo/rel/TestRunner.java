@@ -95,6 +95,7 @@ public final class TestRunner extends ErlangMojo {
       throw new MojoFailureException("Failed to consult .rel file.");
     }
 
+    checkSystemConfig(log, new File(p.base(), ErlConstants.SYS_CONFIG));
     checkReleaseName(log, relFile, releaseName, relResult.getName());
     checkReleaseVersion(log, relFile, releaseVersion, relResult.getReleaseVersion());
     checkDependencies(log, artifacts, relResult.getApplications());
@@ -112,6 +113,17 @@ public final class TestRunner extends ErlangMojo {
       log.error("Required release is '" + expected + "' while backend node runs '" + actual + "'.");
       String msg = "Required erlang/OTP release not available " + expected + " != " + actual + ".";
       throw new MojoFailureException(msg);
+    }
+  }
+
+  /**
+   * Checks whether the vital system configuration {@code sys.config} exists.
+   */
+  private static void checkSystemConfig(Log log, File sysConfig) throws MojoFailureException {
+    if (!sysConfig.isFile()) {
+      log.error(sysConfig.toString() + " does not exist.");
+      log.error("Use 'mvn erlang:setup' to create a default system configuration file.");
+      throw new MojoFailureException("No " + sysConfig.getName() + " file found.");
     }
   }
 

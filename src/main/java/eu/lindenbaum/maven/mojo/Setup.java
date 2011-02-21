@@ -90,6 +90,13 @@ import org.codehaus.plexus.util.FileUtils;
  *  ${AUTODEPS}}.
  * </pre>
  * </p>
+ * <p>
+ * The default system configuration file will look like:
+ * 
+ * <pre>
+ * [].
+ * </pre>
+ * </p>
  * 
  * @goal setup
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
