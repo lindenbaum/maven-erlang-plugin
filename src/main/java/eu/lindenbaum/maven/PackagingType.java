@@ -21,7 +21,7 @@ public enum PackagingType {
    * <pre>
    *  BASE
    *    +-- src/changes (changes.xml)
-   *    +-- src/main/erlang (*.app, *.appup, *.erl, private *.hrl)
+   *    +-- src/main/erlang ([ARTIFACTID].app, [ARTIFACTID].appup, *.erl, private *.hrl)
    *    +-- src/main/include (*.hrl)
    *    +-- src/main/priv (*)
    *    +-- src/site (overview.edoc, site.xml)
@@ -42,7 +42,7 @@ public enum PackagingType {
    * 
    * <pre>
    *  BASE
-   *    +-- ebin (*.app, *.appup)
+   *    +-- ebin ([ARTIFACTID].app, [ARTIFACTID].appup)
    *    +-- include (*.hrl)
    *    +-- priv (*)
    *    +-- src (*.erl, private *.hrl)
@@ -61,11 +61,12 @@ public enum PackagingType {
    * Packaging type for erlang/OTP releases with trivial directory layout:
    * 
    * <pre>
-   *  BASE (*.rel, *.relup)
+   *  BASE
    *    +-- target (build artifacts)
    *    +-- pom.xml
-   *    +-- *.rel
-   *    +-- *.relup
+   *    +-- sys.config
+   *    +-- [ARTIFACTID].rel
+   *    +-- [ARTIFACTID].relup
    * </pre>
    */
   ERLANG_REL("erlang-rel"),
