@@ -2,13 +2,13 @@ package eu.lindenbaum.maven.erlang;
 
 import java.io.File;
 
-import com.ericsson.otp.erlang.OtpErlangObject;
-import com.ericsson.otp.erlang.OtpErlangTuple;
-
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
+
+import com.ericsson.otp.erlang.OtpErlangObject;
+import com.ericsson.otp.erlang.OtpErlangTuple;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -41,7 +41,8 @@ public final class MakeTarScript implements Script<SystoolsScriptResult> {
    * @param outdir to place the release package into
    * @param options additional info according to erlang documentation, maybe
    *          {@code null}
-   * @see http://www.erlang.org/doc/man/systools.html
+   * @see <a
+   *      href="http://www.erlang.org/doc/man/systools.html">http://www.erlang.org/doc/man/systools.html</a>
    */
   public MakeTarScript(File releaseFile, File outdir, String options) {
     this.releaseFile = releaseFile;

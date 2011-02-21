@@ -3,10 +3,10 @@ package eu.lindenbaum.maven.erlang;
 import java.io.File;
 import java.util.List;
 
+import eu.lindenbaum.maven.util.ErlUtils;
+
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
-
-import eu.lindenbaum.maven.util.ErlUtils;
 
 /**
  * A {@link Script} that can be used to dialyze erlang files.
@@ -36,7 +36,8 @@ public final class DialyzerScript implements Script<String[]> {
    * @param files a list of files to dialyze (from source)
    * @param includes a list of include files
    * @param options a list of dialyzer options according to the erlang docs
-   * @see http://www.erlang.org/doc/man/dialyzer.html
+   * @see <a
+   *      href="http://www.erlang.org/doc/man/dialyzer.html">http://www.erlang.org/doc/man/dialyzer.html</a>
    */
   public DialyzerScript(List<File> files, List<File> includes, String options) {
     this.files = files;

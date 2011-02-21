@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.lindenbaum.maven.util.ErlUtils;
+
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
-
-import eu.lindenbaum.maven.util.ErlUtils;
 
 /**
  * A {@link Script} that can be used to extract certain values from an erlang
@@ -36,7 +36,8 @@ public final class CheckAppScript implements Script<CheckAppResult> {
    * Creates an extraction {@link Script} for a specific application file.
    * 
    * @param appFile to extract values from
-   * @see http://www.erlang.org/doc/man/app.html
+   * @see <a
+   *      href="http://www.erlang.org/doc/man/app.html">http://www.erlang.org/doc/man/app.html</a>
    */
   public CheckAppScript(File appFile) {
     this.appFile = appFile;

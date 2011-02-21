@@ -215,6 +215,28 @@
           <encoding>utf8</encoding>
           <additionalargs>-use -version -author -keywords</additionalargs>
           <docfilessubdirs>true</docfilessubdirs>
+          <tags>
+            <tag>
+              <name>goal</name>
+              <placement>t</placement>
+              <head>Goal:</head>
+            </tag>
+            <tag>
+              <name>phase</name>
+              <placement>t</placement>
+              <head>Phase:</head>
+            </tag>
+            <tag>
+              <name>execute</name>
+              <placement>t</placement>
+              <head>Execute:</head>
+            </tag>
+            <tag>
+              <name>requiresDependencyResolution</name>
+              <placement>t</placement>
+              <head>Requires dependency resolution: true</head>
+            </tag>
+          </tags>
         </configuration>
         <reportSets>
           <reportSet>

@@ -3,14 +3,14 @@ package eu.lindenbaum.maven.erlang;
 import java.io.File;
 import java.util.List;
 
+import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
+
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
-
-import eu.lindenbaum.maven.util.ErlUtils;
-import eu.lindenbaum.maven.util.MavenUtils;
-import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -70,7 +70,8 @@ public final class BeamCompilerScript implements Script<CompilerResult> {
    * @param outdir the destination directory for the compiled .beam
    * @param includes a list of include directories
    * @param options a list of compiler options according to the erlang docs
-   * @see http://www.erlang.org/doc/man/compile.html
+   * @see <a
+   *      href="http://www.erlang.org/doc/man/compile.html">http://www.erlang.org/doc/man/compile.html</a>
    */
   public BeamCompilerScript(List<File> files, File outdir, List<File> includes, List<String> options) {
     this.files = files;

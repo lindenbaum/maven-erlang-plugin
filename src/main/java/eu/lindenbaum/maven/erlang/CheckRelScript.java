@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import eu.lindenbaum.maven.util.ErlUtils;
+
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
-
-import eu.lindenbaum.maven.util.ErlUtils;
 
 /**
  * A {@link Script} that can be used to extract certain values from an erlang
@@ -36,7 +36,8 @@ public class CheckRelScript implements Script<CheckRelResult> {
    * Creates an extraction {@link Script} for a specific release file.
    * 
    * @param relFile to extract values from
-   * @see http://www.erlang.org/doc/man/rel.html
+   * @see <a
+   *      href="http://www.erlang.org/doc/man/rel.html">http://www.erlang.org/doc/man/rel.html</a>
    */
   public CheckRelScript(File relFile) {
     this.relFile = relFile;
