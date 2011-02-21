@@ -64,6 +64,11 @@ public interface ErlConstants {
   public static final String OVERVIEW_EDOC = "overview.edoc";
 
   /**
+   * Name of the system configuration file.
+   */
+  public static final String SYS_CONFIG = "sys.config";
+
+  /**
    * Name of the coverdata binary (coverdata) file.
    */
   public static final String COVERDATA_BIN = "coverdata.coverdata";

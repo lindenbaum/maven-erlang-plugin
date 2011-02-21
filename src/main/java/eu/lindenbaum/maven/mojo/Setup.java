@@ -5,6 +5,9 @@ import static eu.lindenbaum.maven.util.MavenUtils.getPluginFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -25,7 +28,8 @@ import org.codehaus.plexus.util.FileUtils;
  * </p>
  * <p>
  * This will typically replace the functionality given by a Maven archetype,
- * checking and creating any missing resource:
+ * checking and creating any missing resource. Regarding erlang/OTP applications
+ * this could be:
  * </p>
  * <ul>
  * <li>source folder</li>
@@ -36,9 +40,21 @@ import org.codehaus.plexus.util.FileUtils;
  * <li>test source folder</li>
  * <li>test include folder</li>
  * <li>test priv folder</li>
- * <li>site folder with <code>site.xml</code> (extras)</li>
- * <li>apt source folder with <code>index.apt[.vm]</code> (extras)</li>
- * <li>changelog folder with <code>changes.xml</code> (extras)</li>
+ * </ul>
+ * <p>
+ * Regarding erlang/OTP releases this could be:
+ * </p>
+ * <ul>
+ * <li>release file <code>[artifactId].rel</code></li>
+ * <li>system configuration <code>sys.config</code></li>
+ * </ul>
+ * <p>
+ * By default some extras for project management are also generated:
+ * </p>
+ * <ul>
+ * <li>site folder with <code>site.xml</code></li>
+ * <li>apt source folder with <code>index.apt[.vm]</code></li>
+ * <li>changelog folder with <code>changes.xml</code></li>
  * </ul>
  * <p>
  * The default application resource file will look like:
@@ -64,15 +80,22 @@ import org.codehaus.plexus.util.FileUtils;
  * {${VERSION}, [], []}.
  * </pre>
  * </p>
+ * <p>
+ * The default release file will look like:
+ * 
+ * <pre>
+ * {release,
+ *  {${ARTIFACT}, ${VERSION}},
+ *  ${ERTS},
+ *  ${AUTODEPS}}.
+ * </pre>
+ * </p>
  * 
  * @goal setup
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public class Setup extends ErlangMojo {
-  private static final String siteXmlFileName = "site.xml";
-  private static final String changesXmlFile = "changes.xml";
-
   /**
    * Setting this to {@code false} will skip generation of the project resources
    * considered best-practice <em>extras</em> - such as Maven site definition
@@ -89,16 +112,15 @@ public class Setup extends ErlangMojo {
 
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
-    PackagingType packagingType = p.packagingType();
-    if (packagingType != PackagingType.ERLANG_OTP && packagingType != PackagingType.ERLANG_STD) {
-      log.info("--> There's nothing to do for packaging " + packagingType + ".");
-      log.info("--> Done!");
-      return;
-    }
-
     this.plugin = getPluginFile("maven-erlang-plugin", p.project(), p.repository());
 
-    setupDefaults(p);
+    PackagingType packagingType = p.packagingType();
+    if (packagingType == PackagingType.ERLANG_OTP || packagingType == PackagingType.ERLANG_STD) {
+      setupAppDefaults(p);
+    }
+    else {
+      setupRelDefaults(p);
+    }
     log.info("-->");
 
     if (this.withExtras) {
@@ -111,90 +133,87 @@ public class Setup extends ErlangMojo {
   }
 
   private void setupExtras(Properties p) throws MojoExecutionException {
-    if (noSite(p)) {
-      createDefaultSite(p);
-    }
-    else {
-      logSkipping();
+    // setup extra folders
+    Map<String, File> folders = new HashMap<String, File>();
+    folders.put("site folder", p.site());
+    folders.put("changes folder", p.changes());
+    folders.put("apt folder", p.apt());
+    for (Entry<String, File> folder : folders.entrySet()) {
+      if (noFolder(folder.getValue(), folder.getKey())) {
+        createFolder(folder.getValue(), folder.getKey());
+      }
+      else {
+        logSkipping();
+      }
     }
 
-    if (noApt(p)) {
-      createDefaultIndexApt(p);
-    }
-    else {
-      logSkipping();
+    // setup extra files
+    Map<String, File> files = new HashMap<String, File>();
+    files.put("default-site.xml", new File(p.site(), "site.xml"));
+    files.put("default-changes.xml", new File(p.changes(), "changes.xml"));
+    for (Entry<String, File> entry : files.entrySet()) {
+      if (noFile(entry.getValue())) {
+        createFile(entry.getValue(), entry.getKey());
+      }
+      else {
+        logSkipping();
+      }
     }
 
-    if (noChangelog(p)) {
-      createDefaultChangelog(p);
+    File defaultApt = new File(p.apt(), "index.apt.vm");
+    if (noFile(new File(p.apt(), "index.apt")) && noFile(defaultApt)) {
+      createFile(defaultApt, "default-index.apt.vm");
     }
     else {
       logSkipping();
     }
   }
 
-  private void setupDefaults(Properties p) throws MojoExecutionException {
-    if (noSourceFolder(p)) {
-      createSourceFolder(p);
-    }
-    else {
-      logSkipping();
-    }
-
-    if (noIncludeFolder(p)) {
-      createIncludeFolder(p);
-    }
-    else {
-      logSkipping();
-    }
-
-    if (noPrivFolder(p)) {
-      createPrivFolder(p);
-    }
-    else {
-      logSkipping();
+  private void setupAppDefaults(Properties p) throws MojoExecutionException {
+    // setup folders
+    Map<String, File> folders = new HashMap<String, File>();
+    folders.put("ebin folder", p.ebin());
+    folders.put("src folder", p.src());
+    folders.put("include folder", p.include());
+    folders.put("priv folder", p.priv());
+    folders.put("test src folder", p.test_src());
+    folders.put("test include folder", p.test_include());
+    folders.put("test priv folder", p.test_priv());
+    for (Entry<String, File> folder : folders.entrySet()) {
+      if (noFolder(folder.getValue(), folder.getKey())) {
+        createFolder(folder.getValue(), folder.getKey());
+      }
+      else {
+        logSkipping();
+      }
     }
 
-    if (noTestSourceFolder(p)) {
-      createTestSourceFolder(p);
+    // setup files
+    Map<String, File> files = new HashMap<String, File>();
+    files.put("default.app", new File(p.ebin(), p.project().getArtifactId() + ErlConstants.APP_SUFFIX));
+    files.put("default.appup", new File(p.ebin(), p.project().getArtifactId() + ErlConstants.APPUP_SUFFIX));
+    for (Entry<String, File> entry : files.entrySet()) {
+      if (noFile(entry.getValue())) {
+        createFile(entry.getValue(), entry.getKey());
+      }
+      else {
+        logSkipping();
+      }
     }
-    else {
-      logSkipping();
-    }
+  }
 
-    if (noTestIncludeFolder(p)) {
-      createTestIncludeFolder(p);
-    }
-    else {
-      logSkipping();
-    }
-
-    if (noTestPrivFolder(p)) {
-      createTestPrivFolder(p);
-    }
-    else {
-      logSkipping();
-    }
-
-    if (noEbinFolder(p)) {
-      createEbinFolder(p);
-    }
-    else {
-      logSkipping();
-    }
-
-    if (noAppFile(p)) {
-      createAppFile(p);
-    }
-    else {
-      logSkipping();
-    }
-
-    if (noAppUpFile(p)) {
-      createAppUpFile(p);
-    }
-    else {
-      logSkipping();
+  private void setupRelDefaults(Properties p) throws MojoExecutionException {
+    // setup files
+    Map<String, File> files = new HashMap<String, File>();
+    files.put("default.rel", new File(p.base(), p.project().getArtifactId() + ErlConstants.REL_SUFFIX));
+    files.put("default-sys.config", new File(p.base(), ErlConstants.SYS_CONFIG));
+    for (Entry<String, File> entry : files.entrySet()) {
+      if (noFile(entry.getValue())) {
+        createFile(entry.getValue(), entry.getKey());
+      }
+      else {
+        logSkipping();
+      }
     }
   }
 
@@ -226,157 +245,34 @@ public class Setup extends ErlangMojo {
     return null;
   }
 
-  private boolean noApt(Properties p) {
-    boolean aptExists = new File(p.apt(), "index.apt").isFile();
-    boolean vmAptExists = new File(p.apt(), "index.apt.vm").isFile();
-    logCheckingIf("site index.apt[.vm] file", aptExists || vmAptExists);
-    return !aptExists && !vmAptExists;
-  }
-
-  private void createDefaultIndexApt(Properties p) throws MojoExecutionException {
-    logGeneratingDefault("site index.apt.vm file");
-    extractFilesFromJar(this.plugin, "index.apt.vm", p.apt());
-  }
-
-  private boolean noAppFile(Properties p) {
-    boolean exists = new File(p.ebin(), p.project().getArtifactId() + ErlConstants.APP_SUFFIX).isFile();
-    logCheckingIf("app file", exists);
+  private boolean noFolder(File folder, String name) {
+    boolean exists = folder.isDirectory();
+    logCheckingIf(name, exists);
     return !exists;
   }
 
-  private void createAppFile(Properties p) throws MojoExecutionException {
-    logGeneratingDefault("app file");
-    File targetFile = new File(p.ebin(), p.project().getArtifactId() + ErlConstants.APP_SUFFIX);
-    String defaultAppFileName = "default.app";
-    extractFilesFromJar(this.plugin, defaultAppFileName, p.ebin());
-    File sourceFile = new File(p.ebin(), defaultAppFileName);
+  private void createFolder(File folder, String name) throws MojoExecutionException {
+    logGeneratingDefault(name);
+    eu.lindenbaum.maven.util.FileUtils.ensureDirectory(folder);
+  }
+
+  private boolean noFile(File file) {
+    boolean exists = file.isFile();
+    logCheckingIf(file.getName(), exists);
+    return !exists;
+  }
+
+  private void createFile(File file, String defaultFileName) throws MojoExecutionException {
+    logGeneratingDefault(file.getName());
+    extractFilesFromJar(this.plugin, defaultFileName, file.getParentFile());
+    File sourceFile = new File(file.getParentFile(), defaultFileName);
     try {
-      FileUtils.copyFile(sourceFile, targetFile);
+      FileUtils.copyFile(sourceFile, file);
     }
     catch (IOException e) {
       throw new MojoExecutionException(e.getMessage(), e);
     }
     sourceFile.delete();
-  }
-
-  private boolean noAppUpFile(Properties p) {
-    boolean exists = new File(p.ebin(), p.project().getArtifactId() + ErlConstants.APPUP_SUFFIX).isFile();
-    logCheckingIf("appup file", exists);
-    return !exists;
-  }
-
-  private void createAppUpFile(Properties p) throws MojoExecutionException {
-    logGeneratingDefault("appup file");
-    File targetFile = new File(p.ebin(), p.project().getArtifactId() + ErlConstants.APPUP_SUFFIX);
-    String defaultAppUpFileName = "default.appup";
-    extractFilesFromJar(this.plugin, defaultAppUpFileName, p.ebin());
-    File sourceFile = new File(p.ebin(), defaultAppUpFileName);
-    try {
-      FileUtils.copyFile(sourceFile, targetFile);
-    }
-    catch (IOException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
-    }
-    sourceFile.delete();
-  }
-
-  private boolean noTestIncludeFolder(Properties p) {
-    boolean exists = p.test_include().isDirectory();
-    logCheckingIf("test include folder", exists);
-    return !exists;
-  }
-
-  private void createTestIncludeFolder(Properties p) {
-    logGeneratingDefault("test include folder");
-    p.test_include().mkdirs();
-  }
-
-  private boolean noTestSourceFolder(Properties p) {
-    boolean exists = p.test_src().isDirectory();
-    logCheckingIf("test source folder", exists);
-    return !exists;
-  }
-
-  private void createTestSourceFolder(Properties p) {
-    logGeneratingDefault("test source folder");
-    p.test_src().mkdirs();
-  }
-
-  private boolean noTestPrivFolder(Properties p) {
-    boolean exists = p.test_priv().isDirectory();
-    logCheckingIf("test priv folder", exists);
-    return !exists;
-  }
-
-  private void createTestPrivFolder(Properties p) {
-    logGeneratingDefault("test priv folder");
-    p.test_priv().mkdirs();
-  }
-
-  private boolean noPrivFolder(Properties p) {
-    boolean exists = p.priv().isDirectory();
-    logCheckingIf("priv folder", exists);
-    return !exists;
-  }
-
-  private void createPrivFolder(Properties p) {
-    logGeneratingDefault("priv folder");
-    p.priv().mkdirs();
-  }
-
-  private boolean noIncludeFolder(Properties p) {
-    boolean exists = p.include().isDirectory();
-    logCheckingIf("include folder", exists);
-    return !exists;
-  }
-
-  private void createIncludeFolder(Properties p) {
-    logGeneratingDefault("include folder");
-    p.include().mkdirs();
-  }
-
-  private boolean noSourceFolder(Properties p) {
-    boolean exists = p.src().isDirectory();
-    logCheckingIf("source folder", exists);
-    return !exists;
-  }
-
-  private void createSourceFolder(Properties p) {
-    p.src().mkdirs();
-    logGeneratingDefault("source folder");
-  }
-
-  private boolean noEbinFolder(Properties p) {
-    boolean exists = p.ebin().isDirectory();
-    logCheckingIf("application resource folder", exists);
-    return !exists;
-  }
-
-  private void createEbinFolder(Properties p) {
-    p.ebin().mkdirs();
-    logGeneratingDefault("application resource folder");
-  }
-
-  private boolean noSite(Properties p) {
-    boolean exists = new File(p.site(), Setup.siteXmlFileName).isFile();
-    logCheckingIf("site section", exists);
-    return !exists;
-  }
-
-  private void createDefaultSite(Properties p) throws MojoExecutionException {
-    logGeneratingDefault("site section");
-    extractFilesFromJar(this.plugin, Setup.siteXmlFileName, p.site());
-  }
-
-  private boolean noChangelog(Properties p) {
-    boolean exists = new File(p.changes(), Setup.changesXmlFile).isFile();
-    logCheckingIf("changelog", exists);
-    return !exists;
-  }
-
-  private void createDefaultChangelog(Properties p) throws MojoExecutionException {
-    logGeneratingDefault("changelog");
-    extractFilesFromJar(this.plugin, Setup.changesXmlFile, p.changes());
   }
 
   private void logCheckingIf(String string, boolean exists) {

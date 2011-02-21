@@ -149,9 +149,15 @@ Maven Erlang Plug-In
 *--+--+
   generate-sources | {{{./extract-dependencies-mojo.html}extract-dependencies}}
 *--+--+
+  process-sources | {{{./reload-dependencies-mojo.html}reload-dependencies}}
+*--+--+
   generate-resources | {{{./generate-resources-mojo.html}generate-resources}}
 *--+--+
   compile | {{{./compile-mojo.html}compile}}
+*--+--+
+  generate-test-sources | {{{./test-initialize-mojo.html}test-initialize}}
+*--+--+
+  process-test-sources | {{{./reload-test-dependencies-mojo.html}reload-test-dependencies}}
 *--+--+
   generate-test-resources | {{{./generate-test-resources-mojo.html}generate-test-resources}}
 *--+--+
@@ -173,6 +179,8 @@ Maven Erlang Plug-In
 *--+--+
   generate-sources | {{{./extract-dependencies-mojo.html}extract-dependencies}}
 *--+--+
+  process-sources | {{{./reload-dependencies-mojo.html}reload-dependencies}}
+*--+--+
   generate-resources | {{{./generate-release-resources-mojo.html}generate-release-resources}}
 *--+--+
   compile | {{{./dialyzer-release-mojo.html}dialyzer-release}}
@@ -184,8 +192,8 @@ Maven Erlang Plug-In
 
 ** Setup
 
- Provides the option to generate <sensible> defaults for <<<erlang-std>>> and
- <<<erlang-otp>>> packaged projects, replacing the need for a maven archetype.
+ Provides the option to generate <sensible> defaults for erlang projects,
+ replacing the need for a maven archetype.
  
  More information:
  

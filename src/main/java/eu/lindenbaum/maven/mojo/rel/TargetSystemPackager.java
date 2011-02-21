@@ -115,7 +115,7 @@ public final class TargetSystemPackager extends ErlangMojo {
 
     {
       // write default sys.config file
-      File sysConfig = new File(releasesVersion, "sys.config");
+      File sysConfig = new File(releasesVersion, ErlConstants.SYS_CONFIG);
       if (!sysConfig.isFile()) {
         String data = "[].";
         FileUtils.writeFile(sysConfig, data);
