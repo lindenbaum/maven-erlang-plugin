@@ -61,8 +61,8 @@ target/app-1.0/ebin/module.beam
 target/app-1.0/src/module.erl
 target/app-1.0-test/ebin/cover2.beam           # plugin internals (not packaged)
 target/app-1.0-test/ebin/cover2.erl            # plugin internals (not packaged)
-target/app-1.0-test/ebin/module.beam
-target/app-1.0-test/ebin/module_tests.beam
+target/app-1.0-test/ebin/module.beam           # (not packaged)
+target/app-1.0-test/ebin/module_tests.beam     # (not packaged)
 target/app-1.0-test/ebin/surefire.beam         # plugin internals (not packaged)
 target/app-1.0-test/ebin/surefire.erl          # plugin internals (not packaged)
 target/app-1.0-test/ebin/ttycapture.beam       # plugin internals (not packaged)
