@@ -63,8 +63,12 @@ Setting up a new Erlang/OTP release project
  in the system path. To use another OTP version the path can be altered to point
  to the matching <<<erl>>> command.
 
- Next step is to place a release file in the same directory named
- <<<[ARTIFACT-ID].rel>>>, a minimal erlang release file could look like this:
+ The following steps can be omitted when using the {{{../setup-mojo.html}setup}}
+ mojo. It will automatically generate the required configuration files. 
+
+ In case you want to manually configure your project, place a release file in 
+ the same directory named <<<[ARTIFACT-ID].rel>>>, a minimal erlang release file
+ could look like this:
 
 +--
 {release,
@@ -89,6 +93,10 @@ Setting up a new Erlang/OTP release project
 
  Relup files (<<<[ARTIFACT-ID].relup>>>) may be provided and will be packaged
  but can not (yet) be generated.
+ 
+ A system configuration file named <<<sys.config>>> is mandatory and must be
+ placed in the same directory. Again the {{{../setup-mojo.html}setup}} mojo will
+ provide a minimal default for you.
 
  After a call to <<<mvn clean package>>> the <<<target>>> directory should
  contain the release <<<.tar.gz>>> that can be installed using the erlang
@@ -102,5 +110,4 @@ drwxr-xr-x 4 schlager schlager    4096 2011-02-03 14:27 lib
 -rw-r--r-- 1 schlager schlager     185 2011-02-03 14:27 [ARTIFACT-ID]-[VERSION].rel
 -rw-r--r-- 1 schlager schlager    9339 2011-02-03 14:27 [ARTIFACT-ID]-[VERSION].script
 -rw-r--r-- 1 schlager schlager 3240027 2011-02-03 14:27 [ARTIFACT-ID]-[VERSION].tar.gz
--rw-r--r-- 1 schlager schlager     185 2011-02-03 14:27 [ARTIFACT-ID]-[VERSION].rel
 +--

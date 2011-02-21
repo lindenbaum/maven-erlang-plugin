@@ -1,47 +1,72 @@
 
-Compile erlang sources
+Compile and test erlang sources in an application
 
-  By default the compilation goal is bound to the <<<compile>>> phase when
-  the project packaging is defined as <<<erlang-otp>>> or <<<erlang-std>>>.
-  
-  Information about configuration options see the goal
-  {{{../compile-mojo.html}reference documentation}}. 
- 
- The following example shows a simple setup:
-  
-+--
-<project>
-  ...
-  <packaging>erlang-otp</packaging>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>${project.artifactId}</artifactId>
-        <version>${project.version}</version>
-        <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
-  ...
-</project>
-+--
-
- This all that is required to compile the Erlang sources found in
- <<<src/main/erlang>>>.
+ Doing TDD or test driven development with the maven-erlang-plugin is easy. Put
+ source modules and tests in the respective diretories. For example in an
+ <<<erlang-std>>> project we have the following modules and tests:
  
 +--
-+- src/
-  +- main/
-    +- erlang/
-      +- sample_module.erl
+src/module.erl
+test_src/module_tests.erl
 +--
 
- The output <<<beam>>> files will be put into <<<target/ebin>>>.
+ While in an <<<erlang-otp>>> project, we would expect the files in the
+ following layout:
  
 +--
-+- target/
-  +- ebin/
-    +- sample_module.beam
+src/main/erlang/module.erl
+src/test/erlang/module_tests.erl
++-- 
+
+ A simple test for our <<<module.erl>>> is defined in the file 
+ <<<module_tests.erl>>> and contains:
+ 
 +--
+-module(module_tests).
+-include_lib("eunit/include/eunit.hrl").
+
+one_success_test() ->
+    ?assertMatch(2, module:one(1)).
+
+one_failing_test() ->
+    ?assertMatch(not_ok, module:one(ok)).
++--
+
+ So we'll implement a trivial <<<module.erl>>> like this:
+ 
++--
+-module(module).
+-export([one/1]).
+
+one(Arg) when is_integer(Arg) ->
+    Arg + 1;
+one(Arg) ->
+    Arg.
++--
+
+ Compiling and testing is simply done with:
+
+[../erlang-compile-test-fail-example.png] Tests fail.
+ 
+ Oh, a test fails since we've made a wrong expectation. The output should be the
+ same as the input. Let's fix that and run the tests again.
+
+[../erlang-compile-test-success-example.png] Tests ok.
+
+ The created output files from compile and test can be found in the <<<target>>>
+ directory:
+ 
++--
+target/app-1.0/ebin/module.beam
+target/app-1.0/src/module.erl
+target/app-1.0-test/ebin/cover2.beam           # plugin internals (not packaged)
+target/app-1.0-test/ebin/cover2.erl            # plugin internals (not packaged)
+target/app-1.0-test/ebin/module.beam
+target/app-1.0-test/ebin/module_tests.beam
+target/app-1.0-test/ebin/surefire.beam         # plugin internals (not packaged)
+target/app-1.0-test/ebin/surefire.erl          # plugin internals (not packaged)
+target/app-1.0-test/ebin/ttycapture.beam       # plugin internals (not packaged)
+target/app-1.0-test/ebin/ttycapture.erl        # plugin internals (not packaged)
+target/surefire-reports/TEST-module_tests.xml  # plugin internals (not packaged)
++--
+

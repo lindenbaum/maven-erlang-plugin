@@ -15,10 +15,10 @@
       <item name="FAQ" href="faq.html" />
     </menu>
     <menu name="Examples">
-      <item name="Application project setup" href="examples/setup.html" />
-      <item name="Release project setup" href="examples/release-setup.html" />
-      <item name="Compile source" href="examples/compile.html" />
-      <item name="Coverage report" href="examples/coverage.html" />
+      <item name="Create an application project" href="examples/setup.html" />
+      <item name="Compiling and testing an application" href="examples/compile.html" />
+      <item name="Create a release project" href="examples/release-setup.html" />
+      <item name="Generate a coverage report" href="examples/coverage.html" />
     </menu>
     <menu name="Project">
       <item name="Summary" href="project-summary.html" />
