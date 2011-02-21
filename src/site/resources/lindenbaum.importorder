@@ -1,10 +1,11 @@
 #Organize Import Order
-#Thu Jul 31 16:57:43 CEST 2008
-6=net
-5=de
-4=com
-3=net.disy
-2=de.disy
+#Thu Jan 27 16:00:48 CET 2011
+8=org
+7=net
+6=de
+5=com
+4=net.disy
+3=de.disy
+2=eu.lindenbaum
 1=javax
 0=java
-7=org
