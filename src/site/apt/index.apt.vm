@@ -179,7 +179,7 @@ Maven Erlang Plug-In
 *--+--+
   generate-sources | {{{./extract-dependencies-mojo.html}extract-dependencies}}
 *--+--+
-  process-sources | {{{./reload-dependencies-mojo.html}reload-dependencies}}
+  process-sources | {{{./reload-release-dependencies-mojo.html}reload-release-dependencies}}
 *--+--+
   generate-resources | {{{./generate-release-resources-mojo.html}generate-release-resources}}
 *--+--+

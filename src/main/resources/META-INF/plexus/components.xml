@@ -125,7 +125,7 @@
               <validate></validate>
               <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
-              <process-sources>eu.lindenbaum:maven-erlang-plugin:reload-dependencies</process-sources>
+              <process-sources>eu.lindenbaum:maven-erlang-plugin:reload-release-dependencies</process-sources>
               <generate-resources>eu.lindenbaum:maven-erlang-plugin:generate-release-resources</generate-resources>
               <process-resources></process-resources>
               <compile>eu.lindenbaum:maven-erlang-plugin:dialyzer-release</compile>

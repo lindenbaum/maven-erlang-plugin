@@ -63,7 +63,7 @@ public final class TestCompiler extends ErlangMojo {
       return;
     }
 
-    FileUtils.ensureDirectory(p.targetTestEbin());
+    FileUtils.ensureDirectories(p.targetTestEbin());
     int removed = FileUtils.removeFilesRecursive(p.targetTestEbin(), ErlConstants.BEAM_SUFFIX);
     log.debug("Removed " + removed + " stale " + ErlConstants.BEAM_SUFFIX + "-files from "
               + p.targetTestEbin());
@@ -91,8 +91,7 @@ public final class TestCompiler extends ErlangMojo {
 
       List<File> includes = MojoUtils.getTestIncludeDirectories(p);
       Script<CompilerResult> script = new BeamCompilerScript(files, p.targetTestEbin(), includes, options);
-      List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-      CompilerResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script, codePaths);
+      CompilerResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script);
       result.logOutput(log);
       String failedCompilationUnit = result.getFailed();
       if (failedCompilationUnit != null) {

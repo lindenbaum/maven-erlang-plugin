@@ -316,7 +316,7 @@ public final class FileUtils {
       for (File src : toCopy) {
         File dest = new File(to, src.getAbsolutePath().replace(from.getAbsolutePath(), ""));
         if (src.isDirectory()) {
-          ensureDirectory(dest);
+          ensureDirectories(dest);
         }
         else {
           try {
@@ -360,7 +360,7 @@ public final class FileUtils {
       for (File src : toCopy) {
         File dest = new File(to, src.getAbsolutePath().replace(from.getAbsolutePath(), ""));
         if (src.isDirectory()) {
-          ensureDirectory(dest);
+          ensureDirectories(dest);
         }
         else {
           copyFile(src, dest, replacements);
@@ -395,7 +395,7 @@ public final class FileUtils {
       }
       File parent = to.getParentFile();
       if (parent != null) {
-        ensureDirectory(parent);
+        ensureDirectories(parent);
       }
       writeFile(to, content);
     }
@@ -413,7 +413,7 @@ public final class FileUtils {
    * @throws MojoExecutionException in case a file could not be copied
    */
   public static void copyFiles(File destination, File... files) throws MojoExecutionException {
-    ensureDirectory(destination);
+    ensureDirectories(destination);
     for (File file : files) {
       File dest = new File(destination, file.getName());
       try {
@@ -443,22 +443,24 @@ public final class FileUtils {
   }
 
   /**
-   * Ensures that the directory denoted by the given file exists and is a
-   * directory. If the directory does not exist the function will try to create
+   * Ensures that the directories denoted by the given files exist and are
+   * directories. If a directory does not exist the function will try to create
    * it (with parent directories).
    * 
-   * @param dir to create/assure.
-   * @throws MojoExecutionException in case directory denotes a file or
-   *           directory could not be created
+   * @param dirs to create/assure.
+   * @throws MojoExecutionException in case one of the directories denotes a
+   *           file or directory could not be created
    */
-  public static void ensureDirectory(File dir) throws MojoExecutionException {
-    if (!dir.isDirectory()) {
-      if (dir.isFile()) {
-        throw new MojoExecutionException("Failed to create directory " + dir + " (is a file).");
-      }
-      else {
-        if (!dir.mkdirs()) {
-          throw new MojoExecutionException("Failed to create directory " + dir + ".");
+  public static void ensureDirectories(File... dirs) throws MojoExecutionException {
+    for (File dir : dirs) {
+      if (!dir.isDirectory()) {
+        if (dir.isFile()) {
+          throw new MojoExecutionException("Failed to create directory " + dir + " (is a file).");
+        }
+        else {
+          if (!dir.mkdirs()) {
+            throw new MojoExecutionException("Failed to create directory " + dir + ".");
+          }
         }
       }
     }
@@ -500,7 +502,7 @@ public final class FileUtils {
    * @throws MojoExecutionException
    */
   public static void extractFilesFromJar(File archive, String suffix, File destDir) throws MojoExecutionException {
-    ensureDirectory(destDir);
+    ensureDirectories(destDir);
     if (destDir.isDirectory()) {
       try {
         JarFile jarFile = new JarFile(archive);

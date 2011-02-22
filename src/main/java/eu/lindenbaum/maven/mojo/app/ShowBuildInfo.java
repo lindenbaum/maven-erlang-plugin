@@ -4,9 +4,8 @@ import java.io.File;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
+import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
-import eu.lindenbaum.maven.util.ErlConstants;
-import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MojoUtils;
 
@@ -53,10 +52,15 @@ public class ShowBuildInfo extends ErlangMojo {
     log.info(MavenUtils.SEPARATOR);
     log.info(" B U I L D - I N F O R M A T I O N");
     log.info(MavenUtils.SEPARATOR);
-    List<File> includeDirectories = MojoUtils.getIncludeDirectories(p);
-    logKeyValues(log, INCLUDE_DIRS, includeDirectories);
-    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    logKeyValues(log, CODE_PATHS, codePaths);
+
+    PackagingType packagingType = p.packagingType();
+    if (PackagingType.ERLANG_OTP != packagingType && PackagingType.ERLANG_STD != packagingType) {
+      log.info("Nothing to do for packaging " + packagingType + ".");
+      return;
+    }
+
+    logKeyValues(log, INCLUDE_DIRS, MojoUtils.getIncludeDirectories(p));
+    logKeyValues(log, CODE_PATHS, MojoUtils.getApplicationCodePaths(p));
   }
 
   private void logKeyValues(Log log, String key, List<File> values) {

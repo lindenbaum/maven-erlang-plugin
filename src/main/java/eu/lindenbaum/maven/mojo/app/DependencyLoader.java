@@ -1,4 +1,4 @@
-package eu.lindenbaum.maven.mojo;
+package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
 import java.util.List;
@@ -11,6 +11,7 @@ import eu.lindenbaum.maven.erlang.PurgeModulesScript;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -34,11 +35,13 @@ public final class DependencyLoader extends ErlangMojo {
 
     // reload dependency modules on backend node
     List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    if (!modules.isEmpty()) {
-      LoadModulesScript loadScript = new LoadModulesScript(modules);
-      Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript, codePaths);
-      log.debug("Successfully loaded " + loaded + " .beam file(s) from dependencies.");
-    }
+
+    // code paths must exist when added
+    List<File> codePaths = MojoUtils.getApplicationCodePaths(p);
+    FileUtils.ensureDirectories(codePaths.toArray(new File[0]));
+
+    LoadModulesScript loadScript = new LoadModulesScript(modules);
+    Integer loaded = MavenSelf.get(p.cookie()).exec(p.node(), loadScript, codePaths);
+    log.debug("Successfully loaded " + loaded + " .beam file(s) from dependencies.");
   }
 }

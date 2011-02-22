@@ -258,7 +258,7 @@ public class Setup extends ErlangMojo {
 
   private void createFolder(File folder, String name) throws MojoExecutionException {
     logGeneratingDefault(name);
-    FileUtils.ensureDirectory(folder);
+    FileUtils.ensureDirectories(folder);
   }
 
   private boolean noFile(File file) {

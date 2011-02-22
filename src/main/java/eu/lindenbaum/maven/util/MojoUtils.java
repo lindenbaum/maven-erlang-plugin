@@ -1,7 +1,5 @@
 package eu.lindenbaum.maven.util;
 
-import static eu.lindenbaum.maven.util.FileUtils.getDirectoriesRecursive;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +41,11 @@ public final class MojoUtils {
   }
 
   /**
-   * Gathers a complete list of directories that may contain erlang header
-   * (".hrl") files included in a standard compilation process.
+   * Gathers a complete list of directories used as include directories in a
+   * standard compilation process.
    * 
-   * @param p a the properties object containing some of the include
-   *          directories.
-   * @return a list of directories that must be considered when resolving erlang
-   *         header files.
+   * @param p the properties object containing some of the include directories
+   * @return a non-{@code null} list of include directories
    */
   public static List<File> getIncludeDirectories(Properties p) {
     List<File> includes = new ArrayList<File>();
@@ -61,22 +57,63 @@ public final class MojoUtils {
   }
 
   /**
-   * Gathers a complete list of directories that may contain erlang header
-   * (".hrl") files included in a test compilation process.
+   * Gathers a complete list of directories used as include directories in a
+   * test compilation process.
    * 
-   * @param p a the properties object containing some of the include
-   *          directories.
-   * @return a list of directories that must be considered when resolving erlang
-   *         header files.
+   * @param p the properties object containing some of the include directories
+   * @return a non-{@code null} list of include directories
    */
   public static List<File> getTestIncludeDirectories(Properties p) {
     List<File> includes = new ArrayList<File>();
-    includes.addAll(getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX));
+    includes.addAll(FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX));
     includes.add(p.include());
     includes.add(p.test_src());
     includes.add(p.test_include());
     includes.add(p.targetInclude());
     includes.add(p.src());
     return includes;
+  }
+
+  private static List<File> getDependencyCodePaths(Properties p) {
+    return FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
+  }
+
+  /**
+   * Gathers a complete list of directories used as code paths in an
+   * application's build process.
+   * 
+   * @param p the properties object containing the code path directories
+   * @return a non-{@code null} list of code path directories
+   */
+  public static List<File> getApplicationCodePaths(Properties p) {
+    List<File> codePaths = new ArrayList<File>(getDependencyCodePaths(p));
+    codePaths.add(p.targetEbin());
+    return codePaths;
+  }
+
+  /**
+   * Gathers a complete list of directories used as code paths in an
+   * application's test build process.
+   * 
+   * @param p the properties object containing the code path directories
+   * @return a non-{@code null} list of code path directories
+   */
+  public static List<File> getApplicationTestCodePaths(Properties p) {
+    List<File> codePaths = new ArrayList<File>(getDependencyCodePaths(p));
+    codePaths.add(p.targetTestEbin());
+    return codePaths;
+  }
+
+  /**
+   * Gathers a complete list of directories used as code paths in a release
+   * build process.
+   * 
+   * @param p the properties object containing the code path directories
+   * @return a non-{@code null} list of code path directories
+   */
+  public static List<File> getReleaseCodePaths(Properties p) {
+    List<File> codePaths = new ArrayList<File>(getDependencyCodePaths(p));
+    codePaths.add(p.target());
+    return codePaths;
   }
 }

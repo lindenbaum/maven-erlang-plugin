@@ -54,7 +54,7 @@ public final class TarGzUnarchiver {
   public void extract(File archive) throws IOException {
     if (archive.isFile()) {
       try {
-        FileUtils.ensureDirectory(this.destination);
+        FileUtils.ensureDirectories(this.destination);
       }
       catch (MojoExecutionException e) {
         throw new IOException("failed to create destination directory " + this.destination);

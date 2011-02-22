@@ -1,16 +1,15 @@
 package eu.lindenbaum.maven.erlang;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.ericsson.otp.erlang.OtpErlangList;
-import com.ericsson.otp.erlang.OtpErlangObject;
-import com.ericsson.otp.erlang.OtpErlangTuple;
 
 import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
+
+import com.ericsson.otp.erlang.OtpErlangList;
+import com.ericsson.otp.erlang.OtpErlangObject;
+import com.ericsson.otp.erlang.OtpErlangTuple;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -22,9 +21,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class StartApplicationScript implements Script<StartResult> {
   private static final String script = //
-  NL + "CodePaths = %s," + NL + //
-      "Applications = %s," + NL + //
-      "code:add_pathsa(CodePaths)," + NL + //
+  NL + "Applications = %s," + NL + //
       "Before = [A || {A, _, _} <- application:which_applications()]," + NL + //
       "Fun = fun([], ok, _) ->" + NL + //
       "              ok;" + NL + //
@@ -43,10 +40,8 @@ public class StartApplicationScript implements Script<StartResult> {
       "              Error" + NL + //
       "      end," + NL + //
       "Result = Fun(Applications, ok, Fun)," + NL + //
-      "[code:del_path(P) || P <- CodePaths]," + NL + //
       "{Result, Before}." + NL;
 
-  private final List<File> codePaths;
   private final List<String> applications;
 
   /**
@@ -55,16 +50,14 @@ public class StartApplicationScript implements Script<StartResult> {
    * @param codePaths needed to find the code
    * @param applications to start
    */
-  public StartApplicationScript(List<File> codePaths, List<String> applications) {
-    this.codePaths = codePaths;
+  public StartApplicationScript(List<String> applications) {
     this.applications = applications;
   }
 
   @Override
   public String get() {
-    String paths = ErlUtils.toFileList(this.codePaths, "\"", "\"");
     String applications = ErlUtils.toList(this.applications, null, "'", "'");
-    return String.format(script, paths, applications);
+    return String.format(script, applications);
   }
 
   /**

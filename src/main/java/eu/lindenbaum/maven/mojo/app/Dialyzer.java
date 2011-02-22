@@ -97,7 +97,7 @@ public final class Dialyzer extends ErlangMojo {
 
       List<File> includes = MojoUtils.getIncludeDirectories(p);
       DialyzerScript script = new DialyzerScript(sources, includes, this.dialyzerOptions);
-      String[] warnings = MavenSelf.get(p.cookie()).exec(p.node(), script, new ArrayList<File>());
+      String[] warnings = MavenSelf.get(p.cookie()).exec(p.node(), script);
       for (String warning : warnings) {
         log.warn(warning);
       }

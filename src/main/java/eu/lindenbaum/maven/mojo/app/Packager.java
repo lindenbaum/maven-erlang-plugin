@@ -5,7 +5,6 @@ import static eu.lindenbaum.maven.util.FileUtils.APP_FILTER;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -85,8 +84,7 @@ public final class Packager extends ErlangMojo {
     Set<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
     List<File> modules = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
     Script<String> registeredScript = new GetAttributesScript(modules, "registered");
-    List<File> codePaths = Arrays.asList(p.targetEbin());
-    String registeredNames = MavenSelf.get(p.cookie()).exec(p.node(), registeredScript, codePaths);
+    String registeredNames = MavenSelf.get(p.cookie()).exec(p.node(), registeredScript);
 
     Map<String, String> replacements = new HashMap<String, String>();
     replacements.put("${ARTIFACT}", "\'" + p.project().getArtifactId() + "\'");
@@ -98,7 +96,7 @@ public final class Packager extends ErlangMojo {
     replacements.put("${APPLICATIONS}", ErlUtils.toArtifactIdListing(dependencies));
 
     // copy application resource files
-    FileUtils.ensureDirectory(p.targetEbin());
+    FileUtils.ensureDirectories(p.targetEbin());
     int copied = FileUtils.copyDirectory(p.ebin(), p.targetEbin(), APP_FILTER, replacements);
     log.debug("Copied " + copied + " application resource files");
 
@@ -111,7 +109,7 @@ public final class Packager extends ErlangMojo {
 
     // parse .app file
     Script<CheckAppResult> appScript = new CheckAppScript(appFile);
-    CheckAppResult appResult = MavenSelf.get(p.cookie()).exec(p.node(), appScript, new ArrayList<File>());
+    CheckAppResult appResult = MavenSelf.get(p.cookie()).exec(p.node(), appScript);
     if (!appResult.success()) {
       log.error("Failed to consult file");
       MavenUtils.logContent(log, LogLevel.ERROR, appFile);
@@ -132,7 +130,7 @@ public final class Packager extends ErlangMojo {
     else {
       // check .appup file
       Script<String> appUpScript = new CheckAppUpScript(appUpFile, projectVersion);
-      String error = MavenSelf.get(p.cookie()).exec(p.node(), appUpScript, new ArrayList<File>());
+      String error = MavenSelf.get(p.cookie()).exec(p.node(), appUpScript);
       if (error != null) {
         MavenUtils.logMultiLineString(log, LogLevel.ERROR, error);
         MavenUtils.logContent(log, LogLevel.ERROR, appUpFile);
@@ -193,9 +191,8 @@ public final class Packager extends ErlangMojo {
       File beamFile = new File(p.targetEbin(), startModule + ErlConstants.BEAM_SUFFIX);
       if (beamFile.isFile()) {
         List<File> list = Arrays.asList(beamFile);
-        List<File> codePaths = Arrays.asList(p.targetEbin());
         Script<String> behaviourScript = new GetAttributesScript(list, "behaviour", "behavior");
-        String behaviours = MavenSelf.get(p.cookie()).exec(p.node(), behaviourScript, codePaths);
+        String behaviours = MavenSelf.get(p.cookie()).exec(p.node(), behaviourScript);
         if (behaviours.contains("application")) {
           if (!r.getApplications().contains("sasl")) {
             log.error("Application dependency to 'sasl' is missing in .app file.");

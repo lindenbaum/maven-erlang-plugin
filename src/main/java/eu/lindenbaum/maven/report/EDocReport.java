@@ -59,7 +59,7 @@ public class EDocReport extends ErlangReport {
     File outdir = new File(getReportOutputDirectory(), "edoc");
     File overview = new File(p.target(), ErlConstants.OVERVIEW_EDOC);
 
-    FileUtils.ensureDirectory(outdir);
+    FileUtils.ensureDirectories(outdir);
     Script<Boolean> script = new EDocScript(application, p.src(), outdir, overview);
     Boolean success = MavenSelf.get(p.cookie()).exec(p.node(), script);
     if (!success) {

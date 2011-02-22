@@ -1,7 +1,6 @@
 package eu.lindenbaum.maven.mojo.rel;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -88,7 +87,7 @@ public final class Dialyzer extends ErlangMojo {
       }
 
       DialyzerScript script = new DialyzerScript(sources, includes, this.dialyzerOptions);
-      String[] warnings = MavenSelf.get(p.cookie()).exec(p.node(), script, new ArrayList<File>());
+      String[] warnings = MavenSelf.get(p.cookie()).exec(p.node(), script);
       for (String warning : warnings) {
         log.warn(warning);
       }

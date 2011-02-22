@@ -83,15 +83,11 @@ public final class TestRunner extends ErlangMojo {
         return;
       }
     }
-    FileUtils.ensureDirectory(p.targetSurefireReports());
-
-    List<File> testCodePaths = new ArrayList<File>();
-    testCodePaths.add(p.targetTestEbin());
-    testCodePaths.addAll(FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX));
+    FileUtils.ensureDirectories(p.targetSurefireReports());
 
     String suiteName = p.project().getArtifactId();
     Script<TestResult> script = new TestScript(tests, p.targetSurefireReports(), suiteName);
-    TestResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script, testCodePaths);
+    TestResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script);
     result.logOutput(log);
 
     if (!result.testsPassed()) {

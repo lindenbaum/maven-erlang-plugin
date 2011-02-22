@@ -95,16 +95,11 @@ public class CoverageReport extends ErlangReport {
 
     List<File> sources = FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX);
 
-    List<File> testCodePaths = new ArrayList<File>();
-    testCodePaths.add(p.targetTestEbin());
-    testCodePaths.addAll(FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX));
-    testCodePaths.addAll(FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX));
-
     File outdir = new File(getReportOutputDirectory(), "coverage");
-    FileUtils.ensureDirectory(outdir);
+    FileUtils.ensureDirectories(outdir);
 
     Script<CoverageReportResult> script = new CoverageReportScript(targetTestEbin, tests, sources);
-    CoverageReportResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script, testCodePaths);
+    CoverageReportResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script);
 
     if (result.failed()) {
       result.logOutput(getLog());

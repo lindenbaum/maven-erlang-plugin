@@ -26,11 +26,11 @@ import org.apache.maven.project.MavenProject;
  * @requiresDependencyResolution test
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class DependencyExtracter extends ErlangMojo {
+public final class DependencyExtractor extends ErlangMojo {
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
     File targetLib = p.targetLib();
-    FileUtils.ensureDirectory(targetLib);
+    FileUtils.ensureDirectories(targetLib);
     TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), targetLib);
     Set<Artifact> artifacts = MavenUtils.getErlangArtifacts(p.project());
     log.debug("found artifacts " + artifacts);

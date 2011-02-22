@@ -1,7 +1,6 @@
 package eu.lindenbaum.maven.mojo.rel;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -70,7 +69,7 @@ public final class TestRunner extends ErlangMojo {
     log.info(MavenUtils.SEPARATOR);
 
     RuntimeInfoScript infoScript = new RuntimeInfoScript();
-    RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).exec(p.node(), infoScript, new ArrayList<File>());
+    RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).exec(p.node(), infoScript);
 
     if (!this.skipReleaseTest) {
       checkOtpReleaseVersion(log, this.otpRelease, runtimeInfo.getOtpRelease());
@@ -88,7 +87,7 @@ public final class TestRunner extends ErlangMojo {
 
     File relFile = new File(p.target(), relFileBaseName + ErlConstants.REL_SUFFIX);
     CheckRelScript relScript = new CheckRelScript(relFile);
-    CheckRelResult relResult = MavenSelf.get(p.cookie()).exec(p.node(), relScript, new ArrayList<File>());
+    CheckRelResult relResult = MavenSelf.get(p.cookie()).exec(p.node(), relScript);
     if (!relResult.success()) {
       log.error("Failed to consult file");
       MavenUtils.logContent(log, LogLevel.ERROR, relFile);

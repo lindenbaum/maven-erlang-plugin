@@ -1,7 +1,6 @@
 package eu.lindenbaum.maven.mojo.rel;
 
 import java.io.File;
-import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
@@ -10,7 +9,6 @@ import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.erlang.SystoolsScriptResult;
 import eu.lindenbaum.maven.util.ErlConstants;
-import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.plugin.Mojo;
@@ -61,10 +59,6 @@ public final class Packager extends ErlangMojo {
     String releaseName = p.project().getArtifactId();
     String releaseFileBaseName = releaseName + "-" + p.project().getVersion();
 
-    File relFile = new File(p.target(), releaseFileBaseName + ErlConstants.REL_SUFFIX);
-    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    codePaths.add(p.target());
-
     String options = this.tarOptions != null ? this.tarOptions : "";
     if (this.includeErts) {
       String erts = "{erts,code:root_dir()}";
@@ -76,8 +70,9 @@ public final class Packager extends ErlangMojo {
       }
     }
 
+    File relFile = new File(p.target(), releaseFileBaseName + ErlConstants.REL_SUFFIX);
     Script<SystoolsScriptResult> script = new MakeTarScript(relFile, p.target(), options);
-    SystoolsScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script, codePaths);
+    SystoolsScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
     result.logOutput(log);
     if (!result.success()) {
       throw new MojoFailureException("Could not create release package.");

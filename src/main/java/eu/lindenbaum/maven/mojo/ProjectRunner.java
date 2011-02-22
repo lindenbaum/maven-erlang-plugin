@@ -1,12 +1,9 @@
 package eu.lindenbaum.maven.mojo;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.ericsson.otp.erlang.OtpPeer;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.PackagingType;
@@ -16,9 +13,9 @@ import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.erlang.StartApplicationScript;
 import eu.lindenbaum.maven.erlang.StartResult;
 import eu.lindenbaum.maven.erlang.StopApplicationScript;
-import eu.lindenbaum.maven.util.ErlConstants;
-import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+
+import com.ericsson.otp.erlang.OtpPeer;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
@@ -65,10 +62,7 @@ public final class ProjectRunner extends ErlangMojo {
     }
     Collections.reverse(applications);
 
-    List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
-    codePaths.add(p.targetEbin());
-
-    Script<StartResult> startScript = new StartApplicationScript(codePaths, applications);
+    Script<StartResult> startScript = new StartApplicationScript(applications);
     StartResult startResult = MavenSelf.get(p.cookie()).exec(p.node(), startScript);
     if (startResult.startSucceeded()) {
       String cookie = p.cookie() != null ? " -setcookie " + p.cookie() + " " : "";
