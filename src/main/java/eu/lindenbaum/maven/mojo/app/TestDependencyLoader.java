@@ -15,7 +15,6 @@ import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -28,7 +27,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class TestDependencyLoader extends ErlangMojo {
   @Override
-  protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
+  protected void execute(Log log, Properties p) throws MojoExecutionException {
     // clean up dynamically loaded modules on backend from previous runs
     Script<Void> purgeScript = new PurgeModulesScript();
     MavenSelf.get(p.testCookie()).exec(p.testNode(), purgeScript);

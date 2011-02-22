@@ -10,8 +10,6 @@ import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -48,7 +46,7 @@ public class ShowBuildInfo extends ErlangMojo {
   private static final String CODE_PATHS = "code_path";
 
   @Override
-  protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
+  protected void execute(Log log, Properties p) {
     log.info(MavenUtils.SEPARATOR);
     log.info(" B U I L D - I N F O R M A T I O N");
     log.info(MavenUtils.SEPARATOR);
