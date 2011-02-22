@@ -84,8 +84,9 @@
       <action dev="schlagert" type="remove">
         Removed support for SNMP resource compilation.
       </action>
-      <action dev="schlagert" type="add">
-        Added support for test resources which will override main resources.
+      <action dev="schlagert" type="remove">
+        Main and test resources no longer supported by packaging, replaced with
+        main and test priv directories (can be found using code:priv_dir/1).
       </action>
       <action dev="schlagert" type="add">
         Added support for test and provided scope dependencies.
