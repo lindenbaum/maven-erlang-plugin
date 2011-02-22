@@ -19,6 +19,8 @@
       <item name="Compiling and testing an application" href="examples/compile.html" />
       <item name="Create a release project" href="examples/release-setup.html" />
       <item name="Generate a coverage report" href="examples/coverage.html" />
+      <item name="Running dialyzer on a project" href="examples/dialyzer.html" />
+      <item name="Running your application" href="examples/running.html" />
     </menu>
     <menu name="Project">
       <item name="Summary" href="project-summary.html" />

@@ -47,7 +47,6 @@ public class StartApplicationScript implements Script<StartResult> {
   /**
    * Creates a {@link Script} trying to start a set of erlang applications.
    * 
-   * @param codePaths needed to find the code
    * @param applications to start
    */
   public StartApplicationScript(List<String> applications) {

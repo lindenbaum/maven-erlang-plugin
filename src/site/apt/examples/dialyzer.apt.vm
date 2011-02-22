@@ -1,0 +1,32 @@
+
+Running dialyzer on a project
+
+ Since not all errors can be caught by the compiler, the maven-erlang-plugin
+ uses the {{{http://www.erlang.org/doc/man/dialyzer.html}dialyzer}} to ensure
+ that the code is sane.
+ 
+ The plugin will run the dialyzer on the project sources, checking for errors. 
+ If we, for example, have a (in this case not so) sneaky error in some function:
+ 
++--
+-module(module).
+-export([one/1]).
+
+-spec one(term()) ->
+     term().
+one(Arg) when is_integer(Arg) ->
+    Arg ++ 1; % <--- Here! Not very 1337.
+one(Arg) ->
+    Arg.
++--
+
+ Running the <<<mvn package>>> phase, on the project, we get the following
+ output:
+
+[../erlang-dialyzer-example.png] Example output from dialyzer.
+ 
+ Or optionally, specifying the <<<-DdialyzerWarningsAreErrors>>> will ensure
+ that the build immediately fails.
+
+ For projects with dependencies the parameter <<<-DdialyzerWithDependencies>>> 
+ is handy, and might provide an even better check.

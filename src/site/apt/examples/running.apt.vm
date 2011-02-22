@@ -1,0 +1,30 @@
+
+Running your application project
+
+ Since project {{{./setup.html}setup}} is so easy, the maven-erlang-plugin also
+ provides a simple means of getting your application project up and running. The
+ {{{../run-mojo.html}run}} goal can be used to kick-start an application,
+ directly from the console.
+ 
+ We've written a trivial module with a single exported function:
+  
++--
+-module(module).
+-export([hello/0]).
+
+hello() ->
+    "World!".
++--
+ 
+ Start the application by simply running <<<mvn erlang:run>>>.
+
+[../erlang-run1-example.png] Running the application project.
+
+ We can copy the credentials and connect to the running application node, using
+ the remote shell:
+
+[../erlang-run2-example.png] Connecting with a remote shell.
+ 
+ We can see that the application and it's dependencies (in this case sasl, 
+ kernel and stdlib) have been started and that the application modules have been
+ loaded.
