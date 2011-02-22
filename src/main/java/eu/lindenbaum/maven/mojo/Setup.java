@@ -1,8 +1,5 @@
 package eu.lindenbaum.maven.mojo;
 
-import static eu.lindenbaum.maven.util.FileUtils.extractFilesFromJar;
-import static eu.lindenbaum.maven.util.MavenUtils.getPluginFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,11 +11,12 @@ import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.FileUtils;
+import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.FileUtils;
 
 /**
  * <p>
@@ -119,7 +117,7 @@ public class Setup extends ErlangMojo {
 
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
-    this.plugin = getPluginFile("maven-erlang-plugin", p.project(), p.repository());
+    this.plugin = MavenUtils.getPluginFile("maven-erlang-plugin", p.project(), p.repository());
 
     PackagingType packagingType = p.packagingType();
     if (packagingType == PackagingType.ERLANG_OTP || packagingType == PackagingType.ERLANG_STD) {
@@ -260,7 +258,7 @@ public class Setup extends ErlangMojo {
 
   private void createFolder(File folder, String name) throws MojoExecutionException {
     logGeneratingDefault(name);
-    eu.lindenbaum.maven.util.FileUtils.ensureDirectory(folder);
+    FileUtils.ensureDirectory(folder);
   }
 
   private boolean noFile(File file) {
@@ -271,10 +269,10 @@ public class Setup extends ErlangMojo {
 
   private void createFile(File file, String defaultFileName) throws MojoExecutionException {
     logGeneratingDefault(file.getName());
-    extractFilesFromJar(this.plugin, defaultFileName, file.getParentFile());
+    FileUtils.extractFilesFromJar(this.plugin, defaultFileName, file.getParentFile());
     File sourceFile = new File(file.getParentFile(), defaultFileName);
     try {
-      FileUtils.copyFile(sourceFile, file);
+      org.codehaus.plexus.util.FileUtils.copyFile(sourceFile, file);
     }
     catch (IOException e) {
       throw new MojoExecutionException(e.getMessage(), e);

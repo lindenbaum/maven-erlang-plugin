@@ -2,8 +2,6 @@ package eu.lindenbaum.maven.mojo.app;
 
 import static eu.lindenbaum.maven.util.ErlConstants.TARGZ_SUFFIX;
 import static eu.lindenbaum.maven.util.FileUtils.APP_FILTER;
-import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
-import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +83,7 @@ public final class Packager extends ErlangMojo {
     String projectVersion = p.project().getVersion();
 
     Set<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
-    List<File> modules = getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
+    List<File> modules = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
     Script<String> registeredScript = new GetAttributesScript(modules, "registered");
     List<File> codePaths = Arrays.asList(p.targetEbin());
     String registeredNames = MavenSelf.get(p.cookie()).exec(p.node(), registeredScript, codePaths);
@@ -101,7 +99,7 @@ public final class Packager extends ErlangMojo {
 
     // copy application resource files
     FileUtils.ensureDirectory(p.targetEbin());
-    int copied = copyDirectory(p.ebin(), p.targetEbin(), APP_FILTER, replacements);
+    int copied = FileUtils.copyDirectory(p.ebin(), p.targetEbin(), APP_FILTER, replacements);
     log.debug("Copied " + copied + " application resource files");
 
     File appFile = new File(p.targetEbin(), p.project().getArtifactId() + ErlConstants.APP_SUFFIX);

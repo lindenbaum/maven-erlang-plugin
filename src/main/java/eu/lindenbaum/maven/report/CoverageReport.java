@@ -1,7 +1,5 @@
 package eu.lindenbaum.maven.report;
 
-import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -95,7 +93,7 @@ public class CoverageReport extends ErlangReport {
     tests.addAll(FileUtils.getFilesRecursive(p.targetTestEbin(), "_test" + ErlConstants.BEAM_SUFFIX));
     tests.addAll(FileUtils.getFilesRecursive(p.targetTestEbin(), "_tests" + ErlConstants.BEAM_SUFFIX));
 
-    List<File> sources = getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX);
+    List<File> sources = FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX);
 
     List<File> testCodePaths = new ArrayList<File>();
     testCodePaths.add(p.targetTestEbin());

@@ -28,8 +28,6 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import eu.lindenbaum.maven.Properties;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.SelectorUtils;
 
@@ -459,29 +457,6 @@ public final class FileUtils {
   }
 
   /**
-   * Returns whether there are newer files in a specific directory (recursive)
-   * than a given reference file.
-   * 
-   * @param dir input directory to check
-   * @param reference the file taken as reference time (modified)
-   * @return true if there are .erl/.hrl files newer than the reference file
-   */
-  public static boolean newerFilesThan(File dir, File reference) {
-    final long referenceTime = reference.lastModified();
-    if (referenceTime > 0L) {
-      List<File> sources = getFilesRecursive(dir, ERL_SUFFIX);
-      sources.addAll(getFilesRecursive(dir, HRL_SUFFIX));
-      for (File file : sources) {
-        if (file.lastModified() > referenceTime) {
-          return true;
-        }
-      }
-      return false;
-    }
-    return true;
-  }
-
-  /**
    * Extracts all files from a .jar file matching the given file suffix into a
    * directory.
    * 
@@ -527,25 +502,5 @@ public final class FileUtils {
     else {
       throw new MojoExecutionException("directory " + destDir + " cannot be created");
     }
-  }
-
-  /**
-   * Gathers a complete list of directories that may contain erlang header
-   * (".hrl") files.
-   * 
-   * @param p a the properties object containing some of the include
-   *          directories.
-   * @return a list of directories that must be considered when resolving erlang
-   *         header files.
-   * @since 2.0.0
-   * @author Sven Heyll <sven.heyll@gmail.com>
-   */
-  public static List<File> getIncludeDirs(Properties p) {
-    List<File> includes = new ArrayList<File>();
-    includes.addAll(getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX));
-    includes.add(p.include());
-    includes.add(p.targetInclude());
-    includes.add(p.src());
-    return includes;
   }
 }

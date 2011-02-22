@@ -1,8 +1,5 @@
 package eu.lindenbaum.maven.mojo.app;
 
-import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
-import static eu.lindenbaum.maven.util.FileUtils.removeDirectory;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -41,11 +38,11 @@ public final class TestResourceGenerator extends ErlangMojo {
       return;
     }
 
-    removeDirectory(p.targetTest());
+    FileUtils.removeDirectory(p.targetTest());
 
     int testResources = 0;
-    testResources += copyDirectory(p.priv(), p.targetTestPriv(), FileUtils.NULL_FILTER);
-    testResources += copyDirectory(p.test_priv(), p.targetTestPriv(), FileUtils.NULL_FILTER);
+    testResources += FileUtils.copyDirectory(p.priv(), p.targetTestPriv(), FileUtils.NULL_FILTER);
+    testResources += FileUtils.copyDirectory(p.test_priv(), p.targetTestPriv(), FileUtils.NULL_FILTER);
     log.debug("copied " + testResources + " test resources");
     if (testResources == 0) {
       p.targetTest().delete();

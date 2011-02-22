@@ -1,8 +1,5 @@
 package eu.lindenbaum.maven.mojo.rel;
 
-import static eu.lindenbaum.maven.util.FileUtils.getDirectoriesRecursive;
-import static eu.lindenbaum.maven.util.FileUtils.newerFilesThan;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +11,9 @@ import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.DialyzerScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -71,12 +70,12 @@ public final class Dialyzer extends ErlangMojo {
     }
 
     File lastBuildIndicator = new File(p.target(), ErlConstants.DIALYZER_OK);
-    if (newerFilesThan(p.targetLib(), lastBuildIndicator)) {
+    if (MojoUtils.newerFilesThan(p.targetLib(), lastBuildIndicator)) {
       lastBuildIndicator.delete();
       log.info("Running dialyzer on " + p.targetLib());
 
       List<File> sources = Arrays.asList(new File[]{ p.targetLib() });
-      List<File> includes = getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX);
+      List<File> includes = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX);
 
       String[] dependenciesToAnalyze = p.targetLib().list();
       if (dependenciesToAnalyze == null || dependenciesToAnalyze.length == 0) {

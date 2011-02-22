@@ -7,7 +7,7 @@
       <action dev="heyll" type="add">
        Added the 'erlang:show-build-info' goal that outputs code paths and 
        include paths used to compile the erlang sources, so that other tools
-       (i.e. emacs)can compile erlang files of a mavenized erlang project. 
+       (i.e. emacs) can compile erlang files of a mavenized erlang project. 
       </action>
       <action dev="ghaskins" type="add">
        Added UnArchiver support to erlang-rel artifacts. This allows other

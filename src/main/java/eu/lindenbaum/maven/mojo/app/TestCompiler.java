@@ -1,11 +1,5 @@
 package eu.lindenbaum.maven.mojo.app;
 
-import static eu.lindenbaum.maven.util.FileUtils.extractFilesFromJar;
-import static eu.lindenbaum.maven.util.FileUtils.getDirectoriesRecursive;
-import static eu.lindenbaum.maven.util.FileUtils.getFilesRecursive;
-import static eu.lindenbaum.maven.util.FileUtils.removeFilesRecursive;
-import static eu.lindenbaum.maven.util.MavenUtils.getPluginFile;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +13,7 @@ import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -69,29 +64,21 @@ public final class TestCompiler extends ErlangMojo {
     }
 
     FileUtils.ensureDirectory(p.targetTestEbin());
-    int removed = removeFilesRecursive(p.targetTestEbin(), ErlConstants.BEAM_SUFFIX);
+    int removed = FileUtils.removeFilesRecursive(p.targetTestEbin(), ErlConstants.BEAM_SUFFIX);
     log.debug("Removed " + removed + " stale " + ErlConstants.BEAM_SUFFIX + "-files from "
               + p.targetTestEbin());
 
     log.debug("Looking up test sources under " + p.test_src() + " with file suffix "
               + ErlConstants.ERL_SUFFIX);
-    List<File> files = getFilesRecursive(p.test_src(), ErlConstants.ERL_SUFFIX);
+    List<File> files = FileUtils.getFilesRecursive(p.test_src(), ErlConstants.ERL_SUFFIX);
     if (!files.isEmpty()) {
-      File plugin = getPluginFile("maven-erlang-plugin", p.project(), p.repository());
-      extractFilesFromJar(plugin, ErlConstants.ERL_SUFFIX, p.targetTestEbin());
+      File plugin = MavenUtils.getPluginFile("maven-erlang-plugin", p.project(), p.repository());
+      FileUtils.extractFilesFromJar(plugin, ErlConstants.ERL_SUFFIX, p.targetTestEbin());
 
-      files.addAll(getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX));
+      files.addAll(FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX));
 
       List<File> supportFiles = getTestSupportFiles(p);
       files.addAll(supportFiles);
-
-      List<File> includes = new ArrayList<File>();
-      includes.addAll(getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX));
-      includes.add(p.include());
-      includes.add(p.test_src());
-      includes.add(p.test_include());
-      includes.add(p.targetInclude());
-      includes.add(p.src());
 
       List<String> options = new ArrayList<String>();
       options.add("debug_info");
@@ -102,6 +89,7 @@ public final class TestCompiler extends ErlangMojo {
         options.add(this.testCompilerOptions);
       }
 
+      List<File> includes = MojoUtils.getTestIncludeDirectories(p);
       Script<CompilerResult> script = new BeamCompilerScript(files, p.targetTestEbin(), includes, options);
       List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
       CompilerResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script, codePaths);

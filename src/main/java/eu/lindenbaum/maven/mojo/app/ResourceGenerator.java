@@ -1,8 +1,5 @@
 package eu.lindenbaum.maven.mojo.app;
 
-import static eu.lindenbaum.maven.util.FileUtils.copyDirectory;
-import static eu.lindenbaum.maven.util.FileUtils.removeDirectory;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -36,24 +33,24 @@ import org.apache.maven.plugin.logging.Log;
 public final class ResourceGenerator extends ErlangMojo {
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
-    removeDirectory(p.targetProject());
+    FileUtils.removeDirectory(p.targetProject());
 
     int sources = 0;
-    sources += copyDirectory(p.src(), p.targetSrc(), FileUtils.SOURCE_FILTER);
+    sources += FileUtils.copyDirectory(p.src(), p.targetSrc(), FileUtils.SOURCE_FILTER);
     log.debug("copied " + sources + " sources");
     if (sources == 0) {
       p.targetSrc().delete();
     }
 
     int includes = 0;
-    includes += copyDirectory(p.include(), p.targetInclude(), FileUtils.SOURCE_FILTER);
+    includes += FileUtils.copyDirectory(p.include(), p.targetInclude(), FileUtils.SOURCE_FILTER);
     log.debug("copied " + includes + " includes");
     if (includes == 0) {
       p.targetInclude().delete();
     }
 
     int resources = 0;
-    resources += copyDirectory(p.priv(), p.targetPriv(), FileUtils.NULL_FILTER);
+    resources += FileUtils.copyDirectory(p.priv(), p.targetPriv(), FileUtils.NULL_FILTER);
     log.debug("copied " + resources + " resources");
     if (resources == 0) {
       p.targetPriv().delete();
@@ -79,7 +76,7 @@ public final class ResourceGenerator extends ErlangMojo {
     replacements.put("${ID}", p.project().getId());
     replacements.put("${VERSION}", p.project().getVersion());
     int overview = 0;
-    overview += copyDirectory(p.site(), p.target(), new FileFilter() {
+    overview += FileUtils.copyDirectory(p.site(), p.target(), new FileFilter() {
       @Override
       public boolean accept(File pathname) {
         return pathname.isFile() && pathname.getName().equals(ErlConstants.OVERVIEW_EDOC);

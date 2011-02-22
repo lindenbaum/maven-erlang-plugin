@@ -13,6 +13,7 @@ import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -53,7 +54,6 @@ public final class Compiler extends ErlangMojo {
 
     List<File> files = FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX);
     if (!files.isEmpty()) {
-      List<File> includes = FileUtils.getIncludeDirs(p);
 
       List<String> options = new ArrayList<String>();
       if (this.compilerOptions != null && !this.compilerOptions.isEmpty()) {
@@ -61,6 +61,7 @@ public final class Compiler extends ErlangMojo {
         options.add(this.compilerOptions);
       }
 
+      List<File> includes = MojoUtils.getIncludeDirectories(p);
       Script<CompilerResult> script = new BeamCompilerScript(files, p.targetEbin(), includes, options);
       List<File> codePaths = FileUtils.getDirectoriesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
       CompilerResult result = MavenSelf.get(p.cookie()).exec(p.node(), script, codePaths);

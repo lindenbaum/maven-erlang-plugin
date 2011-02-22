@@ -1,12 +1,8 @@
 package eu.lindenbaum.maven.mojo.app;
 
-import static eu.lindenbaum.maven.util.FileUtils.getDirectoriesRecursive;
-import static eu.lindenbaum.maven.util.FileUtils.newerFilesThan;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -15,6 +11,7 @@ import eu.lindenbaum.maven.erlang.DialyzerScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -86,8 +83,9 @@ public final class Dialyzer extends ErlangMojo {
     }
 
     File lastBuildIndicator = new File(p.target(), ErlConstants.DIALYZER_OK);
-    if (newerFilesThan(p.src(), lastBuildIndicator) || newerFilesThan(p.include(), lastBuildIndicator)
-        || newerFilesThan(p.targetLib(), lastBuildIndicator)) {
+    if (MojoUtils.newerFilesThan(p.src(), lastBuildIndicator)
+        || MojoUtils.newerFilesThan(p.include(), lastBuildIndicator)
+        || MojoUtils.newerFilesThan(p.targetLib(), lastBuildIndicator)) {
       lastBuildIndicator.delete();
       log.info("Running dialyzer on " + p.src());
 
@@ -96,10 +94,8 @@ public final class Dialyzer extends ErlangMojo {
       if (this.dialyzerWithDependencies) {
         sources.add(p.targetLib());
       }
-      List<File> includes = new ArrayList<File>();
-      includes.addAll(Arrays.asList(new File[]{ p.include(), p.targetInclude() }));
-      includes.addAll(getDirectoriesRecursive(p.targetLib(), ErlConstants.HRL_SUFFIX));
 
+      List<File> includes = MojoUtils.getIncludeDirectories(p);
       DialyzerScript script = new DialyzerScript(sources, includes, this.dialyzerOptions);
       String[] warnings = MavenSelf.get(p.cookie()).exec(p.node(), script, new ArrayList<File>());
       for (String warning : warnings) {
