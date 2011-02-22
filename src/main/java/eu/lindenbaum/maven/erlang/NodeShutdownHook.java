@@ -1,12 +1,15 @@
 package eu.lindenbaum.maven.erlang;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import eu.lindenbaum.maven.util.MavenUtils;
 
 import com.ericsson.otp.erlang.OtpConnection;
 import com.ericsson.otp.erlang.OtpErlangList;
 
-import eu.lindenbaum.maven.util.MavenUtils;
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Provides JVM unique shutdown hooks that stop erlang backend nodes.
@@ -58,7 +61,10 @@ public final class NodeShutdownHook extends Thread {
       connection.sendRPC("erlang", "halt", new OtpErlangList());
       System.out.println("[INFO] Successfully shut down '" + this.nodeName + "'");
     }
-    catch (Exception e) {
+    catch (IOException e) {
+      System.out.println("[ERROR] Failed to shutdown '" + this.nodeName + "'");
+    }
+    catch (MojoExecutionException e) {
       System.out.println("[ERROR] Failed to shutdown '" + this.nodeName + "'");
     }
     System.out.println("[INFO] " + MavenUtils.SEPARATOR);

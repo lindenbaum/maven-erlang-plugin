@@ -3,11 +3,12 @@ package eu.lindenbaum.maven.archiver;
 import java.io.File;
 import java.io.IOException;
 
-import com.ericsson.otp.erlang.OtpErlangObject;
-import com.ericsson.otp.erlang.OtpErlangTuple;
-
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
+import eu.lindenbaum.maven.util.FileUtils;
+
+import com.ericsson.otp.erlang.OtpErlangObject;
+import com.ericsson.otp.erlang.OtpErlangTuple;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -52,7 +53,12 @@ public final class TarGzUnarchiver {
    */
   public void extract(File archive) throws IOException {
     if (archive.isFile()) {
-      this.destination.mkdirs();
+      try {
+        FileUtils.ensureDirectory(this.destination);
+      }
+      catch (MojoExecutionException e) {
+        throw new IOException("failed to create destination directory " + this.destination);
+      }
       if (this.destination.exists()) {
         if (this.destination.isDirectory()) {
           Script<String> script = new TarGzUnarchiverScript(archive, this.destination);
@@ -71,7 +77,7 @@ public final class TarGzUnarchiver {
         }
       }
       else {
-        throw new IOException("could not create " + this.destination.toString());
+        throw new IOException("could not create " + this.destination);
       }
     }
     else {

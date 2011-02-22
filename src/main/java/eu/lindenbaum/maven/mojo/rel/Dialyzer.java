@@ -1,7 +1,6 @@
 package eu.lindenbaum.maven.mojo.rel;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,7 +70,7 @@ public final class Dialyzer extends ErlangMojo {
 
     File lastBuildIndicator = new File(p.target(), ErlConstants.DIALYZER_OK);
     if (MojoUtils.newerFilesThan(p.targetLib(), lastBuildIndicator)) {
-      lastBuildIndicator.delete();
+      FileUtils.removeFiles(lastBuildIndicator);
       log.info("Running dialyzer on " + p.targetLib());
 
       List<File> sources = Arrays.asList(new File[]{ p.targetLib() });
@@ -97,15 +96,7 @@ public final class Dialyzer extends ErlangMojo {
         throw new MojoFailureException("Dialyzer emitted warnings.");
       }
       log.info("Dialyzer run successful.");
-
-      try {
-        if (warnings.length == 0) {
-          lastBuildIndicator.createNewFile();
-        }
-      }
-      catch (IOException e) {
-        throw new MojoExecutionException("Failed to create " + lastBuildIndicator + ".");
-      }
+      FileUtils.touch(lastBuildIndicator);
     }
     else {
       log.info("Last dialyzer run is still up to date.");

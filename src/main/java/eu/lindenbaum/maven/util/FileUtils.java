@@ -178,6 +178,22 @@ public final class FileUtils {
   }
 
   /**
+   * Removes an empty directory. Non-empty directories will not be deleted.
+   * 
+   * @param directory to remove
+   */
+  public static void removeEmptyDirectory(File directory) throws MojoExecutionException {
+    if (directory.isDirectory()) {
+      String[] list = directory.list();
+      if (list != null && list.length == 0) {
+        if (!directory.delete()) {
+          throw new MojoExecutionException("Failed to delete empty directory " + directory + ".");
+        }
+      }
+    }
+  }
+
+  /**
    * Removes the specific files from the file system. Returns the number of
    * files removed. Directories are skipped.
    * 
@@ -188,8 +204,7 @@ public final class FileUtils {
     int removed = 0;
     for (File file : files) {
       if (file.isFile()) {
-        file.delete();
-        if (!file.isFile()) {
+        if (file.delete()) {
           removed++;
         }
       }
@@ -314,10 +329,7 @@ public final class FileUtils {
         }
       }
       for (File src : toCopy) {
-        File dest = new File(to, src.getAbsolutePath().replace(from.getAbsolutePath(), ""));
-        if (dest.isDirectory()) {
-          dest.delete();
-        }
+        removeEmptyDirectory(new File(to, src.getAbsolutePath().replace(from.getAbsolutePath(), "")));
       }
     }
     return copied;
@@ -356,10 +368,7 @@ public final class FileUtils {
         }
       }
       for (File src : toCopy) {
-        File dest = new File(to, src.getAbsolutePath().replace(from.getAbsolutePath(), ""));
-        if (dest.isDirectory()) {
-          dest.delete();
-        }
+        removeEmptyDirectory(new File(to, src.getAbsolutePath().replace(from.getAbsolutePath(), "")));
       }
     }
     return copied;
@@ -448,10 +457,35 @@ public final class FileUtils {
         throw new MojoExecutionException("Failed to create directory " + dir + " (is a file).");
       }
       else {
-        dir.mkdirs();
-        if (!dir.isDirectory()) {
+        if (!dir.mkdirs()) {
           throw new MojoExecutionException("Failed to create directory " + dir + ".");
         }
+      }
+    }
+  }
+
+  /**
+   * Touches a file UNIX style. If the file does not exist it will be created,
+   * if the file already exists the modification timestamp is set to
+   * {@link System#currentTimeMillis()}.
+   * 
+   * @param file to touch
+   * @throws MojoExecutionException
+   */
+  public static void touch(File file) throws MojoExecutionException {
+    if (file.isFile()) {
+      if (!file.setLastModified(System.currentTimeMillis())) {
+        throw new MojoExecutionException("Failed to update modification time on " + file + ".");
+      }
+    }
+    else {
+      try {
+        if (!file.createNewFile()) {
+          throw new MojoExecutionException("Failed to create " + file + ".");
+        }
+      }
+      catch (IOException e) {
+        throw new MojoExecutionException("Failed to create " + file + ".", e);
       }
     }
   }

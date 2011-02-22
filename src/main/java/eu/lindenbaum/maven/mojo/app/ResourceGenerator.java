@@ -39,21 +39,21 @@ public final class ResourceGenerator extends ErlangMojo {
     sources += FileUtils.copyDirectory(p.src(), p.targetSrc(), FileUtils.SOURCE_FILTER);
     log.debug("copied " + sources + " sources");
     if (sources == 0) {
-      p.targetSrc().delete();
+      FileUtils.removeEmptyDirectory(p.targetSrc());
     }
 
     int includes = 0;
     includes += FileUtils.copyDirectory(p.include(), p.targetInclude(), FileUtils.SOURCE_FILTER);
     log.debug("copied " + includes + " includes");
     if (includes == 0) {
-      p.targetInclude().delete();
+      FileUtils.removeEmptyDirectory(p.targetInclude());
     }
 
     int resources = 0;
     resources += FileUtils.copyDirectory(p.priv(), p.targetPriv(), FileUtils.NULL_FILTER);
     log.debug("copied " + resources + " resources");
     if (resources == 0) {
-      p.targetPriv().delete();
+      FileUtils.removeEmptyDirectory(p.targetPriv());
     }
 
     int foreignArtifacts = 0;

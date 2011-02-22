@@ -45,7 +45,7 @@ public final class TestResourceGenerator extends ErlangMojo {
     testResources += FileUtils.copyDirectory(p.test_priv(), p.targetTestPriv(), FileUtils.NULL_FILTER);
     log.debug("copied " + testResources + " test resources");
     if (testResources == 0) {
-      p.targetTest().delete();
+      FileUtils.removeEmptyDirectory(p.targetTest());
     }
 
     int foreignArtifacts = 0;

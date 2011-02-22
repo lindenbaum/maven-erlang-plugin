@@ -277,7 +277,7 @@ public class Setup extends ErlangMojo {
     catch (IOException e) {
       throw new MojoExecutionException(e.getMessage(), e);
     }
-    sourceFile.delete();
+    FileUtils.removeFiles(sourceFile);
   }
 
   private void logCheckingIf(String string, boolean exists) {
