@@ -18,7 +18,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * {@link Mojo} that first purges and all dynamically loaded modules on the test
+ * {@link Mojo} that first purges all dynamically loaded modules on the test
  * backend node and reloads the modules provided by (unpacked) dependencies.
  * 
  * @goal reload-test-dependencies
