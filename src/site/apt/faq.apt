@@ -56,10 +56,6 @@ Frequently Asked Questions
  into the development process using Emacs/distel (see next section for
  detailed information on that).
 
-* Can I integrate the plug-in in my emacs/distel workflow?
-
- TODO document me
-
 * How do I manage non-erlang source code/artifacts?
 
  It is recommended to organize your project's non-erlang dependencies in
