@@ -7,6 +7,7 @@ import java.util.List;
 import eu.lindenbaum.maven.Properties;
 
 import org.apache.maven.plugin.Mojo;
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Containing utilities related to maven-erlang-plugin specific {@link Mojo}s.
@@ -17,9 +18,32 @@ import org.apache.maven.plugin.Mojo;
  * @since 2.0.0
  */
 public final class MojoUtils {
+  private static final String WINDOWS = "WINDOWS";
+
   /**
-   * Returns whether there are newer files in a specific directory (recursive)
-   * than a given reference file.
+   * Returns whether the executing JVM is running under Microsoft Windows or
+   * not.
+   * 
+   * @return {@code true} on Microsoft Windows systems, {@code false} otherwise
+   * @throws MojoExecutionException in case the 'os.name' property is not set
+   */
+  public static boolean isWindows() throws MojoExecutionException {
+    String property = System.getProperty("os.name");
+    if (property != null) {
+      if (property.toUpperCase().contains(WINDOWS)) {
+        return true;
+      }
+    }
+    else {
+      throw new MojoExecutionException("Java property 'os.name' not set.");
+    }
+    return false;
+  }
+
+  /**
+   * Returns whether there are erlang source/header files in a specific
+   * directory (recursive) having a newer modification time than a given
+   * reference file.
    * 
    * @param dir input directory to check
    * @param reference the file taken as reference time (modified)

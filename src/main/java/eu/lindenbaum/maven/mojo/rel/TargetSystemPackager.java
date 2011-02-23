@@ -18,6 +18,7 @@ import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -44,7 +45,7 @@ import org.apache.maven.plugin.logging.Log;
  * Note: This mojo is currently working but still in experimental stage.
  * </p>
  * <ul>
- * <li>FIXME binary names on windows may not be covered by this implementation</li>
+ * <li>FIXME not supported on Microsoft Windows</li>
  * </ul>
  * 
  * @goal target-system
@@ -64,6 +65,10 @@ public final class TargetSystemPackager extends ErlangMojo {
     if (PackagingType.ERLANG_REL != packagingType) {
       log.info("Nothing to do for packaging " + packagingType + ".");
       return;
+    }
+
+    if (MojoUtils.isWindows()) {
+      throw new MojoExecutionException("Mojo is not supported on Microsoft Windows systems.");
     }
 
     File tmp = new File(p.target(), "tmp");
