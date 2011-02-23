@@ -21,6 +21,7 @@
       <item name="Generate a coverage report" href="examples/coverage.html" />
       <item name="Running dialyzer on a project" href="examples/dialyzer.html" />
       <item name="Running your application" href="examples/running.html" />
+      <item name="Uploading code on a remote node" href="examples/uploading.html" />
     </menu>
     <menu name="Project">
       <item name="Summary" href="project-summary.html" />

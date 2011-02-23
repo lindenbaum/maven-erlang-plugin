@@ -50,10 +50,31 @@ Maven Erlang Plug-In
 
 +--
  tar xzvf ${project.artifactId}-${project.version}.tar.gz
+ 
  cd ${project.artifactId}-${project.version}
- mvn install:install-file -Dfile=${project.artifactId}-${project.version}.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=${project.version} -Dpackaging=jar
- mvn install:install-file -Dfile=${project.artifactId}-${project.version}-javadoc.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=${project.version} -Dpackaging=jar -Dclassifier=javadoc
- mvn install:install-file -Dfile=${project.artifactId}-${project.version}-sources.jar -DgroupId=${project.groupId} -DartifactId=${project.artifactId} -Dversion=${project.version} -Dpackaging=jar -Dclassifier=sources
+ 
+ mvn install:install-file \
+    -Dfile=${project.artifactId}-${project.version}.jar \
+    -DgroupId=${project.groupId} \
+    -DartifactId=${project.artifactId} \
+    -Dversion=${project.version} \
+    -Dpackaging=jar
+ 
+ mvn install:install-file \
+    -Dfile=${project.artifactId}-${project.version}-javadoc.jar \
+    -DgroupId=${project.groupId} \
+    -DartifactId=${project.artifactId} \
+    -Dversion=${project.version} \
+    -Dpackaging=jar \
+    -Dclassifier=javadoc
+ 
+ mvn install:install-file \
+    -Dfile=${project.artifactId}-${project.version}-sources.jar \
+    -DgroupId=${project.groupId} \
+    -DartifactId=${project.artifactId} \
+    -Dversion=${project.version} \
+    -Dpackaging=jar \
+    -Dclassifier=sources
 +--
  
 ** Packaging Type
