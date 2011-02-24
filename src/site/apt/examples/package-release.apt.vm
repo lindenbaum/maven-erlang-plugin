@@ -41,7 +41,7 @@ top-level supervisor.
 application.
 
  Now that the application is available to other projects we create the release
- project <<<rel>> having a dependency to the <<<app>>> application. In our
+ project <<<rel>>> having a dependency to the <<<app>>> application. In our
  example the release <<<pom.xml>>> has the below content and the rest of the
  needed project infrastructure was generated using the setup goal
  <<<mvn erlang:setup -DwithExtras=false>>>.
