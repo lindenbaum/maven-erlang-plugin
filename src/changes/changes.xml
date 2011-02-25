@@ -4,6 +4,9 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert, heyll" type="remove">
+        Removed the 'failIfNoTests' parameter for simplifying plug-ing usage.
+      </action>
       <action dev="schlagert, olle-t" type="fix">
         Fixed dangling application project dependencies in 'target/lib' when
         changing a dependency version and not 'cleaning' the next build. 

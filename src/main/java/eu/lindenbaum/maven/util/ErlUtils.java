@@ -260,23 +260,14 @@ public final class ErlUtils {
 
   /**
    * Attaches the plugin to a backend erlang node. If the backend node is not
-   * already running it will be started. On successful connection the function
-   * also purges all modules that are not preloaded in order to clean up the
-   * backend.
+   * already running it will be started.
    * 
    * @param log logger to use
-   * @param shutdownGoal to run in order to shutdown the backend node
    * @param nodeName name of the backend to connect to
    * @param nodeCookie cookie of the backend to connect to
-   * @param autoShutdown whether to register a shutdown hook that stops the
-   *          backend automatically on JVM exit
    * @throws MojoExecutionException
    */
-  public static void startBackend(Log log,
-                                  String shutdownGoal,
-                                  String nodeName,
-                                  String nodeCookie,
-                                  boolean autoShutdown) throws MojoExecutionException {
+  public static void startBackend(Log log, String nodeName, String nodeCookie) throws MojoExecutionException {
     OtpPeer peer = new OtpPeer(nodeName);
     try {
       try {
@@ -304,17 +295,11 @@ public final class ErlUtils {
         }
         log.debug("Node " + peer + " sucessfully started.");
       }
-      if (autoShutdown) {
-        try {
-          Runtime.getRuntime().addShutdownHook(NodeShutdownHook.get(nodeName, nodeCookie));
-        }
-        catch (IllegalArgumentException e1) {
-          log.debug("shutdown hook already registered.");
-        }
+      try {
+        Runtime.getRuntime().addShutdownHook(NodeShutdownHook.get(nodeName, nodeCookie));
       }
-      else {
-        log.info("Node " + peer + " will not be shutdown automatically.");
-        log.info("To shutdown the node run 'mvn " + shutdownGoal + "'");
+      catch (IllegalArgumentException e1) {
+        log.debug("shutdown hook already registered.");
       }
     }
     catch (IOException e) {

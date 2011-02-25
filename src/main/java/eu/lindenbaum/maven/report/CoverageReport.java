@@ -99,7 +99,7 @@ public class CoverageReport extends ErlangReport {
     FileUtils.ensureDirectories(outdir);
 
     Script<CoverageReportResult> script = new CoverageReportScript(targetTestEbin, tests, sources);
-    CoverageReportResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script);
+    CoverageReportResult result = MavenSelf.get(p.cookie()).exec(p.testNode(), script);
 
     if (result.failed()) {
       result.logOutput(getLog());

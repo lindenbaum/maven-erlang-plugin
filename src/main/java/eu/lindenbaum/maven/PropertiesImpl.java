@@ -12,15 +12,24 @@ import org.apache.maven.project.MavenProject;
  * @see PackagingType
  */
 final class PropertiesImpl implements Properties {
+  /**
+   * Name of the default backend node used by the plug-in.
+   */
+  private static final String DEFAULT_BACKEND = "maven-erlang-plugin-backend";
+
+  /**
+   * Name of the default test backend node used by the plug-in.
+   */
+  private static final String DEFAULT_TEST_BACKEND = "maven-erlang-plugin-test-backend";
+
   private final MavenProject project;
   private final ArtifactRepository repository;
 
   private final String projectName;
   private final PackagingType packagingType;
   private final String node;
-  private final String cookie;
   private final String testNode;
-  private final String testCookie;
+  private final String cookie;
 
   private final File apt;
   private final File base;
@@ -55,19 +64,15 @@ final class PropertiesImpl implements Properties {
                  ArtifactRepository repository,
                  File base,
                  File target,
-                 String node,
-                 String cookie,
-                 String testNode,
-                 String testCookie) {
+                 String cookie) {
     this.project = project;
     this.repository = repository;
 
     this.projectName = project.getArtifactId() + "-" + project.getVersion();
     this.packagingType = type;
-    this.node = node;
+    this.node = DEFAULT_BACKEND;
+    this.testNode = DEFAULT_TEST_BACKEND;
     this.cookie = cookie;
-    this.testNode = testNode;
-    this.testCookie = testCookie;
 
     switch (type) {
       case ERLANG_STD: {
@@ -164,11 +169,6 @@ final class PropertiesImpl implements Properties {
   @Override
   public String testNode() {
     return this.testNode;
-  }
-
-  @Override
-  public String testCookie() {
-    return this.testCookie;
   }
 
   @Override

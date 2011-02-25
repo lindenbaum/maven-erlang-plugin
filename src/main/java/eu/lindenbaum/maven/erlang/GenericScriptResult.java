@@ -3,13 +3,13 @@ package eu.lindenbaum.maven.erlang;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Interface representing the result returned by the {@link MakeScriptScript}
- * and {@link MakeTarScript} scripts.
+ * Interface representing a generic result of a {@link Script} execution
+ * providing a success qualifier and output to log.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
-public interface SystoolsScriptResult {
+public interface GenericScriptResult {
   /**
    * Returns whether script execution was successfull.
    * 

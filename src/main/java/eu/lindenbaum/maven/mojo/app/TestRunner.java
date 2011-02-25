@@ -43,14 +43,6 @@ public final class TestRunner extends ErlangMojo {
    */
   private String test;
 
-  /**
-   * Setting this to {@code true} will break the build if there are no tests to
-   * run.
-   * 
-   * @parameter expression="${failIfNoTests}" default-value=false
-   */
-  private boolean failIfNoTests;
-
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
     log.info(MavenUtils.SEPARATOR);
@@ -75,19 +67,14 @@ public final class TestRunner extends ErlangMojo {
     }
 
     if (tests.isEmpty()) {
-      if (this.failIfNoTests) {
-        throw new MojoFailureException("No tests to run.");
-      }
-      else {
-        log.info("No tests to run.");
-        return;
-      }
+      log.info("No tests to run.");
+      return;
     }
     FileUtils.ensureDirectories(p.targetSurefireReports());
 
     String suiteName = p.project().getArtifactId();
     Script<TestResult> script = new TestScript(tests, p.targetSurefireReports(), suiteName);
-    TestResult result = MavenSelf.get(p.testCookie()).exec(p.testNode(), script);
+    TestResult result = MavenSelf.get(p.cookie()).exec(p.testNode(), script);
     result.logOutput(log);
 
     if (!result.testsPassed()) {

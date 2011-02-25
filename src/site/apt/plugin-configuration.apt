@@ -26,14 +26,7 @@ Grouped Parameter Summary
 
 * General
 
-  * <<<node>>>: specifies the node to use as backend node (will be started
-  automatically if not running)
-
   * <<<cookie>>>: specifies the cookie used for the backend node
-
-  * <<<shutdownNode>>>: specifies whether to shutdown the backend node after
-  a build has completed (set this to false to reuse the backend node for
-  subsequent builds)
 
 * Compiler
 
@@ -61,18 +54,6 @@ Grouped Parameter Summary
  * <<<test>>>: will only run this module (using <<<eunit>>>) 
  
  * <<<skipTests>>>: will skip test compilation and running
- 
- * <<<failIfNoTests>>>: will break the build if no eunit tests are found in the
- project
-
- * <<<testNode>>>: specifies the node to use as backend node (will be started
- automatically if not running) for tests
-
- * <<<testCookie>>>: specifies the cookie used for the test backend node
-
- * <<<shutdownTestNode>>>: specifies whether to shutdown the test backend node
- after a test runs have completed (set this to false to reuse the test backend
- node for subsequent tests)
 
 * Release Packaging
 

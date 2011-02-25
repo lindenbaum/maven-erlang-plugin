@@ -10,4 +10,16 @@
       </phase>
     </phases>
   </lifecycle>
+  <lifecycle>
+    <id>upload</id>
+    <phases>
+      <phase>
+        <id>package</id>
+        <configuration>
+          <skipTests>true</skipTests>
+          <skipDialyzer>true</skipDialyzer>
+        </configuration>
+      </phase>
+    </phases>
+  </lifecycle>
 </lifecycles>

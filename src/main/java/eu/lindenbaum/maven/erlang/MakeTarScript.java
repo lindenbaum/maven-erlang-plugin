@@ -19,7 +19,7 @@ import org.apache.maven.plugin.logging.Log;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
-public final class MakeTarScript implements Script<SystoolsScriptResult> {
+public final class MakeTarScript implements Script<GenericScriptResult> {
   private static final String script = //
   NL + "case systools:make_tar(\"%s\", [silent, {outdir, \"%s\"}] ++ [%s]) of" + NL + //
       "    ok -> {ok, \"\"};" + NL + //
@@ -65,11 +65,11 @@ public final class MakeTarScript implements Script<SystoolsScriptResult> {
    * @return An object capable of delivering the results transparently.
    */
   @Override
-  public SystoolsScriptResult handle(OtpErlangObject result) {
+  public GenericScriptResult handle(OtpErlangObject result) {
     OtpErlangTuple resultTuple = (OtpErlangTuple) result;
     final String level = ErlUtils.toString(resultTuple.elementAt(0));
     final String messages = ErlUtils.toString(resultTuple.elementAt(1));
-    return new SystoolsScriptResult() {
+    return new GenericScriptResult() {
       @Override
       public boolean success() {
         return "ok".equals(level) || "warn".equals(level);

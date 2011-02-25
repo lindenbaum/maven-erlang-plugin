@@ -6,9 +6,10 @@ import java.util.List;
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
+import eu.lindenbaum.maven.erlang.GenericScriptResult;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
-import eu.lindenbaum.maven.erlang.UploadModulesScript;
+import eu.lindenbaum.maven.erlang.UploadScript;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
@@ -18,10 +19,12 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * Recompiles the sources of the project and uploads them onto a configured
- * (remote) node.
+ * (remote) node along with the projects application file which will be loaded
+ * using <code>application:load/1</code>. The modules will be purged as if
+ * <code>c:c/1</code> would have been called on a shell.
  * 
  * @goal upload
- * @execute phase="compile"
+ * @execute phase="package" lifecycle="upload"
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @since 2.0.0
  */
@@ -60,19 +63,31 @@ public final class Upload extends ErlangMojo {
       return;
     }
 
+    if (p.node().equals(this.remote)) {
+      log.error("Target node and backend node must not be the same node.");
+      throw new MojoExecutionException("Target node equals backend node.");
+    }
+
     List<File> modules = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
     if (this.withDependencies) {
       modules.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX));
     }
 
-    Script<String> script = new UploadModulesScript(this.remote, modules);
-    String result = MavenSelf.get(p.cookie()).exec(p.node(), script);
-    if (!"ok".equals(result)) {
-      log.error("Uploading modules failed: " + result + ".");
-      throw new MojoExecutionException("Uploading modules failed: " + result + ".");
+    List<File> applicationFiles = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.APP_SUFFIX);
+    if (this.withDependencies) {
+      applicationFiles.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.APP_SUFFIX));
+    }
+
+    Script<GenericScriptResult> script = new UploadScript(this.remote, modules, applicationFiles);
+    GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
+    if (result.success()) {
+      log.info("Successfully uploaded files to " + this.remote);
+      result.logOutput(log);
     }
     else {
-      log.info("Successfully uploaded " + modules.size() + " modules to " + this.remote);
+      log.error("Uploading files to " + this.remote + " failed.");
+      result.logOutput(log);
+      throw new MojoExecutionException("Uploading files failed.");
     }
   }
 }

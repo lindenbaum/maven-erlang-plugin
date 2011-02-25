@@ -7,7 +7,7 @@ import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.MakeTarScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
-import eu.lindenbaum.maven.erlang.SystoolsScriptResult;
+import eu.lindenbaum.maven.erlang.GenericScriptResult;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.MavenUtils;
 
@@ -71,8 +71,8 @@ public final class Packager extends ErlangMojo {
     }
 
     File relFile = new File(p.target(), releaseFileBaseName + ErlConstants.REL_SUFFIX);
-    Script<SystoolsScriptResult> script = new MakeTarScript(relFile, p.target(), options);
-    SystoolsScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
+    Script<GenericScriptResult> script = new MakeTarScript(relFile, p.target(), options);
+    GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
     result.logOutput(log);
     if (!result.success()) {
       throw new MojoFailureException("Could not create release package.");

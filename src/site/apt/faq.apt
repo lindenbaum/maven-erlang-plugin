@@ -32,6 +32,8 @@ Frequently Asked Questions
 
 * How does the plug-in work?
 
+ DEPRECATED TODO
+
  The plug-in uses several erlang nodes as backends to execute scripts via remote
  procedure calls. The backend node will not be altered by the plug-in except for
  the extension of code paths. The plug-in does not need write access to the

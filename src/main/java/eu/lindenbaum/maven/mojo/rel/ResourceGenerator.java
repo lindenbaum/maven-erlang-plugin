@@ -19,7 +19,7 @@ import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.RuntimeInfo;
 import eu.lindenbaum.maven.erlang.RuntimeInfoScript;
 import eu.lindenbaum.maven.erlang.Script;
-import eu.lindenbaum.maven.erlang.SystoolsScriptResult;
+import eu.lindenbaum.maven.erlang.GenericScriptResult;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.FileUtils;
@@ -117,8 +117,8 @@ public final class ResourceGenerator extends ErlangMojo {
       log.debug("Copied release upgrade file to " + destRelupFile + " .");
     }
 
-    Script<SystoolsScriptResult> script = new MakeScriptScript(destRelFile, p.target(), this.scriptOptions);
-    SystoolsScriptResult makeScriptResult = MavenSelf.get(p.cookie()).exec(p.node(), script);
+    Script<GenericScriptResult> script = new MakeScriptScript(destRelFile, p.target(), this.scriptOptions);
+    GenericScriptResult makeScriptResult = MavenSelf.get(p.cookie()).exec(p.node(), script);
     makeScriptResult.logOutput(log);
     if (!makeScriptResult.success()) {
       throw new MojoFailureException("Could not create boot scripts.");

@@ -26,11 +26,22 @@ import org.apache.maven.plugin.logging.Log;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class TestDependencyLoader extends ErlangMojo {
+  /**
+   * Setting this to {@code true} will skip the test dependency loading.
+   * 
+   * @parameter expression="${skipTests}" default-value=false
+   */
+  private boolean skipTests;
+
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
+    if (this.skipTests) {
+      return;
+    }
+
     // clean up dynamically loaded modules on backend from previous runs
     Script<Void> purgeScript = new PurgeModulesScript();
-    MavenSelf.get(p.testCookie()).exec(p.testNode(), purgeScript);
+    MavenSelf.get(p.cookie()).exec(p.testNode(), purgeScript);
 
     // reload dependency modules on backend node
     List<File> modules = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX);
@@ -40,7 +51,7 @@ public final class TestDependencyLoader extends ErlangMojo {
     FileUtils.ensureDirectories(codePaths.toArray(new File[0]));
 
     LoadModulesScript loadScript = new LoadModulesScript(modules);
-    Integer loaded = MavenSelf.get(p.testCookie()).exec(p.testNode(), loadScript, codePaths);
+    Integer loaded = MavenSelf.get(p.cookie()).exec(p.testNode(), loadScript, codePaths);
     log.debug("Successfully loaded " + loaded + " .beam file(s) from dependencies.");
   }
 }

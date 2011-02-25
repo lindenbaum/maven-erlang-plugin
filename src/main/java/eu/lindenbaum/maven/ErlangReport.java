@@ -69,36 +69,11 @@ public abstract class ErlangReport extends AbstractMavenReport {
   private File target;
 
   /**
-   * The name of the backend node to use.
-   * 
-   * @parameter expression="${node}" default-value="maven-erlang-plugin-backend"
-   * @required
-   */
-  private String node;
-
-  /**
    * The cookie to use for the java and the backend node.
    * 
-   * @parameter expression="${cookie}" default-value=""
-   * @required
+   * @parameter expression="${cookie}"
    */
   private String cookie;
-
-  /**
-   * The name of the backend node to use.
-   * 
-   * @parameter expression="${testNode}"
-   *            default-value="maven-erlang-plugin-test-backend"
-   * @required
-   */
-  private String testNode;
-
-  /**
-   * The cookie to use for the java and the backend node.
-   * 
-   * @parameter expression="${testCookie}" default-value=""
-   */
-  private String testCookie;
 
   @Override
   protected final MavenProject getProject() {
@@ -146,15 +121,7 @@ public abstract class ErlangReport extends AbstractMavenReport {
    */
   protected Properties getProperties() {
     PackagingType type = PackagingType.fromString(this.project.getPackaging());
-    return new PropertiesImpl(type,
-                              this.project,
-                              this.repository,
-                              this.base,
-                              this.target,
-                              this.node,
-                              this.cookie,
-                              this.testNode,
-                              this.testCookie);
+    return new PropertiesImpl(type, this.project, this.repository, this.base, this.target, this.cookie);
   }
 
   /**

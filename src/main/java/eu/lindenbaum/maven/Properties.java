@@ -49,12 +49,6 @@ public interface Properties {
   public String testNode();
 
   /**
-   * Returns the cookie that must be used when connecting to the test backend
-   * node.
-   */
-  public String testCookie();
-
-  /**
    * Returns the directory where the maven .apt resources reside.
    */
   public File apt();

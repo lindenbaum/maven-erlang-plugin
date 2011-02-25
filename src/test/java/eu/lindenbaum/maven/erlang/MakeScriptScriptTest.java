@@ -49,7 +49,7 @@ public class MakeScriptScriptTest {
     File outdir = new File("outdir");
     File relFile = new File("relfile.rel");
     MakeScriptScript script = new MakeScriptScript(relFile, outdir, null);
-    SystoolsScriptResult scriptResult = script.handle(result);
+    GenericScriptResult scriptResult = script.handle(result);
     assertTrue(scriptResult.success());
     scriptResult.logOutput(this.log);
 
@@ -69,7 +69,7 @@ public class MakeScriptScriptTest {
     File outdir = new File("outdir");
     File relFile = new File("relfile.rel");
     MakeScriptScript script = new MakeScriptScript(relFile, outdir, null);
-    SystoolsScriptResult scriptResult = script.handle(result);
+    GenericScriptResult scriptResult = script.handle(result);
     assertTrue(scriptResult.success());
     scriptResult.logOutput(this.log);
 
@@ -89,7 +89,7 @@ public class MakeScriptScriptTest {
     File outdir = new File("outdir");
     File relFile = new File("relfile.rel");
     MakeScriptScript script = new MakeScriptScript(relFile, outdir, null);
-    SystoolsScriptResult scriptResult = script.handle(result);
+    GenericScriptResult scriptResult = script.handle(result);
     assertFalse(scriptResult.success());
     scriptResult.logOutput(this.log);
 
