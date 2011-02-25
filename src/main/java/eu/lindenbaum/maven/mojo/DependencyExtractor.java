@@ -2,6 +2,8 @@ package eu.lindenbaum.maven.mojo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -37,23 +39,22 @@ public final class DependencyExtractor extends ErlangMojo {
     for (Artifact artifact : artifacts) {
       extractArtifact(log, artifact, unarchiver);
     }
+    cleanupArtifacts(log, targetLib, artifacts);
   }
 
   /**
    * Extract a specific artifact (.zip file) into a specific directory.
-   * 
-   * @param log logger to use
-   * @param artifact to extract
-   * @param unarchiver directory to extract the artifact into
-   * @throws MojoExecutionException
    */
   private static void extractArtifact(Log log, Artifact artifact, TarGzUnarchiver unarchiver) throws MojoExecutionException {
     File artifactFile = artifact.getFile();
     String artifactdirectory = getArtifactDirectory(artifact);
     File cachedDependency = new File(unarchiver.getDestination(), artifactdirectory);
     if (!cachedDependency.isDirectory() || artifactFile.lastModified() > cachedDependency.lastModified()) {
-      log.info("Extracting artifact " + artifact.getGroupId() + ":" + artifact.getId());
+      if (cachedDependency.isDirectory()) {
+        FileUtils.removeDirectory(cachedDependency);
+      }
       try {
+        log.info("Extracting dependency " + artifactdirectory + ".");
         unarchiver.extract(artifact.getFile());
       }
       catch (IOException e) {
@@ -66,10 +67,22 @@ public final class DependencyExtractor extends ErlangMojo {
   }
 
   /**
+   * Removes obsolete dependencies from previous build runs.
+   */
+  private static void cleanupArtifacts(Log log, File targetLib, Set<Artifact> artifacts) {
+    List<String> excludes = new ArrayList<String>();
+    for (Artifact artifact : artifacts) {
+      excludes.add(getArtifactDirectory(artifact));
+    }
+    List<File> obsoleteDependencies = FileUtils.getDirectories(targetLib, excludes);
+    for (File obsoleteDependency : obsoleteDependencies) {
+      log.debug("Removing obsolete dependency " + obsoleteDependency.getName() + ".");
+      FileUtils.removeDirectory(obsoleteDependency);
+    }
+  }
+
+  /**
    * Returns the directory name for the given {@link Artifact}.
-   * 
-   * @param artifact to retrieve the directory name from
-   * @return a string containing the directory name
    */
   private static String getArtifactDirectory(Artifact artifact) {
     return artifact.getFile().getName().replace("." + artifact.getType(), "");

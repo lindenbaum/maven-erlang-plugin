@@ -44,11 +44,6 @@ public interface ErlConstants {
   public static final String REL_SUFFIX = ".rel";
 
   /**
-   * Suffix for relup files.
-   */
-  public static final String RELUP_SUFFIX = ".relup";
-
-  /**
    * Suffix for src files, like erl.src, start.src, etc.
    */
   public static final String SRC_SUFFIX = ".src";
@@ -67,6 +62,11 @@ public interface ErlConstants {
    * Name of the system configuration file.
    */
   public static final String SYS_CONFIG = "sys.config";
+
+  /**
+   * Name of the release upgrade file.
+   */
+  public static final String RELUP = "relup";
 
   /**
    * Name of the coverdata binary (coverdata) file.

@@ -95,6 +95,7 @@ public final class TestRunner extends ErlangMojo {
     }
 
     checkSystemConfig(log, new File(p.base(), ErlConstants.SYS_CONFIG));
+    checkReleaseUpgradeFile(log, new File(p.base(), ErlConstants.RELUP));
     checkReleaseName(log, relFile, releaseName, relResult.getName());
     checkReleaseVersion(log, relFile, releaseVersion, relResult.getReleaseVersion());
     checkDependencies(log, artifacts, relResult.getApplications());
@@ -123,6 +124,17 @@ public final class TestRunner extends ErlangMojo {
       log.error(sysConfig.toString() + " does not exist.");
       log.error("Use 'mvn erlang:setup' to create a default system configuration file.");
       throw new MojoFailureException("No " + sysConfig.getName() + " file found.");
+    }
+  }
+
+  /**
+   * Checks whether the vital release upgrade file {@code relup} exists.
+   */
+  private static void checkReleaseUpgradeFile(Log log, File relup) throws MojoFailureException {
+    if (!relup.isFile()) {
+      log.error(relup.toString() + " does not exist.");
+      log.error("Use 'mvn erlang:setup' to create a template relup file.");
+      throw new MojoFailureException("No " + relup.getName() + " file found.");
     }
   }
 

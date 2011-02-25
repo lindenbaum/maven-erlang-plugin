@@ -36,6 +36,7 @@ import org.apache.maven.plugin.logging.Log;
  * resources contain:
  * <ul>
  * <li>release file (*.rel)</li>
+ * <li>release upgrade file (relup)</li>
  * <li>boot scripts, etc. as returned from <code>systools:make_script</code></li>
  * </ul>
  * The build of script files can be customized by passing user options through
@@ -109,9 +110,9 @@ public final class ResourceGenerator extends ErlangMojo {
     FileUtils.copyFile(srcRelFile, destRelFile, replacements);
     log.debug("Copied release file to " + destRelFile + " .");
 
-    File srcRelupFile = new File(p.ebin(), releaseName + ErlConstants.RELUP_SUFFIX);
+    File srcRelupFile = new File(p.ebin(), ErlConstants.RELUP);
     if (srcRelupFile.isFile()) {
-      File destRelupFile = new File(p.target(), releaseFileBase + ErlConstants.RELUP_SUFFIX);
+      File destRelupFile = new File(p.target(), ErlConstants.RELUP);
       FileUtils.copyFile(srcRelupFile, destRelupFile, replacements);
       log.debug("Copied release upgrade file to " + destRelupFile + " .");
     }

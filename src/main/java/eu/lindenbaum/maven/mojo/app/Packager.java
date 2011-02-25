@@ -126,6 +126,7 @@ public final class Packager extends ErlangMojo {
     if (!appUpFile.exists()) {
       log.warn(appUpFile.getName() + " does not exist.");
       log.warn("Use 'mvn erlang:setup' to create a default .appup file");
+      log.warn("You must edit your .appup file according to http://www.erlang.org/doc/man/appup.html.");
     }
     else {
       // check .appup file
@@ -134,6 +135,7 @@ public final class Packager extends ErlangMojo {
       if (error != null) {
         MavenUtils.logMultiLineString(log, LogLevel.ERROR, error);
         MavenUtils.logContent(log, LogLevel.ERROR, appUpFile);
+        log.error("You must edit your .appup file according to http://www.erlang.org/doc/man/appup.html.");
         throw new MojoFailureException("Failed to verify .appup file.");
       }
     }

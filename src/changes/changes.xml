@@ -4,6 +4,14 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert, olle-t" type="fix">
+        Fixed dangling application project dependencies in 'target/lib' when
+        changing a dependency version and not 'cleaning' the next build. 
+      </action>
+      <action dev="schlagert, olle-t" type="update">
+        Made 'relup' and 'sys.config' files mandatory in erlang-rel projects.
+        Added basic template generation for those in 'erlang:setup'.
+      </action>
       <action dev="heyll" type="add">
        Added the 'erlang:show-build-info' goal that outputs code paths and 
        include paths used to compile the erlang sources, so that other tools

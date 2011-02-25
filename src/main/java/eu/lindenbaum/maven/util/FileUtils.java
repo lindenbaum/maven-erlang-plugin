@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -292,6 +293,30 @@ public final class FileUtils {
       }
     }
     return new ArrayList<File>(result);
+  }
+
+  /**
+   * Returns a list of sub directories of a specific directory not matching a
+   * list of given excludes. By default patterns from
+   * {@link org.codehaus.plexus.util.FileUtils#getDefaultExcludes()} will also
+   * be excluded.
+   * 
+   * @param root to scan
+   * @param excludes exact matches to exclude from the returned list
+   * @return a non-{@code null} list of directories matching the prefix
+   */
+  public static List<File> getDirectories(File root, Collection<String> excludes) {
+    final HashSet<String> excludeStrings = new HashSet<String>(Arrays.asList(getDefaultExcludes()));
+    excludeStrings.addAll(excludes);
+    if (root != null && root.isDirectory()) {
+      return new ArrayList<File>(Arrays.asList(root.listFiles(new FileFilter() {
+        @Override
+        public boolean accept(File file) {
+          return file.isDirectory() && !excludeStrings.contains(file.getName());
+        }
+      })));
+    }
+    return new ArrayList<File>();
   }
 
   /**

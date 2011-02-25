@@ -212,6 +212,7 @@ public class Setup extends ErlangMojo {
     Map<String, File> files = new HashMap<String, File>();
     files.put("default.rel", new File(p.base(), p.project().getArtifactId() + ErlConstants.REL_SUFFIX));
     files.put("default-sys.config", new File(p.base(), ErlConstants.SYS_CONFIG));
+    files.put("default.relup", new File(p.base(), ErlConstants.RELUP));
     for (Entry<String, File> entry : files.entrySet()) {
       if (noFile(entry.getValue())) {
         createFile(entry.getValue(), entry.getKey());
