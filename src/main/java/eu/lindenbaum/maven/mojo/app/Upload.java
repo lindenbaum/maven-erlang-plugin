@@ -54,7 +54,7 @@ public final class Upload extends ErlangMojo {
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
     log.info(MavenUtils.SEPARATOR);
-    log.info(" U P L O A D");
+    log.info(" U P L O A D E R");
     log.info(MavenUtils.SEPARATOR);
 
     PackagingType packagingType = p.packagingType();
@@ -69,23 +69,21 @@ public final class Upload extends ErlangMojo {
     }
 
     List<File> modules = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
-    if (this.withDependencies) {
-      modules.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX));
-    }
-
     List<File> applicationFiles = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.APP_SUFFIX);
     if (this.withDependencies) {
+      modules.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX));
       applicationFiles.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.APP_SUFFIX));
     }
 
-    Script<GenericScriptResult> script = new UploadScript(this.remote, modules, applicationFiles);
+    String target = "'" + this.remote + "'";
+    Script<GenericScriptResult> script = new UploadScript(target, modules, applicationFiles);
     GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
     if (result.success()) {
-      log.info("Successfully uploaded files to " + this.remote);
+      log.info("Successfully uploaded files to " + target);
       result.logOutput(log);
     }
     else {
-      log.error("Uploading files to " + this.remote + " failed.");
+      log.error("Uploading files to " + target + " failed.");
       result.logOutput(log);
       throw new MojoExecutionException("Uploading files failed.");
     }

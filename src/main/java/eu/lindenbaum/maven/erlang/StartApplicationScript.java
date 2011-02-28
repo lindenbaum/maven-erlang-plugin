@@ -14,19 +14,21 @@ import com.ericsson.otp.erlang.OtpErlangTuple;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * A {@link Script} starting a list of erlang applications.
+ * A {@link Script} starting a list of erlang applications on a specific node.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
 public class StartApplicationScript implements Script<StartResult> {
   private static final String script = //
-  NL + "Applications = %s," + NL + //
-      "Before = [A || {A, _, _} <- application:which_applications()]," + NL + //
+  NL + "Node = %s," + NL + //
+      "Applications = %s," + NL + //
+      "Which = rpc:call(Node, application, which_applications, [])," + NL + //
+      "Before = [A || {A, _, _} <- Which]," + NL + //
       "Fun = fun([], ok, _) ->" + NL + //
       "              ok;" + NL + //
       "         ([A | Rest], ok, Rec) ->" + NL + //
-      "              case application:start(A) of" + NL + //
+      "              case rpc:call(Node, application, start, [A]) of" + NL + //
       "                  ok ->" + NL + //
       "                      Rec(Rest, ok, Rec);" + NL + //
       "                  {error, {already_started, _}} ->" + NL + //
@@ -39,24 +41,26 @@ public class StartApplicationScript implements Script<StartResult> {
       "         (_, Error, _) ->" + NL + //
       "              Error" + NL + //
       "      end," + NL + //
-      "Result = Fun(Applications, ok, Fun)," + NL + //
-      "{Result, Before}." + NL;
+      "{Fun(Applications, ok, Fun), Before}." + NL;
 
+  private final String node;
   private final List<String> applications;
 
   /**
    * Creates a {@link Script} trying to start a set of erlang applications.
    * 
+   * @param node to start the applications on
    * @param applications to start
    */
-  public StartApplicationScript(List<String> applications) {
+  public StartApplicationScript(String node, List<String> applications) {
+    this.node = node;
     this.applications = applications;
   }
 
   @Override
   public String get() {
     String applications = ErlUtils.toList(this.applications, null, "'", "'");
-    return String.format(script, applications);
+    return String.format(script, this.node, applications);
   }
 
   /**

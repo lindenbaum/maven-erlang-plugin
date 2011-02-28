@@ -104,7 +104,8 @@
       </action>
       <action dev="schlagert" type="add">
         Fixed run goal to start all transitive application dependencies and
-        pre-load all project (and dependency) modules.
+        pre-load all project (and dependency) modules. The run goal can now run
+        projects on remote nodes (located on another machine).
       </action>
       <action dev="schlagert" type="add">
         Added more checks for release file management support, removed automatic

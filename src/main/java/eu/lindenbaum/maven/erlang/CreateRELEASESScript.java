@@ -2,9 +2,9 @@ package eu.lindenbaum.maven.erlang;
 
 import java.io.File;
 
-import com.ericsson.otp.erlang.OtpErlangObject;
-
 import eu.lindenbaum.maven.util.ErlUtils;
+
+import com.ericsson.otp.erlang.OtpErlangObject;
 
 /**
  * A {@link Script} that creates an initial RELEASES file from a specific
@@ -13,7 +13,7 @@ import eu.lindenbaum.maven.util.ErlUtils;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public class CreateRELEASESScript implements Script<String> {
-  private static String script = NL + "release_handler:create_RELEASES(\"%s\", \"%s\", \"%s\", []).";
+  private static String script = NL + "release_handler:create_RELEASES(\"%s\", \"%s\", \"%s\", [])." + NL;
 
   private final File rootDir;
   private final File relFile;

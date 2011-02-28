@@ -2,10 +2,10 @@ package eu.lindenbaum.maven.erlang;
 
 import java.io.File;
 
+import eu.lindenbaum.maven.util.ErlUtils;
+
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
-
-import eu.lindenbaum.maven.util.ErlUtils;
 
 /**
  * A {@link Script} that can be used to retrieve runtime information from the
@@ -18,7 +18,7 @@ public class RuntimeInfoScript implements Script<RuntimeInfo> {
   NL + "{code:lib_dir()," + NL + //
       "code:root_dir()," + NL + //
       "erlang:system_info(version)," + NL + //
-      "erlang:system_info(otp_release)}.";
+      "erlang:system_info(otp_release)}." + NL;
 
   public RuntimeInfoScript() {
     // ignored

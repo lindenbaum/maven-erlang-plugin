@@ -22,7 +22,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class UploadScript implements Script<GenericScriptResult> {
   private static String script = //
-  NL + "Node = '%s'," + NL + //
+  NL + "Node = %s," + NL + //
       "BeamFileList = %s," + NL + //
       "ApplicationFileList = %s," + NL + //
       "case net_kernel:connect(Node) of" + NL + //
@@ -32,11 +32,11 @@ public class UploadScript implements Script<GenericScriptResult> {
       "                      Module = filename:basename(BeamFile, \".beam\")," + NL + //
       "                      case file:read_file(BeamFile) of" + NL + //
       "                          {ok, Binary} ->" + NL + //
-      "                              rpc:eval_everywhere(" + NL + //
-      "                                [Node], code, purge," + NL + //
+      "                              rpc:call(" + NL + //
+      "                                Node, code, purge," + NL + //
       "                                [list_to_atom(Module)])," + NL + //
-      "                              rpc:eval_everywhere(" + NL + //
-      "                                [Node], code, load_binary," + NL + //
+      "                              rpc:call(" + NL + //
+      "                                Node, code, load_binary," + NL + //
       "                                [list_to_atom(Module)," + NL + //
       "                                 BeamFile, Binary])," + NL + //
       "                              [BeamFile | Ok];" + NL + //
@@ -50,8 +50,8 @@ public class UploadScript implements Script<GenericScriptResult> {
       "          fun(AppFile, Ok) when is_list(Ok) ->" + NL + //
       "                  case file:consult(AppFile) of" + NL + //
       "                      {ok, [AppSpec]} ->" + NL + //
-      "                          rpc:eval_everywhere(" + NL + //
-      "                            [Node], application," + NL + //
+      "                          rpc:call(" + NL + //
+      "                            Node, application," + NL + //
       "                            load, [AppSpec])," + NL + //
       "                            [AppFile | Ok];" + NL + //
       "                      Other ->" + NL + //
@@ -62,7 +62,7 @@ public class UploadScript implements Script<GenericScriptResult> {
       "          end, E, ApplicationFileList);" + NL + //
       "    false ->" + NL + //
       "        {error, {cannot_connect, Node}}" + NL + //
-      " end.";
+      " end." + NL;
 
   private final String remoteNode;
   private final List<File> beamFiles;

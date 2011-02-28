@@ -31,8 +31,9 @@ public class StartApplicationScriptTest {
 
   @Test
   public void testGetHandle() {
+    String node = "node";
     List<String> applications = Arrays.asList("application");
-    StartApplicationScript script = new StartApplicationScript(applications);
+    StartApplicationScript script = new StartApplicationScript(node, applications);
     String expression = script.get();
     assertNotNull(expression);
     assertFalse(expression.isEmpty());
@@ -48,8 +49,9 @@ public class StartApplicationScriptTest {
     OtpErlangList beforeApps = new OtpErlangList(new OtpErlangObject[]{ beforeApp });
     OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ success, beforeApps });
 
+    String node = "node";
     List<String> applications = Arrays.asList("application");
-    StartApplicationScript script = new StartApplicationScript(applications);
+    StartApplicationScript script = new StartApplicationScript(node, applications);
     StartResult startResult = script.handle(result);
     startResult.logError(this.log);
     assertTrue(startResult.startSucceeded());
@@ -73,8 +75,9 @@ public class StartApplicationScriptTest {
     OtpErlangList beforeApps = new OtpErlangList(new OtpErlangObject[]{ beforeApp });
     OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ error, beforeApps });
 
+    String node = "node";
     List<String> applications = Arrays.asList("application");
-    StartApplicationScript script = new StartApplicationScript(applications);
+    StartApplicationScript script = new StartApplicationScript(node, applications);
     StartResult startResult = script.handle(result);
     startResult.logError(this.log);
     assertFalse(startResult.startSucceeded());
