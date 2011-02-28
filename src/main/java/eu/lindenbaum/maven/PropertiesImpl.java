@@ -27,6 +27,7 @@ final class PropertiesImpl implements Properties {
 
   private final String projectName;
   private final PackagingType packagingType;
+  private final String erlCommand;
   private final String node;
   private final String testNode;
   private final String cookie;
@@ -64,12 +65,14 @@ final class PropertiesImpl implements Properties {
                  ArtifactRepository repository,
                  File base,
                  File target,
+                 String erlCommand,
                  String cookie) {
     this.project = project;
     this.repository = repository;
 
     this.projectName = project.getArtifactId() + "-" + project.getVersion();
     this.packagingType = type;
+    this.erlCommand = erlCommand;
     this.node = DEFAULT_BACKEND;
     this.testNode = DEFAULT_TEST_BACKEND;
     this.cookie = cookie;
@@ -154,6 +157,11 @@ final class PropertiesImpl implements Properties {
   @Override
   public PackagingType packagingType() {
     return this.packagingType;
+  }
+
+  @Override
+  public String erlCommand() {
+    return this.erlCommand;
   }
 
   @Override

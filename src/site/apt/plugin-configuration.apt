@@ -27,6 +27,12 @@ Grouped Parameter Summary
 * General
 
   * <<<cookie>>>: specifies the cookie used for the backend node
+  
+  * <<<erlCommand>>>: specifies the erlang command used to start an erlang
+  backend node (must exist and the destination must be executable), if the given
+  command does not fullfill these requirements <<<erl>>> is used (assuming the
+  command is part of the hosts <<<PATH>>>, please note that <<<erlCommand>>>
+  must not contain any arguments passed to the command
 
 * Compiler
 

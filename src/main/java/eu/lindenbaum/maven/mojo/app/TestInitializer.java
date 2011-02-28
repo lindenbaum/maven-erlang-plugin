@@ -2,7 +2,7 @@ package eu.lindenbaum.maven.mojo.app;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
-import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,6 +32,6 @@ public class TestInitializer extends ErlangMojo {
     if (this.skipTests) {
       return;
     }
-    ErlUtils.startBackend(log, p.testNode(), p.cookie());
+    MojoUtils.startBackend(log, p.erlCommand(), p.testNode(), p.cookie());
   }
 }

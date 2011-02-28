@@ -2,6 +2,8 @@ package eu.lindenbaum.maven;
 
 import java.io.File;
 
+import eu.lindenbaum.maven.util.ErlConstants;
+
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.Mojo;
@@ -64,6 +66,17 @@ public abstract class ErlangMojo extends AbstractMojo {
   private String cookie;
 
   /**
+   * The erlang command used to start an erlang backend node. The path must
+   * exist and the destination must be executable. If the given command does not
+   * fullfill these requirements <code>erl</code> is used (assuming the command
+   * is part of the hosts <code>PATH</code>). The path must not contain any
+   * arguments.
+   * 
+   * @parameter expression="${erlCommand}"
+   */
+  private String erlCommand;
+
+  /**
    * Injects the needed {@link Properties} into the abstract
    * {@link #execute(Log, Properties)} method to be implemented by subclasses.
    */
@@ -74,7 +87,24 @@ public abstract class ErlangMojo extends AbstractMojo {
       getLog().info("Skipping invocation for packaging type: " + this.project.getPackaging());
       return;
     }
-    execute(getLog(), getProperties(type));
+    execute(getLog(), getProperties(type, getErlCommand()));
+  }
+
+  /**
+   * Returns the command to use to start an erlang backend node, also known as
+   * the {@code erl} executable.
+   * 
+   * @return the user configured {@link #erlCommand} or simply {@code erl} if
+   *         {@link #erlCommand} was not configured or denotes an invalid path.
+   */
+  private String getErlCommand() {
+    if (this.erlCommand != null) {
+      File cmd = new File(this.erlCommand);
+      if (cmd.isFile() && cmd.canExecute()) {
+        return cmd.getAbsolutePath();
+      }
+    }
+    return ErlConstants.ERL;
   }
 
   /**
@@ -82,10 +112,12 @@ public abstract class ErlangMojo extends AbstractMojo {
    * on the packaging type of this project.
    * 
    * @param type the packaging type of the project
+   * @param cmd the command used to start a new erlang backend node
    * @return properties for this report
    */
-  private Properties getProperties(PackagingType type) {
-    return new PropertiesImpl(type, this.project, this.repository, this.base, this.target, this.cookie);
+  private Properties getProperties(PackagingType type, String cmd) {
+    getLog().debug("Using command: " + cmd);
+    return new PropertiesImpl(type, this.project, this.repository, this.base, this.target, cmd, this.cookie);
   }
 
   /**

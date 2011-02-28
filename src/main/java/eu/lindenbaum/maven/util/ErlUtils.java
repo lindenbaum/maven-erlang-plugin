@@ -1,16 +1,12 @@
 package eu.lindenbaum.maven.util;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
 import eu.lindenbaum.maven.erlang.CheckAppResult;
-import eu.lindenbaum.maven.erlang.NodeShutdownHook;
 import eu.lindenbaum.maven.mojo.app.ResourceGenerator;
 
-import com.ericsson.otp.erlang.OtpAuthException;
 import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangInt;
 import com.ericsson.otp.erlang.OtpErlangList;
@@ -19,12 +15,8 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangRangeException;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangUInt;
-import com.ericsson.otp.erlang.OtpPeer;
-import com.ericsson.otp.erlang.OtpSelf;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 
 /**
  * Containing utilities related to erlang code execution.
@@ -256,60 +248,5 @@ public final class ErlUtils {
       applications.append(artifact.getArtifactId());
     }
     return applications.toString();
-  }
-
-  /**
-   * Attaches the plugin to a backend erlang node. If the backend node is not
-   * already running it will be started.
-   * 
-   * @param log logger to use
-   * @param nodeName name of the backend to connect to
-   * @param nodeCookie cookie of the backend to connect to
-   * @throws MojoExecutionException
-   */
-  public static void startBackend(Log log, String nodeName, String nodeCookie) throws MojoExecutionException {
-    OtpPeer peer = new OtpPeer(nodeName);
-    try {
-      try {
-        String startupName = "maven-erlang-plugin-startup-" + System.nanoTime();
-        OtpSelf self = nodeCookie != null ? new OtpSelf(startupName, nodeCookie) : new OtpSelf(startupName);
-        self.connect(peer);
-        log.debug("Node " + peer + " is already running.");
-      }
-      catch (IOException e) {
-        log.debug("starting " + peer + ".");
-        ArrayList<String> command = new ArrayList<String>();
-        command.add(ErlConstants.ERL);
-        command.add("-boot");
-        command.add("start_sasl");
-        command.add("-name");
-        command.add(peer.node());
-        command.add("-detached");
-        if (nodeCookie != null) {
-          command.add("-setcookie");
-          command.add(nodeCookie);
-        }
-        Process process = new ProcessBuilder(command).start();
-        if (process.waitFor() != 0) {
-          throw new MojoExecutionException("Failed to start " + peer + ".");
-        }
-        log.debug("Node " + peer + " sucessfully started.");
-      }
-      try {
-        Runtime.getRuntime().addShutdownHook(NodeShutdownHook.get(nodeName, nodeCookie));
-      }
-      catch (IllegalArgumentException e1) {
-        log.debug("shutdown hook already registered.");
-      }
-    }
-    catch (IOException e) {
-      throw new MojoExecutionException("Failed to start " + peer + ".", e);
-    }
-    catch (OtpAuthException e) {
-      throw new MojoExecutionException("Failed to connect to " + peer + ".", e);
-    }
-    catch (InterruptedException e) {
-      throw new MojoExecutionException("Failed to start " + peer + ".", e);
-    }
   }
 }

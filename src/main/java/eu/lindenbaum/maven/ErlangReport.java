@@ -3,6 +3,8 @@ package eu.lindenbaum.maven;
 import java.io.File;
 import java.util.Locale;
 
+import eu.lindenbaum.maven.util.ErlConstants;
+
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -75,6 +77,17 @@ public abstract class ErlangReport extends AbstractMavenReport {
    */
   private String cookie;
 
+  /**
+   * The erlang command used to start an erlang backend node. The path must
+   * exist and the destination must be executable. If the given command does not
+   * fullfill these requirements <code>erl</code> is used (assuming the command
+   * is part of the hosts <code>PATH</code>). The path must not contain any
+   * arguments.
+   * 
+   * @parameter expression="${erlCommand}"
+   */
+  private String erlCommand;
+
   @Override
   protected final MavenProject getProject() {
     return this.project;
@@ -114,6 +127,23 @@ public abstract class ErlangReport extends AbstractMavenReport {
   }
 
   /**
+   * Returns the command to use to start an erlang backend node, also known as
+   * the {@code erl} executable.
+   * 
+   * @return the user configured {@link #erlCommand} or simply {@code erl} if
+   *         {@link #erlCommand} was not configured or denotes an invalid path.
+   */
+  private String getErlCommand() {
+    if (this.erlCommand != null) {
+      File cmd = new File(this.erlCommand);
+      if (cmd.isFile() && cmd.canExecute()) {
+        return cmd.getAbsolutePath();
+      }
+    }
+    return ErlConstants.ERL;
+  }
+
+  /**
    * Returns properties built from the mojo parameters of this report and based
    * on the packaging type of this project.
    * 
@@ -121,7 +151,9 @@ public abstract class ErlangReport extends AbstractMavenReport {
    */
   protected Properties getProperties() {
     PackagingType type = PackagingType.fromString(this.project.getPackaging());
-    return new PropertiesImpl(type, this.project, this.repository, this.base, this.target, this.cookie);
+    String cmd = getErlCommand();
+    getLog().debug("Using command: " + cmd);
+    return new PropertiesImpl(type, this.project, this.repository, this.base, this.target, cmd, this.cookie);
   }
 
   /**

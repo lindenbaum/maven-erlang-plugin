@@ -1,13 +1,20 @@
 package eu.lindenbaum.maven.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import eu.lindenbaum.maven.Properties;
+import eu.lindenbaum.maven.erlang.NodeShutdownHook;
+
+import com.ericsson.otp.erlang.OtpAuthException;
+import com.ericsson.otp.erlang.OtpPeer;
+import com.ericsson.otp.erlang.OtpSelf;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * Containing utilities related to maven-erlang-plugin specific {@link Mojo}s.
@@ -38,6 +45,62 @@ public final class MojoUtils {
       throw new MojoExecutionException("Java property 'os.name' not set.");
     }
     return false;
+  }
+
+  /**
+   * Attaches the plugin to a backend erlang node. If the backend node is not
+   * already running it will be started.
+   * 
+   * @param log logger to use
+   * @param cmd path to the {@code erl} command
+   * @param nodeName name of the backend to connect to
+   * @param nodeCookie cookie of the backend to connect to
+   * @throws MojoExecutionException
+   */
+  public static void startBackend(Log log, String cmd, String nodeName, String nodeCookie) throws MojoExecutionException {
+    OtpPeer peer = new OtpPeer(nodeName);
+    try {
+      try {
+        String startupName = "maven-erlang-plugin-startup-" + System.nanoTime();
+        OtpSelf self = nodeCookie != null ? new OtpSelf(startupName, nodeCookie) : new OtpSelf(startupName);
+        self.connect(peer);
+        log.debug("Node " + peer + " is already running.");
+      }
+      catch (IOException e) {
+        log.debug("starting " + peer + ".");
+        ArrayList<String> command = new ArrayList<String>();
+        command.add(cmd);
+        command.add("-boot");
+        command.add("start_sasl");
+        command.add("-name");
+        command.add(peer.node());
+        command.add("-detached");
+        if (nodeCookie != null) {
+          command.add("-setcookie");
+          command.add(nodeCookie);
+        }
+        Process process = new ProcessBuilder(command).start();
+        if (process.waitFor() != 0) {
+          throw new MojoExecutionException("Failed to start " + peer + ".");
+        }
+        log.debug("Node " + peer + " sucessfully started.");
+      }
+      try {
+        Runtime.getRuntime().addShutdownHook(NodeShutdownHook.get(nodeName, nodeCookie));
+      }
+      catch (IllegalArgumentException e1) {
+        log.debug("shutdown hook already registered.");
+      }
+    }
+    catch (IOException e) {
+      throw new MojoExecutionException("Failed to start " + peer + ".", e);
+    }
+    catch (OtpAuthException e) {
+      throw new MojoExecutionException("Failed to connect to " + peer + ".", e);
+    }
+    catch (InterruptedException e) {
+      throw new MojoExecutionException("Failed to start " + peer + ".", e);
+    }
   }
 
   /**

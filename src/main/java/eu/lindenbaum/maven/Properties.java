@@ -34,6 +34,13 @@ public interface Properties {
   public PackagingType packagingType();
 
   /**
+   * Returns the erlang command used to start new backend node's. This may be an
+   * absolute or relative path as well as a simple command (assuming the host
+   * environment is set up properly). The path must not contain any arguments.
+   */
+  public String erlCommand();
+
+  /**
    * Returns the name of the backend node to use.
    */
   public String node();
