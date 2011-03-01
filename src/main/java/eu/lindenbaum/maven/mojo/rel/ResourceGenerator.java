@@ -14,12 +14,12 @@ import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.CheckAppResult;
 import eu.lindenbaum.maven.erlang.CheckAppScript;
+import eu.lindenbaum.maven.erlang.GenericScriptResult;
 import eu.lindenbaum.maven.erlang.MakeScriptScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.RuntimeInfo;
 import eu.lindenbaum.maven.erlang.RuntimeInfoScript;
 import eu.lindenbaum.maven.erlang.Script;
-import eu.lindenbaum.maven.erlang.GenericScriptResult;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.FileUtils;
@@ -105,12 +105,12 @@ public final class ResourceGenerator extends ErlangMojo {
 
     log.debug("Created mappings: " + replacements);
 
-    File srcRelFile = new File(p.ebin(), releaseName + ErlConstants.REL_SUFFIX);
+    File srcRelFile = new File(p.base(), releaseName + ErlConstants.REL_SUFFIX);
     File destRelFile = new File(p.target(), releaseFileBase + ErlConstants.REL_SUFFIX);
     FileUtils.copyFile(srcRelFile, destRelFile, replacements);
     log.debug("Copied release file to " + destRelFile + " .");
 
-    File srcRelupFile = new File(p.ebin(), ErlConstants.RELUP);
+    File srcRelupFile = new File(p.base(), ErlConstants.RELUP);
     if (srcRelupFile.isFile()) {
       File destRelupFile = new File(p.target(), ErlConstants.RELUP);
       FileUtils.copyFile(srcRelupFile, destRelupFile, replacements);

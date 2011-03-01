@@ -39,8 +39,8 @@
         erts section.
       </action>
       <action dev="schlagert" type="add">
-        Added goal to upload the compiled modules of an application project onto
-        a remote erlang node.
+        Added goal erlang:upload to upload the applications and releases to a
+        remote erlang node (located on another machine).
       </action>
       <action dev="schlagert" type="update">
         Changed semantics of the ${APPLICATION_NAME} release packaging
@@ -103,9 +103,9 @@
         Added support for test and provided scope dependencies.
       </action>
       <action dev="schlagert" type="add">
-        Fixed run goal to start all transitive application dependencies and
-        pre-load all project (and dependency) modules. The run goal can now run
-        projects on remote nodes (located on another machine).
+        Fixed run goal erlang:run to start all transitive application
+        dependencies and pre-load all project (and dependency) modules. The goal
+        can now run projects on remote nodes (located on another machine).
       </action>
       <action dev="schlagert" type="add">
         Added more checks for release file management support, removed automatic
