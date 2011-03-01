@@ -3,6 +3,7 @@ package eu.lindenbaum.maven.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import eu.lindenbaum.maven.Properties;
@@ -26,6 +27,39 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class MojoUtils {
   private static final String WINDOWS = "WINDOWS";
+
+  /**
+   * Returns a list of script files used by the plugin to provide a proper test
+   * phase, e.g. erlang scripts for surefire reports.
+   * 
+   * @param p the properties object containing plug-in paths
+   * @return a non-{@code null} collection of test support scripts
+   */
+  public static Collection<File> getTestSupportScripts(Properties p) {
+    Collection<File> supportFiles = new ArrayList<File>();
+    supportFiles.add(new File(p.targetTestEbin(), "surefire.erl"));
+    supportFiles.add(new File(p.targetTestEbin(), "cover2.erl"));
+    supportFiles.add(new File(p.targetTestEbin(), "ttycapture.erl"));
+    return supportFiles;
+  }
+
+  /**
+   * Returns a list of artifacts used by the plugin to provide a proper test
+   * phase, e.g. the compiled artifacts of
+   * {@link #getTestSupportScripts(Properties)}.
+   * 
+   * @param p the properties object containing plug-in paths
+   * @return a non-{@code null} collection of test support artifacts
+   */
+  public static Collection<File> getTestSupportArtifacts(Properties p) {
+    Collection<File> supportArtifacts = new ArrayList<File>();
+    for (File script : getTestSupportScripts(p)) {
+      String erl = ErlConstants.ERL_SUFFIX;
+      String beam = ErlConstants.BEAM_SUFFIX;
+      supportArtifacts.add(new File(script.getAbsolutePath().replace(erl, beam)));
+    }
+    return supportArtifacts;
+  }
 
   /**
    * Returns whether the executing JVM is running under Microsoft Windows or

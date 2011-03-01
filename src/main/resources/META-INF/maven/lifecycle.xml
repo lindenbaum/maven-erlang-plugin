@@ -24,6 +24,17 @@
     </phases>
   </lifecycle>
   <lifecycle>
+    <id>testupload</id>
+    <phases>
+      <phase>
+        <id>test-compile</id>
+        <configuration>
+          <skipDialyzer>true</skipDialyzer>
+        </configuration>
+      </phase>
+    </phases>
+  </lifecycle>
+  <lifecycle>
     <id>run</id>
     <phases>
       <phase>

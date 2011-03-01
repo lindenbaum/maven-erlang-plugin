@@ -2,7 +2,7 @@ package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -73,7 +73,9 @@ public final class TestCompiler extends ErlangMojo {
               + ErlConstants.ERL_SUFFIX);
     List<File> files = FileUtils.getFilesRecursive(p.test_src(), ErlConstants.ERL_SUFFIX);
     if (!files.isEmpty()) {
-      List<File> testSupportFiles = getTestSupportFiles(p);
+      Collection<File> testSupportFiles = MojoUtils.getTestSupportScripts(p);
+      extractTestSupportFiles(getClass(), testSupportFiles);
+
       files.addAll(testSupportFiles);
       files.addAll(FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX));
 
@@ -103,14 +105,14 @@ public final class TestCompiler extends ErlangMojo {
     }
   }
 
-  private List<File> getTestSupportFiles(Properties p) throws MojoExecutionException {
-    String path = "/" + getClass().getPackage().getName().replace(".", "/");
-    List<File> supportFiles = Arrays.asList(new File(p.targetTestEbin(), "surefire.erl"),
-                                            new File(p.targetTestEbin(), "cover2.erl"),
-                                            new File(p.targetTestEbin(), "ttycapture.erl"));
-    for (File file : supportFiles) {
-      FileUtils.extractFileFromClassPath(getClass(), path, file.getName(), file);
+  /**
+   * Extract the test support files needed for test execution in order to
+   * compile them with the test modules.
+   */
+  private static void extractTestSupportFiles(Class<?> caller, Collection<File> testSupportFiles) throws MojoExecutionException {
+    String path = "/" + caller.getPackage().getName().replace(".", "/");
+    for (File file : testSupportFiles) {
+      FileUtils.extractFileFromClassPath(caller, path, file.getName(), file);
     }
-    return supportFiles;
   }
 }

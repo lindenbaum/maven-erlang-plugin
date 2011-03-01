@@ -75,7 +75,7 @@ public final class ProjectRunner extends ErlangMojo {
       runApplication(log, p, this.remote, this.withDependencies);
     }
     else {
-      log.info("Nothing to do for packaging " + packagingType + ".");
+      throw new MojoExecutionException("Mojo does not (yet) support packaging type " + packagingType + ".");
     }
   }
 

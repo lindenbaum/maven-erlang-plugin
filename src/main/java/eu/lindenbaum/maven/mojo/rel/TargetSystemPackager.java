@@ -63,8 +63,7 @@ public final class TargetSystemPackager extends ErlangMojo {
 
     PackagingType packagingType = p.packagingType();
     if (PackagingType.ERLANG_REL != packagingType) {
-      log.info("Nothing to do for packaging " + packagingType + ".");
-      return;
+      throw new MojoExecutionException("Mojo does not support packaging type " + packagingType + ".");
     }
 
     if (MojoUtils.isWindows()) {
