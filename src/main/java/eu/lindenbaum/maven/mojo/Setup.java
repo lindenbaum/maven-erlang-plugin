@@ -1,7 +1,6 @@
 package eu.lindenbaum.maven.mojo;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,7 +11,6 @@ import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
-import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -113,12 +111,8 @@ public class Setup extends ErlangMojo {
    */
   private boolean withExtras;
 
-  private volatile File plugin;
-
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
-    this.plugin = MavenUtils.getPluginFile("maven-erlang-plugin", p.project(), p.repository());
-
     PackagingType packagingType = p.packagingType();
     if (packagingType == PackagingType.ERLANG_OTP || packagingType == PackagingType.ERLANG_STD) {
       setupAppDefaults(p);
@@ -270,15 +264,7 @@ public class Setup extends ErlangMojo {
 
   private void createFile(File file, String defaultFileName) throws MojoExecutionException {
     logGeneratingDefault(file.getName());
-    FileUtils.extractFilesFromJar(this.plugin, defaultFileName, file.getParentFile());
-    File sourceFile = new File(file.getParentFile(), defaultFileName);
-    try {
-      org.codehaus.plexus.util.FileUtils.copyFile(sourceFile, file);
-    }
-    catch (IOException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
-    }
-    FileUtils.removeFiles(sourceFile);
+    FileUtils.extractFileFromClassPath(getClass().getClassLoader(), "", defaultFileName, file);
   }
 
   private void logCheckingIf(String string, boolean exists) {

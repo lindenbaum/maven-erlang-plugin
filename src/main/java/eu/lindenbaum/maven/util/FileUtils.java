@@ -10,24 +10,18 @@ import static eu.lindenbaum.maven.util.ErlConstants.SRC_SUFFIX;
 import static org.codehaus.plexus.util.FileUtils.getDefaultExcludes;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.SelectorUtils;
@@ -518,50 +512,64 @@ public final class FileUtils {
   }
 
   /**
-   * Extracts all files from a .jar file matching the given file suffix into a
-   * directory.
+   * Writes a file that is part of the classpath to a specific destination file.
+   * Parent directories will be created if necessary.
    * 
-   * @param archive the jar archive to extract files from
-   * @param suffix of files to be extracted
-   * @param destDir to extract files into
-   * @throws MojoExecutionException
+   * @param classLoader used to retrieve the classpath resources from
+   * @param path the file's classpath prefix
+   * @param name the file to extract denoted by its name in the classpath
+   * @param dest the file to write to
    */
-  public static void extractFilesFromJar(File archive, String suffix, File destDir) throws MojoExecutionException {
-    ensureDirectories(destDir);
-    if (destDir.isDirectory()) {
+  public static void extractFileFromClassPath(ClassLoader classLoader, String path, String name, File dest) throws MojoExecutionException {
+    if (dest.isDirectory()) {
+      throw new MojoExecutionException("Destination must be a file.");
+    }
+    ensureDirectories(dest.getParentFile());
+    writeFile(dest, readFileFromClassPath(classLoader, path, name));
+  }
+
+  /**
+   * Reads a file that is part of the classpath and returns its content as a
+   * {@link String} object.
+   * 
+   * @param classLoader used to retrieve the classpath resources from
+   * @param path the file's classpath prefix
+   * @param name the file to extract denoted by its name in the classpath
+   * @return a non-{@code null} object containing the content of the file
+   * @throws MojoExecutionException in case the file could not be found or read
+   *           errors occured
+   */
+  public static String readFileFromClassPath(ClassLoader classLoader, String path, String name) throws MojoExecutionException {
+    String resource = path + "/" + name;
+    InputStream resourceStream = classLoader.getResourceAsStream(resource);
+    if (resourceStream != null) {
+      StringBuilder data = new StringBuilder(4096);
+      BufferedInputStream input = new BufferedInputStream(resourceStream);
+      byte[] b = new byte[4096];
       try {
-        JarFile jarFile = new JarFile(archive);
-        Enumeration<JarEntry> entries = jarFile.entries();
-        List<JarEntry> toBeExtracted = new ArrayList<JarEntry>();
-        while (entries.hasMoreElements()) {
-          JarEntry current = entries.nextElement();
-          if (current.getName().endsWith(suffix)) {
-            toBeExtracted.add(current);
+        while (true) {
+          int numRead = input.read(b, 0, b.length);
+          if (numRead == -1) {
+            break;
           }
-        }
-        for (JarEntry entry : toBeExtracted) {
-          File dest = new File(destDir, new File(entry.getName()).getName());
-          OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(dest));
-          InputStream inputStream = new BufferedInputStream(jarFile.getInputStream(entry));
-          byte[] buffer = new byte[4096];
-          while (true) {
-            int nBytes = inputStream.read(buffer);
-            if (nBytes <= 0) {
-              break;
-            }
-            outputStream.write(buffer, 0, nBytes);
-          }
-          outputStream.flush();
-          outputStream.close();
-          inputStream.close();
+          data.append(new String(b, 0, numRead));
         }
       }
       catch (IOException e) {
-        throw new MojoExecutionException(e.getMessage(), e);
+        throw new MojoExecutionException("Failed to read from resource " + resource + ".", e);
       }
+      finally {
+        try {
+          input.close();
+        }
+        catch (IOException e) {
+          // ignored
+        }
+      }
+      return data.toString();
     }
     else {
-      throw new MojoExecutionException("directory " + destDir + " cannot be created");
+      throw new MojoExecutionException("Could not find resource " + resource + ".");
     }
   }
 }

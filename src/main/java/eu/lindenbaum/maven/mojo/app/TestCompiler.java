@@ -2,6 +2,7 @@ package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -72,13 +73,9 @@ public final class TestCompiler extends ErlangMojo {
               + ErlConstants.ERL_SUFFIX);
     List<File> files = FileUtils.getFilesRecursive(p.test_src(), ErlConstants.ERL_SUFFIX);
     if (!files.isEmpty()) {
-      File plugin = MavenUtils.getPluginFile("maven-erlang-plugin", p.project(), p.repository());
-      FileUtils.extractFilesFromJar(plugin, ErlConstants.ERL_SUFFIX, p.targetTestEbin());
-
+      List<File> testSupportFiles = getTestSupportFiles(p);
+      files.addAll(testSupportFiles);
       files.addAll(FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX));
-
-      List<File> supportFiles = getTestSupportFiles(p);
-      files.addAll(supportFiles);
 
       List<String> options = new ArrayList<String>();
       options.add("debug_info");
@@ -98,7 +95,7 @@ public final class TestCompiler extends ErlangMojo {
         throw new MojoFailureException("Failed to compile " + failedCompilationUnit + ".");
       }
 
-      int numberOfTestFiles = files.size() - supportFiles.size();
+      int numberOfTestFiles = files.size() - testSupportFiles.size();
       log.info("Successfully compiled " + numberOfTestFiles + " test source file(s).");
     }
     else {
@@ -106,11 +103,14 @@ public final class TestCompiler extends ErlangMojo {
     }
   }
 
-  private static List<File> getTestSupportFiles(Properties p) {
-    List<File> supportFiles = new ArrayList<File>();
-    supportFiles.add(new File(p.targetTestEbin(), "surefire.erl"));
-    supportFiles.add(new File(p.targetTestEbin(), "cover2.erl"));
-    supportFiles.add(new File(p.targetTestEbin(), "ttycapture.erl"));
+  private List<File> getTestSupportFiles(Properties p) throws MojoExecutionException {
+    String path = "/" + getClass().getPackage().getName().replace(".", "/");
+    List<File> supportFiles = Arrays.asList(new File(p.targetTestEbin(), "surefire.erl"),
+                                            new File(p.targetTestEbin(), "cover2.erl"),
+                                            new File(p.targetTestEbin(), "ttycapture.erl"));
+    for (File file : supportFiles) {
+      FileUtils.extractFileFromClassPath(getClass().getClassLoader(), path, file.getName(), file);
+    }
     return supportFiles;
   }
 }
