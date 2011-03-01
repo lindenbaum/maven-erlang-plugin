@@ -21,6 +21,8 @@ import org.apache.maven.plugin.logging.Log;
  * <p>
  * The output is logged at info level and contains:
  * <ul>
+ * <li>source folder for main erlang sources</li>
+ * <li>source folder for unit-test erlang sources</li>
  * <li>include directories that may contain erlang header files</li>
  * <li>code path directories including those of dependend projects in the target
  * directory of the maven build</li>
@@ -28,6 +30,8 @@ import org.apache.maven.plugin.logging.Log;
  * The output consists of one line per item. Each item consists of two elements:
  * <code>InfoType ": " InfoValue</code> where <code>InfoType</code> is one of:
  * <ul>
+ * <li><code>src_dir</code></li>
+ * <li><code>test_src_dir</code></li>
  * <li><code>include_dir</code></li>
  * <li><code>code_path</code></li>
  * </ul>
@@ -42,6 +46,8 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class ShowBuildInfo extends ErlangMojo {
 
+  private static final String SOURCE_DIR = "src_dir";
+  private static final String TEST_SOURCE_DIR = "test_src_dir";
   private static final String INCLUDE_DIRS = "include_dir";
   private static final String CODE_PATHS = "code_path";
 
@@ -57,13 +63,19 @@ public class ShowBuildInfo extends ErlangMojo {
       return;
     }
 
+    logKeyValue(log, SOURCE_DIR, p.src());
+    logKeyValue(log, TEST_SOURCE_DIR, p.test_src());
     logKeyValues(log, INCLUDE_DIRS, MojoUtils.getIncludeDirectories(p));
     logKeyValues(log, CODE_PATHS, MojoUtils.getApplicationCodePaths(p));
   }
 
   private void logKeyValues(Log log, String key, List<File> values) {
     for (File f : values) {
-      log.info(key + ": " + f.getAbsolutePath());
+      logKeyValue(log, key, f);
     }
+  }
+
+  public void logKeyValue(Log log, String key, File f) {
+    log.info(key + ": " + f.getAbsolutePath());
   }
 }
