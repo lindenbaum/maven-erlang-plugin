@@ -11,6 +11,7 @@ import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.easymock.IMocksControl;
 import org.junit.Before;
@@ -27,7 +28,7 @@ public class UploadReleaseScriptTest {
   }
 
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     String remoteNode = "node@otherhost.de";
     File release = new File("release.tar.gz");
     UploadReleaseScript script = new UploadReleaseScript(remoteNode, release);
@@ -38,7 +39,7 @@ public class UploadReleaseScriptTest {
   }
 
   @Test
-  public void testHandleOk() {
+  public void testHandleOk() throws MojoExecutionException {
     this.control.replay();
 
     OtpErlangAtom result = new OtpErlangAtom("ok");
@@ -54,7 +55,7 @@ public class UploadReleaseScriptTest {
   }
 
   @Test
-  public void testHandleError() {
+  public void testHandleError() throws MojoExecutionException {
     this.log.error("{error,reason}");
 
     this.control.replay();

@@ -15,6 +15,7 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.easymock.IMocksControl;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class UploadScriptTest {
   }
 
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     String remoteNode = "node@otherhost.de";
     List<File> modules = Arrays.asList(new File("module"));
     List<File> appFiles = Arrays.asList(new File("appFile"));
@@ -43,7 +44,7 @@ public class UploadScriptTest {
   }
 
   @Test
-  public void testHandleOk() {
+  public void testHandleOk() throws MojoExecutionException {
     this.log.info("[\"module\"]");
 
     this.control.replay();
@@ -63,7 +64,7 @@ public class UploadScriptTest {
   }
 
   @Test
-  public void testHandleError() {
+  public void testHandleError() throws MojoExecutionException {
     this.log.error("{error,reason}");
 
     this.control.replay();

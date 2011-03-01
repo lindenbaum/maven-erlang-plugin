@@ -14,6 +14,7 @@ import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.easymock.IMocksControl;
 import org.junit.Before;
@@ -30,7 +31,7 @@ public class StartApplicationScriptTest {
   }
 
   @Test
-  public void testGetHandle() {
+  public void testGetHandle() throws MojoExecutionException {
     String node = "node";
     List<String> applications = Arrays.asList("application");
     StartApplicationScript script = new StartApplicationScript(node, applications);
@@ -41,7 +42,7 @@ public class StartApplicationScriptTest {
   }
 
   @Test
-  public void testHandleSuccess() {
+  public void testHandleSuccess() throws MojoExecutionException {
     this.control.replay();
 
     OtpErlangAtom success = new OtpErlangAtom("ok");
@@ -63,7 +64,7 @@ public class StartApplicationScriptTest {
   }
 
   @Test
-  public void testHandleFailure() {
+  public void testHandleFailure() throws MojoExecutionException {
     this.log.error("{error,what}");
 
     this.control.replay();

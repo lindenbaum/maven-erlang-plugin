@@ -8,11 +8,12 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 public class RuntimeInfoScriptTest {
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     RuntimeInfoScript script = new RuntimeInfoScript();
     String expression = script.get();
     assertNotNull(expression);
@@ -21,7 +22,7 @@ public class RuntimeInfoScriptTest {
   }
 
   @Test
-  public void testHandle() {
+  public void testHandle() throws MojoExecutionException {
     OtpErlangString path1 = new OtpErlangString("/path1");
     OtpErlangString path2 = new OtpErlangString("/path2");
     OtpErlangString version = new OtpErlangString("version");

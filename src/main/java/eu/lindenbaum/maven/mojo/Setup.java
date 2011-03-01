@@ -264,7 +264,7 @@ public class Setup extends ErlangMojo {
 
   private void createFile(File file, String defaultFileName) throws MojoExecutionException {
     logGeneratingDefault(file.getName());
-    FileUtils.extractFileFromClassPath(getClass().getClassLoader(), "", defaultFileName, file);
+    FileUtils.extractFileFromClassPath(getClass(), "", defaultFileName, file);
   }
 
   private void logCheckingIf(String string, boolean exists) {

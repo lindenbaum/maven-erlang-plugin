@@ -15,6 +15,7 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.easymock.IMocksControl;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class BeamCompilerScriptTest {
   }
 
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     List<File> files = Arrays.asList(new File("file"));
     File outdir = new File("outdir");
     List<File> includes = Arrays.asList(new File("include"));
@@ -45,7 +46,7 @@ public class BeamCompilerScriptTest {
   }
 
   @Test
-  public void testHandle() {
+  public void testHandle() throws MojoExecutionException {
     this.log.warn("message1");
     this.log.error("message2");
 

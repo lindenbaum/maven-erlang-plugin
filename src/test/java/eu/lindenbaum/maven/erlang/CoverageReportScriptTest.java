@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import eu.lindenbaum.maven.erlang.CoverageReportResult.Report;
+import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Module;
+
 import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangInt;
 import com.ericsson.otp.erlang.OtpErlangList;
@@ -19,9 +22,7 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
-import eu.lindenbaum.maven.erlang.CoverageReportResult.Report;
-import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Module;
-
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.easymock.IMocksControl;
 import org.junit.Before;
@@ -38,7 +39,7 @@ public class CoverageReportScriptTest {
   }
 
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     File testDir = new File("testDir");
     List<File> tests = Arrays.asList(new File("test1"), new File("test2"));
     List<File> sources = Arrays.asList(new File("source1"), new File("source2"));
@@ -50,7 +51,7 @@ public class CoverageReportScriptTest {
   }
 
   @Test
-  public void testCoverageWithModules() {
+  public void testCoverageWithModules() throws MojoExecutionException {
     this.control.replay();
 
     List<OtpErlangObject> rows = new ArrayList<OtpErlangObject>();
@@ -200,7 +201,7 @@ public class CoverageReportScriptTest {
   }
 
   @Test
-  public void testCoverageFailed() {
+  public void testCoverageFailed() throws MojoExecutionException {
     this.log.error("");
     this.log.error("message2");
     this.log.error("message3");

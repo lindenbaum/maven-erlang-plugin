@@ -10,11 +10,12 @@ import java.util.List;
 
 import com.ericsson.otp.erlang.OtpErlangInt;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 public class LoadModulesScriptTest {
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     List<File> modules = Arrays.asList(new File("module"));
     LoadModulesScript script = new LoadModulesScript(modules);
     String expression = script.get();
@@ -24,7 +25,7 @@ public class LoadModulesScriptTest {
   }
 
   @Test
-  public void testHandle() {
+  public void testHandle() throws MojoExecutionException {
     OtpErlangInt result = new OtpErlangInt(2);
 
     List<File> modules = Arrays.asList(new File("module"));

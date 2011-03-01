@@ -12,11 +12,12 @@ import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 public class GetAttributesScriptTest {
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     List<File> modules = Arrays.asList(new File("file1.erl", "file2.beam"));
     String attribute = "attribute";
 
@@ -28,7 +29,7 @@ public class GetAttributesScriptTest {
   }
 
   @Test
-  public void testHandleEmpty() {
+  public void testHandleEmpty() throws MojoExecutionException {
     List<File> modules = Arrays.asList(new File("file1.erl", "file2.beam"));
     String attribute = "attribute";
 
@@ -40,7 +41,7 @@ public class GetAttributesScriptTest {
   }
 
   @Test
-  public void testHandleNotEmpty() {
+  public void testHandleNotEmpty() throws MojoExecutionException {
     List<File> modules = Arrays.asList(new File("file1.erl", "file2.beam"));
     String attribute = "attribute";
 

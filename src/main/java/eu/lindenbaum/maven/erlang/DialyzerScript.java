@@ -8,23 +8,14 @@ import eu.lindenbaum.maven.util.ErlUtils;
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 /**
  * A {@link Script} that can be used to dialyze erlang files.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class DialyzerScript implements Script<String[]> {
-  private static final String script = //
-  NL + "Options = [{from, src_code}," + NL + //
-      "           {get_warnings, true}," + NL + //
-      "           {files_rec, %s}," + NL + //
-      "           {include_dirs, %s}," + NL + //
-      "           {warnings, %s}]," + NL + //
-      "lists:map(fun(Warning) ->" + NL + //
-      "              S = dialyzer:format_warning(Warning)," + NL + //
-      "              lists:flatten(S)" + NL + //
-      "          end, dialyzer:run(Options))." + NL;
-
+public final class DialyzerScript extends AbstractScript<String[]> {
   private final List<File> files;
   private final List<File> includes;
   private final String options;
@@ -39,7 +30,8 @@ public final class DialyzerScript implements Script<String[]> {
    * @see <a
    *      href="http://www.erlang.org/doc/man/dialyzer.html">http://www.erlang.org/doc/man/dialyzer.html</a>
    */
-  public DialyzerScript(List<File> files, List<File> includes, String options) {
+  public DialyzerScript(List<File> files, List<File> includes, String options) throws MojoExecutionException {
+    super();
     this.files = files;
     this.includes = includes;
     this.options = options;
@@ -53,7 +45,7 @@ public final class DialyzerScript implements Script<String[]> {
     String files = ErlUtils.toFileList(this.files, "\"", "\"");
     String incs = ErlUtils.toFileList(this.includes, "\"", "\"");
     String opts = "[" + (this.options != null ? this.options : "") + "]";
-    return String.format(script, files, incs, opts);
+    return String.format(this.script, files, incs, opts);
   }
 
   /**

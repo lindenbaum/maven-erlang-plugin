@@ -3,15 +3,16 @@ package eu.lindenbaum.maven.erlang;
 import java.io.File;
 import java.util.List;
 
+import eu.lindenbaum.maven.util.ErlUtils;
+import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
+
 import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
-import eu.lindenbaum.maven.util.ErlUtils;
-import eu.lindenbaum.maven.util.MavenUtils;
-import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
-
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -20,19 +21,7 @@ import org.apache.maven.plugin.logging.Log;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
-public final class TestScript implements Script<TestResult> {
-  private static final String script = //
-  NL + "Surefire = {report, {surefire, [{dir, \"%s\"}, {package, \"%s.\"}]}}," + NL + //
-      "Tty = {report, {ttycapture, [{report_to, self()}]}}," + NL + //
-      "Out = try eunit:test(%s, [Surefire, Tty]) of" + NL + //
-      "          _ -> []" + NL + //
-      "      catch" + NL + //
-      "          Class:Exception ->" + NL + //
-      "              Msg = io_lib:format(\"~p:~p\", [Class, Exception])," + NL + //
-      "              [lists:flatten(Msg)]" + NL + //
-      "      end," + NL + //
-      "receive {Level, Captured} -> {Level, Captured ++ Out} end." + NL;
-
+public final class TestScript extends AbstractScript<TestResult> {
   private final List<File> tests;
   private final File surefireDir;
   private final String suiteName;
@@ -44,7 +33,8 @@ public final class TestScript implements Script<TestResult> {
    * @param surefireDir to output surefire compatible reports into
    * @param suiteName the name of the test suite (for surefire)
    */
-  public TestScript(List<File> tests, File surefireDir, String suiteName) {
+  public TestScript(List<File> tests, File surefireDir, String suiteName) throws MojoExecutionException {
+    super();
     this.tests = tests;
     this.surefireDir = surefireDir;
     this.suiteName = suiteName;
@@ -54,7 +44,7 @@ public final class TestScript implements Script<TestResult> {
   public String get() {
     String surefirePath = this.surefireDir.getAbsolutePath();
     String testList = ErlUtils.toModuleList(this.tests, "'", "'");
-    return String.format(script, surefirePath, this.suiteName, testList);
+    return String.format(this.script, surefirePath, this.suiteName, testList);
   }
 
   /**

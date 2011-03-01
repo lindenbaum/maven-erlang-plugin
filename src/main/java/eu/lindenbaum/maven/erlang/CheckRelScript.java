@@ -10,6 +10,8 @@ import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 /**
  * A {@link Script} that can be used to extract certain values from an erlang
  * release file.
@@ -17,19 +19,7 @@ import com.ericsson.otp.erlang.OtpErlangTuple;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
-public class CheckRelScript implements Script<CheckRelResult> {
-  private static final String script = //
-  NL + "case file:consult(\"%s\") of" + NL + //
-      "    {ok, [{release, {N, V}, {erts, E}, Apps}]} ->" + NL + //
-      "        {ok, N, V, E, lists:map(" + NL + //
-      "                    fun({App, Vsn}) -> {App, Vsn};" + NL + //
-      "                       ({App, Vsn, _}) -> {App, Vsn};" + NL + //
-      "                       ({App, Vsn, _, _}) -> {App, Vsn}" + NL + //
-      "                    end, Apps)};" + NL + //
-      "    _ ->" + NL + //
-      "        {error, undefined, undefined, undefined, []} " + NL + // do not remove the trailing whitespace!
-      "end." + NL;
-
+public class CheckRelScript extends AbstractScript<CheckRelResult> {
   private final File relFile;
 
   /**
@@ -39,13 +29,14 @@ public class CheckRelScript implements Script<CheckRelResult> {
    * @see <a
    *      href="http://www.erlang.org/doc/man/rel.html">http://www.erlang.org/doc/man/rel.html</a>
    */
-  public CheckRelScript(File relFile) {
+  public CheckRelScript(File relFile) throws MojoExecutionException {
+    super();
     this.relFile = relFile;
   }
 
   @Override
   public String get() {
-    return String.format(script, this.relFile.getAbsolutePath());
+    return String.format(this.script, this.relFile.getAbsolutePath());
   }
 
   /**

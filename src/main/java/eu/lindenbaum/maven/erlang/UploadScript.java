@@ -10,6 +10,7 @@ import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -20,55 +21,13 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public class UploadScript implements Script<GenericScriptResult> {
-  private static String script = //
-  NL + "Node = %s," + NL + //
-      "BeamFileList = %s," + NL + //
-      "ApplicationFileList = %s," + NL + //
-      "case net_kernel:connect(Node) of" + NL + //
-      "    true ->" + NL + //
-      "        E = lists:foldl(" + NL + //
-      "              fun(BeamFile, Ok) when is_list(Ok) ->" + NL + //
-      "                      Module = filename:basename(BeamFile, \".beam\")," + NL + //
-      "                      case file:read_file(BeamFile) of" + NL + //
-      "                          {ok, Binary} ->" + NL + //
-      "                              rpc:call(" + NL + //
-      "                                Node, code, purge," + NL + //
-      "                                [list_to_atom(Module)])," + NL + //
-      "                              rpc:call(" + NL + //
-      "                                Node, code, load_binary," + NL + //
-      "                                [list_to_atom(Module)," + NL + //
-      "                                 BeamFile, Binary])," + NL + //
-      "                              [BeamFile | Ok];" + NL + //
-      "                          Other ->" + NL + //
-      "                              {BeamFile, Other}" + NL + //
-      "                      end;" + NL + //
-      "                 (_, Error) ->" + NL + //
-      "                      Error" + NL + //
-      "              end, [], BeamFileList)," + NL + //
-      "        lists:foldl(" + NL + //
-      "          fun(AppFile, Ok) when is_list(Ok) ->" + NL + //
-      "                  case file:consult(AppFile) of" + NL + //
-      "                      {ok, [AppSpec]} ->" + NL + //
-      "                          rpc:call(" + NL + //
-      "                            Node, application," + NL + //
-      "                            load, [AppSpec])," + NL + //
-      "                            [AppFile | Ok];" + NL + //
-      "                      Other ->" + NL + //
-      "                          {AppFile, Other}" + NL + //
-      "                  end;" + NL + //
-      "             (_, Error) ->" + NL + //
-      "                  Error" + NL + //
-      "          end, E, ApplicationFileList);" + NL + //
-      "    false ->" + NL + //
-      "        {error, {cannot_connect, Node}}" + NL + //
-      " end." + NL;
-
+public class UploadScript extends AbstractScript<GenericScriptResult> {
   private final String remoteNode;
   private final List<File> beamFiles;
   private final List<File> appFiles;
 
-  public UploadScript(String remoteNode, List<File> beamFiles, List<File> appFiles) {
+  public UploadScript(String remoteNode, List<File> beamFiles, List<File> appFiles) throws MojoExecutionException {
+    super();
     this.remoteNode = remoteNode;
     this.beamFiles = beamFiles;
     this.appFiles = appFiles;
@@ -78,7 +37,7 @@ public class UploadScript implements Script<GenericScriptResult> {
   public String get() {
     String beamFileList = ErlUtils.toFileList(this.beamFiles, "\"", "\"");
     String appFileList = ErlUtils.toFileList(this.appFiles, "\"", "\"");
-    return String.format(script, this.remoteNode, beamFileList, appFileList);
+    return String.format(this.script, this.remoteNode, beamFileList, appFileList);
   }
 
   /**

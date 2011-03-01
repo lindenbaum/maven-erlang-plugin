@@ -10,11 +10,12 @@ import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 public class CreateRELEASESScriptTest {
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     File rootDir = new File("/rootDir");
     File relFile = new File("/rootDir/release.rel");
     CreateRELEASESScript script = new CreateRELEASESScript(rootDir, relFile);
@@ -25,7 +26,7 @@ public class CreateRELEASESScriptTest {
   }
 
   @Test
-  public void testHandleOk() {
+  public void testHandleOk() throws MojoExecutionException {
     OtpErlangAtom result = new OtpErlangAtom("ok");
 
     File rootDir = new File("/rootDir");
@@ -35,7 +36,7 @@ public class CreateRELEASESScriptTest {
   }
 
   @Test
-  public void testHandleError() {
+  public void testHandleError() throws MojoExecutionException {
     OtpErlangAtom error = new OtpErlangAtom("error");
     OtpErlangAtom reason = new OtpErlangAtom("reason");
     OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ error, reason });

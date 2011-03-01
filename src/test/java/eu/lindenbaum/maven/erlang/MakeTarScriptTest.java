@@ -12,6 +12,7 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.easymock.IMocksControl;
 import org.junit.Before;
@@ -28,7 +29,7 @@ public class MakeTarScriptTest {
   }
 
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     File outdir = new File("outdir");
     File relFile = new File("relfile.rel");
     MakeTarScript script = new MakeTarScript(relFile, outdir, null);
@@ -39,7 +40,7 @@ public class MakeTarScriptTest {
   }
 
   @Test
-  public void testHandle() {
+  public void testHandle() throws MojoExecutionException {
     this.control.replay();
 
     OtpErlangString message = new OtpErlangString("ignored");
@@ -57,7 +58,7 @@ public class MakeTarScriptTest {
   }
 
   @Test
-  public void testHandleWithWarning() {
+  public void testHandleWithWarning() throws MojoExecutionException {
     this.log.warn("message");
 
     this.control.replay();
@@ -77,7 +78,7 @@ public class MakeTarScriptTest {
   }
 
   @Test
-  public void testHandleWithError() {
+  public void testHandleWithError() throws MojoExecutionException {
     this.log.error("message");
 
     this.control.replay();

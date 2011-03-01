@@ -8,6 +8,7 @@ import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import com.ericsson.otp.erlang.OtpErlangObject;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -22,38 +23,19 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public class UploadReleaseScript implements Script<GenericScriptResult> {
-  private static String script = //
-  NL + "Node = %s," + NL + //
-      "Release = \"%s\"," + NL + //
-      "case net_kernel:connect(Node) of" + NL + //
-      "    true ->" + NL + //
-      "        FileName = filename:basename(Release)," + NL + //
-      "        DestRoot = rpc:call(Node, code, root_dir, [])," + NL + //
-      "        Dest = rpc:call(" + NL + //
-      "                 Node, filename, join," + NL + //
-      "                 [[DestRoot, \"releases\", FileName]])," + NL + //
-      "        case file:read_file(Release) of" + NL + //
-      "            {ok, Binary} ->" + NL + //
-      "                rpc:call(Node, file, write_file, [Dest, Binary]);" + NL + //
-      "            Other ->" + NL + //
-      "                Other" + NL + //
-      "        end;" + NL + //
-      "    false ->" + NL + //
-      "        {error, {cannot_connect, Node}}" + NL + //
-      "end." + NL;
-
+public class UploadReleaseScript extends AbstractScript<GenericScriptResult> {
   private final String remoteNode;
   private final File releasePackage;
 
-  public UploadReleaseScript(String remoteNode, File releasePackage) {
+  public UploadReleaseScript(String remoteNode, File releasePackage) throws MojoExecutionException {
+    super();
     this.remoteNode = remoteNode;
     this.releasePackage = releasePackage;
   }
 
   @Override
   public String get() {
-    return String.format(script, this.remoteNode, this.releasePackage.getAbsolutePath());
+    return String.format(this.script, this.remoteNode, this.releasePackage.getAbsolutePath());
   }
 
   /**

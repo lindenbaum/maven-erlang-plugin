@@ -109,7 +109,7 @@ public final class TestCompiler extends ErlangMojo {
                                             new File(p.targetTestEbin(), "cover2.erl"),
                                             new File(p.targetTestEbin(), "ttycapture.erl"));
     for (File file : supportFiles) {
-      FileUtils.extractFileFromClassPath(getClass().getClassLoader(), path, file.getName(), file);
+      FileUtils.extractFileFromClassPath(getClass(), path, file.getName(), file);
     }
     return supportFiles;
   }

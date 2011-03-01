@@ -10,6 +10,7 @@ import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -19,17 +20,7 @@ import org.apache.maven.plugin.logging.Log;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
-public final class MakeTarScript implements Script<GenericScriptResult> {
-  private static final String script = //
-  NL + "case systools:make_tar(\"%s\", [silent, {outdir, \"%s\"}] ++ [%s]) of" + NL + //
-      "    ok -> {ok, \"\"};" + NL + //
-      "    error -> {error, \"unknown\"};" + NL + //
-      "    {ok, Module, Warnings} ->" + NL + //
-      "        {warn, lists:flatten(Module:format_warning(Warnings))};" + NL + //
-      "    {error, Module, Error} ->" + NL + //
-      "        {error, lists:flatten(Module:format_error(Error))}" + NL + //
-      "end." + NL;
-
+public final class MakeTarScript extends AbstractScript<GenericScriptResult> {
   private final File releaseFile;
   private final File outdir;
   private final String options;
@@ -44,7 +35,8 @@ public final class MakeTarScript implements Script<GenericScriptResult> {
    * @see <a
    *      href="http://www.erlang.org/doc/man/systools.html">http://www.erlang.org/doc/man/systools.html</a>
    */
-  public MakeTarScript(File releaseFile, File outdir, String options) {
+  public MakeTarScript(File releaseFile, File outdir, String options) throws MojoExecutionException {
+    super();
     this.releaseFile = releaseFile;
     this.outdir = outdir;
     this.options = options != null ? options : "";
@@ -54,7 +46,7 @@ public final class MakeTarScript implements Script<GenericScriptResult> {
   public String get() {
     String rel = this.releaseFile.getAbsolutePath().replace(ErlConstants.REL_SUFFIX, "");
     String outPath = this.outdir.getAbsolutePath();
-    return String.format(script, rel, outPath, this.options);
+    return String.format(this.script, rel, outPath, this.options);
   }
 
   /**

@@ -13,11 +13,12 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 public class CheckAppScriptTest {
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     File appFile = new File("appFile");
 
     CheckAppScript script = new CheckAppScript(appFile);
@@ -28,7 +29,7 @@ public class CheckAppScriptTest {
   }
 
   @Test
-  public void testHandleDefault() {
+  public void testHandleDefault() throws MojoExecutionException {
     File appFile = new File("appFile");
 
     OtpErlangAtom error = new OtpErlangAtom("error");
@@ -47,7 +48,7 @@ public class CheckAppScriptTest {
   }
 
   @Test
-  public void testHandle() {
+  public void testHandle() throws MojoExecutionException {
     File appFile = new File("appFile");
 
     OtpErlangAtom ok = new OtpErlangAtom("ok");

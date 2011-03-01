@@ -3,10 +3,12 @@ package eu.lindenbaum.maven.erlang;
 import java.io.File;
 import java.util.List;
 
+import eu.lindenbaum.maven.util.ErlUtils;
+
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * A {@link Script} that filters a list of modules for the specification of a
@@ -15,18 +17,7 @@ import eu.lindenbaum.maven.util.ErlUtils;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
-public class FilterForAttributeScript implements Script<String> {
-  private static final String script = //
-  NL + "lists:flatten(" + NL + //
-      "    lists:foldl(" + NL + //
-      "      fun(Module, Acc) ->" + NL + //
-      "              A = Module:module_info(attributes)," + NL + //
-      "              case proplists:get_value(%s, A) of" + NL + //
-      "                  undefined -> Acc;" + NL + //
-      "                  _ -> [Module | Acc]" + NL + //
-      "              end" + NL + //
-      "      end, [], %s))." + NL;
-
+public class FilterForAttributeScript extends AbstractScript<String> {
   private final List<File> modules;
   private final String attribute;
 
@@ -36,7 +27,8 @@ public class FilterForAttributeScript implements Script<String> {
    * @param modules to filter
    * @param attribute to look after
    */
-  public FilterForAttributeScript(List<File> modules, String attribute) {
+  public FilterForAttributeScript(List<File> modules, String attribute) throws MojoExecutionException {
+    super();
     this.modules = modules;
     this.attribute = attribute;
   }
@@ -44,7 +36,7 @@ public class FilterForAttributeScript implements Script<String> {
   @Override
   public String get() {
     String modules = ErlUtils.toModuleList(this.modules, "'", "'");
-    return String.format(script, this.attribute, modules);
+    return String.format(this.script, this.attribute, modules);
   }
 
   /**

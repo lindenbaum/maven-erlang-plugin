@@ -13,11 +13,12 @@ import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 public class DialyzerScriptTest {
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     List<File> files = Arrays.asList(new File("file"));
     List<File> includes = Arrays.asList(new File("include"));
     String options = "option";
@@ -30,7 +31,7 @@ public class DialyzerScriptTest {
   }
 
   @Test
-  public void testHandle() {
+  public void testHandle() throws MojoExecutionException {
     List<File> files = Arrays.asList(new File("file"));
     List<File> includes = Arrays.asList(new File("include"));
     String options = "option1, option2";

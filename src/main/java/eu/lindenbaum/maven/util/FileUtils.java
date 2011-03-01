@@ -515,33 +515,33 @@ public final class FileUtils {
    * Writes a file that is part of the classpath to a specific destination file.
    * Parent directories will be created if necessary.
    * 
-   * @param classLoader used to retrieve the classpath resources from
+   * @param clazz used to retrieve the classpath resource from
    * @param path the file's classpath prefix
    * @param name the file to extract denoted by its name in the classpath
    * @param dest the file to write to
    */
-  public static void extractFileFromClassPath(ClassLoader classLoader, String path, String name, File dest) throws MojoExecutionException {
+  public static void extractFileFromClassPath(Class<?> clazz, String path, String name, File dest) throws MojoExecutionException {
     if (dest.isDirectory()) {
       throw new MojoExecutionException("Destination must be a file.");
     }
     ensureDirectories(dest.getParentFile());
-    writeFile(dest, readFileFromClassPath(classLoader, path, name));
+    writeFile(dest, readFileFromClassPath(clazz, path, name));
   }
 
   /**
    * Reads a file that is part of the classpath and returns its content as a
    * {@link String} object.
    * 
-   * @param classLoader used to retrieve the classpath resources from
+   * @param clazz used to retrieve the classpath resource from
    * @param path the file's classpath prefix
    * @param name the file to extract denoted by its name in the classpath
    * @return a non-{@code null} object containing the content of the file
    * @throws MojoExecutionException in case the file could not be found or read
    *           errors occured
    */
-  public static String readFileFromClassPath(ClassLoader classLoader, String path, String name) throws MojoExecutionException {
+  public static String readFileFromClassPath(Class<?> clazz, String path, String name) throws MojoExecutionException {
     String resource = path + "/" + name;
-    InputStream resourceStream = classLoader.getResourceAsStream(resource);
+    InputStream resourceStream = clazz.getResourceAsStream(resource);
     if (resourceStream != null) {
       StringBuilder data = new StringBuilder(4096);
       BufferedInputStream input = new BufferedInputStream(resourceStream);

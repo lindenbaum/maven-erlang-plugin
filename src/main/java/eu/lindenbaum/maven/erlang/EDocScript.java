@@ -2,9 +2,11 @@ package eu.lindenbaum.maven.erlang;
 
 import java.io.File;
 
+import eu.lindenbaum.maven.util.ErlUtils;
+
 import com.ericsson.otp.erlang.OtpErlangObject;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * A {@link Script} generating <code>edoc</code> documentation for an
@@ -12,14 +14,7 @@ import eu.lindenbaum.maven.util.ErlUtils;
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public class EDocScript implements Script<Boolean> {
-  private static final String script = //
-  NL + "In = \"%s\"," + NL + //
-      "Out = [{dir, \"%s\"}]," + NL + //
-      "Overview = [{overview, \"%s\"}]," + NL + //
-      "Options = [{todo, true}, {new, true}, {subpackages, true}]," + NL + //
-      "edoc:application('%s', In, Out ++ Overview ++ Options)." + NL;
-
+public class EDocScript extends AbstractScript<Boolean> {
   private final String appName;
   private final File indir;
   private final File outdir;
@@ -35,7 +30,8 @@ public class EDocScript implements Script<Boolean> {
    * @param outdir to put the documentation into
    * @param overview location of the overview file
    */
-  public EDocScript(String appName, File indir, File outdir, File overview) {
+  public EDocScript(String appName, File indir, File outdir, File overview) throws MojoExecutionException {
+    super();
     this.appName = appName;
     this.indir = indir;
     this.outdir = outdir;
@@ -47,7 +43,7 @@ public class EDocScript implements Script<Boolean> {
     String inPath = this.indir.getAbsolutePath();
     String outPath = this.outdir.getAbsolutePath();
     String overviewPath = this.overview.getAbsolutePath();
-    return String.format(script, inPath, outPath, overviewPath, this.appName);
+    return String.format(this.script, inPath, outPath, overviewPath, this.appName);
   }
 
   /**

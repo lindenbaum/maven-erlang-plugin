@@ -6,19 +6,20 @@ import eu.lindenbaum.maven.util.ErlUtils;
 
 import com.ericsson.otp.erlang.OtpErlangObject;
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 /**
  * A {@link Script} that creates an initial RELEASES file from a specific
  * release file.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public class CreateRELEASESScript implements Script<String> {
-  private static String script = NL + "release_handler:create_RELEASES(\"%s\", \"%s\", \"%s\", [])." + NL;
-
+public class CreateRELEASESScript extends AbstractScript<String> {
   private final File rootDir;
   private final File relFile;
 
-  public CreateRELEASESScript(File rootDir, File relFile) {
+  public CreateRELEASESScript(File rootDir, File relFile) throws MojoExecutionException {
+    super();
     this.rootDir = rootDir;
     this.relFile = relFile;
   }
@@ -28,7 +29,7 @@ public class CreateRELEASESScript implements Script<String> {
     String rootDirectory = this.rootDir.getAbsolutePath();
     String relDirectory = this.relFile.getParentFile().getAbsolutePath();
     String relFile = this.relFile.getAbsolutePath();
-    return String.format(script, rootDirectory, relDirectory, relFile);
+    return String.format(this.script, rootDirectory, relDirectory, relFile);
   }
 
   /**

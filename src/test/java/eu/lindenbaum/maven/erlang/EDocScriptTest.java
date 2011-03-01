@@ -8,11 +8,12 @@ import java.io.File;
 
 import com.ericsson.otp.erlang.OtpErlangAtom;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 public class EDocScriptTest {
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     String appName = "appName";
     File indir = new File("indir");
     File outdir = new File("outdir");
@@ -26,7 +27,7 @@ public class EDocScriptTest {
   }
 
   @Test
-  public void testHandleSuccess() {
+  public void testHandleSuccess() throws MojoExecutionException {
     OtpErlangAtom ignored = new OtpErlangAtom("ok");
 
     String appName = "appName";
@@ -39,7 +40,7 @@ public class EDocScriptTest {
   }
 
   @Test
-  public void testHandleError() {
+  public void testHandleError() throws MojoExecutionException {
     OtpErlangAtom ignored = new OtpErlangAtom("error");
 
     String appName = "appName";

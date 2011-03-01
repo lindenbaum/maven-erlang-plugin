@@ -2,6 +2,8 @@ package eu.lindenbaum.maven.erlang;
 
 import com.ericsson.otp.erlang.OtpErlangObject;
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 /**
  * A {@link Script} that purges all modules currently loaded except the ones
  * loaded directly from the backends lib directory retrieved using
@@ -10,39 +12,14 @@ import com.ericsson.otp.erlang.OtpErlangObject;
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class PurgeModulesScript implements Script<Void> {
-  private static final String script = //
-  NL + "LibDir = code:lib_dir()," + NL + //
-      "lists:foreach(" + NL + //
-      "  fun({_, preloaded}) ->" + NL + //
-      "        ok;" + NL + //
-      "     ({M, _}) when M =:= distel" + NL + //
-      "                   orelse M =:= distel_ie" + NL + //
-      "                   orelse M =:= fdoc" + NL + //
-      "                   orelse M =:= otp_doc ->" + NL + //
-      "        ok;" + NL + //
-      "     ({Module, Path}) when is_list(Path) ->" + NL + //
-      "        case string:str(Path, LibDir) of" + NL + //
-      "             1 ->" + NL + //
-      "                 ok;" + NL + //
-      "             _ ->" + NL + //
-      "                 code:purge(Module)," + NL + //
-      "                 code:delete(Module)," + NL + //
-      "                 code:purge(Module)" + NL + //
-      "        end;" + NL + //
-      "     ({Module, cover_compiled}) ->" + NL + //
-      "        code:purge(Module)," + NL + //
-      "        code:delete(Module)," + NL + //
-      "        code:purge(Module)" + NL + //
-      "  end, code:all_loaded())." + NL;
-
-  public PurgeModulesScript() {
-    // no params
+public final class PurgeModulesScript extends AbstractScript<Void> {
+  public PurgeModulesScript() throws MojoExecutionException {
+    super();
   }
 
   @Override
   public String get() {
-    return script;
+    return this.script;
   }
 
   /**

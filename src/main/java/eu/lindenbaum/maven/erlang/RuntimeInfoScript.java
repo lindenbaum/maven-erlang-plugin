@@ -7,26 +7,22 @@ import eu.lindenbaum.maven.util.ErlUtils;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 /**
  * A {@link Script} that can be used to retrieve runtime information from the
  * plugins backend node.
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public class RuntimeInfoScript implements Script<RuntimeInfo> {
-  private static final String script = //
-  NL + "{code:lib_dir()," + NL + //
-      "code:root_dir()," + NL + //
-      "erlang:system_info(version)," + NL + //
-      "erlang:system_info(otp_release)}." + NL;
-
-  public RuntimeInfoScript() {
-    // ignored
+public class RuntimeInfoScript extends AbstractScript<RuntimeInfo> {
+  public RuntimeInfoScript() throws MojoExecutionException {
+    super();
   }
 
   @Override
   public String get() {
-    return script;
+    return this.script;
   }
 
   /**

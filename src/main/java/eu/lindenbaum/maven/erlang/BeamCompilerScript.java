@@ -12,6 +12,7 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -20,44 +21,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class BeamCompilerScript implements Script<CompilerResult> {
-  private static final String script = //
-  NL + "OutDir = \"%s\"," + NL + //
-      "Options = [return, {outdir, OutDir}] ++ %s ++ %s," + NL + //
-      "lists:foldl(" + NL + //
-      "  fun(ToCompile, {\"\", Reports}) ->" + NL + //
-      "          {Fail, Messages} = case compile:file(ToCompile, Options) of" + NL + //
-      "                               {error, E, W} ->" + NL + //
-      "                                   {ToCompile," + NL + //
-      "                                    lists:map(fun(Elem) -> {error, Elem} end, E)" + NL + //
-      "                                    ++ lists:map(fun(Elem) -> {warn, Elem} end, W)};" + NL + //
-      "                               {ok, M, W} ->" + NL + //
-      "                                   Mod = atom_to_list(M)," + NL + //
-      "                                   code:load_abs(filename:join([OutDir, Mod]))," + NL + //
-      "                                   {\"\"," + NL + //
-      "                                    lists:map(fun(Elem) -> {warn, Elem} end, W)}" + NL + //
-      "                             end," + NL + //
-      "          R = lists:foldr(" + NL + //
-      "                fun({Level, {File, Exceptions}}, Acc) ->" + NL + //
-      "                        lists:foldr(fun({Line, Module, Info}, A) ->" + NL + //
-      "                                            Formatted = Module:format_error(Info)," + NL + //
-      "                                            Flattened = lists:flatten(Formatted)," + NL + //
-      "                                            F = io_lib:format(\"~s:~p:\", [File, Line])," + NL + //
-      "                                            S = io_lib:format(\"~s\", [Flattened])," + NL + //
-      "                                            [{Level, lists:flatten(F)}," + NL + //
-      "                                             {Level, lists:flatten(S)}] ++ A;" + NL + //
-      "                                       (Else, A) ->" + NL + //
-      "                                            F = io_lib:format(\"~s:\", [File])," + NL + //
-      "                                            S = io_lib:format(\"~p\", [Else])," + NL + //
-      "                                            [{Level, lists:flatten(F)}," + NL + //
-      "                                             {Level, lists:flatten(S)}] ++ A" + NL + //
-      "                                    end, Acc, Exceptions)" + NL + //
-      "                end, [], Messages)," + NL + //
-      "          {Fail, Reports ++ R};" + NL + //
-      "     (_, Result) ->" + NL + //
-      "          Result" + NL + //
-      "  end, {\"\", []}, %s)." + NL;
-
+public final class BeamCompilerScript extends AbstractScript<CompilerResult> {
   private final List<File> files;
   private final File outdir;
   private final List<File> includes;
@@ -73,7 +37,8 @@ public final class BeamCompilerScript implements Script<CompilerResult> {
    * @see <a
    *      href="http://www.erlang.org/doc/man/compile.html">http://www.erlang.org/doc/man/compile.html</a>
    */
-  public BeamCompilerScript(List<File> files, File outdir, List<File> includes, List<String> options) {
+  public BeamCompilerScript(List<File> files, File outdir, List<File> includes, List<String> options) throws MojoExecutionException {
+    super();
     this.files = files;
     this.outdir = outdir;
     this.includes = includes;
@@ -86,7 +51,7 @@ public final class BeamCompilerScript implements Script<CompilerResult> {
     String incs = ErlUtils.toFileList(this.includes, "{i, \"", "\"}");
     String opts = ErlUtils.toList(this.options, null, "", "");
     String files = ErlUtils.toFileList(this.files, "\"", "\"");
-    return String.format(script, out, incs, opts, files);
+    return String.format(this.script, out, incs, opts, files);
   }
 
   /**

@@ -3,11 +3,13 @@ package eu.lindenbaum.maven.erlang;
 import java.io.File;
 import java.util.List;
 
+import eu.lindenbaum.maven.util.ErlUtils;
+
 import com.ericsson.otp.erlang.OtpErlangLong;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangRangeException;
 
-import eu.lindenbaum.maven.util.ErlUtils;
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * A {@link Script} that loads a list of modules located in the current code
@@ -16,31 +18,18 @@ import eu.lindenbaum.maven.util.ErlUtils;
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public final class LoadModulesScript implements Script<Integer> {
-  private static final String script = //
-  NL + "Modules = %s," + NL + //
-      "L = lists:foldl(" + NL + //
-      "      fun(Module, Acc) ->" + NL + //
-      "            code:purge(Module)," + NL + //
-      "            code:delete(Module)," + NL + //
-      "            code:purge(Module)," + NL + //
-      "            case code:load_file(Module) of" + NL + //
-      "                {module, _} -> Acc + 1;" + NL + //
-      "                _ -> Acc" + NL + //
-      "            end" + NL + //
-      "      end, 0, Modules)," + NL + //
-      "L." + NL;
-
+public final class LoadModulesScript extends AbstractScript<Integer> {
   private final List<File> modules;
 
-  public LoadModulesScript(List<File> modules) {
+  public LoadModulesScript(List<File> modules) throws MojoExecutionException {
+    super();
     this.modules = modules;
   }
 
   @Override
   public String get() {
     String modules = ErlUtils.toModuleList(this.modules, "'", "'");
-    return String.format(script, modules);
+    return String.format(this.script, modules);
   }
 
   /**

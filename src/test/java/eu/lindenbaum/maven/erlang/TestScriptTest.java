@@ -15,6 +15,7 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.easymock.IMocksControl;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class TestScriptTest {
   }
 
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     List<File> tests = Arrays.asList(new File("test1"), new File("test2"));
     File surefireDir = new File("surefireDir");
     String suiteName = "suiteName";
@@ -44,7 +45,7 @@ public class TestScriptTest {
   }
 
   @Test
-  public void testHandleTestsPassed() {
+  public void testHandleTestsPassed() throws MojoExecutionException {
     this.log.info("");
     this.log.info("message2");
     this.log.info("message3");
@@ -74,7 +75,7 @@ public class TestScriptTest {
   }
 
   @Test
-  public void testHandleTestsPassedWithWarnings() {
+  public void testHandleTestsPassedWithWarnings() throws MojoExecutionException {
     this.log.warn("");
     this.log.warn("message2");
     this.log.warn("message3");
@@ -104,7 +105,7 @@ public class TestScriptTest {
   }
 
   @Test
-  public void testHandleTestsFailed() {
+  public void testHandleTestsFailed() throws MojoExecutionException {
     this.log.error("");
     this.log.error("message2");
     this.log.error("message3");

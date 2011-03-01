@@ -10,6 +10,8 @@ import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 /**
  * A {@link Script} that can be used to extract certain values from an erlang
  * application file.
@@ -17,19 +19,7 @@ import com.ericsson.otp.erlang.OtpErlangTuple;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
-public final class CheckAppScript implements Script<CheckAppResult> {
-  private static final String script = //
-  NL + "case file:consult(\"%s\") of" + NL + //
-      "    {ok, [{application, A, Props}]} ->" + NL + //
-      "        V = proplists:get_value(vsn, Props, undefined)," + NL + //
-      "        S = proplists:get_value(mod, Props, omitted)," + NL + //
-      "        M = proplists:get_value(modules, Props, [])," + NL + //
-      "        D = proplists:get_value(applications, Props, [])," + NL + //
-      "        case S of {Module, _} -> {ok, A, V, Module, M, D}; _ -> {ok, A, V, S, M, D} end;" + NL + //
-      "    _ ->" + NL + //
-      "        {error, undefined, undefined, undefined, [], []}" + NL + //
-      "end." + NL;
-
+public final class CheckAppScript extends AbstractScript<CheckAppResult> {
   private final File appFile;
 
   /**
@@ -39,14 +29,15 @@ public final class CheckAppScript implements Script<CheckAppResult> {
    * @see <a
    *      href="http://www.erlang.org/doc/man/app.html">http://www.erlang.org/doc/man/app.html</a>
    */
-  public CheckAppScript(File appFile) {
+  public CheckAppScript(File appFile) throws MojoExecutionException {
+    super();
     this.appFile = appFile;
   }
 
   @Override
   public String get() {
     String appFilePath = this.appFile.getAbsolutePath();
-    return String.format(script, appFilePath);
+    return String.format(this.script, appFilePath);
   }
 
   /**

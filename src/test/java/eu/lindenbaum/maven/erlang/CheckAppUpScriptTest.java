@@ -10,11 +10,12 @@ import java.io.File;
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangString;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 public class CheckAppUpScriptTest {
   @Test
-  public void testGet() {
+  public void testGet() throws MojoExecutionException {
     File appFile = new File("appUpFile");
     String version = "version";
 
@@ -26,7 +27,7 @@ public class CheckAppUpScriptTest {
   }
 
   @Test
-  public void testHandleNoError() {
+  public void testHandleNoError() throws MojoExecutionException {
     File appFile = new File("appFile");
     String version = "version";
 
@@ -37,7 +38,7 @@ public class CheckAppUpScriptTest {
   }
 
   @Test
-  public void testHandleWithError() {
+  public void testHandleWithError() throws MojoExecutionException {
     File appFile = new File("appFile");
     String version = "version";
 
