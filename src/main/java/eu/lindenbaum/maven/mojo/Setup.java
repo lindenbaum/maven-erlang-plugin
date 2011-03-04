@@ -53,7 +53,8 @@ import org.apache.maven.plugin.logging.Log;
  * <li>changelog folder with <code>changes.xml</code></li>
  * </ul>
  * <p>
- * The default application resource file will look like:
+ * The default application resource file will look like (this would be
+ * sufficient for library applications):
  * 
  * <pre>
  * {application, ${ARTIFACT},
@@ -73,7 +74,7 @@ import org.apache.maven.plugin.logging.Log;
  * The default application upgrade file will look like:
  * 
  * <pre>
- * {${VERSION}, [], []}.
+ * {${VERSION}, [EDIT HERE], [EDIT HERE]}.
  * </pre>
  * </p>
  * <p>
@@ -84,6 +85,13 @@ import org.apache.maven.plugin.logging.Log;
  *  {${ARTIFACT}, ${VERSION}},
  *  ${ERTS},
  *  ${AUTODEPS}}.
+ * </pre>
+ * </p>
+ * <p>
+ * The default release upgrade file will look like:
+ * 
+ * <pre>
+ * {${VERSION}, [EDIT HERE], [EDIT HERE]}.
  * </pre>
  * </p>
  * <p>
