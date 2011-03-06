@@ -1,7 +1,7 @@
 
 Project Configuration
 
-* Application Resource, Application Upgrade and Release Files
+* Application Resource, Application Upgrade, Release and Release Upgrade Files
 
  The following sections describe the ways the plugin can support a projects
  application resource, upgrade and release file management. For further
@@ -12,6 +12,8 @@ Project Configuration
  * {{http://www.erlang.org/doc/man/appup.html}}
  
  * {{http://www.erlang.org/doc/man/rel.html}}
+
+ * {{http://www.erlang.org/doc/man/relup.html}}
 
 ** File Management
 
@@ -60,8 +62,9 @@ Project Configuration
 
  The plug-in can generate default versions of application resource and upgrade
  files for your project. This is done by the setup mojo. For further information
- please refer to the {{{./setup-mojo.html}mojos documentation}}. Generation of
- release files is not supported (due to their complexity).
+ please refer to the {{{./setup-mojo.html}mojos documentation}}. For release
+ projects there's also the possibility to generate default basic release and
+ release upgrade files as well as a default empty system configuration.
 
 ** Application Resource File Checking
 
@@ -84,7 +87,7 @@ Project Configuration
  Will be performed on (erlang-otp) project packaging. Checks whether upgrade
  file has correct term structure.
  
-* Release File Checking
+** Release File Checking
 
  Will be performed on <<<erlang-rel>>> project packaging. Checks include:
 
@@ -95,3 +98,11 @@ Project Configuration
  * consistency of configured application dependencies
 
  * consistency of required erlang/OTP release the release will be based on
+
+** Release Upgrade File Checking
+
+ The release upgrade file <<<relup>>> is only checked for existence.
+
+** System Configuration File Checking
+
+ The system configuration file <<<sys.config>>> is only checked for existence.

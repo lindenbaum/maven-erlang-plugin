@@ -26,7 +26,7 @@ Grouped Parameter Summary
 
 * General
 
-  * <<<cookie>>>: specifies the cookie used for the backend node
+  * <<<cookie>>>: specifies the cookie used for the plugin nodes
   
   * <<<erlCommand>>>: specifies the erlang command used to start an erlang
   backend node (must exist and the destination must be executable), if the given
@@ -70,7 +70,7 @@ Grouped Parameter Summary
  see {{http://www.erlang.org/doc/man/systools.html}}
 
  * <<<includeErts>>>: will package the system dependent erlang emulator taken
- from the backend nodes erlang installation along with the release package. For
+ from the backend node's erlang installation along with the release package. For
  further information see {{./package-release-mojo.html}}.
 
  * <<<otpRelease>>>: mandatory parameter that must be set to the erlang/OTP

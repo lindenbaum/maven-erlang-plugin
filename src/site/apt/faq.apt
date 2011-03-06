@@ -7,8 +7,8 @@ Frequently Asked Questions
  <<<erlang-otp>>> packaging type assumes the standard maven directory layout
  while the <<<erlang-std>>> packaging type assumes the erlang/OTP standard
  directory layout. Release projects don't have a specific directory layout (flat
- top level directory) since they only consist of a <<<pom.xml>>> and a
- release/release upgrade files.
+ top level directory) since they only consist of a <<<pom.xml>>>, a release
+ file, a release upgrade file and a system configuration file.
 
  For an exact listing of directories and the supported content types please
  refer to the {{{./apidocs/eu/lindenbaum/maven/PackagingType.html}PackagingType}}
@@ -96,13 +96,11 @@ Frequently Asked Questions
 
  Yes, the {{{./run-mojo.html}run}} mojo provides a convenient way to run an
  application project (with all dependency applications) for basic testing
- purposes. The only configuration available will be the configuration specified
- in the specific application resource files. The mojo will pause the build (by
- waiting for user input) after all applications have been started successfully.
- The plug-in will give an advice about how to connect to the backend node to
- interact with the started applications remotely. When finishing the build all
- applications started by the plug-in will be stopped and unloaded. All modules
- will be left loaded (but will be purged when the next build starts). 
+ purposes (optionally on a remote node). The only configuration available 
+ will be the configuration specified in the specific application resource
+ file. The plug-in will give an advice about how to connect to the (remote)
+ node running the application. Please note that application resources will
+ be available when running the application on a remote node. 
 
 * Does the plug-in suppport structured source directories?
 
@@ -142,6 +140,8 @@ Frequently Asked Questions
  about that.
 
 * How to debug a broken unit test?
+
+ DEPRECATED TODO
 
  In order to debug a unit test it is recommended to start a test backend node
  before issuing a build in a separate shell manually. By default the plug-in
@@ -247,9 +247,9 @@ Frequently Asked Questions
 
  On top of that the plug-in will generate the necessary scripts to package with
  the release (e.g. <<<.boot>>> file, ...). <<<.relup>>> files will not (yet) be
- generated but will be packaged when provided. Finally the plug-in checks the
- resulting release file for plausability (e.g. whether all application
- dependencies are present, ...).
+ generated but will be packaged. Finally the plug-in checks the resulting
+ release file for plausability (e.g. whether all application dependencies are
+ present, ...).
 
 * Does the plug-in support the edoc application overview file?
 

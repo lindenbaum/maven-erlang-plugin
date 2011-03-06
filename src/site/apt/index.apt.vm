@@ -34,8 +34,8 @@ Maven Erlang Plug-In
 ...
 +--
 
- Or you may check out the source code from the repository and install it
- locally.
+ Or you may check out the latest development source code from the repository and
+ install it locally.
 
 +--
  svn co https://erlang-plugin.svn.sourceforge.net/svnroot/erlang-plugin/trunk/maven-erlang-plugin maven-erlang-plugin
@@ -220,13 +220,21 @@ Maven Erlang Plug-In
  
  * {{{./setup-mojo.html}setup}}
 
-** Run
+** Run Application Projects
 
- There is a plug-in goal to run an <<<erlang-otp>>> or <<<erlang-std>>> packaged
- project for testing purposes. This will also start all required (transitive)
- applications. On successfull start the build will be paused to allow you to
- connect to the running application on the backend node remotely. To shutdown
- the applications and finish the build you will be prompted for further action.
+ There is a plug-in goal to run application projects (optionally even on a
+ remote node) for testing purposes. Simply typing <<<mvn clean erlang:run>>> 
+ will start the application and all required (transitive) applications needed.
+ On successfull start the build will be paused to allow you to connect to the 
+ running application using the erlang remote shell. To shutdown the application 
+ just finish the build by pressing <ENTER>.
+
+ When specifying a running remote node using <<<-Dremote={REMOTE_NODE}>>> the 
+ application code will be uploaded to the specified node (without resources) 
+ and the application will be started there. To additionally upload the projects
+ transitive dependencies specify <<<-DwithDependencies>>>. Please note that the
+ applications started on the remote node will not be stopped when the build
+ finishes. The node owner has to take care of that.
  
  More information:
  
@@ -234,9 +242,15 @@ Maven Erlang Plug-In
 
 ** Upload
 
- The upload goal will compile the sources of an application project and upload
- them on a remote node. The dependencies of the project will only be uploaded
- when specifying the <<<withDependencies>>> parameter. 
+ The upload goal will upload the compiled artifacts of an erlang project on a
+ remote node specified by the <<<-Dremote>>> parameter. In case of application
+ projects the compiled source code will be uploaded (except for project
+ resource files). The dependencies of the project will only be uploaded when
+ specifying the <<<withDependencies>>> parameter. In case of release projects
+ the packaged release .tar.gz will be uploaded into the remote node's
+ <<<releases>>> directory. Please note that the remote node's process will have
+ to have write access to its <<<releases>>> directory to be able to successfully
+ execute this goal.
  
  More information:
 
@@ -244,8 +258,8 @@ Maven Erlang Plug-In
 
 ** Target-System
 
- The target-system goal will package a release as a startable target system
- according to the official documentation on
+ On UNIX hosts the target-system goal will package a release as a startable
+ target system according to the official documentation on
  {{{http://www.erlang.org/doc/system_principles/create_target.html}erlang.org}}.
  Please note that a target system is highly system dependent since the runtime
  of the current backend node (binaries) is packaged along with the target
