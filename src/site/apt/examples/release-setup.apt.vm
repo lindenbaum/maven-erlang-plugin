@@ -60,7 +60,7 @@ Setting up a new Erlang/OTP release project
  Note: This release is configured to be created using the erlang/OTP standard
  applications from <<<R13B04>>>. Thus the executing backend node must run this
  OTP release. By default the backend node is spawned using the <<<erl>>> command
- in the system path. To use another OTP version the path can be altered to point
+ in the system path. To use another OTP version the <<<erlCommand>>> can be set
  to the matching <<<erl>>> command.
 
  The following steps can be omitted when using the {{{../setup-mojo.html}setup}}
@@ -91,12 +91,10 @@ Setting up a new Erlang/OTP release project
  ]}.
 +--
 
- Relup files (<<<[ARTIFACT-ID].relup>>>) may be provided and will be packaged
- but can not (yet) be generated.
- 
- A system configuration file named <<<sys.config>>> is mandatory and must be
- placed in the same directory. Again the {{{../setup-mojo.html}setup}} mojo will
- provide a minimal default for you.
+ The system configuration <<<sys.config>>> and the release upgrade file
+ <<<relup>>> are mandatory and must be placed in the project's root directory.
+ Again the {{{../setup-mojo.html}setup}} mojo will provide minimal defaults for
+ you.
 
  After a call to <<<mvn clean package>>> the <<<target>>> directory should
  contain the release <<<.tar.gz>>> that can be installed using the erlang
@@ -110,4 +108,5 @@ drwxr-xr-x 4 schlager schlager    4096 2011-02-03 14:27 lib
 -rw-r--r-- 1 schlager schlager     185 2011-02-03 14:27 [ARTIFACT-ID]-[VERSION].rel
 -rw-r--r-- 1 schlager schlager    9339 2011-02-03 14:27 [ARTIFACT-ID]-[VERSION].script
 -rw-r--r-- 1 schlager schlager 3240027 2011-02-03 14:27 [ARTIFACT-ID]-[VERSION].tar.gz
+-rw-r--r-- 1 schlager schlager      15 2011-02-03 14:27 relup
 +--
