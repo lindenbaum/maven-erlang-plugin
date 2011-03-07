@@ -93,7 +93,7 @@ public final class ResourceGenerator extends ErlangMojo {
     Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
     Set<String> artifactIds = MavenUtils.getArtifactIds(artifacts);
     artifactIds.addAll(Arrays.asList("kernel", "stdlib", "sasl"));
-    Map<String, CheckAppResult> appInfos = getAppInfos(p, p.targetLib(), otpLibDirectory);
+    Map<String, CheckAppResult> appInfos = getAppInfos(p, otpLibDirectory, p.targetLib());
     Set<CheckAppResult> autoDependencies = getDependencies(artifactIds, appInfos);
 
     log.debug("Found dependencies: " + autoDependencies);

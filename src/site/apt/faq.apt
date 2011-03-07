@@ -16,10 +16,6 @@ Frequently Asked Questions
 
 * Is there a project archetype for erlang projects?
 
- Actually project archetypes make us feel like we could set up a project in 5
- minutes. In most cases the truth is that after creating the archetype we end
- up editing the project for half an hour to make it fit the needs.
- 
  The plug-in does not depend on any empty directories so users don't have to
  create them if they don't use them (e.g. an empty <<<priv>>> directory). We
  therefore recommend that users write their own <<<pom.xml>>> from the start
@@ -32,31 +28,12 @@ Frequently Asked Questions
 
 * How does the plug-in work?
 
- DEPRECATED TODO
-
  The plug-in uses several erlang nodes as backends to execute scripts via remote
  procedure calls. The backend node will not be altered by the plug-in except for
  the extension of code paths. The plug-in does not need write access to the
- backend node's installation directory.
-
- A backend node is started and stoppend by the plug-in automatically as needed
- unless configured otherwise, e.g. using the <<<shutdownNode>>> and
- <<<shutdownTestNode>>> properties. The plug-in will re-use still/already
- running backend nodes by connecting/reconnecting to the specific node. The 
- backend nodes can be specified using the <<<node>>> and/or <<<testNode>>>
- parameter.
-
- Each build will first purge all non <<<preloaded>>> modules loaded on the
- backend nodes (modules needed by the Emacs/distel mode will also be left
- unpurged). This makes sure that removed modules disappear on the node as
- soon as the user decides to rebuild. The plug-in also modifies the code paths
- of the running backend nodes. These changes will not be reverted when starting
- a new build.
- 
- After a build all newly compiled modules as well as the dependency modules are
- available and loaded on the backend nodes. This allows a better integration
- into the development process using Emacs/distel (see next section for
- detailed information on that).
+ backend node's installation directory. A backend node is started and stoppend
+ by the plug-in automatically as needed. The plug-in can re-use an already
+ running backend node by reconnecting to it.
 
 * How do I manage non-erlang source code/artifacts?
 
@@ -139,24 +116,21 @@ Frequently Asked Questions
  {{{./examples/coverage.html}coverage}} example page for further information
  about that.
 
-* How to debug a broken unit test?
-
- DEPRECATED TODO
-
- In order to debug a unit test it is recommended to start a test backend node
- before issuing a build in a separate shell manually. By default the plug-in
- tries to attach to the node <<<'maven-erlang-plugin-test-backend'>>> and run
- the unit tests on this node. The name of this node can of course be changed to
- any other name using the <<<testNode>>> parameter (on the command line). Since
- the user then has command line access to the test node all possible debug
- features of erlang/OTP can be used to debug the unit test.
- 
- To reuse the test node for subsequent builds the <<<shutdownTestNode>>>
- parameter can be specified so the node doesn't get halted after the test run.
- 
  To run only a single test module the <<<test>>> parameter can be set to a
  specific test module.
 
+* How to debug a broken unit test?
+
+ Debugging broken unit tests can sometimes be a hard thing. Therefore debugging
+ should be made directly from the erlang console where you can use all that
+ shiny <<<dbg>>> stuff erlang has to offer. The plug-in can support that by
+ providing all modules (with debug information compiled) needed for test
+ execution in a single directory making it unnecessary to add custom code paths
+ to an erlang shell used for unit test debugging. To debug the test run
+ <<<mvn clean test>>> which will basically compile all needed modules and try
+ the test execution. After that simply start an erlang shell in the directory
+ <<<target/ARTIFACTID-VERSION-test/ebin>>>.
+ 
 * How does application packaging of <<<erlang-otp>>> and <<<erlang-std>>>
   projects work?
   
@@ -212,8 +186,8 @@ Frequently Asked Questions
  point the release must be built on a backend node that can deliver the
  required versions of applications. The maven dependencies (applications
  packaged by the plug-in) will be put into the code paths automatically by the
- plug-in. Standard erlang/OTP applications will be taken from the backend nodes
- default code paths.
+ plug-in. Standard erlang/OTP applications will be taken from the backend node's
+ library directory.
  
  The <<<${APPLICATIONS}>>> and <<<${AUTODEPS}>>> variables expand to all
  transitive maven dependencies as required by the release files applications
@@ -221,7 +195,7 @@ Frequently Asked Questions
  erlang/OTP applications (e.g. mnesia, sasl, ...). The version of the standard
  applications are those available to the backend node. To achieve a correct
  dependency management a release project must configure what erlang/OTP release
- should be used as release base (the standard application version's will then
+ should be used as release base (the standard application versions will then
  be taken from this release). The build will fail if either the OTP release
  base variable (<<<otpRelease>>>) is not configured or the backend node does not
  run the configured release.
@@ -235,7 +209,8 @@ Frequently Asked Questions
  applications of <<<R13B04>>> your backend node must actually run this version
  of erlang. This can be achieved by building your release on a central build
  server like {{{http://jenkins-ci.org/}jenkins/hudson}} or by having the
- suitable release installed locally.
+ suitable release installed locally. It is possible to specify the used
+ <<<erl>>> command using the <<<erlCommand>>> parameter.
  
  For a list of available release packaging variables see the
  {{{./plugin-configuration.html}plugin configuration}} page.
