@@ -2,7 +2,8 @@
 Maven Erlang Plug-In
 
  The Maven Erlang Plug-In manages Erlang projects under Maven2, enabling 
- building, testing and deployment - as expected by Maven users.
+ building, testing, deployment and of course erlang project dependency
+ management - as expected by Maven users.
  
  This project is based on the ideas of
  {{{http://maven-erlang.sourceforge.net/erlang-plugin/}maven-erlang}}, created 
