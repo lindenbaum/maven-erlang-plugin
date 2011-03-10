@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.0.0" date="TBA" description="New feature release">
+      <action dev="schlagert, olle-t" type="add">
+        Added generated help mojo 'erlang:help' to display information about the
+        available goals.
+      </action>
       <action dev="schlagert, heyll" type="remove">
         Removed the 'failIfNoTests' parameter for simplifying plug-ing usage.
       </action>

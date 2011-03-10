@@ -2,7 +2,6 @@ package eu.lindenbaum.maven;
 
 import java.io.File;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -23,9 +22,9 @@ final class PropertiesImpl implements Properties {
   private static final String DEFAULT_TEST_BACKEND = "maven-erlang-plugin-test-backend";
 
   private final MavenProject project;
-  private final ArtifactRepository repository;
 
   private final String projectName;
+  private final MavenComponents components;
   private final PackagingType packagingType;
   private final String erlCommand;
   private final String node;
@@ -62,13 +61,13 @@ final class PropertiesImpl implements Properties {
 
   PropertiesImpl(PackagingType type,
                  MavenProject project,
-                 ArtifactRepository repository,
+                 MavenComponents components,
                  File base,
                  File target,
                  String erlCommand,
                  String cookie) {
     this.project = project;
-    this.repository = repository;
+    this.components = components;
 
     this.projectName = project.getArtifactId() + "-" + project.getVersion();
     this.packagingType = type;
@@ -145,8 +144,8 @@ final class PropertiesImpl implements Properties {
   }
 
   @Override
-  public ArtifactRepository repository() {
-    return this.repository;
+  public MavenComponents components() {
+    return this.components;
   }
 
   @Override

@@ -1,10 +1,15 @@
 package eu.lindenbaum.maven;
 
 import java.io.File;
+import java.util.List;
 
 import eu.lindenbaum.maven.util.ErlConstants;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,14 +36,52 @@ public abstract class ErlangMojo extends AbstractMojo {
   private MavenProject project;
 
   /**
-   * {@link ArtifactRepository} storing dependencies of this
+   * The local {@link ArtifactRepository} storing dependencies of this
    * {@link MavenProject}.
    * 
    * @parameter expression="${localRepository}"
    * @required
    * @readonly
    */
-  private ArtifactRepository repository;
+  private ArtifactRepository localRepository;
+
+  /**
+   * A list of remote {@link ArtifactRepository}s storing dependencies of this
+   * {@link MavenProject}.
+   * 
+   * @parameter expression="${project.remoteArtifactRepositories}"
+   * @required
+   * @readonly
+   */
+  private List<?> remoteRepositories;
+
+  /**
+   * The source for {@link Artifact} metadata information.
+   * 
+   * @component
+   * @required
+   * @readonly
+   */
+  private ArtifactMetadataSource metadataSource;
+
+  /**
+   * A factory to create {@link Artifact} objects.
+   * 
+   * @component
+   * @required
+   * @readonly
+   */
+  private ArtifactFactory artifactFactory;
+
+  /**
+   * An object capable of resolving {@link Artifact}s from remote repositories
+   * into the local repository.
+   * 
+   * @component
+   * @required
+   * @readonly
+   */
+  private ArtifactResolver artifactResolver;
 
   /**
    * The projects working directory root.
@@ -116,8 +159,17 @@ public abstract class ErlangMojo extends AbstractMojo {
    * @return properties for this report
    */
   private Properties getProperties(PackagingType type, String cmd) {
+    @SuppressWarnings("unchecked")
+    List<ArtifactRepository> remoteRepositories = (List<ArtifactRepository>) this.remoteRepositories;
+
+    MavenComponents components = new MavenComponentsImpl(this.localRepository,
+                                                         remoteRepositories,
+                                                         this.metadataSource,
+                                                         this.artifactFactory,
+                                                         this.artifactResolver);
+
     getLog().debug("Using command: " + cmd);
-    return new PropertiesImpl(type, this.project, this.repository, this.base, this.target, cmd, this.cookie);
+    return new PropertiesImpl(type, this.project, components, this.base, this.target, cmd, this.cookie);
   }
 
   /**

@@ -4,15 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import eu.lindenbaum.maven.MavenComponents;
 import eu.lindenbaum.maven.PackagingType;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -67,48 +72,52 @@ public final class MavenUtils {
   }
 
   /**
-   * Returns an (existing) file pointing to a plugin {@link Artifact} used by a
-   * {@link MavenProject} from a {@link ArtifactRepository}.
+   * Returns a {@link Set} of available versions for an artifact in the given
+   * repositories.
    * 
-   * @param artifactId to lookup in the project
-   * @param project to scan for the plugin {@link Artifact}
-   * @param repository to scan for the artifact
-   * @return an existing file pointing to a plugin artifact
+   * @param artifact to lookup in the repository
+   * @param components a bean holding maven specific components
+   * @return a non-{@code null} {@link Set} of {@link ArtifactVersion}s
    * @throws MojoExecutionException
    */
-  public static File getPluginFile(String artifactId, MavenProject project, ArtifactRepository repository) throws MojoExecutionException {
-    @SuppressWarnings("unchecked")
-    Set<Artifact> plugins = project.getPluginArtifacts();
-    Artifact resolved = null;
-    for (Artifact artifact : plugins) {
-      if (artifact.getArtifactId().equals(artifactId)) {
-        resolved = artifact;
-        break;
-      }
+  public static Set<ArtifactVersion> getAvailableVersions(Artifact artifact, MavenComponents components) throws MojoExecutionException {
+    ArtifactMetadataSource source = components.metadataSource();
+    ArtifactRepository local = components.localRepository();
+    List<ArtifactRepository> remotes = components.remoteRepositories();
+    try {
+      @SuppressWarnings("unchecked")
+      List<ArtifactVersion> retrieved = source.retrieveAvailableVersions(artifact, local, remotes);
+      return new HashSet<ArtifactVersion>(retrieved);
     }
-    if (resolved != null) {
-      return getArtifactFile(resolved, repository);
-    }
-    else {
-      throw new MojoExecutionException("project does not use a plugin with artifact id " + artifactId);
+    catch (ArtifactMetadataRetrievalException e) {
+      throw new MojoExecutionException("Failed to get available versions for artifact " + artifact + ".", e);
     }
   }
 
   /**
    * Returns an (existing) file pointing to an {@link Artifact} of an
-   * {@link ArtifactRepository}.
+   * {@link ArtifactRepository}. The artifact will first be resolved.
    * 
    * @param artifact to lookup in the repository
-   * @param repository to scan for the artifact
+   * @param components a bean holding maven specific components
    * @return an existing file pointing to an artifact
    * @throws MojoExecutionException
    */
-  public static File getArtifactFile(Artifact artifact, ArtifactRepository repository) throws MojoExecutionException {
-    File file = new File(repository.getBasedir(), repository.pathOf(artifact));
-    if (file.exists()) {
-      return file;
+  public static File getArtifactFile(Artifact artifact, MavenComponents components) throws MojoExecutionException {
+    ArtifactResolver artifactResolver = components.artifactResolver();
+    List<ArtifactRepository> remoteRepositories = components.remoteRepositories();
+    ArtifactRepository localRepository = components.localRepository();
+    try {
+      artifactResolver.resolve(artifact, remoteRepositories, localRepository);
     }
-    throw new MojoExecutionException("artifact " + artifact + " not present in the repository");
+    catch (Exception e) {
+      throw new MojoExecutionException("Failed to resolve artifact " + artifact + ".", e);
+    }
+    File file = new File(localRepository.getBasedir(), localRepository.pathOf(artifact));
+    if (!file.isFile()) {
+      throw new MojoExecutionException("Failed to resolve artifact " + artifact + ".");
+    }
+    return file;
   }
 
   /**
@@ -117,36 +126,28 @@ public final class MavenUtils {
    * 
    * @param from to clone
    * @param version of the returned artifact
+   * @param components a bean holding maven specific components
    * @return a new {@link Artifact} with the requested version
    */
-  public static Artifact getArtifact(Artifact from, String version) {
-    String groupId = from.getGroupId();
-    String artifactId = from.getArtifactId();
-    String scope = from.getScope();
-    String type = from.getType();
-    String classifier = from.getClassifier();
-    ArtifactHandler artifactHandler = from.getArtifactHandler();
-    VersionRange versionRange = VersionRange.createFromVersion(version);
-    return new DefaultArtifact(groupId, artifactId, versionRange, scope, type, classifier, artifactHandler);
+  public static Artifact getArtifact(Artifact from, String version, MavenComponents components) {
+    ArtifactFactory factory = components.artifactFactory();
+    return factory.createBuildArtifact(from.getGroupId(), from.getArtifactId(), version, from.getType());
   }
 
   /**
-   * Returns an {@link Artifact} object with the given artifactId and version.
-   * Default groupId is <code>org.erlang</code>, scope will be
-   * <code>provided</code> and type will be <code>erlang-std</code>.
+   * Returns a {@link VersionRange} from a given string specification.
    * 
-   * @param artifactId to set
-   * @param version to set
-   * @return a non-{@code null} {@link Artifact} object
+   * @param versionSpec to create a {@link VersionRange} from
+   * @return a version range object
+   * @throws MojoExecutionException if specification is invalid
    */
-  public static Artifact getArtifact(String artifactId, String version) {
-    String groupId = "org.erlang";
-    String scope = "provided";
-    String type = "erlang-std";
-    String classifier = "";
-    ArtifactHandler artifactHandler = new DefaultArtifactHandler();
-    VersionRange versionRange = VersionRange.createFromVersion(version);
-    return new DefaultArtifact(groupId, artifactId, versionRange, scope, type, classifier, artifactHandler);
+  public static VersionRange createVersionRange(String versionSpec) throws MojoExecutionException {
+    try {
+      return VersionRange.createFromVersionSpec(versionSpec);
+    }
+    catch (InvalidVersionSpecificationException e) {
+      throw new MojoExecutionException("Failed to create version range.", e);
+    }
   }
 
   /**

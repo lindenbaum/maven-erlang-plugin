@@ -2,7 +2,6 @@ package eu.lindenbaum.maven;
 
 import java.io.File;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -17,10 +16,9 @@ public interface Properties {
   public MavenProject project();
 
   /**
-   * Returns the {@link ArtifactRepository} storing dependencies of this
-   * {@link MavenProject}.
+   * Returns the {@link MavenComponents} that are available to the plugin.
    */
-  public ArtifactRepository repository();
+  public MavenComponents components();
 
   /**
    * Returns the name of the projects build artifact. Usually this is
