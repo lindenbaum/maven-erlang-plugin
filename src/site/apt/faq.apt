@@ -233,3 +233,13 @@ Frequently Asked Questions
  packaging variables <<<$\{ARTIFACT\}>>>, <<<$\{DESCRIPTION\}>>>, <<<$\{ID\}>>>
  and <<<$\{VERSION\}>>> are available to the overview file and may be used
  accordingly.
+
+* How to deal with non-maven packaged erlang projects?
+
+ To make non-maven packaged 3rd party erlang applications available to other
+ application or release projects {{{./team-list.html}Gregory Haskins}} wrote
+ the nifty escript <<<eapp2mvn>>> to deploy these artifacts under configurable
+ maven coordinates. The script's documentation is self-contained. The script
+ can be found in the
+ {{{https://erlang-plugin.svn.sourceforge.net/svnroot/erlang-plugin/trunk/maven-erlang-plugin/tools/}tools}}
+ directory of the plug-in's source code repository.

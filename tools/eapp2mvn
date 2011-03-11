@@ -1,0 +1,275 @@
+#!/usr/bin/env escript
+%
+% eapp2mvn - Mavenizes existing erlang applications into .erlang-otp artifacts
+%
+% maven-erlang-plugin can, of course, build erlang applications into
+% .erlang-otp artifacts.  When a maven based erlang application has a
+% dependency on another erlang-app, it is generally specified as an
+% official maven coordinate in the <dependency> section of the pom as we
+% might expect.  However, not all erlang applications will be built within
+% the maven system, and therefore will not have a natural maven coordinate
+% to associate with.  This tool aims to allow an erlang application to be
+% converted into a legitimate <package>erlang-otp</package coordinate
+% for consumption within the maven system.
+%
+% It accomplishes this feat by virtue of the install/deploy plugins which
+% support installing/deploying from a local file.  Since the .erlang-otp
+% package format is essentially a .tgz of the standard OTP app layout
+% (ebin, priv, include, src, etc), we can simply locate the install area,
+% tar up its contents, and then have the install/deploy plugin do the
+% heavy lifting on creating a POM for us.
+%
+% By default, eapp2mvn will install the artifact into the local
+% ~/.m2/repository
+%
+% example usage: "eapp2mvn -app mnesia"
+%
+%                this example would search the ERL_LIBS path for an
+%                application named "mnesia" and create a coordinate
+%                of org.erlang.otp::mnesia::$VSN::erlang-otp, where
+%                "org.erlang.otp" is the default groupId, and $VSN
+%                would be automatically determined from the application
+%                metadata.
+%
+% example usage: "eapp2mvn -app yaws -groupId=com.github.klacke"
+%
+%                this example would create the coordinate based on the
+%                provided groupId
+%                 (e.g. com.github.klacke::yaws::1.89::erlang-otp)
+% 
+% We can also use the -deploy option to deploy the artifact straight to
+% a repository, such as nexus.  For instance:
+%
+% example usage: "eapp2mvn -app inets -deploy nexus,http://mynexus.com/repopath"
+%
+%                this example would deploy to the server 
+%                "http://mynexus.com/repopath" whose credentials are
+%                identified by <id>nexus</id> as specified in the
+%                <servers><server> section of the local ~/.m2/settings.xml.
+%
+% Written by: Gregory Haskins <ghaskins@novell.com>
+%                .  
+
+-include_lib("kernel/include/file.hrl").
+
+-record(state,
+	{groupId="org.erlang.otp",
+	 app=undefined,
+	 deploy=install,
+	 goal="install:install-file",
+	 classifier=undefined
+	}
+       ).
+
+default_extention() -> "erlang-otp".
+native_extention() -> "erlang-otp-native".
+
+eapp2mvn(Args) ->
+    State = process_args(Args, #state{}),
+    Path = case code:lib_dir(State#state.app) of
+	       {error, _Error} -> throw("Bad -app");
+	       P -> P
+	   end,
+
+    AppFileName = format("~s.app", [State#state.app]),
+    AppFilePath = case code:where_is_file(AppFileName) of
+		  non_existing -> throw({"Failed to find .app file",
+						AppFileName});
+		  F -> F
+	      end,
+    Attrs = case file:consult(AppFilePath) of
+		{error, Reason} ->
+		    throw({"Failed to open .app file", Reason});
+		{ok, [{application, _, A}]} -> A
+	    end,
+    {value, {vsn, Vsn}} = lists:keysearch(vsn, 1, Attrs),
+
+    RawTmpFile = os_cmd("mktemp"),
+    TmpFile = string:substr(RawTmpFile, 1, length(RawTmpFile)-1),
+
+    try
+	Files = find_files(Path),
+	TarFiles = [{State#state.app ++
+		     "-" ++
+		     Vsn ++
+		     string:substr(File, length(Path)+1), File} || 
+		       {File, _Type} <- Files],
+	ok = erl_tar:create(TmpFile, TarFiles, [compressed]),
+	Goal = case State#state.deploy of
+		   install -> "install:install-file";
+		   {RepoId, Url} ->
+		       DeployCmd = "deploy:deploy-file -DrepositoryId=~s -Durl=~s",
+		       format(DeployCmd, [RepoId, Url])
+	       end,
+	NeedsClassifier = needs_classifier(Files),
+	{Options, Ext} = case {State#state.classifier, NeedsClassifier} of
+			     {undefined, true} ->
+				 throw("Classifier required");
+			     {disabled, true} ->
+				 io:format("[WARNING] Classifier required, but disabled~n", []),
+				 {"", default_extention()};
+			     {{forced, Classifier}, _} ->
+				 generate_classifier(Classifier);
+			     {{auto, Classifier}, true} ->
+				 generate_classifier(Classifier);
+			     _ ->
+				 {"", default_extention()}
+		  end,
+	os_cmd_format("mvn ~s "  ++
+		      "-DgroupId=~s -DartifactId=~s -Dversion=~s " ++
+		      "-Dpackaging=~s -Dfile=~s ~s",
+		      [Goal,
+		       State#state.groupId,
+		       State#state.app,
+		       Vsn,
+		       Ext,
+		       TmpFile,
+		       Options], true)
+    after
+	file:delete(TmpFile)
+    end.
+
+main(Args) ->
+    try eapp2mvn(Args)
+    catch
+	throw:Msg -> io:format("[ERROR] ~p~n", [Msg])
+    end.
+
+format(String, Args) ->
+    lists:flatten(io_lib:format(String, Args)).
+
+generate_classifier(Classifier) ->
+    {format("-Dclassifier=~s", [Classifier]), native_extention()}.
+
+needs_classifier(Files) ->
+    NativeTypes = sets:from_list(["application/x-executable", 
+				  "application/x-sharedlib"]),
+
+    Parent = self(),
+    Work = fun({_File, Type}) ->
+		   Result = sets:is_element(Type, NativeTypes),
+		   Parent ! {self(), Result}
+	   end,
+    Pids = [spawn_link(fun() -> Work(File) end) || File <- Files],
+ 
+    lists:foldl(fun(Pid, false) ->
+			receive
+			    {Pid, Result} -> Result
+			end;
+		   (_Pid, true) -> true
+		   end,
+		false,
+		Pids).
+
+process_args(["-deploy" | T], State) ->
+    [RepoSpec | T1] = T,
+    [RepoId, Url] = string:tokens(RepoSpec, ","),
+    process_args(T1, State#state{deploy={RepoId, Url}});
+process_args(["-app" | T], State) ->
+    [App | T1] = T,
+    process_args(T1, State#state{app=App});
+process_args(["-classifier" | T], State) ->
+    [Classifier | T1] = T,
+    process_args(T1, State#state{classifier={forced, Classifier}});
+process_args(["-autoClassifier" | T], State) ->
+    [Classifier | T1] = T,
+    process_args(T1, State#state{classifier={auto, Classifier}});
+process_args(["-disableClassifier" | T], State) ->
+    process_args(T, State#state{classifier=disabled});
+process_args(["-groupId" | T], State) ->
+    [GroupId | T1] = T,
+    process_args(T1, State#state{groupId=GroupId});
+process_args(["-pa" | T], State) ->
+    [Path | T1] = T,
+    code:patha(Path),
+    process_args(T1, State);
+process_args([Arg | _T], _State) ->
+    throw({unknown_arg, Arg});
+process_args([], State) ->
+    case State#state.app of
+	undefined -> throw("--app NAME required");
+	_ -> ok
+    end,
+    State.
+
+file_info(File) ->
+    case file:read_file_info(File) of
+	{ok, FileInfo} -> FileInfo;  
+	{error, Reason} -> throw({"Could not read file", File, Reason})
+    end.
+	
+find_files(Dir) ->
+    find_files(Dir, []).
+
+find_files(Dir, Acc) ->
+    case file:list_dir(Dir) of
+	{ok, Files} -> find_files(Files, Dir, Acc);
+	{error, _} -> Acc
+    end.
+
+find_files([File | T], Dir, Acc) ->
+    FullName = Dir ++  [$/|File],
+    FileInfo = file_info(FullName),
+    case FileInfo#file_info.type of
+	directory ->
+	    Acc1 = find_files(FullName, Acc),
+	    find_files(T, Dir, Acc1);
+	regular ->
+	    MimeType = get_mimetype(FullName),
+	    find_files(T, Dir, [{FullName, MimeType} | Acc]);
+	UnexpectedType ->
+	    throw({"Unexpected file type", File, UnexpectedType})
+    end;
+find_files([], _, Acc) ->
+    Acc.
+
+get_mimetype(File) ->
+    RawMime = os_cmd_format("file -b --mime ~s", [File]),
+
+    % strip out any ";" or "\n" that may be present
+    Mime = re:replace(RawMime, "\[\n;]+", "", [global, {return, list}]),
+    case string:tokens(Mime, " ") of
+	       [T, _CharSet] -> T; 
+	       [T] -> T
+    end.
+
+os_cmd_format(CmdFormat, Params) ->
+    os_cmd_format(CmdFormat, Params, false).
+
+os_cmd_format(CmdFormat, Params, Verbose) ->
+    Cmd = format(CmdFormat, Params),    
+    os_cmd(Cmd, Verbose).
+
+os_cmd(Cmd) ->
+    os_cmd(Cmd, 0, false).
+
+os_cmd(Cmd, Verbose) ->
+    os_cmd(Cmd, 0, Verbose).
+
+os_cmd(Cmd, ExpectedStatus, Verbose) ->
+    case Verbose of
+	true -> io:format("[INFO] Running \"~s\"~n", [Cmd]);
+	false -> nop
+    end,
+
+    Port = erlang:open_port({spawn, Cmd}, [use_stdio, exit_status]),
+    case cmd_receive(Port, "", Verbose) of
+        {ok, ExpectedStatus, Data} ->
+            Data;
+        {ok, UnexpectedStatus, Data} ->
+            throw({badstatus, {{status, UnexpectedStatus},
+                               {cmd, Cmd},
+                               {data, Data}}})
+    end.
+
+cmd_receive(Port, Acc, Verbose) ->
+    receive
+        {Port, {data, Data}} ->
+	    case Verbose of
+		true -> io:format("~s", [Data]);
+		false -> nop
+	    end,
+            cmd_receive(Port, string:concat(Acc, Data), Verbose);
+        {Port, {exit_status, Status}} ->
+            {ok, Status, Acc}
+    end.
