@@ -54,7 +54,13 @@ public class StartApplicationScript extends AbstractScript<StartResult> {
   public StartResult handle(OtpErlangObject result) {
     OtpErlangTuple resultTuple = (OtpErlangTuple) result;
     final String resultMessage = ErlUtils.toString(resultTuple.elementAt(0));
-    final OtpErlangList beforeList = (OtpErlangList) resultTuple.elementAt(1);
+
+    OtpErlangList beforeList = (OtpErlangList) resultTuple.elementAt(1);
+    final List<String> beforeApplications = new ArrayList<String>();
+    for (int i = 0; i < beforeList.arity(); ++i) {
+      beforeApplications.add(ErlUtils.toString(beforeList.elementAt(i)));
+    }
+
     return new StartResult() {
       @Override
       public boolean startSucceeded() {
@@ -70,11 +76,7 @@ public class StartApplicationScript extends AbstractScript<StartResult> {
 
       @Override
       public List<String> getBeforeApplications() {
-        ArrayList<String> resultList = new ArrayList<String>();
-        for (int i = 0; i < beforeList.arity(); ++i) {
-          resultList.add(ErlUtils.toString(beforeList.elementAt(i)));
-        }
-        return resultList;
+        return beforeApplications;
       }
     };
   }

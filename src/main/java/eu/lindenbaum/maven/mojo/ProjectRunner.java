@@ -14,6 +14,7 @@ import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.erlang.StartApplicationScript;
 import eu.lindenbaum.maven.erlang.StartResult;
+import eu.lindenbaum.maven.erlang.StopApplicationScript;
 import eu.lindenbaum.maven.erlang.UploadScript;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
@@ -133,6 +134,8 @@ public final class ProjectRunner extends ErlangMojo {
         catch (IOException e) {
           // ignored
         }
+        Script<Void> stopScript = new StopApplicationScript(startResult.getBeforeApplications());
+        MavenSelf.get(p.cookie()).exec(p.node(), stopScript);
       }
     }
   }

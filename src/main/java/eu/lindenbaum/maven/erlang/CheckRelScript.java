@@ -54,7 +54,16 @@ public class CheckRelScript extends AbstractScript<CheckRelResult> {
     final OtpErlangObject releaseName = resultTuple.elementAt(1);
     final OtpErlangObject releaseVersion = resultTuple.elementAt(2);
     final OtpErlangObject ertsVersion = resultTuple.elementAt(3);
-    final OtpErlangList applications = (OtpErlangList) resultTuple.elementAt(4);
+
+    OtpErlangList applicationList = (OtpErlangList) resultTuple.elementAt(4);
+    final Map<String, String> applications = new HashMap<String, String>();
+    for (int i = 0; i < applicationList.arity(); ++i) {
+      OtpErlangTuple appTuple = (OtpErlangTuple) applicationList.elementAt(i);
+      String application = ErlUtils.toString(appTuple.elementAt(0));
+      String version = ErlUtils.toString(appTuple.elementAt(1));
+      applications.put(application, version);
+    }
+
     return new CheckRelResult() {
       @Override
       public boolean success() {
@@ -78,14 +87,7 @@ public class CheckRelScript extends AbstractScript<CheckRelResult> {
 
       @Override
       public Map<String, String> getApplications() {
-        Map<String, String> resultMap = new HashMap<String, String>();
-        for (int i = 0; i < applications.arity(); ++i) {
-          OtpErlangTuple appTuple = (OtpErlangTuple) applications.elementAt(i);
-          String application = ErlUtils.toString(appTuple.elementAt(0));
-          String version = ErlUtils.toString(appTuple.elementAt(1));
-          resultMap.put(application, version);
-        }
-        return resultMap;
+        return applications;
       }
 
       @Override

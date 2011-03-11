@@ -55,8 +55,19 @@ public final class CheckAppScript extends AbstractScript<CheckAppResult> {
     final OtpErlangObject name = resultTuple.elementAt(1);
     final OtpErlangObject version = resultTuple.elementAt(2);
     final OtpErlangObject startModule = resultTuple.elementAt(3);
-    final OtpErlangObject modules = resultTuple.elementAt(4);
-    final OtpErlangObject applications = resultTuple.elementAt(5);
+
+    final List<String> modules = new ArrayList<String>();
+    OtpErlangList moduleList = (OtpErlangList) resultTuple.elementAt(4);
+    for (int i = 0; i < moduleList.arity(); ++i) {
+      modules.add(ErlUtils.toString(moduleList.elementAt(i)));
+    }
+
+    final List<String> applications = new ArrayList<String>();
+    OtpErlangList applicationList = (OtpErlangList) resultTuple.elementAt(5);
+    for (int i = 0; i < applicationList.arity(); ++i) {
+      applications.add(ErlUtils.toString(applicationList.elementAt(i)));
+    }
+
     return new CheckAppResult() {
       @Override
       public boolean success() {
@@ -80,22 +91,12 @@ public final class CheckAppScript extends AbstractScript<CheckAppResult> {
 
       @Override
       public List<String> getModules() {
-        List<String> r = new ArrayList<String>();
-        OtpErlangList m = (OtpErlangList) modules;
-        for (int i = 0; i < m.arity(); ++i) {
-          r.add(ErlUtils.toString(m.elementAt(i)));
-        }
-        return r;
+        return modules;
       }
 
       @Override
       public List<String> getApplications() {
-        List<String> r = new ArrayList<String>();
-        OtpErlangList a = (OtpErlangList) applications;
-        for (int i = 0; i < a.arity(); ++i) {
-          r.add(ErlUtils.toString(a.elementAt(i)));
-        }
-        return r;
+        return applications;
       }
 
       @Override
