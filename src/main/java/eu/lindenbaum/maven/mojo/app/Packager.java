@@ -100,7 +100,7 @@ public final class Packager extends ErlangMojo {
     int copied = FileUtils.copyDirectory(p.ebin(), p.targetEbin(), APP_FILTER, replacements);
     log.debug("Copied " + copied + " application resource files");
 
-    File appFile = new File(p.targetEbin(), p.project().getArtifactId() + ErlConstants.APP_SUFFIX);
+    File appFile = p.targetAppFile();
     if (!appFile.exists()) {
       log.error(appFile.getName() + " does not exist.");
       log.error("Use 'mvn erlang:setup' to create a default library application .app file");
@@ -122,7 +122,7 @@ public final class Packager extends ErlangMojo {
     checkApplications(log, dependencies, appResult.getApplications());
     checkStartModule(log, p, appResult);
 
-    File appUpFile = new File(p.targetEbin(), p.project().getArtifactId() + ErlConstants.APPUP_SUFFIX);
+    File appUpFile = p.targetAppupFile();
     if (!appUpFile.exists()) {
       log.warn(appUpFile.getName() + " does not exist.");
       log.warn("Use 'mvn erlang:setup' to create a default .appup file");

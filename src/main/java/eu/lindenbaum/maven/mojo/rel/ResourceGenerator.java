@@ -83,7 +83,6 @@ public final class ResourceGenerator extends ErlangMojo {
 
     String releaseName = p.project().getArtifactId();
     String releaseVersion = p.project().getVersion();
-    String releaseFileBase = releaseName + "-" + releaseVersion;
 
     Map<String, String> replacements = new HashMap<String, String>();
     replacements.put("${ARTIFACT}", "\"" + releaseName + "\"");
@@ -105,19 +104,22 @@ public final class ResourceGenerator extends ErlangMojo {
 
     log.debug("Created mappings: " + replacements);
 
-    File srcRelFile = new File(p.base(), releaseName + ErlConstants.REL_SUFFIX);
-    File destRelFile = new File(p.target(), releaseFileBase + ErlConstants.REL_SUFFIX);
-    FileUtils.copyFile(srcRelFile, destRelFile, replacements);
-    log.debug("Copied release file to " + destRelFile + " .");
+    File relFile = p.targetRelFile();
+    checkReleaseFile(log, p.relFile());
+    FileUtils.copyFile(p.relFile(), relFile, replacements);
+    log.debug("Copied release file to " + relFile + " .");
 
-    File srcRelupFile = new File(p.base(), ErlConstants.RELUP);
-    if (srcRelupFile.isFile()) {
-      File destRelupFile = new File(p.target(), ErlConstants.RELUP);
-      FileUtils.copyFile(srcRelupFile, destRelupFile, replacements);
-      log.debug("Copied release upgrade file to " + destRelupFile + " .");
-    }
+    File relupFile = p.targetRelupFile();
+    checkReleaseUpgradeFile(log, p.relupFile());
+    FileUtils.copyFile(p.relupFile(), relupFile, replacements);
+    log.debug("Copied release upgrade file to " + relupFile + " .");
 
-    Script<GenericScriptResult> script = new MakeScriptScript(destRelFile, p.target(), this.scriptOptions);
+    File sysConfigFile = p.targetSysConfigFile();
+    checkSystemConfig(log, p.sysConfigFile());
+    FileUtils.copyFile(p.sysConfigFile(), sysConfigFile, replacements);
+    log.debug("Copied system configuration file to " + sysConfigFile + " .");
+
+    Script<GenericScriptResult> script = new MakeScriptScript(relFile, p.target(), this.scriptOptions);
     GenericScriptResult makeScriptResult = MavenSelf.get(p.cookie()).exec(p.node(), script);
     makeScriptResult.logOutput(log);
     if (!makeScriptResult.success()) {
@@ -189,5 +191,38 @@ public final class ResourceGenerator extends ErlangMojo {
       }
     }
     return dependencies;
+  }
+
+  /**
+   * Checks whether the vital system configuration {@code sys.config} exists.
+   */
+  private static void checkSystemConfig(Log log, File sysConfig) throws MojoFailureException {
+    if (!sysConfig.isFile()) {
+      log.error(sysConfig.toString() + " does not exist.");
+      log.error("Use 'mvn erlang:setup' to create a default system configuration file.");
+      throw new MojoFailureException("No " + sysConfig.getName() + " file found.");
+    }
+  }
+
+  /**
+   * Checks whether the vital release upgrade file {@code relup} exists.
+   */
+  private static void checkReleaseUpgradeFile(Log log, File relup) throws MojoFailureException {
+    if (!relup.isFile()) {
+      log.error(relup.toString() + " does not exist.");
+      log.error("Use 'mvn erlang:setup' to create a template relup file.");
+      throw new MojoFailureException("No " + relup.getName() + " file found.");
+    }
+  }
+
+  /**
+   * Checks whether the vital release upgrade file {@code relup} exists.
+   */
+  private static void checkReleaseFile(Log log, File rel) throws MojoFailureException {
+    if (!rel.isFile()) {
+      log.error(rel.toString() + " does not exist.");
+      log.error("Use 'mvn erlang:setup' to create a default release file.");
+      throw new MojoFailureException("No " + rel.getName() + " file found.");
+    }
   }
 }

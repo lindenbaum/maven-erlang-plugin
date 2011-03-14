@@ -115,6 +115,36 @@ public interface Properties {
   public File test_src();
 
   /**
+   * Returns the application resource file of an application project. The
+   * returned {@link File} is not guaranteed to exist.
+   */
+  public File appFile();
+
+  /**
+   * Returns the application upgrade file of an application project. The
+   * returned {@link File} is not guaranteed to exist.
+   */
+  public File appupFile();
+
+  /**
+   * Returns the release file of a release project. The returned {@link File} is
+   * not guaranteed to exist.
+   */
+  public File relFile();
+
+  /**
+   * Returns the release upgrade file of a release project. The returned
+   * {@link File} is not guaranteed to exist.
+   */
+  public File relupFile();
+
+  /**
+   * Returns the system configuration file of a release project. The returned
+   * {@link File} is not guaranteed to exist.
+   */
+  public File sysConfigFile();
+
+  /**
    * Returns the base directory for the build artifacts.
    */
   public File target();
@@ -187,4 +217,35 @@ public interface Properties {
    * during the test phase by calling <code>code:lib_dir($APPNAME, priv)</code>.
    */
   public File targetTestPriv();
+
+  /**
+   * Returns the application resource file of an application project that will
+   * be packaged. The returned {@link File} is not guaranteed to exist.
+   */
+  public File targetAppFile();
+
+  /**
+   * Returns the application upgrade file of an application project that will be
+   * packaged.The returned {@link File} is not guaranteed to exist.
+   */
+  public File targetAppupFile();
+
+  /**
+   * Returns the release file of a release project that will be packaged. The
+   * returned {@link File} is not guaranteed to exist.
+   */
+  public File targetRelFile();
+
+  /**
+   * Returns the release upgrade file of a release project that will be
+   * packaged. The returned {@link File} is not guaranteed to exist.
+   */
+  public File targetRelupFile();
+
+  /**
+   * Returns the system configuration file of a release project that will be
+   * packaged. The returned {@link File} is not guaranteed to exist.
+   */
+  public File targetSysConfigFile();
+
 }

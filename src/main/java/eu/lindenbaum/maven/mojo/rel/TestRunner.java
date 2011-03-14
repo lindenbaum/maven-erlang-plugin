@@ -12,7 +12,6 @@ import eu.lindenbaum.maven.erlang.CheckRelScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.RuntimeInfo;
 import eu.lindenbaum.maven.erlang.RuntimeInfoScript;
-import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
@@ -82,10 +81,9 @@ public final class TestRunner extends ErlangMojo {
 
     String releaseName = p.project().getArtifactId();
     String releaseVersion = p.project().getVersion();
-    String relFileBaseName = releaseName + "-" + releaseVersion;
     Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
 
-    File relFile = new File(p.target(), relFileBaseName + ErlConstants.REL_SUFFIX);
+    File relFile = p.targetRelFile();
     CheckRelScript relScript = new CheckRelScript(relFile);
     CheckRelResult relResult = MavenSelf.get(p.cookie()).exec(p.node(), relScript);
     if (!relResult.success()) {
@@ -94,8 +92,6 @@ public final class TestRunner extends ErlangMojo {
       throw new MojoFailureException("Failed to consult .rel file.");
     }
 
-    checkSystemConfig(log, new File(p.base(), ErlConstants.SYS_CONFIG));
-    checkReleaseUpgradeFile(log, new File(p.base(), ErlConstants.RELUP));
     checkReleaseName(log, relFile, releaseName, relResult.getName());
     checkReleaseVersion(log, relFile, releaseVersion, relResult.getReleaseVersion());
     checkDependencies(log, artifacts, relResult.getApplications());
@@ -113,28 +109,6 @@ public final class TestRunner extends ErlangMojo {
       log.error("Required release is '" + expected + "' while backend node runs '" + actual + "'.");
       String msg = "Required erlang/OTP release not available " + expected + " != " + actual + ".";
       throw new MojoFailureException(msg);
-    }
-  }
-
-  /**
-   * Checks whether the vital system configuration {@code sys.config} exists.
-   */
-  private static void checkSystemConfig(Log log, File sysConfig) throws MojoFailureException {
-    if (!sysConfig.isFile()) {
-      log.error(sysConfig.toString() + " does not exist.");
-      log.error("Use 'mvn erlang:setup' to create a default system configuration file.");
-      throw new MojoFailureException("No " + sysConfig.getName() + " file found.");
-    }
-  }
-
-  /**
-   * Checks whether the vital release upgrade file {@code relup} exists.
-   */
-  private static void checkReleaseUpgradeFile(Log log, File relup) throws MojoFailureException {
-    if (!relup.isFile()) {
-      log.error(relup.toString() + " does not exist.");
-      log.error("Use 'mvn erlang:setup' to create a template relup file.");
-      throw new MojoFailureException("No " + relup.getName() + " file found.");
     }
   }
 

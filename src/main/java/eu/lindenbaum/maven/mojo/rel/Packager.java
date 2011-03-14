@@ -4,10 +4,10 @@ import java.io.File;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
+import eu.lindenbaum.maven.erlang.GenericScriptResult;
 import eu.lindenbaum.maven.erlang.MakeTarScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
-import eu.lindenbaum.maven.erlang.GenericScriptResult;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.MavenUtils;
 
@@ -70,7 +70,7 @@ public final class Packager extends ErlangMojo {
       }
     }
 
-    File relFile = new File(p.target(), releaseFileBaseName + ErlConstants.REL_SUFFIX);
+    File relFile = p.targetRelFile();
     Script<GenericScriptResult> script = new MakeTarScript(relFile, p.target(), options);
     GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
     result.logOutput(log);

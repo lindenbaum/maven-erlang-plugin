@@ -2,6 +2,8 @@ package eu.lindenbaum.maven;
 
 import java.io.File;
 
+import eu.lindenbaum.maven.util.ErlConstants;
+
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -239,6 +241,31 @@ final class PropertiesImpl implements Properties {
   }
 
   @Override
+  public File appFile() {
+    return new File(this.ebin, this.project.getArtifactId() + ErlConstants.APP_SUFFIX);
+  }
+
+  @Override
+  public File appupFile() {
+    return new File(this.ebin, this.project.getArtifactId() + ErlConstants.APPUP_SUFFIX);
+  }
+
+  @Override
+  public File relFile() {
+    return new File(this.base, this.project.getArtifactId() + ErlConstants.REL_SUFFIX);
+  }
+
+  @Override
+  public File relupFile() {
+    return new File(this.base, ErlConstants.RELUP);
+  }
+
+  @Override
+  public File sysConfigFile() {
+    return new File(this.base, ErlConstants.SYS_CONFIG);
+  }
+
+  @Override
   public File target() {
     return this.target;
   }
@@ -306,5 +333,30 @@ final class PropertiesImpl implements Properties {
   @Override
   public File targetTestPriv() {
     return this.targetTestPriv;
+  }
+
+  @Override
+  public File targetAppFile() {
+    return new File(this.targetEbin, this.project.getArtifactId() + ErlConstants.APP_SUFFIX);
+  }
+
+  @Override
+  public File targetAppupFile() {
+    return new File(this.targetEbin, this.project.getArtifactId() + ErlConstants.APPUP_SUFFIX);
+  }
+
+  @Override
+  public File targetRelFile() {
+    return new File(this.target, this.projectName + ErlConstants.REL_SUFFIX);
+  }
+
+  @Override
+  public File targetRelupFile() {
+    return new File(this.target, ErlConstants.RELUP);
+  }
+
+  @Override
+  public File targetSysConfigFile() {
+    return new File(this.target, ErlConstants.SYS_CONFIG);
   }
 }

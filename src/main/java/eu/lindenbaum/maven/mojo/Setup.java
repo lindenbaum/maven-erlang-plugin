@@ -9,7 +9,6 @@ import java.util.Set;
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
-import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 
 import org.apache.maven.artifact.Artifact;
@@ -197,8 +196,8 @@ public class Setup extends ErlangMojo {
 
     // setup files
     Map<String, File> files = new HashMap<String, File>();
-    files.put("default.app", new File(p.ebin(), p.project().getArtifactId() + ErlConstants.APP_SUFFIX));
-    files.put("default.appup", new File(p.ebin(), p.project().getArtifactId() + ErlConstants.APPUP_SUFFIX));
+    files.put("default.app", p.appFile());
+    files.put("default.appup", p.appupFile());
     for (Entry<String, File> entry : files.entrySet()) {
       if (noFile(entry.getValue())) {
         createFile(entry.getValue(), entry.getKey());
@@ -212,9 +211,9 @@ public class Setup extends ErlangMojo {
   private void setupRelDefaults(Properties p) throws MojoExecutionException {
     // setup files
     Map<String, File> files = new HashMap<String, File>();
-    files.put("default.rel", new File(p.base(), p.project().getArtifactId() + ErlConstants.REL_SUFFIX));
-    files.put("default-sys.config", new File(p.base(), ErlConstants.SYS_CONFIG));
-    files.put("default.relup", new File(p.base(), ErlConstants.RELUP));
+    files.put("default.rel", p.relFile());
+    files.put("default-sys.config", p.sysConfigFile());
+    files.put("default.relup", p.relupFile());
     for (Entry<String, File> entry : files.entrySet()) {
       if (noFile(entry.getValue())) {
         createFile(entry.getValue(), entry.getKey());
