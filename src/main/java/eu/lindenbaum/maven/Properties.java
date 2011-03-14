@@ -27,6 +27,11 @@ public interface Properties {
   public String projectName();
 
   /**
+   * Returns the file packaged as build artifact for a this project.
+   */
+  public File projectArtifactFile();
+
+  /**
    * Returns the packaging type of the project artifact.
    */
   public PackagingType packagingType();

@@ -156,6 +156,11 @@ final class PropertiesImpl implements Properties {
   }
 
   @Override
+  public File projectArtifactFile() {
+    return new File(this.target, this.projectName + ErlConstants.TARGZ_SUFFIX);
+  }
+
+  @Override
   public PackagingType packagingType() {
     return this.packagingType;
   }

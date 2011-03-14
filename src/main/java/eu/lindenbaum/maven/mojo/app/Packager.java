@@ -1,6 +1,5 @@
 package eu.lindenbaum.maven.mojo.app;
 
-import static eu.lindenbaum.maven.util.ErlConstants.TARGZ_SUFFIX;
 import static eu.lindenbaum.maven.util.FileUtils.APP_FILTER;
 
 import java.io.File;
@@ -141,7 +140,7 @@ public final class Packager extends ErlangMojo {
     }
 
     // create .tar.gz package
-    File toFile = new File(p.targetProject().getAbsolutePath() + TARGZ_SUFFIX);
+    File toFile = p.projectArtifactFile();
     try {
       TarGzArchiver archiver = new TarGzArchiver(p.node(), p.cookie(), toFile);
       archiver.addFile(p.targetProject());

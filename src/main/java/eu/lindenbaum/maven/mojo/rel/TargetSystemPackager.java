@@ -83,10 +83,9 @@ public final class TargetSystemPackager extends ErlangMojo {
     }
 
     String releaseName = p.project().getArtifactId();
-    String releaseFileBaseName = releaseName + "-" + p.project().getVersion();
 
     // extract .tar.gz from systools:make_tar/2 to target/tmp
-    File releaseTarGz = new File(p.target(), releaseFileBaseName + ErlConstants.TARGZ_SUFFIX);
+    File releaseTarGz = new File(p.target(), p.projectName() + ErlConstants.TARGZ_SUFFIX);
     TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), tmp);
     try {
       unarchiver.extract(releaseTarGz);
@@ -137,7 +136,7 @@ public final class TargetSystemPackager extends ErlangMojo {
     }
 
     // create the initial RELEASES file
-    String releaseFileName = releaseFileBaseName + ErlConstants.REL_SUFFIX;
+    String releaseFileName = p.projectName() + ErlConstants.REL_SUFFIX;
     Script<String> script = new CreateRELEASESScript(tmp, new File(tmpReleases, releaseFileName));
     String result = MavenSelf.get(p.cookie()).exec(p.node(), script);
     if (!"ok".equals(result)) {
@@ -145,7 +144,7 @@ public final class TargetSystemPackager extends ErlangMojo {
     }
 
     // package target system
-    String targetName = releaseFileBaseName + "-target-system" + ErlConstants.TARGZ_SUFFIX;
+    String targetName = p.projectName() + "-target-system" + ErlConstants.TARGZ_SUFFIX;
     File targetSystemTarGz = new File(p.target(), targetName);
     try {
       TarGzArchiver archiver = new TarGzArchiver(p.node(), p.cookie(), targetSystemTarGz);

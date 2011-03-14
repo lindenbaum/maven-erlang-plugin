@@ -8,7 +8,6 @@ import eu.lindenbaum.maven.erlang.GenericScriptResult;
 import eu.lindenbaum.maven.erlang.MakeTarScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
-import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.plugin.Mojo;
@@ -56,9 +55,6 @@ public final class Packager extends ErlangMojo {
     log.info(" P A C K A G E R");
     log.info(MavenUtils.SEPARATOR);
 
-    String releaseName = p.project().getArtifactId();
-    String releaseFileBaseName = releaseName + "-" + p.project().getVersion();
-
     String options = this.tarOptions != null ? this.tarOptions : "";
     if (this.includeErts) {
       String erts = "{erts,code:root_dir()}";
@@ -78,7 +74,7 @@ public final class Packager extends ErlangMojo {
       throw new MojoFailureException("Could not create release package.");
     }
 
-    File releaseTarGz = new File(p.target(), releaseFileBaseName + ErlConstants.TARGZ_SUFFIX);
+    File releaseTarGz = p.projectArtifactFile();
     if (!releaseTarGz.isFile()) {
       throw new MojoFailureException("Could not find packaged release " + releaseTarGz.getPath());
     }
