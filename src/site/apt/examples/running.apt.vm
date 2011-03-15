@@ -1,30 +1,87 @@
 
 Running your application project
 
- Since project {{{./setup.html}setup}} is so easy, the maven-erlang-plugin also
- provides a simple means of getting your application project up and running. The
- {{{../run-mojo.html}run}} goal can be used to kick-start an application,
- directly from the console.
+ Running a basic application for testing purposes is fairly easy. First of all
+ we'll need an application project. For this example we'll use the application
+ we already used in the {{{./package-release.html}release packaging example}}.
+
+* Test setup
+
+ Our test project <<<app>>> consists of three modules. An application callback,
+ a top-level supervisor and a test server.
  
- We've written a trivial module with a single exported function:
-  
+[../erlang-release-code1-example.png] Code for the application callback and the
+top-level supervisor.
+ 
+[../erlang-release-code2-example.png] Code for the test server.
+
+ The application resource file <<<app.app>>> and the application upgrade file
+ <<<app.appup>>> for this application are listed below. Please note that we have
+ to add the correct start module for non-library applications.
+ 
 +--
--module(module).
--export([hello/0]).
-
-hello() ->
-    "World!".
+app.app:
+ {application, ${ARTIFACT},
+   [{description, ${DESCRIPTION}},
+    {id, ${ID}},
+    {vsn, ${VERSION}},
+    {modules, ${MODULES}},
+    {maxT, infinity},
+    {registered, ${REGISTERED}},
+    {included_applications, []},
+    {applications, [kernel, stdlib, sasl]},
+    {mod, {app, []}},
+    {env, []},
+    {start_phases, []}]}.
 +--
+
++--
+app.appup:
+ {${VERSION}, [], []}.
++--
+
+ The plug-in provides two possibilities of running an application project. The
+ local mode will run the application (and its transitive dependency
+ applications) on the local machine using the plug-in's own backend node. The
+ remote node will upload all needed code to a specified node, load the
+ application files and start the application(s).
+
+* Local mode
  
- Start the application by simply running <<<mvn erlang:run>>>.
+ The basic command <<<mvn erlang:run>>> will run the application in local mode.
 
-[../erlang-run1-example.png] Running the application project.
+[../erlang-run-local1-example.png] Starting the application.
 
- We can copy the credentials and connect to the running application node, using
- the remote shell:
+ As soon as the application's have been started the build will be paused so the
+ user can interact with the running application. Node credentials will be
+ printed. To shutdown the previously started applications simply hit <ENTER> to
+ complete the build.
 
-[../erlang-run2-example.png] Connecting with a remote shell.
- 
- We can see that the application and it's dependencies (in this case sasl, 
- kernel and stdlib) have been started and that the application modules have been
- loaded.
+[../erlang-run-local2-example.png] Stopping the application.
+
+* Remote mode
+
+ To run an application project in remote mode the remote node must be specified.
+ Please note that the remote node must be running before invoking the run
+ command. For this example we will use the node <<<test@wega.lbaum.eu>>>. As can
+ be seen there are no applications running except the vital applications
+ <<<kernel>>> and <<<stdlib>>>.
+
+[../erlang-run-remote1-example.png] Clean started remote node.
+
+ Now running the application using
+ <<<mvn erlang:run -Dcookie=test -Dremote=test@wega.lbaum.eu>>> issues the
+ following output. Again the credentials of the remote node are printed.
+
+[../erlang-run-remote2-example.png] Starting the application.
+
+ Changing back to the remote node we can see that <<<sasl>>> was started as a
+ dependency of <<<app>>>.
+
+[../erlang-run-remote3-example.png] Remote node with started application.
+
+ Now we can interact with the running application, e.g. by sending a message to
+ the started <<<app_server>>> process.
+
+[../erlang-run-remote4-example.png] Interacting with the application on the
+remote node.
