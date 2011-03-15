@@ -68,7 +68,7 @@ public final class TestUploader extends ErlangMojo {
     }
 
     PackagingType packagingType = p.packagingType();
-    if (PackagingType.ERLANG_OTP != packagingType && PackagingType.ERLANG_STD != packagingType) {
+    if (packagingType == PackagingType.ERLANG_REL) {
       throw new MojoExecutionException("Mojo does not support packaging type " + packagingType + ".");
     }
 
