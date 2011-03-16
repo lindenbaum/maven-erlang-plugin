@@ -84,8 +84,8 @@ Project Configuration
 
 ** Application Upgrade File Checking
 
- Will be performed on (erlang-otp) project packaging. Checks whether upgrade
- file has correct term structure.
+ Will be performed on <<<erlang-otp>>> or <<<erlang-std>>> project packaging.
+ Checks whether upgrade file has correct term structure.
  
 ** Release File Checking
 
