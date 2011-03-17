@@ -82,7 +82,7 @@
       <!-- 2) Append account info to your settings.xml file -->
       <!-- SEE: http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
       <id>erlang-plugin.sourceforge.net</id>
-      <url>scp://shell.sourceforge.net/home/groups/e/er/erlang-plugin/htdocs</url>
+      <url>scp://shell.sourceforge.net/home/groups/e/er/erlang-plugin/htdocs/${project.version}</url>
     </site>
   </distributionManagement>
   <properties>
