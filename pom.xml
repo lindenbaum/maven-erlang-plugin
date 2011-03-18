@@ -48,8 +48,16 @@
   </developers>
   <contributors>
     <contributor>
+      <name>Paul Guyot</name>
+      <url>http://sourceforge.net/users/pguyot</url>
+    </contributor>
+    <contributor>
       <name>Gregory Haskins</name>
       <url>http://sourceforge.net/users/ghaskins</url>
+    </contributor>
+    <contributor>
+      <name>Olivier Sambourg</name>
+      <url>http://sourceforge.net/users/adamselene</url>
     </contributor>
   </contributors>
   <licenses>
