@@ -269,3 +269,12 @@ Maven Erlang Plug-In
  More information:
 
  * {{{./target-system-mojo.html}target-system}}
+ 
+** Help
+
+ Prints a generated list of the available goals and their documentation.
+ 
+ More information:
+
+ * {{{./help-mojo.html}help}}
+ 

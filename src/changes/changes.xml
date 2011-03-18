@@ -3,7 +3,7 @@
     <title>Maven Erlang Plug-In Release Notes</title>
   </properties>
   <body>
-    <release version="2.0.0" date="TBA" description="First stable release">
+    <release version="2.0.0" date="2011-03-18" description="First stable release">
       <action dev="ghaskins" type="add" issue="3167277">
         Added tool 'eapp2mvn' to deploy non-maven packaged erlang applications
         to a maven repository using configurable coordinates.
