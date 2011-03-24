@@ -119,13 +119,15 @@ public final class TestRunner extends ErlangMojo {
   private static void checkDependencies(Log log, Collection<Artifact> expected, Map<String, String> actual) throws MojoFailureException {
     boolean errors = false;
     for (Artifact artifact : expected) {
-      String version = actual.get(artifact.getArtifactId());
-      if (version == null) {
+      String expectedVersion = artifact.getBaseVersion();
+      String actualVersion = actual.get(artifact.getArtifactId());
+      if (actualVersion == null) {
         log.error(artifact.getArtifactId() + " is not included in the .rel file.");
         errors = true;
       }
-      else if (!version.equals(artifact.getVersion())) {
-        log.error("Version mismatch for " + artifact.getArtifactId() + ": " + expected + " != " + actual);
+      else if (!actualVersion.equals(expectedVersion)) {
+        log.error("Version mismatch for " + artifact.getArtifactId() + ": " + expectedVersion + " != "
+                  + actualVersion);
         errors = true;
       }
     }

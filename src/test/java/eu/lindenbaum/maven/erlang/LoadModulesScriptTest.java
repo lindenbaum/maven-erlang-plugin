@@ -30,6 +30,6 @@ public class LoadModulesScriptTest {
 
     List<File> modules = Arrays.asList(new File("module"));
     LoadModulesScript script = new LoadModulesScript(modules);
-    assertEquals(new Integer(2), script.handle(result));
+    assertEquals(Integer.valueOf(2), script.handle(result));
   }
 }

@@ -1,6 +1,7 @@
 package eu.lindenbaum.maven.erlang;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Interface representing the result returned by the {@link RuntimeInfoScript}.
@@ -39,4 +40,12 @@ public interface RuntimeInfo {
    * @return The erlang OTP release version string.
    */
   public String getOtpRelease();
+
+  /**
+   * Returns the current code paths of the backend node as returned by
+   * <code>code:get_path/0</code>.
+   * 
+   * @return A {@link List} with code paths.
+   */
+  public List<File> getPaths();
 }

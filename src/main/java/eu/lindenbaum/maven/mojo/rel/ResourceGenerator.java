@@ -1,11 +1,14 @@
 package eu.lindenbaum.maven.mojo.rel;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -79,7 +82,6 @@ public final class ResourceGenerator extends ErlangMojo {
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
     RuntimeInfoScript infoScript = new RuntimeInfoScript();
     RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).exec(p.node(), infoScript);
-    File otpLibDirectory = runtimeInfo.getLibDirectory();
 
     String releaseName = p.project().getArtifactId();
     String releaseVersion = p.project().getVersion();
@@ -92,7 +94,15 @@ public final class ResourceGenerator extends ErlangMojo {
     Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
     Set<String> artifactIds = MavenUtils.getArtifactIds(artifacts);
     artifactIds.addAll(Arrays.asList("kernel", "stdlib", "sasl"));
-    Map<String, CheckAppResult> appInfos = getAppInfos(p, otpLibDirectory, p.targetLib());
+
+    List<File> codePaths = new ArrayList<File>(Arrays.asList(p.targetLib()));
+    codePaths.addAll(runtimeInfo.getPaths());
+    codePaths.removeAll(Arrays.asList(p.target()));
+    Collections.reverse(codePaths);
+
+    log.debug(".app lookup path is: " + codePaths);
+
+    Map<String, CheckAppResult> appInfos = getAppInfos(p, codePaths);
     Set<CheckAppResult> autoDependencies = getDependencies(artifactIds, appInfos);
 
     log.debug("Found dependencies: " + autoDependencies);
@@ -146,10 +156,10 @@ public final class ResourceGenerator extends ErlangMojo {
    * Returns a {@link Map} containing {@link CheckAppResult} mappings for all
    * applications available in the given lib directories installation.
    */
-  private static Map<String, CheckAppResult> getAppInfos(Properties p, File... libDirectories) throws MojoExecutionException {
+  private static Map<String, CheckAppResult> getAppInfos(Properties p, List<File> paths) throws MojoExecutionException {
     Map<String, CheckAppResult> applications = new HashMap<String, CheckAppResult>();
-    for (File libDirectory : libDirectories) {
-      for (File appFile : FileUtils.getFilesRecursive(libDirectory, ErlConstants.APP_SUFFIX)) {
+    for (File path : paths) {
+      for (File appFile : FileUtils.getFilesRecursive(path, ErlConstants.APP_SUFFIX)) {
         Script<CheckAppResult> script = new CheckAppScript(appFile);
         CheckAppResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
         applications.put(result.getName(), result);

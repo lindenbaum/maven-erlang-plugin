@@ -3,6 +3,18 @@
     <title>Maven Erlang Plug-In Release Notes</title>
   </properties>
   <body>
+    <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="schlagert, olle-t" type="fix" issue="3240436">
+        Fixed packaging problems where the wrong version string was used to
+        for comparison when validating and checking dependencies.
+      </action>
+      <action dev="schlagert", type="fix" issue="3240233">
+        Fixed packaging problems of release projects when the backend node has
+        several OTP installations in its library directory. Standard OTP
+        application dependencies will now be searched for in the code path of
+        the current backend node.
+      </action>
+    </release>    
     <release version="2.0.0" date="2011-03-18" description="First stable release">
       <action dev="ghaskins" type="add" issue="3167277">
         Added tool 'eapp2mvn' to deploy non-maven packaged erlang applications

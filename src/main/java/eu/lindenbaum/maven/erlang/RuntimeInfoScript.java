@@ -1,9 +1,12 @@
 package eu.lindenbaum.maven.erlang;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import eu.lindenbaum.maven.util.ErlUtils;
 
+import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
@@ -34,6 +37,13 @@ public class RuntimeInfoScript extends AbstractScript<RuntimeInfo> {
   @Override
   public RuntimeInfo handle(final OtpErlangObject result) {
     final OtpErlangTuple resultTuple = (OtpErlangTuple) result;
+
+    final List<File> paths = new ArrayList<File>();
+    OtpErlangList pathList = (OtpErlangList) resultTuple.elementAt(4);
+    for (int i = 0; i < pathList.arity(); ++i) {
+      paths.add(new File(ErlUtils.toString(pathList.elementAt(i))));
+    }
+
     return new RuntimeInfo() {
       @Override
       public File getLibDirectory() {
@@ -53,6 +63,11 @@ public class RuntimeInfoScript extends AbstractScript<RuntimeInfo> {
       @Override
       public String getOtpRelease() {
         return ErlUtils.toString(resultTuple.elementAt(3));
+      }
+
+      @Override
+      public List<File> getPaths() {
+        return paths;
       }
     };
   }

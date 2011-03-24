@@ -187,7 +187,7 @@ Frequently Asked Questions
  required versions of applications. The maven dependencies (applications
  packaged by the plug-in) will be put into the code paths automatically by the
  plug-in. Standard erlang/OTP applications will be taken from the backend node's
- library directory.
+ code path.
  
  The <<<${APPLICATIONS}>>> and <<<${AUTODEPS}>>> variables expand to all
  transitive maven dependencies as required by the release files applications
@@ -218,7 +218,8 @@ Frequently Asked Questions
  In case the plug-in support is disclaimed the user has to take care of the
  availability of the required versions of standard applications. This can be
  achieved by specifying the <<<skipReleaseTest>>> parameter and adding the
- needed applications to the code path of the backend node manually.
+ needed applications to the code path of the backend node manually. Applications
+ found in paths prepended to the code path will override later entries.
 
  On top of that the plug-in will generate the necessary scripts to package with
  the release (e.g. <<<.boot>>> file, ...). <<<.relup>>> files will not (yet) be
