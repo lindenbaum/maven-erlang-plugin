@@ -4,6 +4,14 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="schlagert" type="add">
+        Added 'erlang:relup' to generate sensible release upgrade file
+        templates based on installed/deployed versions of a project. 
+      </action>
+      <action dev="schlagert" type="add">
+        Added 'erlang:appup' to generate sensible application upgrade file
+        templates based on installed/deployed versions of a project. 
+      </action>
       <action dev="schlagert, olle-t" type="fix" issue="3240436">
         Fixed packaging problems where the wrong version string was used to
         for comparison when validating and checking dependencies.

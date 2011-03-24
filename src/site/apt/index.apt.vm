@@ -221,6 +221,26 @@ Maven Erlang Plug-In
  
  * {{{./setup-mojo.html}setup}}
 
+** Application Upgrade File Generation
+
+ The plug-in can generate a sensible application upgrade file template for a
+ project based on all available (local and remote repositories) earlier versions
+ of the project.
+ 
+ More information:
+ 
+ * {{{./appup-mojo.html}appup}}
+
+** Release Upgrade File Generation
+
+ The plug-in can generate a sensible release upgrade file template for a project
+ based on all available (local and remote repositories) earlier versions of the
+ project. The generation will use <<<systools:make_relup/4>>> internally.
+ 
+ More information:
+ 
+ * {{{./relup-mojo.html}relup}}
+
 ** Run Application Projects
 
  There is a plug-in goal to run application projects (optionally even on a

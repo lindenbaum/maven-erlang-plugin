@@ -47,4 +47,19 @@
       </phase>
     </phases>
   </lifecycle>
+  <lifecycle>
+    <id>appup-relup</id>
+    <phases>
+      <phase>
+        <id>package</id>
+        <configuration>
+          <skipTests>true</skipTests>
+          <skipDialyzer>true</skipDialyzer>
+        </configuration>
+      </phase>
+      <phase>
+        <id>generate-resources</id>
+      </phase>
+    </phases>
+  </lifecycle>
 </lifecycles>

@@ -25,6 +25,11 @@ Frequently Asked Questions
  setup the needed directory layout as well as default configuration files. For
  more information please refer to the {{{./setup-mojo.html}setup}} mojo
  documentation.
+ 
+ For application and release upgrade files the plug-in provides separate goals
+ that can generate sensible template files based on previously
+ installed/deployed project artifacts. For more information please refer to the
+ {{{./appup-mojo.html}appup}} and {{{relup-mojo.html}relup}} mojo documentation.
 
 * How does the plug-in work?
 
@@ -222,10 +227,8 @@ Frequently Asked Questions
  found in paths prepended to the code path will override later entries.
 
  On top of that the plug-in will generate the necessary scripts to package with
- the release (e.g. <<<.boot>>> file, ...). <<<.relup>>> files will not (yet) be
- generated but will be packaged. Finally the plug-in checks the resulting
- release file for plausability (e.g. whether all application dependencies are
- present, ...).
+ the release (e.g. <<<.boot>>> file, ...). Finally the plug-in preforms some
+ checks on the project's resource files.
 
 * Does the plug-in support the edoc application overview file?
 

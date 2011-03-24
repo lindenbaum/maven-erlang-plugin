@@ -220,7 +220,7 @@ public final class ResourceGenerator extends ErlangMojo {
   private static void checkReleaseUpgradeFile(Log log, File relup) throws MojoFailureException {
     if (!relup.isFile()) {
       log.error(relup.toString() + " does not exist.");
-      log.error("Use 'mvn erlang:setup' to create a template relup file.");
+      log.error("Use 'mvn erlang:relup' or 'mvn erlang:setup' to create a template relup file.");
       throw new MojoFailureException("No " + relup.getName() + " file found.");
     }
   }

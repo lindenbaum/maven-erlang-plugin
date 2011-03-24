@@ -124,7 +124,7 @@ public final class Packager extends ErlangMojo {
     File appUpFile = p.targetAppupFile();
     if (!appUpFile.exists()) {
       log.warn(appUpFile.getName() + " does not exist.");
-      log.warn("Use 'mvn erlang:setup' to create a default .appup file");
+      log.warn("Use 'mvn erlang:appup' or 'mvn erlang:setup' to create a template .appup file");
       log.warn("You must edit your .appup file according to http://www.erlang.org/doc/man/appup.html.");
     }
     else {

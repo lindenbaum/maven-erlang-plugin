@@ -60,11 +60,19 @@ Project Configuration
 
 ** File Generation
 
- The plug-in can generate default versions of application resource and upgrade
- files for your project. This is done by the setup mojo. For further information
- please refer to the {{{./setup-mojo.html}mojos documentation}}. For release
- projects there's also the possibility to generate default basic release and
- release upgrade files as well as a default empty system configuration.
+ The plug-in can generate default versions of the needed resource files for a
+ project. This is done by the setup mojo. For further information please refer
+ to the {{{./setup-mojo.html}mojos documentation}}.
+ 
+ Because application and release upgrade files are way more complicated the
+ plug-in offers several goals to generate more sensible defaults than the
+ {{{./setup-mojo.html}setup}} goal can. These mojos will compute the templates
+ using already installed/deployed versions of the project. For more information
+ about appup and relup generation please refer to the specific documentation:
+ 
+ * {{{./appup-mojo.html}appup}}
+ 
+ * {{{relup-mojo.html}relup}}
 
 ** Application Resource File Checking
 
