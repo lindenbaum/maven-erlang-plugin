@@ -8,7 +8,7 @@
         Fixed packaging problems where the wrong version string was used to
         for comparison when validating and checking dependencies.
       </action>
-      <action dev="schlagert", type="fix" issue="3240233">
+      <action dev="schlagert" type="fix" issue="3240233">
         Fixed packaging problems of release projects when the backend node has
         several OTP installations in its library directory. Standard OTP
         application dependencies will now be searched for in the code path of
