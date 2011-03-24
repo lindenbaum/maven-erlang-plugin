@@ -166,14 +166,14 @@ public final class MavenUtils {
   }
 
   /**
-   * Returns the release name for the given {@link Artifact}. The release name
-   * consists of the artifacts id and its version.
+   * Returns the release name for the given {@link MavenProject}. The release
+   * name consists of the project artifacts id and its version.
    * 
-   * @param artifact to retrieve the release name from
+   * @param project to retrieve the release name from
    * @return a string containing the release name
    */
-  public static String getReleaseName(Artifact artifact) {
-    return artifact.getArtifactId() + "-" + artifact.getVersion();
+  public static String getReleaseName(MavenProject project) {
+    return project.getArtifactId() + "-" + project.getVersion();
   }
 
   /**

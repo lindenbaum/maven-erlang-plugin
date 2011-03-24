@@ -199,7 +199,7 @@ public final class ErlUtils {
       applications.append("{\'");
       applications.append(artifact.getArtifactId());
       applications.append("\', \"");
-      applications.append(artifact.getVersion());
+      applications.append(artifact.getBaseVersion());
       applications.append("\"}");
     }
     return applications.toString();
