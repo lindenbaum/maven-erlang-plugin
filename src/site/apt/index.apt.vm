@@ -277,6 +277,17 @@ Maven Erlang Plug-In
 
  * {{{./upload-mojo.html}upload}}
 
+** Upload Tests
+
+ The upload tests goal is useful for debugging of unit tests. It works similar
+ to the previously mentioned {{{./upload-mojo.html}upload}} goal except that the
+ project's test modules will also be uploaded and all modules (except the
+ dependencies) are compiled with debug information.
+ 
+ More information:
+
+ * {{{./upload-tests-mojo.html}upload-tests}}
+
 ** Target-System
 
  On UNIX hosts the target-system goal will package a release as a startable

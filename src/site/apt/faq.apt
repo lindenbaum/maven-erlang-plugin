@@ -129,12 +129,10 @@ Frequently Asked Questions
  Debugging broken unit tests can sometimes be a hard thing. Therefore debugging
  should be made directly from the erlang console where you can use all that
  shiny <<<dbg>>> stuff erlang has to offer. The plug-in can support that by
- providing all modules (with debug information compiled) needed for test
- execution in a single directory making it unnecessary to add custom code paths
- to an erlang shell used for unit test debugging. To debug the test run
- <<<mvn clean test>>> which will basically compile all needed modules and try
- the test execution. After that simply start an erlang shell in the directory
- <<<target/ARTIFACTID-VERSION-test/ebin>>>.
+ uploading all needed modules (tests and project modules compiled with debug
+ information) to a specified node. The {{{./upload-tests-mojo.html}upload-tests}}
+ goal will upload everything you need to an (already started) node the user can
+ run/debug tests on.
  
 * How does application packaging of <<<erlang-otp>>> and <<<erlang-std>>>
   projects work?
