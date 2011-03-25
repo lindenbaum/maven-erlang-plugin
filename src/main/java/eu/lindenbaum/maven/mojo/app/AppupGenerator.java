@@ -97,13 +97,14 @@ public final class AppupGenerator extends ErlangMojo {
         Artifact toResolve = MavenUtils.getArtifact(artifact, artifactVersion.toString(), p.components());
         if (!toResolve.isSnapshot()) {
           extract(unarchiver, MavenUtils.getArtifactFile(toResolve, p.components()));
-          String toResolveBase = projectFileBase(toResolve);
+          String toResolveVersion = toResolve.getBaseVersion();
+          String toResolveBase = toResolve.getArtifactId() + "-" + toResolveVersion;
           File toResolveEbin = new File(new File(p.target(), toResolveBase), "ebin");
           File toResolveAppFile = new File(toResolveEbin, artifact.getArtifactId() + ErlConstants.APP_SUFFIX);
           // up from part
-          upFromDirectivesMap.put(toResolve.getVersion(), getDirectives(p, toResolveAppFile, projectAppFile));
+          upFromDirectivesMap.put(toResolveVersion, getDirectives(p, toResolveAppFile, projectAppFile));
           // down to part
-          downToDirectivesMap.put(toResolve.getVersion(), getDirectives(p, projectAppFile, toResolveAppFile));
+          downToDirectivesMap.put(toResolveVersion, getDirectives(p, projectAppFile, toResolveAppFile));
         }
       }
     }
@@ -194,12 +195,5 @@ public final class AppupGenerator extends ErlangMojo {
     catch (IOException e) {
       throw new MojoExecutionException("Failed to extract " + file + ".", e);
     }
-  }
-
-  /**
-   * Returns the base name of a certain artifact.
-   */
-  private static String projectFileBase(Artifact artifact) {
-    return artifact.getArtifactId() + "-" + artifact.getVersion();
   }
 }

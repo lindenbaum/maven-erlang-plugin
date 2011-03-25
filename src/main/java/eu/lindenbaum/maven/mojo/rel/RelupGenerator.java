@@ -112,6 +112,6 @@ public final class RelupGenerator extends ErlangMojo {
    * Returns the base name of a certain artifact.
    */
   private static String getReleaseName(Artifact artifact) {
-    return artifact.getArtifactId() + "-" + artifact.getVersion();
+    return artifact.getArtifactId() + "-" + artifact.getBaseVersion();
   }
 }
