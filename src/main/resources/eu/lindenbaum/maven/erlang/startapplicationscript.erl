@@ -12,6 +12,10 @@ Fun = fun([], ok, _) ->
                       Rec(Rest, ok, Rec);
                   {error, {not_started, Dep}} ->
                       Rec([Dep, A] ++ Rest, ok, Rec);
+                  {error, {"no such file or directory", AppFile}} ->
+                      "could not find application file \"" ++ AppFile ++ "\"\n"
+                      ++ "maybe dependencies are missing, try a re-run"
+                      ++" using -DwithDependencies";
                   Error ->
                       Error
               end;
