@@ -136,6 +136,7 @@ Maven Erlang Plug-In
             <reports>
               <report>edoc</report>
               <report>coverage</report>
+              <report>profiling</report>
             </reports>
           </reportSet>
         </reportSets>
@@ -149,6 +150,8 @@ Maven Erlang Plug-In
  * {{{./edoc-mojo.html}edoc}}
  
  * {{{./coverage-mojo.html}coverage}}
+ 
+ * {{{./profile-mojo.html}profile}} and {{{./profiling-report-mojo.html}profiling-report}}
 
 ** Directory Structure
 
