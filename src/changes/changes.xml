@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="add">
+        Added 'erlang:profile' and 'erlang:profiling-report' - eprof based 
+        profiling and reporting, using the tests in an application project.
+      </action>
       <action dev="schlagert" type="add">
         Added 'erlang:relup' to generate sensible release upgrade file
         templates based on installed/deployed versions of a project. 
