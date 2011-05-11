@@ -60,6 +60,7 @@ final class PropertiesImpl implements Properties {
   private final File targetTest;
   private final File targetTestEbin;
   private final File targetTestPriv;
+  private final File targetProfilingReports;
 
   PropertiesImpl(PackagingType type,
                  MavenProject project,
@@ -138,6 +139,7 @@ final class PropertiesImpl implements Properties {
     this.targetTest = new File(this.target, this.projectName + "-test");
     this.targetTestEbin = new File(this.targetTest, "ebin");
     this.targetTestPriv = new File(this.targetTest, "priv");
+    this.targetProfilingReports = new File(this.target, "profiling-reports");
   }
 
   @Override
@@ -363,5 +365,13 @@ final class PropertiesImpl implements Properties {
   @Override
   public File targetSysConfigFile() {
     return new File(this.target, ErlConstants.SYS_CONFIG);
+  }
+
+  /**
+   * @since 2.1.0
+   */
+  @Override
+  public File targetProfilingReports() {
+    return this.targetProfilingReports;
   }
 }

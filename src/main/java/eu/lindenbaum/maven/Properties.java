@@ -253,4 +253,11 @@ public interface Properties {
    */
   public File targetSysConfigFile();
 
+  /**
+   * Returns the directory where profiling reports will be put.
+   * 
+   * @since 2.1.0
+   */
+  public File targetProfilingReports();
+
 }
