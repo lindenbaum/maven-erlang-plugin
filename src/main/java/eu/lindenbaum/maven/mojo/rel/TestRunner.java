@@ -1,6 +1,7 @@
 package eu.lindenbaum.maven.mojo.rel;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -74,9 +75,9 @@ public final class TestRunner extends ErlangMojo {
       checkOtpReleaseVersion(log, this.otpRelease, runtimeInfo.getOtpRelease());
     }
     else {
-      log.warn("erlang/OTP release version check is skipped.");
-      log.warn("Standard erlang/OTP applications will be included from release '"
-               + runtimeInfo.getOtpRelease() + "'.");
+      log.warn("Warnings:");
+      log.warn(" * erlang/OTP release version check is skipped, standard erlang/OTP");
+      log.warn("   applications will be included from release '" + runtimeInfo.getOtpRelease() + "'");
     }
 
     String releaseName = p.project().getArtifactId();
@@ -87,9 +88,10 @@ public final class TestRunner extends ErlangMojo {
     CheckRelScript relScript = new CheckRelScript(relFile);
     CheckRelResult relResult = MavenSelf.get(p.cookie()).exec(p.node(), relScript);
     if (!relResult.success()) {
-      log.error("Failed to consult file");
-      MavenUtils.logContent(log, LogLevel.ERROR, relFile);
-      throw new MojoFailureException("Failed to consult .rel file.");
+      log.error("Errors:");
+      log.error(" * failed to consult release file ");
+      MavenUtils.logContent(log, LogLevel.ERROR, relFile, "   ");
+      throw new MojoFailureException("Failed to consult " + relFile + ".");
     }
 
     checkReleaseName(log, relFile, releaseName, relResult.getName());
@@ -105,9 +107,10 @@ public final class TestRunner extends ErlangMojo {
    */
   private static void checkOtpReleaseVersion(Log log, String expected, String actual) throws MojoFailureException {
     if (!actual.equals(expected)) {
-      log.error("Backend node does not run the required erlang/OTP release.");
-      log.error("Required release is '" + expected + "' while backend node runs '" + actual + "'.");
-      String msg = "Required erlang/OTP release not available " + expected + " != " + actual + ".";
+      log.error("Errors:");
+      log.error(" * backend node does not run the required erlang/OTP release, required");
+      log.error("   release is '" + expected + "' while backend node runs '" + actual + "'");
+      String msg = "Required erlang/OTP release not available '" + expected + "' != '" + actual + "'.";
       throw new MojoFailureException(msg);
     }
   }
@@ -118,24 +121,30 @@ public final class TestRunner extends ErlangMojo {
    */
   private static void checkDependencies(Log log, Collection<Artifact> expected, Map<String, String> actual) throws MojoFailureException {
     boolean errors = false;
+    ArrayList<String> errorLines = new ArrayList<String>();
     for (Artifact artifact : expected) {
       String expectedVersion = artifact.getBaseVersion();
       String actualVersion = actual.get(artifact.getArtifactId());
       if (actualVersion == null) {
-        log.error(artifact.getArtifactId() + " is not included in the .rel file.");
+        errorLines.add(" * dependency '" + artifact.getArtifactId() + "' is not included");
+        errorLines.add("   in the .rel file");
         errors = true;
       }
       else if (!actualVersion.equals(expectedVersion)) {
-        log.error("Version mismatch for " + artifact.getArtifactId() + ": " + expectedVersion + " != "
-                  + actualVersion);
+        errorLines.add(" * version mismatch for '" + artifact.getArtifactId() + "'");
+        errorLines.add("   pom version is '" + expectedVersion + "' while .rel version");
+        errorLines.add("   is '" + actualVersion + "'");
         errors = true;
       }
     }
     if (actual.get("kernel") == null || actual.get("stdlib") == null) {
-      log.error("The mandatory applications 'kernel' and 'stdlib' must be part of every release.");
+      errorLines.add(" * the mandatory applications 'kernel' and 'stdlib' must be part of");
+      errorLines.add("   every release");
       errors = true;
     }
     if (errors) {
+      log.error("Errors:");
+      MavenUtils.logCollection(log, LogLevel.ERROR, errorLines, "");
       throw new MojoFailureException("Checking dependencies failed, see previous output for detailed description.");
     }
   }
@@ -146,10 +155,11 @@ public final class TestRunner extends ErlangMojo {
    */
   private static void checkReleaseName(Log log, File relFile, String expected, String actual) throws MojoFailureException {
     if (!expected.equals(actual)) {
-      log.error("Release name mismatch.");
-      log.error("Project release name is " + expected + " while .rel name is " + actual);
-      MavenUtils.logContent(log, LogLevel.ERROR, relFile);
-      throw new MojoFailureException("Release name mismatch " + expected + " != " + actual + ".");
+      log.error("Errors:");
+      log.error(" * release name mismatch, project release name is '" + expected + "'");
+      log.error("   while .rel release name is '" + actual + "'");
+      MavenUtils.logContent(log, LogLevel.ERROR, relFile, "   ");
+      throw new MojoFailureException("Release name mismatch '" + expected + "' != '" + actual + "'.");
     }
   }
 
@@ -159,10 +169,11 @@ public final class TestRunner extends ErlangMojo {
    */
   private static void checkReleaseVersion(Log log, File relFile, String expected, String actual) throws MojoFailureException {
     if (!expected.equals(actual)) {
-      log.error("Release version mismatch.");
-      log.error("Project release version is " + expected + " while .rel version is " + actual);
-      MavenUtils.logContent(log, LogLevel.ERROR, relFile);
-      throw new MojoFailureException("Release version mismatch " + expected + " != " + actual + ".");
+      log.error("Errors:");
+      log.error(" * release version mismatch, project release version is '" + expected + "'");
+      log.error("   while .rel release version is '" + actual + "'");
+      MavenUtils.logContent(log, LogLevel.ERROR, relFile, "   ");
+      throw new MojoFailureException("Release version mismatch '" + expected + "' != '" + actual + "'.");
     }
   }
 }

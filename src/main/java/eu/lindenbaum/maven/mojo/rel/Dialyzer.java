@@ -2,6 +2,7 @@ package eu.lindenbaum.maven.mojo.rel;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -11,6 +12,7 @@ import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
@@ -87,15 +89,21 @@ public final class Dialyzer extends ErlangMojo {
       }
 
       DialyzerScript script = new DialyzerScript(sources, includes, this.dialyzerOptions);
-      String[] warnings = MavenSelf.get(p.cookie()).exec(p.node(), script);
-      for (String warning : warnings) {
-        log.warn(warning);
+      String[] output = MavenSelf.get(p.cookie()).exec(p.node(), script);
+
+      List<File> files = FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.ERL_SUFFIX);
+      Collection<String> warnings = MojoUtils.parseDialyzerOutput(output, files);
+      if (warnings.size() > 0) {
+        log.warn("Warnings:");
+        MavenUtils.logCollection(log, LogLevel.WARN, warnings, "");
+        if (this.dialyzerWarningsAreErrors) {
+          throw new MojoFailureException("Dialyzer reported warnings.");
+        }
       }
-      if (warnings.length > 0 && this.dialyzerWarningsAreErrors) {
-        throw new MojoFailureException("Dialyzer emitted warnings.");
+      else {
+        log.info("Dialyzer run successful.");
+        FileUtils.touch(lastBuildIndicator);
       }
-      log.info("Dialyzer run successful.");
-      FileUtils.touch(lastBuildIndicator);
     }
     else {
       log.info("Last dialyzer run is still up to date.");

@@ -7,7 +7,8 @@ Root = spawn(fun() ->
 		     receive
 			 {start, From} ->
 			     try eunit:test(Tests, [Tty]) of
-				 _ -> From ! {info, ["Tests run sucessfully!"]}
+				 error -> From ! {error, ["Test(s) failed!"]};
+				 _ -> From ! {info, ["Test(s) run sucessfully!"]}
 			     catch
 				 Class:Exception ->
 				     From ! {error, [lists:flatten(io_lib:format("~p:~p", [Class, Exception]))]}

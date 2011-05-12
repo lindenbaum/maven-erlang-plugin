@@ -88,7 +88,7 @@ public final class RelupGenerator extends ErlangMojo {
     GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
     if (result.success()) {
       log.info("Successfully generated release upgrade file.");
-      MavenUtils.logContent(log, LogLevel.INFO, relupFile);
+      MavenUtils.logContent(log, LogLevel.INFO, relupFile, "");
     }
     else {
       result.logOutput(log);

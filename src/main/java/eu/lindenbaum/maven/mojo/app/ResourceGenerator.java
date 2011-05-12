@@ -3,6 +3,8 @@ package eu.lindenbaum.maven.mojo.app;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,55 +36,69 @@ import org.apache.maven.plugin.logging.Log;
 public final class ResourceGenerator extends ErlangMojo {
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
-    FileUtils.removeDirectory(p.targetProject());
+    Collection<File> current;
 
-    int sources = 0;
-    sources += FileUtils.copyDirectory(p.src(), p.targetSrc(), FileUtils.SOURCE_FILTER);
-    log.debug("copied " + sources + " sources");
-    if (sources == 0) {
+    FileUtils.removeDirectory(p.targetSrc());
+    current = FileUtils.copyDirectory(p.src(), p.targetSrc(), FileUtils.SOURCE_FILTER);
+    if (current.size() > 0) {
+      log.debug("Copied sources:");
+      MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
+    }
+    else {
       FileUtils.removeEmptyDirectory(p.targetSrc());
     }
 
-    int includes = 0;
-    includes += FileUtils.copyDirectory(p.include(), p.targetInclude(), FileUtils.SOURCE_FILTER);
-    log.debug("copied " + includes + " includes");
-    if (includes == 0) {
+    FileUtils.removeDirectory(p.targetInclude());
+    current = FileUtils.copyDirectory(p.include(), p.targetInclude(), FileUtils.SOURCE_FILTER);
+    if (current.size() > 0) {
+      log.debug("Copied includes:");
+      MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
+    }
+    else {
       FileUtils.removeEmptyDirectory(p.targetInclude());
     }
 
-    int resources = 0;
-    resources += FileUtils.copyDirectory(p.priv(), p.targetPriv(), FileUtils.NULL_FILTER);
-    log.debug("copied " + resources + " resources");
-    if (resources == 0) {
+    FileUtils.removeDirectory(p.targetPriv());
+    current = FileUtils.copyDirectory(p.priv(), p.targetPriv(), FileUtils.NULL_FILTER);
+    if (current.size() > 0) {
+      log.debug("Copied resources:");
+      MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
+    }
+    else {
       FileUtils.removeEmptyDirectory(p.targetPriv());
     }
 
-    int foreignArtifacts = 0;
+    current = new ArrayList<File>();
     for (Artifact artifact : MavenUtils.getForeignDependenciesToPackage(p.project())) {
       File source = artifact.getFile();
       File destination = new File(p.targetPriv(), source.getName());
       try {
         org.codehaus.plexus.util.FileUtils.copyFile(source, destination);
-        foreignArtifacts++;
+        current.add(source);
       }
       catch (IOException e) {
         log.error("Failed to copy artifact " + source.getPath() + " to " + p.targetPriv() + ".", e);
       }
     }
-    log.debug("copied " + foreignArtifacts + " foreign artifacts");
+    if (current.size() > 0) {
+      log.debug("Copied foreign artifacts:");
+      MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
+    }
 
     Map<String, String> replacements = new HashMap<String, String>();
     replacements.put("${ARTIFACT}", p.project().getArtifactId());
     replacements.put("${DESCRIPTION}", p.project().getDescription());
     replacements.put("${ID}", p.project().getId());
     replacements.put("${VERSION}", p.project().getVersion());
-    int overview = 0;
-    overview += FileUtils.copyDirectory(p.site(), p.target(), new FileFilter() {
+    current = FileUtils.copyDirectory(p.site(), p.target(), new FileFilter() {
       @Override
       public boolean accept(File pathname) {
         return pathname.isFile() && pathname.getName().equals(ErlConstants.OVERVIEW_EDOC);
       }
     }, replacements);
-    log.debug("copied " + overview + " overview.edoc file(s)");
+    if (current.size() > 0) {
+      log.debug("Copied documentation resources:");
+      MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
+    }
   }
 }

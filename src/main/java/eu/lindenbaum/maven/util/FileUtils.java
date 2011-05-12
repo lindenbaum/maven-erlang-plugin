@@ -144,6 +144,24 @@ public final class FileUtils {
   }
 
   /**
+   * Returns the file object of a certain file contained in a given list. The
+   * files name will be compared to {@link File#getName()}.
+   * 
+   * @param name file name to look for
+   * @param files to examine for the corresponding file object
+   * @return The {@link File} referring to the given name or {@code null} if no
+   *         file with the file name could be found.
+   */
+  public static File getFile(String name, Collection<File> files) {
+    for (File file : files) {
+      if (name.equals(file.getName())) {
+        return file;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Removes all files ending with a specific suffix recursively from a
    * directory. By default patterns from
    * {@link org.codehaus.plexus.util.FileUtils#getDefaultExcludes()} will always
@@ -324,12 +342,12 @@ public final class FileUtils {
    * @param from the source directory to copy from
    * @param to the destination directory to copy to
    * @param filter additional filter to apply before copying
-   * @return the number of copied <b>files</b>
+   * @return a {@link Collection} of <b>files</b> that were copied
    * @throws MojoExecutionException
    * @see #getFilesAndDirectoriesRecursive(File, FileFilter)
    */
-  public static int copyDirectory(File from, File to, FileFilter filter) throws MojoExecutionException {
-    int copied = 0;
+  public static Collection<File> copyDirectory(File from, File to, FileFilter filter) throws MojoExecutionException {
+    Collection<File> copied = new ArrayList<File>();
     if (from.exists() && from.isDirectory()) {
       List<File> toCopy = getFilesAndDirectoriesRecursive(from, filter);
       for (File src : toCopy) {
@@ -340,7 +358,7 @@ public final class FileUtils {
         else {
           try {
             org.codehaus.plexus.util.FileUtils.copyFile(src, dest);
-            copied++;
+            copied.add(src);
           }
           catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
@@ -368,12 +386,15 @@ public final class FileUtils {
    * @param to the destination directory to copy to
    * @param filter additional filter to apply before copying
    * @param replacements a {@link Map} of {@link String} patterns to be replaced
-   * @return the number of copied <b>files</b>
+   * @return a {@link Collection} of <b>files</b> that were copied
    * @see #getFilesAndDirectoriesRecursive(File, FileFilter)
    * @throws MojoExecutionException
    */
-  public static int copyDirectory(File from, File to, FileFilter filter, Map<String, String> replacements) throws MojoExecutionException {
-    int copied = 0;
+  public static Collection<File> copyDirectory(File from,
+                                               File to,
+                                               FileFilter filter,
+                                               Map<String, String> replacements) throws MojoExecutionException {
+    Collection<File> copied = new ArrayList<File>();
     if (from.exists() && from.isDirectory()) {
       List<File> toCopy = getFilesAndDirectoriesRecursive(from, filter);
       for (File src : toCopy) {
@@ -383,7 +404,7 @@ public final class FileUtils {
         }
         else {
           copyFile(src, dest, replacements);
-          copied++;
+          copied.add(src);
         }
       }
       for (File src : toCopy) {

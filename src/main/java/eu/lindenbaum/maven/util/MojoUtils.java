@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import eu.lindenbaum.maven.Properties;
+import eu.lindenbaum.maven.erlang.DialyzerScript;
 import eu.lindenbaum.maven.erlang.NodeShutdownHook;
 
 import com.ericsson.otp.erlang.OtpAuthException;
@@ -27,6 +30,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class MojoUtils {
   private static final String WINDOWS = "WINDOWS";
+  public static final Pattern DIALYZER_WARNING = Pattern.compile("(.+):(\\d+): (.+)");
 
   /**
    * Returns a list of script files used by the plugin to provide a proper test
@@ -236,5 +240,35 @@ public final class MojoUtils {
     List<File> codePaths = new ArrayList<File>(getDependencyCodePaths(p));
     codePaths.add(p.target());
     return codePaths;
+  }
+
+  /**
+   * Parses the output of the {@link DialyzerScript} and converts it to a
+   * beautified {@link Collection} of strings to be logged.
+   * 
+   * @param output the dialyzers warning output
+   * @param sources a complete collection of source files dialyzer was run on
+   * @return a list of warning strings that can be logged
+   */
+  public static Collection<String> parseDialyzerOutput(String[] output, Collection<File> sources) {
+    ArrayList<String> warnings = new ArrayList<String>();
+    for (String warning : output) {
+      Matcher matcher = DIALYZER_WARNING.matcher(warning);
+      if (matcher.matches()) {
+        String fileName = matcher.group(1);
+        File file = FileUtils.getFile(fileName, sources);
+        if (file != null) {
+          warnings.add(" * " + file + ":" + matcher.group(2));
+        }
+        else {
+          warnings.add(" * " + fileName + ":" + matcher.group(2));
+        }
+        warnings.add("   " + matcher.group(3));
+      }
+      else {
+        warnings.add(" * " + warning);
+      }
+    }
+    return warnings;
   }
 }

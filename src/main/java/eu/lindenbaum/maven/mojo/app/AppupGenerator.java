@@ -116,7 +116,7 @@ public final class AppupGenerator extends ErlangMojo {
     FileUtils.writeFile(appupTemplate, "{${VERSION},\n " + upFrom + ",\n " + downTo + "}.");
     if (appupTemplate.isFile()) {
       log.info("Successfully generated application upgrade template.");
-      MavenUtils.logContent(log, LogLevel.INFO, appupTemplate);
+      MavenUtils.logContent(log, LogLevel.INFO, appupTemplate, "");
     }
     else {
       throw new MojoExecutionException("Failed to create application upgrade file.");

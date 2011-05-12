@@ -4,6 +4,7 @@ Tests = %s,
 Surefire = {report, {surefire, [{dir, SurefirePath}, {package, SuiteName}]}},
 Tty = {report, {ttycapture, [{report_to, self()}]}},
 Out = try eunit:test(Tests, [Surefire, Tty]) of
+          error -> ["Test(s) failed!"];
           _ -> []
       catch
           Class:Exception ->

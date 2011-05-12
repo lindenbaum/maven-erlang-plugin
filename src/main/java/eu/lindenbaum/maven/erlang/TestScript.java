@@ -70,7 +70,7 @@ public final class TestScript extends AbstractScript<TestResult> {
       public void logOutput(Log log) {
         LogLevel logLevel = LogLevel.fromString(level.atomValue());
         for (int i = 0; i < output.arity(); ++i) {
-          MavenUtils.logMultiLineString(log, logLevel, ErlUtils.toString(output.elementAt(i)));
+          MavenUtils.logMultiLineString(log, logLevel, ErlUtils.toString(output.elementAt(i), false));
         }
       }
     };

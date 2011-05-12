@@ -14,6 +14,7 @@ import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
@@ -65,9 +66,6 @@ public final class TestCompiler extends ErlangMojo {
     }
 
     FileUtils.ensureDirectories(p.targetTestEbin());
-    int removed = FileUtils.removeFilesRecursive(p.targetTestEbin(), ErlConstants.BEAM_SUFFIX);
-    log.debug("Removed " + removed + " stale " + ErlConstants.BEAM_SUFFIX + "-files from "
-              + p.targetTestEbin());
 
     log.debug("Looking up test sources under " + p.test_src() + " with file suffix "
               + ErlConstants.ERL_SUFFIX);
@@ -91,14 +89,35 @@ public final class TestCompiler extends ErlangMojo {
       List<File> includes = MojoUtils.getTestIncludeDirectories(p);
       Script<CompilerResult> script = new BeamCompilerScript(files, p.targetTestEbin(), includes, options);
       CompilerResult result = MavenSelf.get(p.cookie()).exec(p.testNode(), script);
-      result.logOutput(log);
-      String failedCompilationUnit = result.getFailed();
-      if (failedCompilationUnit != null) {
-        throw new MojoFailureException("Failed to compile " + failedCompilationUnit + ".");
+
+      List<File> compiled = result.getCompiled();
+      List<File> skipped = result.getSkipped();
+      List<File> failed = result.getFailed();
+      List<String> errors = result.getErrors();
+      List<String> warnings = result.getWarnings();
+
+      if (compiled.size() > 0) {
+        log.debug("Compiled:");
+        MavenUtils.logCollection(log, LogLevel.DEBUG, compiled, " * ");
+      }
+      if (skipped.size() > 0) {
+        log.debug("Skipped:");
+        MavenUtils.logCollection(log, LogLevel.DEBUG, skipped, " * ");
+      }
+      if (errors.size() > 0) {
+        log.error("Errors:");
+        MavenUtils.logCollection(log, LogLevel.ERROR, errors, "");
+      }
+      if (warnings.size() > 0) {
+        log.warn("Warnings:");
+        MavenUtils.logCollection(log, LogLevel.WARN, warnings, "");
       }
 
-      int numberOfTestFiles = files.size() - testSupportFiles.size();
-      log.info("Successfully compiled " + numberOfTestFiles + " test source file(s).");
+      if (failed.size() > 0) {
+        throw new MojoFailureException("Failed to compile " + failed + ".");
+      }
+
+      log.info("Successfully compiled the project test sources.");
     }
     else {
       log.info("No test source files to compile.");

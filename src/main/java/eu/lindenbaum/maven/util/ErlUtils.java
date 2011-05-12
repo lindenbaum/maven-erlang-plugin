@@ -136,22 +136,39 @@ public final class ErlUtils {
    * Converts an {@link OtpErlangObject} into a {@link String} using the object
    * specific conversion function. If there is no specific string conversion
    * function available the default {@link OtpErlangObject#toString()} is used.
-   * Empty {@link OtpErlangList}s will result in an empty {@link String}.
+   * Empty {@link OtpErlangList}s will result in an empty {@link String}. The
+   * returned {@link String} will be trimmed.
    * 
    * @param object to convert
    * @return a non-null, trimmed {@link String} object
    */
   public static String toString(OtpErlangObject object) {
+    return toString(object, true);
+  }
+
+  /**
+   * Converts an {@link OtpErlangObject} into a {@link String} using the object
+   * specific conversion function. If there is no specific string conversion
+   * function available the default {@link OtpErlangObject#toString()} is used.
+   * Empty {@link OtpErlangList}s will result in an empty {@link String}.
+   * 
+   * @param object to convert
+   * @param trim whether the returned string will be trimmed
+   * @return a non-null, trimmed {@link String} object
+   */
+  public static String toString(OtpErlangObject object, boolean trim) {
     if (object instanceof OtpErlangString) {
-      return ((OtpErlangString) object).stringValue().trim();
+      String stringValue = ((OtpErlangString) object).stringValue();
+      return trim ? stringValue.trim() : stringValue;
     }
     if (object instanceof OtpErlangAtom) {
-      return ((OtpErlangAtom) object).atomValue().trim();
+      String atomValue = ((OtpErlangAtom) object).atomValue();
+      return trim ? atomValue.trim() : atomValue;
     }
     if (object instanceof OtpErlangList && ((OtpErlangList) object).arity() == 0) {
       return "";
     }
-    return object.toString().trim();
+    return trim ? object.toString().trim() : object.toString();
   }
 
   /**

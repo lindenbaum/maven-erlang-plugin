@@ -33,16 +33,17 @@ import org.apache.maven.plugin.logging.Log;
  * @since 2.1.0
  * @see ProfilingReport
  */
-public final class ProfilingRunner extends ErlangMojo {
+public final class Profiler extends ErlangMojo {
   /**
    * Setting this to a module name, will only run and profile that test module.
+   * 
    * @parameter expression="${test}"
    */
   private String test;
 
   /**
-   * The time, in seconds, that the full profiling is allowed to take. Must be 
-   * a positive integer. If the profiling tests run longer than this, without
+   * The time, in seconds, that the full profiling is allowed to take. Must be a
+   * positive integer. If the profiling tests run longer than this, without
    * responding with any results, it is considered to have failed.
    * 
    * @parameter expression="${timeout}" default-value=600
@@ -52,7 +53,7 @@ public final class ProfilingRunner extends ErlangMojo {
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
     log.info(MavenUtils.SEPARATOR);
-    log.info(" P R O F I L I N G - R U N N E R");
+    log.info(" P R O F I L E R");
     log.info(MavenUtils.SEPARATOR);
 
     if (this.timeout <= 0) {

@@ -1,19 +1,17 @@
 package eu.lindenbaum.maven.erlang;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import eu.lindenbaum.maven.util.ErlUtils;
-import eu.lindenbaum.maven.util.MavenUtils;
-import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
-import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 
 /**
  * A {@link Script} that can be used to compile erlang files. In case of
@@ -65,25 +63,66 @@ public final class BeamCompilerScript extends AbstractScript<CompilerResult> {
   @Override
   public CompilerResult handle(OtpErlangObject result) {
     OtpErlangTuple r = (OtpErlangTuple) result;
-    final OtpErlangObject failed = r.elementAt(0);
-    final OtpErlangList messages = (OtpErlangList) r.elementAt(1);
+
+    OtpErlangList f = (OtpErlangList) r.elementAt(0);
+    final ArrayList<File> failed = new ArrayList<File>();
+    Iterator<OtpErlangObject> failedIterator = f.iterator();
+    while (failedIterator.hasNext()) {
+      failed.add(new File(ErlUtils.toString(failedIterator.next(), false)));
+    }
+
+    OtpErlangList s = (OtpErlangList) r.elementAt(1);
+    final ArrayList<File> skipped = new ArrayList<File>();
+    Iterator<OtpErlangObject> skippedIterator = s.iterator();
+    while (skippedIterator.hasNext()) {
+      skipped.add(new File(ErlUtils.toString(skippedIterator.next(), false)));
+    }
+
+    OtpErlangList c = (OtpErlangList) r.elementAt(2);
+    final ArrayList<File> compiled = new ArrayList<File>();
+    Iterator<OtpErlangObject> compiledIterator = c.iterator();
+    while (compiledIterator.hasNext()) {
+      compiled.add(new File(ErlUtils.toString(compiledIterator.next(), false)));
+    }
+
+    OtpErlangList e = (OtpErlangList) r.elementAt(3);
+    final ArrayList<String> errors = new ArrayList<String>();
+    Iterator<OtpErlangObject> errorIterator = e.iterator();
+    while (errorIterator.hasNext()) {
+      errors.add(ErlUtils.toString(errorIterator.next(), false));
+    }
+
+    OtpErlangList w = (OtpErlangList) r.elementAt(4);
+    final ArrayList<String> warnings = new ArrayList<String>();
+    Iterator<OtpErlangObject> warningIterator = w.iterator();
+    while (warningIterator.hasNext()) {
+      warnings.add(ErlUtils.toString(warningIterator.next(), false));
+    }
+
     return new CompilerResult() {
       @Override
-      public void logOutput(Log log) {
-        for (int i = 0; i < messages.arity(); ++i) {
-          OtpErlangTuple messageTuple = (OtpErlangTuple) messages.elementAt(i);
-          LogLevel Level = LogLevel.fromString(ErlUtils.toString(messageTuple.elementAt(0)));
-          MavenUtils.logMultiLineString(log, Level, ErlUtils.toString(messageTuple.elementAt(1)));
-        }
+      public List<File> getFailed() {
+        return failed;
       }
 
       @Override
-      public String getFailed() {
-        if (failed instanceof OtpErlangString) {
-          String converted = ErlUtils.toString(failed);
-          return converted.isEmpty() ? null : converted;
-        }
-        return null;
+      public List<File> getSkipped() {
+        return skipped;
+      }
+
+      @Override
+      public List<File> getCompiled() {
+        return compiled;
+      }
+
+      @Override
+      public List<String> getErrors() {
+        return errors;
+      }
+
+      @Override
+      public List<String> getWarnings() {
+        return warnings;
       }
     };
   }

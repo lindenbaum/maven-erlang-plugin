@@ -100,7 +100,7 @@ public final class ResourceGenerator extends ErlangMojo {
     codePaths.removeAll(Arrays.asList(p.target()));
     Collections.reverse(codePaths);
 
-    log.debug(".app lookup path is: " + codePaths);
+    log.debug("Application lookup path is: " + codePaths);
 
     Map<String, CheckAppResult> appInfos = getAppInfos(p, codePaths);
     Set<CheckAppResult> autoDependencies = getDependencies(artifactIds, appInfos);
@@ -208,9 +208,10 @@ public final class ResourceGenerator extends ErlangMojo {
    */
   private static void checkSystemConfig(Log log, File sysConfig) throws MojoFailureException {
     if (!sysConfig.isFile()) {
-      log.error(sysConfig.toString() + " does not exist.");
-      log.error("Use 'mvn erlang:setup' to create a default system configuration file.");
-      throw new MojoFailureException("No " + sysConfig.getName() + " file found.");
+      log.error("Errors:");
+      log.error(" * system configuration file not found, use 'mvn erlang:setup' to create");
+      log.error("   a default system configuration file");
+      throw new MojoFailureException(sysConfig.toString() + " does not exist.");
     }
   }
 
@@ -219,9 +220,10 @@ public final class ResourceGenerator extends ErlangMojo {
    */
   private static void checkReleaseUpgradeFile(Log log, File relup) throws MojoFailureException {
     if (!relup.isFile()) {
-      log.error(relup.toString() + " does not exist.");
-      log.error("Use 'mvn erlang:relup' or 'mvn erlang:setup' to create a template relup file.");
-      throw new MojoFailureException("No " + relup.getName() + " file found.");
+      log.error("Errors:");
+      log.error(" * release upgrade file not found, use 'mvn erlang:relup' or");
+      log.error("   'mvn erlang:setup' to create a template relup file");
+      throw new MojoFailureException(relup.toString() + " does not exist.");
     }
   }
 
@@ -230,9 +232,10 @@ public final class ResourceGenerator extends ErlangMojo {
    */
   private static void checkReleaseFile(Log log, File rel) throws MojoFailureException {
     if (!rel.isFile()) {
-      log.error(rel.toString() + " does not exist.");
-      log.error("Use 'mvn erlang:setup' to create a default release file.");
-      throw new MojoFailureException("No " + rel.getName() + " file found.");
+      log.error("Errors:");
+      log.error(" * release file not found, use 'mvn erlang:setup' to create a default");
+      log.error("   release file");
+      throw new MojoFailureException(rel.toString() + " does not exist.");
     }
   }
 }

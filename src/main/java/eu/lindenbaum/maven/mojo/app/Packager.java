@@ -4,6 +4,7 @@ import static eu.lindenbaum.maven.util.FileUtils.APP_FILTER;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -96,23 +97,28 @@ public final class Packager extends ErlangMojo {
 
     // copy application resource files
     FileUtils.ensureDirectories(p.targetEbin());
-    int copied = FileUtils.copyDirectory(p.ebin(), p.targetEbin(), APP_FILTER, replacements);
-    log.debug("Copied " + copied + " application resource files");
+    Collection<File> copied = FileUtils.copyDirectory(p.ebin(), p.targetEbin(), APP_FILTER, replacements);
+    if (copied.size() > 0) {
+      log.debug("Copied application resource files:");
+      MavenUtils.logCollection(log, LogLevel.DEBUG, copied, " * ");
+    }
 
     File appFile = p.targetAppFile();
     if (!appFile.exists()) {
-      log.error(appFile.getName() + " does not exist.");
-      log.error("Use 'mvn erlang:setup' to create a default library application .app file");
-      throw new MojoFailureException("No .app file found.");
+      log.error("Errors:");
+      log.error(" * no application resource file found, use 'mvn erlang:setup' to create");
+      log.error("   a default library application .app file");
+      throw new MojoFailureException(p.appFile() + " does not exist.");
     }
 
     // parse .app file
     Script<CheckAppResult> appScript = new CheckAppScript(appFile);
     CheckAppResult appResult = MavenSelf.get(p.cookie()).exec(p.node(), appScript);
     if (!appResult.success()) {
-      log.error("Failed to consult file");
-      MavenUtils.logContent(log, LogLevel.ERROR, appFile);
-      throw new MojoFailureException("Failed to consult .app file.");
+      log.error("Errors:");
+      log.error(" * failed to consult application resource file");
+      MavenUtils.logContent(log, LogLevel.ERROR, appFile, "   ");
+      throw new MojoFailureException("Failed to consult " + appFile + ".");
     }
 
     checkApplicationName(log, appFile, p.project().getArtifactId(), appResult.getName());
@@ -123,19 +129,22 @@ public final class Packager extends ErlangMojo {
 
     File appUpFile = p.targetAppupFile();
     if (!appUpFile.exists()) {
-      log.warn(appUpFile.getName() + " does not exist.");
-      log.warn("Use 'mvn erlang:appup' or 'mvn erlang:setup' to create a template .appup file");
-      log.warn("You must edit your .appup file according to http://www.erlang.org/doc/man/appup.html.");
+      log.warn("Warnings:");
+      log.warn(" * no application upgrade file found, use 'mvn erlang:appup' or");
+      log.warn("   'mvn erlang:setup' to create a template .appup file, you must edit");
+      log.warn("   your .appup file according to http://www.erlang.org/doc/man/appup.html");
     }
     else {
       // check .appup file
       Script<String> appUpScript = new CheckAppUpScript(appUpFile, projectVersion);
       String error = MavenSelf.get(p.cookie()).exec(p.node(), appUpScript);
       if (error != null) {
-        MavenUtils.logMultiLineString(log, LogLevel.ERROR, error);
-        MavenUtils.logContent(log, LogLevel.ERROR, appUpFile);
-        log.error("You must edit your .appup file according to http://www.erlang.org/doc/man/appup.html.");
-        throw new MojoFailureException("Failed to verify .appup file.");
+        log.error("Errors:");
+        log.error(" * failed to verify application upgrade file, you must edit your .appup ");
+        log.error("   file according to http://www.erlang.org/doc/man/appup.html");
+        MavenUtils.logMultiLineString(log, LogLevel.ERROR, error, "   ");
+        MavenUtils.logContent(log, LogLevel.ERROR, appUpFile, "   ");
+        throw new MojoFailureException("Failed to verify " + appUpFile + ".");
       }
     }
 
@@ -160,10 +169,11 @@ public final class Packager extends ErlangMojo {
    */
   private static void checkApplicationName(Log log, File appFile, String expected, String actual) throws MojoFailureException {
     if (!expected.equals(actual)) {
-      log.error("Name mismatch.");
-      log.error("Project name is " + expected + " while .app name is " + actual);
-      MavenUtils.logContent(log, LogLevel.ERROR, appFile);
-      throw new MojoFailureException("Name mismatch " + expected + " != " + actual + ".");
+      log.error("Errors:");
+      log.error(" * application name mismatch, project name is '" + expected + "'");
+      log.error("   while .app application name is '" + actual + "'");
+      MavenUtils.logContent(log, LogLevel.ERROR, appFile, "   ");
+      throw new MojoFailureException("Name mismatch '" + expected + "' != '" + actual + "'.");
     }
   }
 
@@ -173,10 +183,11 @@ public final class Packager extends ErlangMojo {
    */
   private static void checkApplicationVersion(Log log, File appFile, String expected, String actual) throws MojoFailureException {
     if (!expected.equals(actual)) {
-      log.error("Version mismatch.");
-      log.error("Project version is " + expected + " while .app version is " + actual);
-      MavenUtils.logContent(log, LogLevel.ERROR, appFile);
-      throw new MojoFailureException("Version mismatch " + expected + " != " + actual + ".");
+      log.error("Errors:");
+      log.error(" * application version mismatch, project version is '" + expected + "'");
+      log.error("   while .app application version is '" + actual + "'");
+      MavenUtils.logContent(log, LogLevel.ERROR, appFile, "   ");
+      throw new MojoFailureException("Version mismatch '" + expected + "' != '" + actual + "'.");
     }
   }
 
@@ -196,18 +207,21 @@ public final class Packager extends ErlangMojo {
         String behaviours = MavenSelf.get(p.cookie()).exec(p.node(), behaviourScript);
         if (behaviours.contains("application")) {
           if (!r.getApplications().contains("sasl")) {
-            log.error("Application dependency to 'sasl' is missing in .app file.");
-            throw new MojoFailureException("Dependency to sasl is missing.");
+            log.error("Errors:");
+            log.error(" * application dependency to 'sasl' is missing in .app file");
+            throw new MojoFailureException("Dependency to 'sasl' is missing.");
           }
         }
         else {
-          log.error("Configured start module \'" + startModule
-                    + "\' does not implement the application behaviour");
+          log.error("Errors:");
+          log.error(" * configured start module '" + startModule + "' does not implement");
+          log.error("   the application behaviour");
           throw new MojoFailureException("Configured start module does not implement the application behaviour.");
         }
       }
       else {
-        log.error("Configured start module \'" + startModule + "\' does not exist.");
+        log.error("Errors:");
+        log.error(" * configured start module '" + startModule + "' does not exist");
         throw new MojoFailureException("Configured start module does not exist.");
       }
     }
@@ -223,12 +237,19 @@ public final class Packager extends ErlangMojo {
       m.add(module.getName().replace(ErlConstants.BEAM_SUFFIX, "").replace(ErlConstants.ERL_SUFFIX, ""));
     }
     if (!m.containsAll(actual) || !actual.containsAll(m)) {
+      log.error("Errors:");
       Set<String> undeclared = new HashSet<String>(m);
       undeclared.removeAll(actual);
-      log.error("Undeclared modules (not in .app file): " + undeclared.toString());
+      if (undeclared.size() > 0) {
+        log.error(" * found undeclared modules (beam file present but not listed in .app file)");
+        MavenUtils.logCollection(log, LogLevel.ERROR, undeclared, "    - ");
+      }
       Set<String> unbacked = new HashSet<String>(actual);
       unbacked.removeAll(m);
-      log.error("Unbacked modules (no .beam file): " + unbacked.toString());
+      if (unbacked.size() > 0) {
+        log.error(" * found unbacked modules (listed in .app file but no beam file present)");
+        MavenUtils.logCollection(log, LogLevel.ERROR, unbacked, "    - ");
+      }
       throw new MojoFailureException("Module mismatch found, see previous output for details.");
     }
   }
@@ -240,19 +261,24 @@ public final class Packager extends ErlangMojo {
    */
   private static void checkApplications(Log log, Collection<Artifact> expected, List<String> actual) throws MojoFailureException {
     boolean missingDependencies = false;
+    Collection<String> errorLines = new ArrayList<String>();
     for (Artifact artifact : expected) {
       String artifactId = artifact.getArtifactId();
       if (!actual.contains(artifactId)) {
-        log.error("Application dependency to '" + artifactId + "' is missing in .app file.");
+        errorLines.add(" * application dependency to '" + artifactId + "' is missing");
+        errorLines.add("   in .app file");
         missingDependencies = true;
       }
     }
     if (!actual.containsAll(Arrays.asList("kernel", "stdlib"))) {
-      log.error("Vital application dependency to either 'kernel' or 'stdlib' is missing in .app file.");
+      errorLines.add(" * vital application dependency to either 'kernel' or 'stdlib' is");
+      errorLines.add("   missing in .app file");
       missingDependencies = true;
     }
     if (missingDependencies) {
-      throw new MojoFailureException("Missing application dependencies.");
+      log.error("Errors:");
+      MavenUtils.logCollection(log, LogLevel.ERROR, errorLines, "");
+      throw new MojoFailureException("Missing application dependencies, see previous output for details.");
     }
   }
 }

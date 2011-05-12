@@ -1,6 +1,7 @@
 package eu.lindenbaum.maven.erlang;
 
-import org.apache.maven.plugin.logging.Log;
+import java.io.File;
+import java.util.List;
 
 /**
  * Interface representing the result returned by the {@link BeamCompilerScript}.
@@ -9,17 +10,40 @@ import org.apache.maven.plugin.logging.Log;
  */
 public interface CompilerResult {
   /**
-   * Returns the failed compilation unit.
+   * Returns a {@link List} of failed compilation units.
    * 
-   * @return A string containing the failed compilation unit or {@code null} if
-   *         compilation succeeded.
+   * @return A {@link List} containing the failed compilation units.
    */
-  public String getFailed();
+  public List<File> getFailed();
 
   /**
-   * Log the compiler output (e.g. warnings/errors) using the provided logger.
+   * Returns a {@link List} of skipped compilation units.
    * 
-   * @param log used to print the output
+   * @return A {@link List} containing the skipped compilation units.
    */
-  public void logOutput(Log log);
+  public List<File> getSkipped();
+
+  /**
+   * Returns a {@link List} of compiled compilation units.
+   * 
+   * @return A {@link List} containing the successfully compiled compilation
+   *         units.
+   */
+  public List<File> getCompiled();
+
+  /**
+   * Returns a {@link List} of compile error outputs.
+   * 
+   * @return A {@link List} containing the compile errors of the compilation
+   *         process.
+   */
+  public List<String> getErrors();
+
+  /**
+   * Returns a {@link List} of compile warning outputs.
+   * 
+   * @return A {@link List} containing the compile warnings of the compilation
+   *         process.
+   */
+  public List<String> getWarnings();
 }

@@ -118,6 +118,7 @@ public class ProfilingReport extends ErlangReport {
           reader.close();
         }
         catch (IOException e) {
+          // ignored
         }
       }
       if (file != null) {
@@ -125,6 +126,7 @@ public class ProfilingReport extends ErlangReport {
           file.close();
         }
         catch (IOException e) {
+          // ignored
         }
       }
     }

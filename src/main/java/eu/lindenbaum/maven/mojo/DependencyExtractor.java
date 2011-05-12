@@ -35,9 +35,11 @@ public final class DependencyExtractor extends ErlangMojo {
     FileUtils.ensureDirectories(targetLib);
     TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), targetLib);
     Set<Artifact> artifacts = MavenUtils.getErlangArtifacts(p.project());
-    log.debug("found artifacts " + artifacts);
-    for (Artifact artifact : artifacts) {
-      extractArtifact(log, artifact, unarchiver);
+    if (artifacts.size() > 0) {
+      log.info("Processed project dependencies:");
+      for (Artifact artifact : artifacts) {
+        extractArtifact(log, artifact, unarchiver);
+      }
     }
     cleanupArtifacts(log, targetLib, artifacts);
   }
@@ -54,7 +56,7 @@ public final class DependencyExtractor extends ErlangMojo {
         FileUtils.removeDirectory(cachedDependency);
       }
       try {
-        log.info("Extracting dependency " + artifactdirectory + ".");
+        log.info(" * " + artifactdirectory + " (extracted)");
         unarchiver.extract(artifact.getFile());
       }
       catch (IOException e) {
@@ -62,7 +64,7 @@ public final class DependencyExtractor extends ErlangMojo {
       }
     }
     else {
-      log.debug("Skipping artifact " + artifact.getGroupId() + ":" + artifact.getId());
+      log.info(" * " + artifact.getArtifactId() + "-" + artifact.getVersion() + " (skipped)");
     }
   }
 
@@ -75,9 +77,12 @@ public final class DependencyExtractor extends ErlangMojo {
       excludes.add(getArtifactDirectory(artifact));
     }
     List<File> obsoleteDependencies = FileUtils.getDirectories(targetLib, excludes);
-    for (File obsoleteDependency : obsoleteDependencies) {
-      log.debug("Removing obsolete dependency " + obsoleteDependency.getName() + ".");
-      FileUtils.removeDirectory(obsoleteDependency);
+    if (obsoleteDependencies.size() > 0) {
+      log.debug("Removed obsolete dependencies:");
+      for (File obsoleteDependency : obsoleteDependencies) {
+        log.debug(" * " + obsoleteDependency.getName());
+        FileUtils.removeDirectory(obsoleteDependency);
+      }
     }
   }
 

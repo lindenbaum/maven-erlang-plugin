@@ -2,11 +2,14 @@ package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -38,28 +41,34 @@ public final class TestResourceGenerator extends ErlangMojo {
       return;
     }
 
-    FileUtils.removeDirectory(p.targetTest());
+    Collection<File> current;
 
-    int testResources = 0;
-    testResources += FileUtils.copyDirectory(p.priv(), p.targetTestPriv(), FileUtils.NULL_FILTER);
-    testResources += FileUtils.copyDirectory(p.test_priv(), p.targetTestPriv(), FileUtils.NULL_FILTER);
-    log.debug("copied " + testResources + " test resources");
-    if (testResources == 0) {
+    FileUtils.removeDirectory(p.targetTestPriv());
+    current = FileUtils.copyDirectory(p.priv(), p.targetTestPriv(), FileUtils.NULL_FILTER);
+    current.addAll(FileUtils.copyDirectory(p.test_priv(), p.targetTestPriv(), FileUtils.NULL_FILTER));
+    if (current.size() > 0) {
+      log.debug("Copied test resources:");
+      MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
+    }
+    else {
       FileUtils.removeEmptyDirectory(p.targetTest());
     }
 
-    int foreignArtifacts = 0;
+    current = new ArrayList<File>();
     for (Artifact artifact : MavenUtils.getForeignDependencies(p.project())) {
       File source = artifact.getFile();
       File destination = new File(p.targetTestPriv(), source.getName());
       try {
         org.codehaus.plexus.util.FileUtils.copyFile(source, destination);
-        foreignArtifacts++;
+        current.add(source);
       }
       catch (IOException e) {
         log.error("Failed to copy artifact " + source.getPath() + " to " + p.targetPriv() + ".", e);
       }
     }
-    log.debug("copied " + foreignArtifacts + " foreign artifacts");
+    if (current.size() > 0) {
+      log.debug("Copied foreign artifacts:");
+      MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
+    }
   }
 }

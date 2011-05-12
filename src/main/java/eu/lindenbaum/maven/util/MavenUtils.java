@@ -332,14 +332,15 @@ public final class MavenUtils {
    * @param log logger to use
    * @param level priority to log the file
    * @param file to read the content from
+   * @param linePrefix prefix prepended to each line
    */
-  public static void logContent(Log log, LogLevel level, File file) {
-    logMultiLineString(log, level, file.getAbsolutePath() + " with content:");
+  public static void logContent(Log log, LogLevel level, File file, String linePrefix) {
+    logMultiLineString(log, level, file.getAbsolutePath() + ":", linePrefix);
     try {
-      logMultiLineString(log, level, FileUtils.fileRead(file));
+      logMultiLineString(log, level, FileUtils.fileRead(file), linePrefix);
     }
     catch (IOException e) {
-      logMultiLineString(log, level, e.getMessage());
+      logMultiLineString(log, level, e.getMessage(), linePrefix);
     }
   }
 
@@ -352,20 +353,61 @@ public final class MavenUtils {
    * @param multiLineString to log
    */
   public static void logMultiLineString(Log log, LogLevel level, String multiLineString) {
+    logMultiLineString(log, level, multiLineString, "");
+  }
+
+  /**
+   * Logs a multi line string containing either unix or windows style line
+   * breaks using a specific logger.
+   * 
+   * @param log logger to use.
+   * @param level priority to log the message
+   * @param multiLineString to log
+   * @param linePrefix prefix prepended to each line
+   */
+  public static void logMultiLineString(Log log, LogLevel level, String multiLineString, String linePrefix) {
     String[] lines = multiLineString.split("\r?\n");
     for (String line : lines) {
       switch (level) {
         case DEBUG:
-          log.debug(line);
+          log.debug(linePrefix + line);
           break;
         case INFO:
-          log.info(line);
+          log.info(linePrefix + line);
           break;
         case WARN:
-          log.warn(line);
+          log.warn(linePrefix + line);
           break;
         case ERROR:
-          log.error(line);
+          log.error(linePrefix + line);
+          break;
+      }
+    }
+  }
+
+  /**
+   * Logs the content of the given {@link Collection} using a specific logger.
+   * Each entry is placed in its own line.
+   * 
+   * @param log logger to use
+   * @param level priority to log the file
+   * @param collection to print
+   * @param linePrefix prefix prepended to each line
+   */
+  public static <T> void logCollection(Log log, LogLevel level, Collection<T> collection, String linePrefix) {
+    for (T entry : collection) {
+      switch (level) {
+        case DEBUG:
+          log.debug(linePrefix + entry.toString());
+          break;
+        case INFO:
+          log.info(linePrefix + entry.toString());
+          break;
+        case WARN:
+          log.warn(linePrefix + entry.toString());
+          break;
+        case ERROR:
+          log.error(linePrefix + entry.toString());
           break;
       }
     }
