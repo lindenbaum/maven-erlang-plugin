@@ -28,13 +28,25 @@ import org.apache.maven.plugin.logging.Log;
  * <p>
  * This {@link Mojo} creates a target system release package {@code .tar.gz}
  * according to the official documentation. If there's no
- * <code>sys.config</code> file found a default empty one will be included. The
- * resulting target system depends on a correct root directory configuration.
- * The plug-in will change the scripts to check for the <code>${</code>
- * <i>ARTIFACTID</i><code>_TOP}</code> (upper case) environment variable. This
+ * <code>sys.config</code> file found a default empty one will be included.
+ * </p>
+ * <p>
+ * The resulting target system depends on a correct root directory
+ * configuration. The plug-in will change the scripts to check for the
+ * <code>${<i>ARTIFACTID</i>_TOP}</code> (upper case) environment variable. This
  * variable must be set by the user to guarantee a proper system behaviour.
+ * Custom arguments like node name or cookie can be set by using the standard
+ * erlang environment variables <code>$ERL_AFLAGS</code>,
+ * <code>$ERL_ZFLAGS</code> or <code>$ERL_FLAGS</code>. If you wish to run
+ * several releases on the same node the variable <code>${
+ * <i>ARTIFACTID</i>_FLAGS}</code> (upper case) environment variable could be
+ * used alternatively to ERL_FLAGS.
+ * </p>
+ * <p>
  * Example: If artifact id is <code>release</code> the environment variable
- * <code>${RELEASE_TOP}</code> must be set.
+ * <code>${RELEASE_TOP}</code> must be set. Arguments could be specified by
+ * setting <code>${RELEASE_FLAGS}</code> like that
+ * <code>RELEASE_FLAGS="-sname some_node -setcookie some_cookie"</code>
  * </p>
  * <p>
  * Note: The resulting target system is highly system dependent since it
@@ -120,9 +132,11 @@ public final class TargetSystemPackager extends ErlangMojo {
     FileUtils.copyFiles(tmpBin, epmd, runErl, toErl, startBoot);
 
     // copy the erl.src, start.src and start_erl.src files to top level bin directory
+    String releaseNameVariable = releaseName.toUpperCase().replace("-", "_");
     HashMap<String, String> replacements = new HashMap<String, String>();
     replacements.put("%EMU%", "beam");
-    replacements.put("%FINAL_ROOTDIR%", "${" + releaseName.toUpperCase().replace("-", "_") + "_TOP}");
+    replacements.put("%FINAL_ROOTDIR%", "${" + releaseNameVariable + "_TOP}");
+    replacements.put("$START_ERL_DATA", "${START_ERL_DATA} ${" + releaseNameVariable + "_FLAGS}");
     FileUtils.copyDirectory(tmpErtsBin, tmpBin, FileUtils.SRC_FILTER, replacements);
 
     // remove .src extension from files previously copied & cleanup

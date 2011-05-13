@@ -116,8 +116,11 @@ system.
 
  In our case we extract the release directly into a temporary directory in the
  <<<target>>> directory. Please note that the environment variable
- <RELEASE_NAME>_TOP must be set to the target systems root directory when
- calling any start scripts of the target system.
+ <RELEASE_NAME><<<_TOP>>> must be set to the target systems root directory when
+ calling any start scripts of the target system. Node name and cookie can be set
+ using the standard erlang variables <<<ERL_AFLAGS>>>, <<<ERL_ZFLAGS>>> or
+ <<<ERL_FLAGS>>>. If you wish to run several releases on the same machine the
+ variable <RELEASE_NAME><<<_FLAGS>>> could be used alternatively to <<<ERL_FLAGS>>>.
 
 [../erlang-release-run1-example.png] Extracting and running the target system.
 

@@ -4,6 +4,15 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="schlagert" type="add">
+        Provided an alternative for the ERL_FLAGS environment variable for
+        target systems. This variable is useful when different releases (nodes)
+        should be run on the same host.
+      </action>
+      <action dev="schlagert" type="update">
+        Projects will now be run with dependencies by default when running an
+        application in remote mode.
+      </action>
       <action dev="olle-t, schlagert" type="fix">
         Fixed false test runner results when executing tests containing test
         generators.

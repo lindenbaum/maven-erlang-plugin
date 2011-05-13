@@ -58,10 +58,11 @@ public final class ProjectRunner extends ErlangMojo {
   private String remote;
 
   /**
-   * Setting this to <code>true</code> will also upload all modules from the
-   * (maven) dependencies on the remote node before starting the application.
+   * Setting this to <code>false</code> will skip the upload of the modules from
+   * the (maven) dependencies on the remote node before starting the
+   * application.
    * 
-   * @parameter expression="${withDependencies}" default-value=false
+   * @parameter expression="${withDependencies}" default-value=true
    */
   private boolean withDependencies;
 

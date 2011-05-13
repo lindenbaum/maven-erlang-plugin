@@ -53,7 +53,7 @@ Grouped Parameter Summary
  run returns warnings
 
  * <<<dialyzerWithDependencies>>>: will include the projects dependencies into
- the <<<dialyzer>>> run. Only for packaging erlang-otp.
+ the <<<dialyzer>>> run. Only for packaging erlang-otp and erlang-std.
 
 * Application Testing
  
