@@ -17,13 +17,6 @@ public interface CompilerResult {
   public List<File> getFailed();
 
   /**
-   * Returns a {@link List} of skipped compilation units.
-   * 
-   * @return A {@link List} containing the skipped compilation units.
-   */
-  public List<File> getSkipped();
-
-  /**
    * Returns a {@link List} of compiled compilation units.
    * 
    * @return A {@link List} containing the successfully compiled compilation

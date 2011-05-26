@@ -3,7 +3,9 @@ package eu.lindenbaum.maven;
 import java.io.File;
 
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.NetworkUtils;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -16,12 +18,24 @@ final class PropertiesImpl implements Properties {
   /**
    * Name of the default backend node used by the plug-in.
    */
-  private static final String DEFAULT_BACKEND = "maven-erlang-plugin-backend";
+  private static final String DEFAULT_BACKEND;
 
   /**
    * Name of the default test backend node used by the plug-in.
    */
-  private static final String DEFAULT_TEST_BACKEND = "maven-erlang-plugin-test-backend";
+  private static final String DEFAULT_TEST_BACKEND;
+
+  static {
+    String iPv4Address = "";
+    try {
+      iPv4Address = "@" + NetworkUtils.getIPv4Address();
+    }
+    catch (MojoExecutionException e) {
+      System.out.println("[WARN] " + e.getMessage());
+    }
+    DEFAULT_BACKEND = "maven-erlang-plugin-backend" + iPv4Address;
+    DEFAULT_TEST_BACKEND = "maven-erlang-plugin-test-backend" + iPv4Address;
+  }
 
   private final MavenProject project;
 

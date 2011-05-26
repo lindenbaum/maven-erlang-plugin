@@ -71,28 +71,21 @@ public final class BeamCompilerScript extends AbstractScript<CompilerResult> {
       failed.add(new File(ErlUtils.toString(failedIterator.next(), false)));
     }
 
-    OtpErlangList s = (OtpErlangList) r.elementAt(1);
-    final ArrayList<File> skipped = new ArrayList<File>();
-    Iterator<OtpErlangObject> skippedIterator = s.iterator();
-    while (skippedIterator.hasNext()) {
-      skipped.add(new File(ErlUtils.toString(skippedIterator.next(), false)));
-    }
-
-    OtpErlangList c = (OtpErlangList) r.elementAt(2);
+    OtpErlangList c = (OtpErlangList) r.elementAt(1);
     final ArrayList<File> compiled = new ArrayList<File>();
     Iterator<OtpErlangObject> compiledIterator = c.iterator();
     while (compiledIterator.hasNext()) {
       compiled.add(new File(ErlUtils.toString(compiledIterator.next(), false)));
     }
 
-    OtpErlangList e = (OtpErlangList) r.elementAt(3);
+    OtpErlangList e = (OtpErlangList) r.elementAt(2);
     final ArrayList<String> errors = new ArrayList<String>();
     Iterator<OtpErlangObject> errorIterator = e.iterator();
     while (errorIterator.hasNext()) {
       errors.add(ErlUtils.toString(errorIterator.next(), false));
     }
 
-    OtpErlangList w = (OtpErlangList) r.elementAt(4);
+    OtpErlangList w = (OtpErlangList) r.elementAt(3);
     final ArrayList<String> warnings = new ArrayList<String>();
     Iterator<OtpErlangObject> warningIterator = w.iterator();
     while (warningIterator.hasNext()) {
@@ -103,11 +96,6 @@ public final class BeamCompilerScript extends AbstractScript<CompilerResult> {
       @Override
       public List<File> getFailed() {
         return failed;
-      }
-
-      @Override
-      public List<File> getSkipped() {
-        return skipped;
       }
 
       @Override

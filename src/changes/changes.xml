@@ -4,6 +4,15 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="schlagert, lti" type="fix">
+        Backend nodes will now be started in fully qualified hostname mode
+        (-name) using one of the IPv4 addresses configured on the host machine.
+        This fixes problems with backend node connectivity in certain
+        environments, e.g. problems experienced on MacOS X or in networks
+        without running DNS services. In case reading the IP addresses from the
+        network interfaces fails the old behaviour (-name bla@localhost) is
+        used.
+      </action>
       <action dev="schlagert" type="add">
         Provided an alternative for the ERL_FLAGS environment variable for
         target systems. This variable is useful when different releases (nodes)
@@ -24,10 +33,6 @@
       <action dev="schlagert" type="add">
         Modules defining custom behaviours will now be compiled. This avoids
         warnings emitted when behaviours can't be found. 
-      </action>
-      <action dev="schlagert" type="add">
-        Implemented incremental recompile based on the modification time of the
-        source file and the compiled artifact.
       </action>
       <action dev="olle-t" type="add">
         Added 'erlang:profile' and 'erlang:profiling-report' - eprof based 

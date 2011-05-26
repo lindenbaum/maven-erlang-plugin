@@ -40,8 +40,6 @@ public class BeamCompilerScriptTest {
 
     OtpErlangString failed = new OtpErlangString("failed");
     OtpErlangList failedList = new OtpErlangList(new OtpErlangObject[]{ failed });
-    OtpErlangString skipped = new OtpErlangString("skipped");
-    OtpErlangList skippedList = new OtpErlangList(new OtpErlangObject[]{ skipped });
     OtpErlangString compiled = new OtpErlangString("compiled");
     OtpErlangList compiledList = new OtpErlangList(new OtpErlangObject[]{ compiled });
 
@@ -50,8 +48,8 @@ public class BeamCompilerScriptTest {
     OtpErlangString warning = new OtpErlangString("warning");
     OtpErlangList warningList = new OtpErlangList(new OtpErlangObject[]{ warning });
 
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ failedList, skippedList, compiledList,
-                                                                     errorList, warningList });
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ failedList, compiledList, errorList,
+                                                                     warningList });
 
     BeamCompilerScript script = new BeamCompilerScript(files, outdir, includes, options);
     CompilerResult compilerResult = script.handle(result);
@@ -59,8 +57,6 @@ public class BeamCompilerScriptTest {
     assertNotNull(compilerResult);
     assertEquals(1, compilerResult.getFailed().size());
     assertEquals("[failed]", compilerResult.getFailed().toString());
-    assertEquals(1, compilerResult.getSkipped().size());
-    assertEquals("[skipped]", compilerResult.getSkipped().toString());
     assertEquals(1, compilerResult.getCompiled().size());
     assertEquals("[compiled]", compilerResult.getCompiled().toString());
     assertEquals(1, compilerResult.getErrors().size());

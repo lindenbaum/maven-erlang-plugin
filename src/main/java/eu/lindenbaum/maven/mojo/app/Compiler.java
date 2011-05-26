@@ -65,7 +65,6 @@ public final class Compiler extends ErlangMojo {
       CompilerResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
 
       List<File> compiled = result.getCompiled();
-      List<File> skipped = result.getSkipped();
       List<File> failed = result.getFailed();
       List<String> errors = result.getErrors();
       List<String> warnings = result.getWarnings();
@@ -73,10 +72,6 @@ public final class Compiler extends ErlangMojo {
       if (compiled.size() > 0) {
         log.info("Compiled:");
         MavenUtils.logCollection(log, LogLevel.INFO, compiled, " * ");
-      }
-      if (skipped.size() > 0) {
-        log.info("Skipped:");
-        MavenUtils.logCollection(log, LogLevel.INFO, skipped, " * ");
       }
       if (errors.size() > 0) {
         log.error("Errors:");
