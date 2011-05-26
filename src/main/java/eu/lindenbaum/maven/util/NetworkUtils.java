@@ -95,9 +95,15 @@ public final class NetworkUtils {
   }
 
   /**
-   * Orders the given {@link List} of {@link InetAddress}es in the way that all
-   * loopback addresses are put to the end of the list. The input {@link List}
-   * will be modified.
+   * <p>
+   * Orders the given {@link List} of {@link InetAddress}es. The input
+   * {@link List} will be modified. Output order is as followed:
+   * <ol>
+   * <li>public network IP addresses</li>
+   * <li>private network IP addresses (192.x.x.x preferred)</li>
+   * <li>loopback addresses (e.g. 127.0.0.1)</li>
+   * </ol>
+   * </p>
    * 
    * @param addresses {@link List} of addresses to reorder
    * @return the modified input {@link List}
@@ -106,7 +112,23 @@ public final class NetworkUtils {
     Collections.sort(addresses, new Comparator<InetAddress>() {
       @Override
       public int compare(InetAddress o1, InetAddress o2) {
-        return o1.isLoopbackAddress() ? (o2.isLoopbackAddress() ? 0 : 1) : -1;
+        String o1Addr = o1.getHostAddress();
+        String o2Addr = o2.getHostAddress();
+
+        int isLoopback = o1.isLoopbackAddress() ? (o2.isLoopbackAddress() ? 0 : 1) : -1;
+        int is192 = o1Addr.startsWith("192") ? (o2Addr.startsWith("192") ? 0 : -1) : 1;
+        int isSiteLocal = o1.isSiteLocalAddress() ? (o2.isSiteLocalAddress() ? 0 : 1) : -1;
+        if (isLoopback > 0) {
+          return isLoopback;
+        }
+        else {
+          if (isSiteLocal > 0) {
+            return isSiteLocal;
+          }
+          else {
+            return is192;
+          }
+        }
       }
     });
     return addresses;
