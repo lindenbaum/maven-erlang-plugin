@@ -6,10 +6,10 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -34,24 +34,23 @@ public final class NetworkUtils {
    *           detected
    */
   public static String getIPv4Address() throws MojoExecutionException {
-    List<InetAddress> inetAddresses = getInetAddresses();
-    filterInetAddresses(inetAddresses, true);
-    sortInetAddresses(inetAddresses);
-    if (inetAddresses.isEmpty()) {
-      throw new MojoExecutionException("Couldn't resolve any IPv4 addresses.");
+    Collection<InetAddress> addresses = filterInetAddresses(getInetAddresses(), true);
+    Collection<InetAddress> sorted = sortInetAddresses(addresses);
+    for (InetAddress address : sorted) {
+      return address.getHostAddress();
     }
-    return inetAddresses.get(0).getHostAddress();
+    throw new MojoExecutionException("Couldn't resolve any IPv4 addresses.");
   }
 
   /**
    * Returns the {@link InetAddress}es as returned by the network interfaces of
    * this host. Addresses of network interfaces currently not up are excluded.
    * 
-   * @return a non-{@code null} list of network addresses.
+   * @return a non-{@code null} collection of network addresses.
    * @throws MojoExecutionException
    */
-  public static List<InetAddress> getInetAddresses() throws MojoExecutionException {
-    ArrayList<InetAddress> addressList = new ArrayList<InetAddress>();
+  public static Collection<InetAddress> getInetAddresses() throws MojoExecutionException {
+    Collection<InetAddress> addressList = new ArrayList<InetAddress>();
     try {
       Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
       while (interfaces.hasMoreElements()) {
@@ -71,33 +70,34 @@ public final class NetworkUtils {
   }
 
   /**
-   * Filters the given {@link List} of {@link InetAddress}es for IPv4 or IPv6
-   * addresses. The input list will be modified. Multicast and wildcard
-   * addresses will be excluded.
+   * Filters the elements of the given {@link Collection} of {@link InetAddress}
+   * objects for IPv4 or IPv6 addresses. The input collection will not be
+   * modified, instead a new {@link Collection} will be returned. Multicast and
+   * wildcard addresses will be filtered out.
    * 
-   * @param addresses to filter for IPv4/IPv6 addresses
+   * @param in to filter for IPv4/IPv6 addresses
    * @param ipv4only if {@code true} the {@link List} will only contain IPv4
    *          addresses, otherwise only IPv6 addresses will be contained
-   * @return the modified input {@link List}
+   * @return a filtered {@link Collection}
    */
-  public static List<InetAddress> filterInetAddresses(List<InetAddress> addresses, boolean ipv4only) {
-    Iterator<InetAddress> iterator = addresses.iterator();
-    while (iterator.hasNext()) {
-      InetAddress address = iterator.next();
-      if (address.isAnyLocalAddress() //
-          || address.isMulticastAddress() //
-          || ipv4only && !(address instanceof Inet4Address) //
-          || !ipv4only && !(address instanceof Inet6Address)) {
-        iterator.remove();
+  public static Collection<InetAddress> filterInetAddresses(Collection<InetAddress> in, boolean ipv4only) {
+    ArrayList<InetAddress> filtered = new ArrayList<InetAddress>();
+    for (InetAddress address : in) {
+      if (!address.isAnyLocalAddress() && !address.isMulticastAddress()) {
+        if (ipv4only && address instanceof Inet4Address //
+            || !ipv4only && address instanceof Inet6Address) {
+          filtered.add(address);
+        }
       }
     }
-    return addresses;
+    return filtered;
   }
 
   /**
    * <p>
-   * Orders the given {@link List} of {@link InetAddress}es. The input
-   * {@link List} will be modified. Output order is as followed:
+   * Orders the elements of the given {@link Collection}. The input
+   * {@link Collection} will not be modified, instead a new {@link Collection}
+   * is returned. Output order is as followed:
    * <ol>
    * <li>public network IP addresses</li>
    * <li>private network IP addresses (192.x.x.x preferred)</li>
@@ -105,32 +105,26 @@ public final class NetworkUtils {
    * </ol>
    * </p>
    * 
-   * @param addresses {@link List} of addresses to reorder
-   * @return the modified input {@link List}
+   * @param in {@link Collection} of addresses to reorder
+   * @return a sorted {@link Collection}
    */
-  public static List<InetAddress> sortInetAddresses(List<InetAddress> addresses) {
-    Collections.sort(addresses, new Comparator<InetAddress>() {
+  public static Collection<InetAddress> sortInetAddresses(Collection<InetAddress> in) {
+    List<InetAddress> sorted = new ArrayList<InetAddress>(in);
+    Collections.sort(sorted, new Comparator<InetAddress>() {
       @Override
       public int compare(InetAddress o1, InetAddress o2) {
-        String o1Addr = o1.getHostAddress();
-        String o2Addr = o2.getHostAddress();
+        boolean l1 = o1.isLoopbackAddress();
+        boolean l2 = o2.isLoopbackAddress();
+        boolean s1 = o1.isSiteLocalAddress();
+        boolean s2 = o2.isSiteLocalAddress();
+        boolean i1 = o1.getHostAddress().startsWith("192");
+        boolean i2 = o2.getHostAddress().startsWith("192");
 
-        int isLoopback = o1.isLoopbackAddress() ? (o2.isLoopbackAddress() ? 0 : 1) : -1;
-        int is192 = o1Addr.startsWith("192") ? (o2Addr.startsWith("192") ? 0 : -1) : 1;
-        int isSiteLocal = o1.isSiteLocalAddress() ? (o2.isSiteLocalAddress() ? 0 : 1) : -1;
-        if (isLoopback > 0) {
-          return isLoopback;
-        }
-        else {
-          if (isSiteLocal > 0) {
-            return isSiteLocal;
-          }
-          else {
-            return is192;
-          }
-        }
+        int is192 = i1 ? (i2 ? 0 : -1) : i2 ? 1 : 0;
+        int isSiteLocal = s1 ? (s2 ? is192 : 1) : s2 ? -1 : 0;
+        return l1 ? (l2 ? 0 : 1) : l2 ? -1 : isSiteLocal;
       }
     });
-    return addresses;
+    return sorted;
   }
 }
