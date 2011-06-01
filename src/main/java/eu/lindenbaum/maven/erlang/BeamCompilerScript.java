@@ -2,6 +2,7 @@ package eu.lindenbaum.maven.erlang;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -77,6 +78,7 @@ public final class BeamCompilerScript extends AbstractScript<CompilerResult> {
     while (compiledIterator.hasNext()) {
       compiled.add(new File(ErlUtils.toString(compiledIterator.next(), false)));
     }
+    Collections.reverse(compiled);
 
     OtpErlangList e = (OtpErlangList) r.elementAt(2);
     final ArrayList<String> errors = new ArrayList<String>();
