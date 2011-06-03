@@ -5,6 +5,9 @@
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
       <action dev="olle-t" type="fix">
+        Updated project configuration (POM) to work with Maven 3.
+      </action>
+      <action dev="olle-t" type="fix">
         Enhanced compilation to check for exported "parse_transform/2" and sort
         those modules to the top of the compilation list. Resolves compilation
         dependencies issues.

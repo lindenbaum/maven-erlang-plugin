@@ -1,8 +1,8 @@
 
 Maven Erlang Plug-In
 
- The Maven Erlang Plug-In manages Erlang projects under Maven2, enabling 
- building, testing, deployment and of course erlang project dependency
+ The Maven Erlang Plug-In manages Erlang projects under Maven, enabling 
+ building, testing, deployment and of course Erlang/OTP project dependency
  management - as expected by Maven users.
  
  This project is based on the ideas of
@@ -12,11 +12,11 @@ Maven Erlang Plug-In
  more definition for {{{./development.html}development}} - be sure to check it 
  out if you are interested in contributing.
 
-* Prerequisites
+* Requirements
 
- You will need to have {{{http://maven.apache.org/download.html}maven2}} and
- {{{http://www.erlang.org/download.html}erlang}} version <<R13B04>> or
- later installed. 
+ You will need to have {{{http://maven.apache.org/download.html} Maven}} and
+ {{{http://www.erlang.org/download.html} Erlang/OTP}} version <<R13B04>> or
+ later installed.
 
 * Getting started
 

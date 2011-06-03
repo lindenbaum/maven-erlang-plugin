@@ -1,6 +1,8 @@
 
 Frequently Asked Questions
 
+%{toc}
+
 * What project directory layouts does the plug-in support?
 
  For application projects there are two possible directory layouts. The
@@ -29,7 +31,7 @@ Frequently Asked Questions
  For application and release upgrade files the plug-in provides separate goals
  that can generate sensible template files based on previously
  installed/deployed project artifacts. For more information please refer to the
- {{{./appup-mojo.html}appup}} and {{{relup-mojo.html}relup}} mojo documentation.
+ {{{./appup-mojo.html}appup}} and {{{./relup-mojo.html}relup}} mojo documentation.
 
 * How does the plug-in work?
 
@@ -39,6 +41,13 @@ Frequently Asked Questions
  backend node's installation directory. A backend node is started and stoppend
  by the plug-in automatically as needed. The plug-in can re-use an already
  running backend node by reconnecting to it.
+ 
+* Can I use Maven 3 with the plug-in?
+
+ Yes, it is possible to run the plug-in with Maven 3 but there are some things
+ to consider due to the {{{https://cwiki.apache.org/MAVEN/maven-3x-and-site-plugin.html} site-plugin changes}}
+ that came with the Maven 3 version. These changes are important when using
+ the reporting features of the plug-in.
 
 * How do I manage non-erlang source code/artifacts?
 
