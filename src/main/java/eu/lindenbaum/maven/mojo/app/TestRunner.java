@@ -2,7 +2,6 @@ package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -94,30 +93,23 @@ public final class TestRunner extends ErlangMojo {
     int skipped = result.skipped();
     int cancelled = result.cancelled();
 
-    final String summary;
     if ((passed | failed | skipped | cancelled) == 0) {
-      summary = "  There were no tests to run.";
+      log.warn("  There were no tests to run.");
     }
     else if ((failed | skipped | cancelled) == 0 && passed == 1) {
-      summary = "  Test passed.";
+      log.info("  Test passed.");
     }
     else if ((failed | skipped | cancelled) == 0 && passed > 1) {
-      summary = "  All " + passed + " tests passed.";
+      log.info("  All " + passed + " tests passed.");
     }
     else {
-      summary = String.format("  Failed: %s.  Skipped: %s.  Passed: %s.  Cancelled: %s.",
+      log.error(MavenUtils.FAT_SEPARATOR);
+      log.error(String.format("  Failed: %s.  Skipped: %s.  Passed: %s.  Cancelled: %s.",
                               failed,
                               skipped,
                               passed,
-                              cancelled);
-    }
-
-    if (failed + skipped + cancelled > 0) {
-      MavenUtils.logCollection(log, LogLevel.ERROR, Arrays.asList(MavenUtils.FAT_SEPARATOR, summary), "");
+                              cancelled));
       throw new MojoFailureException("There were test failures.");
-    }
-    else {
-      MavenUtils.logCollection(log, LogLevel.INFO, Arrays.asList(MavenUtils.FAT_SEPARATOR, summary), "");
     }
   }
 
