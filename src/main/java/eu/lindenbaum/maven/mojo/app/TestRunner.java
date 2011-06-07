@@ -101,6 +101,9 @@ public final class TestRunner extends ErlangMojo {
     else if ((failed | skipped | cancelled) == 0 && passed == 1) {
       summary = "  Test passed.";
     }
+    else if ((failed | skipped | cancelled) == 0 && passed > 1) {
+      summary = "  All " + passed + " tests passed.";
+    }
     else {
       summary = String.format("  Failed: %s.  Skipped: %s.  Passed: %s.  Cancelled: %s.",
                               failed,
