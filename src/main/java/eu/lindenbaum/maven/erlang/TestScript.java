@@ -59,11 +59,27 @@ public final class TestScript extends AbstractScript<TestResult> {
   public TestResult handle(OtpErlangObject result) {
     OtpErlangTuple resultTuple = (OtpErlangTuple) result;
     final OtpErlangAtom level = (OtpErlangAtom) resultTuple.elementAt(0);
-    final OtpErlangList output = (OtpErlangList) resultTuple.elementAt(1);
+    final OtpErlangTuple numbers = (OtpErlangTuple) resultTuple.elementAt(1);
+    final OtpErlangList output = (OtpErlangList) resultTuple.elementAt(2);
     return new TestResult() {
       @Override
-      public boolean testsPassed() {
-        return !"error".equals(level.atomValue());
+      public int passed() {
+        return ErlUtils.toInt(numbers.elementAt(0));
+      }
+
+      @Override
+      public int failed() {
+        return ErlUtils.toInt(numbers.elementAt(1));
+      }
+
+      @Override
+      public int skipped() {
+        return ErlUtils.toInt(numbers.elementAt(2));
+      }
+
+      @Override
+      public int cancelled() {
+        return ErlUtils.toInt(numbers.elementAt(3));
       }
 
       @Override

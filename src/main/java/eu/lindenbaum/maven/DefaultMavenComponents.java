@@ -13,18 +13,18 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
-public class MavenComponentsImpl implements MavenComponents {
+public class DefaultMavenComponents implements MavenComponents {
   private final ArtifactRepository localRepository;
   private final List<ArtifactRepository> remoteRepositories;
   private final ArtifactMetadataSource metadataSource;
   private final ArtifactFactory artifactFactory;
   private final ArtifactResolver artifactResolver;
 
-  public MavenComponentsImpl(ArtifactRepository localRepository,
-                             List<ArtifactRepository> remoteRepositories,
-                             ArtifactMetadataSource metadataSource,
-                             ArtifactFactory artifactFactory,
-                             ArtifactResolver artifactResolver) {
+  public DefaultMavenComponents(ArtifactRepository localRepository,
+                                List<ArtifactRepository> remoteRepositories,
+                                ArtifactMetadataSource metadataSource,
+                                ArtifactFactory artifactFactory,
+                                ArtifactResolver artifactResolver) {
     this.localRepository = localRepository;
     this.remoteRepositories = remoteRepositories;
     this.metadataSource = metadataSource;

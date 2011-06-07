@@ -10,11 +10,32 @@ import org.apache.maven.plugin.logging.Log;
  */
 public interface TestResult {
   /**
-   * Returns whether all tests passed, no test cases failed.
+   * Returns the number of passed test cases.
    * 
-   * @return {@code true} if all tests passed, {@code false} otherwise.
+   * @return a number greater or equal to zero.
    */
-  public boolean testsPassed();
+  public int passed();
+
+  /**
+   * Returns the number of failed test cases.
+   * 
+   * @return a number greater or equal to zero.
+   */
+  public int failed();
+
+  /**
+   * Returns the number of skipped test cases.
+   * 
+   * @return a number greater or equal to zero.
+   */
+  public int skipped();
+
+  /**
+   * Returns the number of cancelled test cases.
+   * 
+   * @return a number greater or equal to zero.
+   */
+  public int cancelled();
 
   /**
    * Log the test output (e.g. infos/warnings/errors) using the provided logger.

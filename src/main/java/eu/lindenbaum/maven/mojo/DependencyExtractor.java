@@ -31,9 +31,9 @@ import org.apache.maven.project.MavenProject;
 public final class DependencyExtractor extends ErlangMojo {
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
-    File targetLib = p.targetLib();
-    FileUtils.ensureDirectories(targetLib);
-    TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), targetLib);
+    File lib = p.targetLayout().lib();
+    FileUtils.ensureDirectories(lib);
+    TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), lib);
     Set<Artifact> artifacts = MavenUtils.getErlangArtifacts(p.project());
     if (artifacts.size() > 0) {
       log.info("Processed project dependencies:");
@@ -41,7 +41,7 @@ public final class DependencyExtractor extends ErlangMojo {
         extractArtifact(log, artifact, unarchiver);
       }
     }
-    cleanupArtifacts(log, targetLib, artifacts);
+    cleanupArtifacts(log, lib, artifacts);
   }
 
   /**

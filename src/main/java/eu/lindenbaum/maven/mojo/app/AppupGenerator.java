@@ -12,6 +12,7 @@ import java.util.Set;
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
+import eu.lindenbaum.maven.TargetLayout;
 import eu.lindenbaum.maven.archiver.TarGzUnarchiver;
 import eu.lindenbaum.maven.erlang.CheckAppResult;
 import eu.lindenbaum.maven.erlang.CheckAppScript;
@@ -82,9 +83,10 @@ public final class AppupGenerator extends ErlangMojo {
       throw new MojoExecutionException("Mojo does not support packaging type " + packagingType + ".");
     }
 
+    TargetLayout targetLayout = p.targetLayout();
     Artifact artifact = p.project().getArtifact();
-    File projectAppFile = p.targetAppFile();
-    TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), p.target());
+    File projectAppFile = targetLayout.appFile();
+    TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), targetLayout.base());
     Set<ArtifactVersion> availableVersions = MavenUtils.getAvailableVersions(artifact, p.components());
 
     Map<String, List<String>> upFromDirectivesMap = new HashMap<String, List<String>>();
@@ -99,7 +101,7 @@ public final class AppupGenerator extends ErlangMojo {
           extract(unarchiver, MavenUtils.getArtifactFile(toResolve, p.components()));
           String toResolveVersion = toResolve.getBaseVersion();
           String toResolveBase = toResolve.getArtifactId() + "-" + toResolveVersion;
-          File toResolveEbin = new File(new File(p.target(), toResolveBase), "ebin");
+          File toResolveEbin = new File(new File(targetLayout.base(), toResolveBase), "ebin");
           File toResolveAppFile = new File(toResolveEbin, artifact.getArtifactId() + ErlConstants.APP_SUFFIX);
           // up from part
           upFromDirectivesMap.put(toResolveVersion, getDirectives(p, toResolveAppFile, projectAppFile));
@@ -112,7 +114,7 @@ public final class AppupGenerator extends ErlangMojo {
     String upFrom = directivesToString(upFromDirectivesMap);
     String downTo = directivesToString(downToDirectivesMap);
 
-    File appupTemplate = new File(p.target(), artifact.getArtifactId() + ErlConstants.APPUP_SUFFIX);
+    File appupTemplate = new File(targetLayout.base(), artifact.getArtifactId() + ErlConstants.APPUP_SUFFIX);
     FileUtils.writeFile(appupTemplate, "{${VERSION},\n " + upFrom + ",\n " + downTo + "}.");
     if (appupTemplate.isFile()) {
       log.info("Successfully generated application upgrade template.");

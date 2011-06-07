@@ -90,11 +90,13 @@ public final class ProjectUploader extends ErlangMojo {
    * the compiled application code and the application resource file).
    */
   private static void uploadApplication(Log log, Properties p, String target, boolean withDependencies) throws MojoExecutionException {
-    List<File> modules = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
-    List<File> applicationFiles = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.APP_SUFFIX);
+    File ebin = p.targetLayout().ebin();
+    List<File> modules = FileUtils.getFilesRecursive(ebin, ErlConstants.BEAM_SUFFIX);
+    List<File> applicationFiles = FileUtils.getFilesRecursive(ebin, ErlConstants.APP_SUFFIX);
     if (withDependencies) {
-      modules.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX));
-      applicationFiles.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.APP_SUFFIX));
+      File lib = p.targetLayout().lib();
+      modules.addAll(FileUtils.getFilesRecursive(lib, ErlConstants.BEAM_SUFFIX));
+      applicationFiles.addAll(FileUtils.getFilesRecursive(lib, ErlConstants.APP_SUFFIX));
     }
 
     Script<GenericScriptResult> script = new UploadScript(target, modules, applicationFiles);
@@ -115,14 +117,12 @@ public final class ProjectUploader extends ErlangMojo {
    * written to the remote node's {@code releases} directory.
    */
   private static void uploadRelease(Log log, Properties p, String target) throws MojoExecutionException {
-    String releaseName = p.project().getArtifactId();
-    String releaseFileBaseName = releaseName + "-" + p.project().getVersion();
-    File releaseTarGz = new File(p.target(), releaseFileBaseName + ErlConstants.TARGZ_SUFFIX);
-    if (!releaseTarGz.isFile()) {
-      throw new MojoExecutionException("Could not find packaged release " + releaseTarGz.getPath());
+    File artifact = p.targetLayout().projectArtifact();
+    if (!artifact.isFile()) {
+      throw new MojoExecutionException("Could not find packaged release " + artifact.getPath());
     }
 
-    Script<GenericScriptResult> script = new UploadReleaseScript(target, releaseTarGz);
+    Script<GenericScriptResult> script = new UploadReleaseScript(target, artifact);
     GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
     if (result.success()) {
       log.info("Successfully uploaded release to " + target + ".");

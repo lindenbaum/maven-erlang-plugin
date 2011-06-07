@@ -15,7 +15,7 @@
   new File(basedir, "src"),
   new File(basedir, "include"),
   new File(basedir, "priv"),
-  new File(basedir, "test_src"),
+  new File(basedir, "test"),
   new File(basedir, "test_include"),
   new File(basedir, "test_priv")
 ].each { dir ->

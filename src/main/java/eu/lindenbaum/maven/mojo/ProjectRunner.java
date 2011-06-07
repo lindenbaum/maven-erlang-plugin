@@ -96,11 +96,13 @@ public final class ProjectRunner extends ErlangMojo {
 
     // load needed .beam/.app files when running on remote node
     if (runOnRemoteNode) {
-      List<File> modules = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
-      List<File> applicationFiles = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.APP_SUFFIX);
+      File ebin = p.targetLayout().ebin();
+      List<File> modules = FileUtils.getFilesRecursive(ebin, ErlConstants.BEAM_SUFFIX);
+      List<File> applicationFiles = FileUtils.getFilesRecursive(ebin, ErlConstants.APP_SUFFIX);
       if (withDependencies) {
-        modules.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX));
-        applicationFiles.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.APP_SUFFIX));
+        File lib = p.targetLayout().lib();
+        modules.addAll(FileUtils.getFilesRecursive(lib, ErlConstants.BEAM_SUFFIX));
+        applicationFiles.addAll(FileUtils.getFilesRecursive(lib, ErlConstants.APP_SUFFIX));
       }
       Script<GenericScriptResult> script = new UploadScript(target, modules, applicationFiles);
       GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);

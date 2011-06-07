@@ -15,7 +15,6 @@ import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
-import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -65,17 +64,17 @@ public final class TestCompiler extends ErlangMojo {
       return;
     }
 
-    FileUtils.ensureDirectories(p.targetTestEbin());
+    File out = p.targetLayout().testEbin();
+    FileUtils.ensureDirectories(out);
 
-    log.debug("Looking up test sources under " + p.test_src() + " with file suffix "
-              + ErlConstants.ERL_SUFFIX);
-    List<File> files = FileUtils.getFilesRecursive(p.test_src(), ErlConstants.ERL_SUFFIX);
+    List<File> files = new ArrayList<File>();
+    for (File d : p.sourceLayout().testSrcs()) {
+      files.addAll(FileUtils.getFilesRecursive(d, ErlConstants.ERL_SUFFIX));
+    }
     if (!files.isEmpty()) {
-      Collection<File> testSupportFiles = MojoUtils.getTestSupportScripts(p);
+      Collection<File> testSupportFiles = p.testSupportScripts();
       extractTestSupportFiles(getClass(), testSupportFiles);
-
       files.addAll(testSupportFiles);
-      files.addAll(FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX));
 
       List<String> options = new ArrayList<String>();
       options.add("debug_info");
@@ -86,8 +85,7 @@ public final class TestCompiler extends ErlangMojo {
         options.add(this.testCompilerOptions);
       }
 
-      List<File> includes = MojoUtils.getTestIncludeDirectories(p);
-      Script<CompilerResult> script = new BeamCompilerScript(files, p.targetTestEbin(), includes, options);
+      Script<CompilerResult> script = new BeamCompilerScript(files, out, p.testIncludePaths(), options);
       CompilerResult result = MavenSelf.get(p.cookie()).exec(p.testNode(), script);
 
       List<File> compiled = result.getCompiled();

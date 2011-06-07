@@ -54,8 +54,8 @@ public class ProfilingReport extends ErlangReport {
 
   @Override
   protected void execute(Log log, Locale l, Properties p) throws MojoExecutionException {
-
-    List<File> profilingReports = FileUtils.getFilesRecursive(p.targetProfilingReports(), ".txt");
+    File profilingReportDir = p.targetLayout().profilingReports();
+    List<File> profilingReports = FileUtils.getFilesRecursive(profilingReportDir, ".txt");
     if (profilingReports.size() < 1) {
       log.info("Nothing to do.");
       return;
@@ -76,7 +76,8 @@ public class ProfilingReport extends ErlangReport {
   }
 
   void makeModulesPattern(Log log, Properties p) {
-    List<File> modules = FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX);
+    File src = p.sourceLayout().src();
+    List<File> modules = FileUtils.getFilesRecursive(src, ErlConstants.ERL_SUFFIX);
     StringBuilder patternString = new StringBuilder();
     boolean afterFirst = false;
     patternString.append("^(");

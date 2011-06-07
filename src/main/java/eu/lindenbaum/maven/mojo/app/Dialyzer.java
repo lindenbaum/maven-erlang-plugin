@@ -84,24 +84,26 @@ public final class Dialyzer extends ErlangMojo {
       return;
     }
 
-    File lastBuildIndicator = new File(p.target(), ErlConstants.DIALYZER_OK);
-    if (MojoUtils.newerFilesThan(p.src(), lastBuildIndicator)
-        || MojoUtils.newerFilesThan(p.include(), lastBuildIndicator)
-        || MojoUtils.newerFilesThan(p.targetLib(), lastBuildIndicator)) {
+    File lastBuildIndicator = p.targetLayout().dialyzerOk();
+    List<File> directories = new ArrayList<File>();
+    directories.add(p.sourceLayout().src());
+    directories.add(p.sourceLayout().include());
+    directories.add(p.targetLayout().lib());
+
+    if (MojoUtils.newerFilesThan(lastBuildIndicator, directories)) {
       FileUtils.removeFiles(lastBuildIndicator);
 
       List<File> sources = new ArrayList<File>();
-      sources.add(p.src());
+      sources.add(p.sourceLayout().src());
       if (this.dialyzerWithDependencies) {
-        sources.add(p.targetLib());
+        sources.add(p.targetLayout().lib());
       }
 
-      List<File> includes = MojoUtils.getIncludeDirectories(p);
-      DialyzerScript script = new DialyzerScript(sources, includes, this.dialyzerOptions);
+      DialyzerScript script = new DialyzerScript(sources, p.includePaths(), this.dialyzerOptions);
       String[] output = MavenSelf.get(p.cookie()).exec(p.node(), script);
 
-      List<File> files = FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX);
-      files.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.ERL_SUFFIX));
+      List<File> files = FileUtils.getFilesRecursive(p.sourceLayout().src(), ErlConstants.ERL_SUFFIX);
+      files.addAll(FileUtils.getFilesRecursive(p.targetLayout().lib(), ErlConstants.ERL_SUFFIX));
       Collection<String> warnings = MojoUtils.parseDialyzerOutput(output, files);
       if (warnings.size() > 0) {
         log.warn("Warnings:");

@@ -96,24 +96,6 @@ public abstract class ErlangReport extends AbstractMavenReport {
   private ArtifactResolver artifactResolver;
 
   /**
-   * The projects working directory root.
-   * 
-   * @parameter expression="${basedir}"
-   * @required
-   * @readonly
-   */
-  private File base;
-
-  /**
-   * The projects build directory.
-   * 
-   * @parameter expression="${project.build.directory}"
-   * @required
-   * @readonly
-   */
-  private File target;
-
-  /**
    * The cookie to use for the java and the backend node.
    * 
    * @parameter expression="${cookie}"
@@ -147,7 +129,7 @@ public abstract class ErlangReport extends AbstractMavenReport {
    */
   @Override
   protected String getOutputDirectory() {
-    return this.target.getAbsolutePath();
+    return new File(this.project.getBuild().getDirectory()).getAbsolutePath();
   }
 
   /**
@@ -196,16 +178,16 @@ public abstract class ErlangReport extends AbstractMavenReport {
     @SuppressWarnings("unchecked")
     List<ArtifactRepository> remoteRepositories = (List<ArtifactRepository>) this.remoteRepositories;
 
-    MavenComponents components = new MavenComponentsImpl(this.localRepository,
-                                                         remoteRepositories,
-                                                         this.metadataSource,
-                                                         this.artifactFactory,
-                                                         this.artifactResolver);
+    MavenComponents components = new DefaultMavenComponents(this.localRepository,
+                                                            remoteRepositories,
+                                                            this.metadataSource,
+                                                            this.artifactFactory,
+                                                            this.artifactResolver);
 
     String cmd = getErlCommand();
     getLog().debug("Using command: " + cmd);
     PackagingType type = PackagingType.fromString(this.project.getPackaging());
-    return new PropertiesImpl(type, this.project, components, this.base, this.target, cmd, this.cookie);
+    return new PropertiesImpl(type, this.project, components, cmd, this.cookie);
   }
 
   /**

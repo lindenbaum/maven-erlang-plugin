@@ -75,30 +75,30 @@ public class CoverageReport extends ErlangReport {
     log.info(" C O V E R A G E");
     log.info(MavenUtils.SEPARATOR);
 
-    if (!p.targetTestEbin().exists()) {
+    File testEbin = p.targetLayout().testEbin();
+    if (!testEbin.exists()) {
       log.info("Nothing to do.");
       return;
     }
     else {
-      File[] testFiles = p.targetTestEbin().listFiles(FileUtils.BEAM_FILTER);
+      File[] testFiles = testEbin.listFiles(FileUtils.BEAM_FILTER);
       if (testFiles == null || testFiles.length == 0) {
         log.info("Nothing to do.");
         return;
       }
     }
 
-    File targetTestEbin = p.targetTestEbin();
-
     List<File> tests = new ArrayList<File>();
-    tests.addAll(FileUtils.getFilesRecursive(p.targetTestEbin(), "_test" + ErlConstants.BEAM_SUFFIX));
-    tests.addAll(FileUtils.getFilesRecursive(p.targetTestEbin(), "_tests" + ErlConstants.BEAM_SUFFIX));
+    tests.addAll(FileUtils.getFilesRecursive(testEbin, "_test" + ErlConstants.BEAM_SUFFIX));
+    tests.addAll(FileUtils.getFilesRecursive(testEbin, "_tests" + ErlConstants.BEAM_SUFFIX));
 
-    List<File> sources = FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX);
+    File src = p.sourceLayout().src();
+    List<File> sources = FileUtils.getFilesRecursive(src, ErlConstants.ERL_SUFFIX);
 
     File outdir = new File(getReportOutputDirectory(), "coverage");
     FileUtils.ensureDirectories(outdir);
 
-    Script<CoverageReportResult> script = new CoverageReportScript(targetTestEbin, tests, sources);
+    Script<CoverageReportResult> script = new CoverageReportScript(testEbin, tests, sources);
     CoverageReportResult result = MavenSelf.get(p.cookie()).exec(p.testNode(), script);
 
     if (result.failed()) {
@@ -298,7 +298,8 @@ public class CoverageReport extends ErlangReport {
   @SuppressWarnings({ "unused", "deprecation" })
   private void generateModuleLineCoverage(Sink sink, Locale locale, Module module) {
     try {
-      File moduleSourceFile = new File(getProperties().src(), module.getName() + ErlConstants.ERL_SUFFIX);
+      File src = getProperties().sourceLayout().src();
+      File moduleSourceFile = new File(src, module.getName() + ErlConstants.ERL_SUFFIX);
       BufferedReader reader;
       reader = new BufferedReader(new FileReader(moduleSourceFile));
       sink.verbatim(true);

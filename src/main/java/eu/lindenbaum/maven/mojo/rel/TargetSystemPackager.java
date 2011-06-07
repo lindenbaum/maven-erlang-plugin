@@ -82,7 +82,9 @@ public final class TargetSystemPackager extends ErlangMojo {
       throw new MojoExecutionException("Mojo is not supported on Microsoft Windows systems.");
     }
 
-    File tmp = new File(p.target(), "tmp");
+    File target = p.targetLayout().base();
+
+    File tmp = new File(target, "tmp");
     File tmpBin = new File(tmp, "bin");
     File tmpLog = new File(tmp, "log");
     FileUtils.ensureDirectories(tmp, tmpBin, tmpLog);
@@ -97,7 +99,7 @@ public final class TargetSystemPackager extends ErlangMojo {
     String releaseName = p.project().getArtifactId();
 
     // extract .tar.gz from systools:make_tar/2 to target/tmp
-    File releaseTarGz = new File(p.target(), p.projectName() + ErlConstants.TARGZ_SUFFIX);
+    File releaseTarGz = p.targetLayout().projectArtifact();
     TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), tmp);
     try {
       unarchiver.extract(releaseTarGz);
@@ -150,7 +152,7 @@ public final class TargetSystemPackager extends ErlangMojo {
     }
 
     // create the initial RELEASES file
-    String releaseFileName = p.projectName() + ErlConstants.REL_SUFFIX;
+    String releaseFileName = p.targetLayout().relFile().getName();
     Script<String> script = new CreateRELEASESScript(tmp, new File(tmpReleases, releaseFileName));
     String result = MavenSelf.get(p.cookie()).exec(p.node(), script);
     if (!"ok".equals(result)) {
@@ -158,8 +160,9 @@ public final class TargetSystemPackager extends ErlangMojo {
     }
 
     // package target system
-    String targetName = p.projectName() + "-target-system" + ErlConstants.TARGZ_SUFFIX;
-    File targetSystemTarGz = new File(p.target(), targetName);
+    String targetSystemSuffix = "-target-system" + ErlConstants.TARGZ_SUFFIX;
+    String targetName = releaseTarGz.getName().replace(ErlConstants.TARGZ_SUFFIX, targetSystemSuffix);
+    File targetSystemTarGz = new File(target, targetName);
     try {
       TarGzArchiver archiver = new TarGzArchiver(p.node(), p.cookie(), targetSystemTarGz);
       archiver.addFile(tmpBin);

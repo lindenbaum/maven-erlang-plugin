@@ -56,7 +56,7 @@ public final class RelupGenerator extends ErlangMojo {
 
     List<String> releases = new ArrayList<String>();
     List<File> paths = new ArrayList<File>();
-    paths.add(new File(new File(p.targetLib(), "*"), "ebin"));
+    paths.add(new File(new File(p.targetLayout().lib(), "*"), "ebin"));
     Artifact artifact = p.project().getArtifact();
     Set<ArtifactVersion> availableVersions = MavenUtils.getAvailableVersions(artifact, p.components());
 
@@ -67,13 +67,13 @@ public final class RelupGenerator extends ErlangMojo {
         Artifact toResolve = MavenUtils.getArtifact(artifact, artifactVersion.toString(), p.components());
         if (!toResolve.isSnapshot()) {
           String releaseName = getReleaseName(toResolve);
-          File destination = new File(p.target(), releaseName);
+          File destination = new File(p.targetLayout().base(), releaseName);
           TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), destination);
           extract(unarchiver, MavenUtils.getArtifactFile(toResolve, p.components()));
 
           // put release file into path for systools
           File relFile = new File(new File(destination, "releases"), releaseName + ErlConstants.REL_SUFFIX);
-          FileUtils.copyFiles(p.target(), relFile);
+          FileUtils.copyFiles(p.targetLayout().base(), relFile);
 
           // add systools path for the release
           paths.add(new File(new File(new File(destination, "lib"), "*"), "ebin"));
@@ -82,8 +82,8 @@ public final class RelupGenerator extends ErlangMojo {
       }
     }
 
-    File relupFile = p.targetRelupFile();
-    File relFile = p.targetRelFile();
+    File relFile = p.targetLayout().relFile();
+    File relupFile = p.targetLayout().relupFile();
     Script<GenericScriptResult> script = new MakeRelupScript(relupFile, relFile, releases, paths);
     GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
     if (result.success()) {

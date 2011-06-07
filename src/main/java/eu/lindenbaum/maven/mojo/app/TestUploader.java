@@ -14,7 +14,6 @@ import eu.lindenbaum.maven.erlang.UploadScript;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
-import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -72,10 +71,12 @@ public final class TestUploader extends ErlangMojo {
       throw new MojoExecutionException("Mojo does not support packaging type " + packagingType + ".");
     }
 
-    List<File> modules = FileUtils.getFilesRecursive(p.targetTestEbin(), ErlConstants.BEAM_SUFFIX);
-    modules.removeAll(MojoUtils.getTestSupportArtifacts(p));
+    File testEbin = p.targetLayout().testEbin();
+    List<File> modules = FileUtils.getFilesRecursive(testEbin, ErlConstants.BEAM_SUFFIX);
+    modules.removeAll(p.testSupportArtifacts());
     if (this.withDependencies) {
-      modules.addAll(FileUtils.getFilesRecursive(p.targetLib(), ErlConstants.BEAM_SUFFIX));
+      File lib = p.targetLayout().lib();
+      modules.addAll(FileUtils.getFilesRecursive(lib, ErlConstants.BEAM_SUFFIX));
     }
 
     String target = "'" + this.remote + "'";

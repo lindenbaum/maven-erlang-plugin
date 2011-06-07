@@ -84,24 +84,6 @@ public abstract class ErlangMojo extends AbstractMojo {
   private ArtifactResolver artifactResolver;
 
   /**
-   * The projects working directory root.
-   * 
-   * @parameter expression="${basedir}"
-   * @required
-   * @readonly
-   */
-  private File base;
-
-  /**
-   * The projects build directory.
-   * 
-   * @parameter expression="${project.build.directory}"
-   * @required
-   * @readonly
-   */
-  private File target;
-
-  /**
    * The cookie to use for the java and the backend node.
    * 
    * @parameter expression="${cookie}"
@@ -162,14 +144,14 @@ public abstract class ErlangMojo extends AbstractMojo {
     @SuppressWarnings("unchecked")
     List<ArtifactRepository> remoteRepositories = (List<ArtifactRepository>) this.remoteRepositories;
 
-    MavenComponents components = new MavenComponentsImpl(this.localRepository,
-                                                         remoteRepositories,
-                                                         this.metadataSource,
-                                                         this.artifactFactory,
-                                                         this.artifactResolver);
+    MavenComponents components = new DefaultMavenComponents(this.localRepository,
+                                                            remoteRepositories,
+                                                            this.metadataSource,
+                                                            this.artifactFactory,
+                                                            this.artifactResolver);
 
     getLog().debug("Using command: " + cmd);
-    return new PropertiesImpl(type, this.project, components, this.base, this.target, cmd, this.cookie);
+    return new PropertiesImpl(type, this.project, components, cmd, this.cookie);
   }
 
   /**

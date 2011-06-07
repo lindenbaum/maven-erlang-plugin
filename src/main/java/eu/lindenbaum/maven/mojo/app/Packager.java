@@ -82,7 +82,7 @@ public final class Packager extends ErlangMojo {
     String projectVersion = p.project().getVersion();
 
     Set<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
-    List<File> modules = FileUtils.getFilesRecursive(p.targetEbin(), ErlConstants.BEAM_SUFFIX);
+    List<File> modules = FileUtils.getFilesRecursive(p.targetLayout().ebin(), ErlConstants.BEAM_SUFFIX);
     Script<String> registeredScript = new GetAttributesScript(modules, "registered");
     String registeredNames = MavenSelf.get(p.cookie()).exec(p.node(), registeredScript);
 
@@ -96,19 +96,21 @@ public final class Packager extends ErlangMojo {
     replacements.put("${APPLICATIONS}", ErlUtils.toArtifactIdListing(dependencies));
 
     // copy application resource files
-    FileUtils.ensureDirectories(p.targetEbin());
-    Collection<File> copied = FileUtils.copyDirectory(p.ebin(), p.targetEbin(), APP_FILTER, replacements);
+    File ebin = p.sourceLayout().ebin();
+    File targetEbin = p.targetLayout().ebin();
+    FileUtils.ensureDirectories(ebin);
+    Collection<File> copied = FileUtils.copyDirectory(ebin, targetEbin, APP_FILTER, replacements);
     if (copied.size() > 0) {
       log.debug("Copied application resource files:");
       MavenUtils.logCollection(log, LogLevel.DEBUG, copied, " * ");
     }
 
-    File appFile = p.targetAppFile();
+    File appFile = p.targetLayout().appFile();
     if (!appFile.exists()) {
       log.error("Errors:");
       log.error(" * no application resource file found, use 'mvn erlang:setup' to create");
       log.error("   a default library application .app file");
-      throw new MojoFailureException(p.appFile() + " does not exist.");
+      throw new MojoFailureException(p.sourceLayout().appFile() + " does not exist.");
     }
 
     // parse .app file
@@ -127,7 +129,7 @@ public final class Packager extends ErlangMojo {
     checkApplications(log, dependencies, appResult.getApplications());
     checkStartModule(log, p, appResult);
 
-    File appUpFile = p.targetAppupFile();
+    File appUpFile = p.targetLayout().appupFile();
     if (!appUpFile.exists()) {
       log.warn("Warnings:");
       log.warn(" * no application upgrade file found, use 'mvn erlang:appup' or");
@@ -149,10 +151,10 @@ public final class Packager extends ErlangMojo {
     }
 
     // create .tar.gz package
-    File toFile = p.projectArtifactFile();
+    File toFile = p.targetLayout().projectArtifact();
     try {
       TarGzArchiver archiver = new TarGzArchiver(p.node(), p.cookie(), toFile);
-      archiver.addFile(p.targetProject());
+      archiver.addFile(p.targetLayout().project());
       archiver.createArchive();
       p.project().getArtifact().setFile(toFile);
     }
@@ -200,7 +202,7 @@ public final class Packager extends ErlangMojo {
                                                                                MojoFailureException {
     String startModule = r.getStartModule();
     if (!"omitted".equals(startModule)) {
-      File beamFile = new File(p.targetEbin(), startModule + ErlConstants.BEAM_SUFFIX);
+      File beamFile = new File(p.targetLayout().ebin(), startModule + ErlConstants.BEAM_SUFFIX);
       if (beamFile.isFile()) {
         List<File> list = Arrays.asList(beamFile);
         Script<String> behaviourScript = new GetAttributesScript(list, "behaviour", "behavior");

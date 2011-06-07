@@ -1,6 +1,7 @@
 package eu.lindenbaum.maven;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.maven.project.MavenProject;
 
@@ -21,17 +22,6 @@ public interface Properties {
   public MavenComponents components();
 
   /**
-   * Returns the name of the projects build artifact. Usually this is
-   * {@code "artifactId-version"}.
-   */
-  public String projectName();
-
-  /**
-   * Returns the file packaged as build artifact for a this project.
-   */
-  public File projectArtifactFile();
-
-  /**
    * Returns the packaging type of the project artifact.
    */
   public PackagingType packagingType();
@@ -49,215 +39,61 @@ public interface Properties {
   public String node();
 
   /**
-   * Returns the cookie that must be used when connecting to the backend node.
-   */
-  public String cookie();
-
-  /**
    * Returns the name of the test backend node to use.
    */
   public String testNode();
 
   /**
-   * Returns the directory where the maven .apt resources reside.
+   * Returns the cookie that must be used when connecting to the backend node.
    */
-  public File apt();
+  public String cookie();
 
   /**
-   * Returns the base project directory.
+   * Returns the {@link SourceLayout} defining this project's source directory
+   * structure.
    */
-  public File base();
+  public SourceLayout sourceLayout();
 
   /**
-   * Returns the directory where the changes resources reside.
+   * Returns the {@link TargetLayout} defining this project's build directory
+   * structure.
    */
-  public File changes();
+  public TargetLayout targetLayout();
 
   /**
-   * Returns the directory where the application (upgrade) files reside.
+   * Gathers a complete {@link List} of directories used as code paths in a
+   * project's build process.
    */
-  public File ebin();
+  public List<File> codePaths();
 
   /**
-   * Returns the directory where the header files reside.
+   * Gathers a complete {@link List} of directories used as code paths in a
+   * project's test build process.
    */
-  public File include();
+  public List<File> testCodePaths();
 
   /**
-   * Returns the directory where the private resources reside.
+   * Gathers a complete {@link List} of directories used as include directories
+   * in a standard build process.
    */
-  public File priv();
+  public List<File> includePaths();
 
   /**
-   * Returns the directory where the maven site resources reside.
+   * Gathers a complete {@link List} of directories used as include directories
+   * in a test build process.
    */
-  public File site();
+  public List<File> testIncludePaths();
 
   /**
-   * Returns the directory where the erlang sources reside.
+   * Returns a list of script files used by the plugin to provide a proper test
+   * phase, e.g. erlang scripts for surefire reports.
    */
-  public File src();
+  public List<File> testSupportScripts();
 
   /**
-   * Returns the base folder for sources of this project. This may be used to
-   * include sources from other languages into the erlang application.
+   * Returns a list of artifacts used by the plugin to provide a proper test
+   * phase, e.g. the compiled artifacts of
+   * {@link #getTestSupportScripts(Properties)}.
    */
-  public File src_base();
-
-  /**
-   * Returns the directory where the erlang test include files reside.
-   */
-  public File test_include();
-
-  /**
-   * Returns the directory where private test resources reside.
-   */
-  public File test_priv();
-
-  /**
-   * Returns the directory where the erlang test source files reside.
-   */
-  public File test_src();
-
-  /**
-   * Returns the application resource file of an application project. The
-   * returned {@link File} is not guaranteed to exist.
-   */
-  public File appFile();
-
-  /**
-   * Returns the application upgrade file of an application project. The
-   * returned {@link File} is not guaranteed to exist.
-   */
-  public File appupFile();
-
-  /**
-   * Returns the release file of a release project. The returned {@link File} is
-   * not guaranteed to exist.
-   */
-  public File relFile();
-
-  /**
-   * Returns the release upgrade file of a release project. The returned
-   * {@link File} is not guaranteed to exist.
-   */
-  public File relupFile();
-
-  /**
-   * Returns the system configuration file of a release project. The returned
-   * {@link File} is not guaranteed to exist.
-   */
-  public File sysConfigFile();
-
-  /**
-   * Returns the base directory for the build artifacts.
-   */
-  public File target();
-
-  /**
-   * Returns the directory where the compiled sources will be placed into.
-   */
-  public File targetEbin();
-
-  /**
-   * Returns the directory where includes to package will be put into.
-   */
-  public File targetInclude();
-
-  /**
-   * Returns the directories where dependencies get unpacked into.
-   */
-  public File targetLib();
-
-  /**
-   * Returns the directory where SNMP related resources will be put into.
-   */
-  public File targetMibs();
-
-  /**
-   * Returns the directory where private resources will be put into.
-   */
-  public File targetPriv();
-
-  /**
-   * Returns the base directory for the project packaging.
-   */
-  public File targetProject();
-
-  /**
-   * Returns the directoriy where all releases will be put into.
-   */
-  public File targetReleases();
-
-  /**
-   * Returns the directory where site documentation will be generated into.
-   */
-  public File targetSite();
-
-  /**
-   * Returns the directory where sources to package will be put into.
-   */
-  public File targetSrc();
-
-  /**
-   * Returns the directory where the surefire reports will be put into.
-   */
-  public File targetSurefireReports();
-
-  /**
-   * Returns the base directory for the tests. This will be accessibly during
-   * the test phase by calling <code>code:lib_dir($APPNAME)</code>.
-   */
-  public File targetTest();
-
-  /**
-   * Returns the directory where the compiled test sources and recompiled
-   * sources will be placed into.
-   */
-  public File targetTestEbin();
-
-  /**
-   * Returns the directory where the main and test resources will be put into
-   * (test resources will override main resources). This will be accessibly
-   * during the test phase by calling <code>code:lib_dir($APPNAME, priv)</code>.
-   */
-  public File targetTestPriv();
-
-  /**
-   * Returns the application resource file of an application project that will
-   * be packaged. The returned {@link File} is not guaranteed to exist.
-   */
-  public File targetAppFile();
-
-  /**
-   * Returns the application upgrade file of an application project that will be
-   * packaged.The returned {@link File} is not guaranteed to exist.
-   */
-  public File targetAppupFile();
-
-  /**
-   * Returns the release file of a release project that will be packaged. The
-   * returned {@link File} is not guaranteed to exist.
-   */
-  public File targetRelFile();
-
-  /**
-   * Returns the release upgrade file of a release project that will be
-   * packaged. The returned {@link File} is not guaranteed to exist.
-   */
-  public File targetRelupFile();
-
-  /**
-   * Returns the system configuration file of a release project that will be
-   * packaged. The returned {@link File} is not guaranteed to exist.
-   */
-  public File targetSysConfigFile();
-
-  /**
-   * Returns the directory where profiling reports will be put.
-   * 
-   * @since 2.1.0
-   */
-  public File targetProfilingReports();
-
+  public List<File> testSupportArtifacts();
 }

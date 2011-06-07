@@ -60,13 +60,15 @@ public final class Profiler extends ErlangMojo {
       throw new IllegalArgumentException("timeout must be a positive integer");
     }
 
+    File testEbin = p.targetLayout().testEbin();
+
     List<File> tests = new ArrayList<File>();
     if (this.test == null || this.test.isEmpty()) {
-      tests.addAll(FileUtils.getFilesRecursive(p.targetTestEbin(), "_test" + ErlConstants.BEAM_SUFFIX));
-      tests.addAll(FileUtils.getFilesRecursive(p.targetTestEbin(), "_tests" + ErlConstants.BEAM_SUFFIX));
+      tests.addAll(FileUtils.getFilesRecursive(testEbin, "_test" + ErlConstants.BEAM_SUFFIX));
+      tests.addAll(FileUtils.getFilesRecursive(testEbin, "_tests" + ErlConstants.BEAM_SUFFIX));
     }
     else {
-      File test = new File(p.targetTestEbin(), this.test + ErlConstants.BEAM_SUFFIX);
+      File test = new File(testEbin, this.test + ErlConstants.BEAM_SUFFIX);
       if (test.isFile()) {
         tests.add(test);
       }
@@ -77,10 +79,10 @@ public final class Profiler extends ErlangMojo {
       return;
     }
 
-    FileUtils.ensureDirectories(p.targetProfilingReports());
-
-    File profilingReportsDir = p.targetProfilingReports();
+    File profilingReportsDir = p.targetLayout().profilingReports();
     String profilingReportName = p.project().getArtifactId();
+
+    FileUtils.ensureDirectories(profilingReportsDir);
 
     Script<ProfilingResult> script = new ProfilingScript(tests,
                                                          profilingReportsDir,

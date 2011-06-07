@@ -14,7 +14,6 @@ import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
-import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -49,9 +48,10 @@ public final class Compiler extends ErlangMojo {
     log.info(" C O M P I L E R");
     log.info(MavenUtils.SEPARATOR);
 
-    FileUtils.ensureDirectories(p.targetEbin());
+    File ebin = p.targetLayout().ebin();
+    FileUtils.ensureDirectories(ebin);
 
-    List<File> files = FileUtils.getFilesRecursive(p.src(), ErlConstants.ERL_SUFFIX);
+    List<File> files = FileUtils.getFilesRecursive(p.sourceLayout().src(), ErlConstants.ERL_SUFFIX);
     if (!files.isEmpty()) {
 
       List<String> options = new ArrayList<String>();
@@ -60,8 +60,7 @@ public final class Compiler extends ErlangMojo {
         options.add(this.compilerOptions);
       }
 
-      List<File> includes = MojoUtils.getIncludeDirectories(p);
-      Script<CompilerResult> script = new BeamCompilerScript(files, p.targetEbin(), includes, options);
+      Script<CompilerResult> script = new BeamCompilerScript(files, ebin, p.includePaths(), options);
       CompilerResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
 
       List<File> compiled = result.getCompiled();

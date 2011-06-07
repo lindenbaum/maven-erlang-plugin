@@ -66,15 +66,15 @@ public final class Packager extends ErlangMojo {
       }
     }
 
-    File relFile = p.targetRelFile();
-    Script<GenericScriptResult> script = new MakeTarScript(relFile, p.target(), options);
+    File relFile = p.targetLayout().relFile();
+    Script<GenericScriptResult> script = new MakeTarScript(relFile, p.targetLayout().base(), options);
     GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
     result.logOutput(log);
     if (!result.success()) {
       throw new MojoFailureException("Could not create release package.");
     }
 
-    File releaseTarGz = p.projectArtifactFile();
+    File releaseTarGz = p.targetLayout().projectArtifact();
     if (!releaseTarGz.isFile()) {
       throw new MojoFailureException("Could not find packaged release " + releaseTarGz.getPath());
     }

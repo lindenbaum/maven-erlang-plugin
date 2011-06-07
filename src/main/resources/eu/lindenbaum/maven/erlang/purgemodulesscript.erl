@@ -1,4 +1,4 @@
-LibDir = code:lib_dir(),
+LibDir = filename:join([code:lib_dir()]),
 lists:foreach(
   fun({_, preloaded}) ->		 
 	  ok;
@@ -8,7 +8,8 @@ lists:foreach(
                    orelse M =:= otp_doc ->
 	  ok;
      ({Module, Path}) when is_list(Path) ->
-	  case string:str(Path, LibDir) of
+	  Normalized = filename:join([Path]),
+	  case string:str(Normalized, LibDir) of
 	      1 ->
 		  ok;
 	      _ ->

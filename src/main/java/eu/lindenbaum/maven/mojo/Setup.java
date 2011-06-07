@@ -9,6 +9,7 @@ import java.util.Set;
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
+import eu.lindenbaum.maven.SourceLayout;
 import eu.lindenbaum.maven.util.FileUtils;
 
 import org.apache.maven.artifact.Artifact;
@@ -141,9 +142,12 @@ public class Setup extends ErlangMojo {
   private void setupExtras(Properties p) throws MojoExecutionException {
     // setup extra folders
     Map<String, File> folders = new HashMap<String, File>();
-    folders.put("site folder", p.site());
-    folders.put("changes folder", p.changes());
-    folders.put("apt folder", p.apt());
+    File site = new File(p.sourceLayout().base(), "src/site");
+    File changes = new File(p.sourceLayout().base(), "src/changes");
+    File apt = new File(site, "apt");
+    folders.put("site folder", site);
+    folders.put("changes folder", changes);
+    folders.put("apt folder", apt);
     for (Entry<String, File> folder : folders.entrySet()) {
       if (noFolder(folder.getValue(), folder.getKey())) {
         createFolder(folder.getValue(), folder.getKey());
@@ -155,8 +159,8 @@ public class Setup extends ErlangMojo {
 
     // setup extra files
     Map<String, File> files = new HashMap<String, File>();
-    files.put("default-site.xml", new File(p.site(), "site.xml"));
-    files.put("default-changes.xml", new File(p.changes(), "changes.xml"));
+    files.put("default-site.xml", new File(site, "site.xml"));
+    files.put("default-changes.xml", new File(changes, "changes.xml"));
     for (Entry<String, File> entry : files.entrySet()) {
       if (noFile(entry.getValue())) {
         createFile(entry.getValue(), entry.getKey());
@@ -166,8 +170,8 @@ public class Setup extends ErlangMojo {
       }
     }
 
-    File defaultApt = new File(p.apt(), "index.apt.vm");
-    if (noFile(new File(p.apt(), "index.apt")) && noFile(defaultApt)) {
+    File defaultApt = new File(apt, "index.apt.vm");
+    if (noFile(new File(apt, "index.apt")) && noFile(defaultApt)) {
       createFile(defaultApt, "default-index.apt.vm");
     }
     else {
@@ -177,14 +181,17 @@ public class Setup extends ErlangMojo {
 
   private void setupAppDefaults(Properties p) throws MojoExecutionException {
     // setup folders
+    SourceLayout sourceLayout = p.sourceLayout();
     Map<String, File> folders = new HashMap<String, File>();
-    folders.put("ebin folder", p.ebin());
-    folders.put("src folder", p.src());
-    folders.put("include folder", p.include());
-    folders.put("priv folder", p.priv());
-    folders.put("test src folder", p.test_src());
-    folders.put("test include folder", p.test_include());
-    folders.put("test priv folder", p.test_priv());
+    folders.put("ebin folder", sourceLayout.ebin());
+    folders.put("src folder", sourceLayout.src());
+    folders.put("include folder", sourceLayout.include());
+    folders.put("priv folder", sourceLayout.priv());
+    for (File folder : sourceLayout.testSrcs()) {
+      folders.put("test src folder", folder);
+    }
+    folders.put("test include folder", sourceLayout.testInclude());
+    folders.put("test priv folder", sourceLayout.testPriv());
     for (Entry<String, File> folder : folders.entrySet()) {
       if (noFolder(folder.getValue(), folder.getKey())) {
         createFolder(folder.getValue(), folder.getKey());
@@ -196,8 +203,8 @@ public class Setup extends ErlangMojo {
 
     // setup files
     Map<String, File> files = new HashMap<String, File>();
-    files.put("default.app", p.appFile());
-    files.put("default.appup", p.appupFile());
+    files.put("default.app", sourceLayout.appFile());
+    files.put("default.appup", sourceLayout.appupFile());
     for (Entry<String, File> entry : files.entrySet()) {
       if (noFile(entry.getValue())) {
         createFile(entry.getValue(), entry.getKey());
@@ -210,10 +217,11 @@ public class Setup extends ErlangMojo {
 
   private void setupRelDefaults(Properties p) throws MojoExecutionException {
     // setup files
+    SourceLayout sourceLayout = p.sourceLayout();
     Map<String, File> files = new HashMap<String, File>();
-    files.put("default.rel", p.relFile());
-    files.put("default-sys.config", p.sysConfigFile());
-    files.put("default.relup", p.relupFile());
+    files.put("default.rel", sourceLayout.relFile());
+    files.put("default-sys.config", sourceLayout.sysConfigFile());
+    files.put("default.relup", sourceLayout.relupFile());
     for (Entry<String, File> entry : files.entrySet()) {
       if (noFile(entry.getValue())) {
         createFile(entry.getValue(), entry.getKey());

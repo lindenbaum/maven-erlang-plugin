@@ -84,7 +84,7 @@ public final class TestRunner extends ErlangMojo {
     String releaseVersion = p.project().getVersion();
     Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
 
-    File relFile = p.targetRelFile();
+    File relFile = p.targetLayout().relFile();
     CheckRelScript relScript = new CheckRelScript(relFile);
     CheckRelResult relResult = MavenSelf.get(p.cookie()).exec(p.node(), relScript);
     if (!relResult.success()) {

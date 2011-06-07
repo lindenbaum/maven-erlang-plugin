@@ -4,6 +4,18 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="schlagert" type="fix">
+        Fixed problems when erlang runtime paths contain duplicate slashes
+        (sometimes discovered on Linux and MacOS).
+      </action>
+      <action dev="schlagert" type="add">
+        Added support for the additional test source folder 'test' in erlang-std
+        projects. 
+      </action>
+      <action dev="schlagert" type="add">
+        Added support for eunit tests embedded into a (main) source module.
+        These will now also be executed during the standard test phase.
+      </action>
       <action dev="olle-t" type="fix">
         Updated project configuration (POM) to work with Maven 3.
       </action>

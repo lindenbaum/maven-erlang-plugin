@@ -146,21 +146,11 @@ format_description(Data) ->
 %%% @end
 %%%-----------------------------------------------------------------------------
 format_result(0, 0, 0, 0, Acc) ->
-    {warn, Acc ++ ["  There were no tests to run."]};
-format_result(1, 0, 0, 0, Acc) ->
-    {info, Acc ++ ["  Test passed."]};
+    {warn, {0, 0, 0, 0}, Acc};
 format_result(Pass, 0, 0, 0, Acc) ->
-    {info, Acc ++ [format("  All ~w tests passed.", [Pass])]};
-format_result(Pass, Fail, Skip, 0, Acc) ->
-    {error, Acc ++
-     ["=======================================================================",
-      format("  Failed: ~w.  Skipped: ~w.  Passed: ~w.", 
-	     [Fail, Skip, Pass])]};
+    {info, {Pass, 0, 0, 0}, Acc};
 format_result(Pass, Fail, Skip, Cancel, Acc) ->
-    {error, Acc ++
-     ["=======================================================================",
-      format("  Failed: ~w.  Skipped: ~w.  Passed: ~w  Cancelled: ~w.",
-	     [Fail, Skip, Pass, Cancel])]}.
+    {error, {Pass, Fail, Skip, Cancel}, Acc}.
 
 %%%-----------------------------------------------------------------------------
 %%% @doc

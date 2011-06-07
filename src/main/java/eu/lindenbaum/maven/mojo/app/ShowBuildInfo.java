@@ -1,13 +1,12 @@
 package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
-import java.util.List;
+import java.util.Collection;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.util.MavenUtils;
-import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,12 +42,13 @@ import org.apache.maven.plugin.logging.Log;
  * @goal show-build-info
  * @execute phase="compile"
  * @author Sven Heyll <sven.heyll@gmail.com>
+ * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @since 2.0.0
  */
 public class ShowBuildInfo extends ErlangMojo {
 
   private static final String SOURCE_DIR = "src_dir";
-  private static final String TEST_SOURCE_DIR = "test_src_dir";
+  private static final String TEST_SOURCE_DIRS = "test_src_dir";
   private static final String INCLUDE_DIRS = "include_dir";
   private static final String CODE_PATHS = "code_path";
 
@@ -63,13 +63,13 @@ public class ShowBuildInfo extends ErlangMojo {
       throw new MojoExecutionException("Mojo does not support packaging type " + packagingType + ".");
     }
 
-    logKeyValue(log, SOURCE_DIR, p.src());
-    logKeyValue(log, TEST_SOURCE_DIR, p.test_src());
-    logKeyValues(log, INCLUDE_DIRS, MojoUtils.getIncludeDirectories(p));
-    logKeyValues(log, CODE_PATHS, MojoUtils.getApplicationCodePaths(p));
+    logKeyValue(log, SOURCE_DIR, p.sourceLayout().src());
+    logKeyValues(log, TEST_SOURCE_DIRS, p.sourceLayout().testSrcs());
+    logKeyValues(log, INCLUDE_DIRS, p.includePaths());
+    logKeyValues(log, CODE_PATHS, p.codePaths());
   }
 
-  private void logKeyValues(Log log, String key, List<File> values) {
+  private void logKeyValues(Log log, String key, Collection<File> values) {
     for (File f : values) {
       logKeyValue(log, key, f);
     }

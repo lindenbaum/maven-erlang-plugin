@@ -1,15 +1,16 @@
 package eu.lindenbaum.maven.erlang;
 
 import static org.easymock.EasyMock.createStrictControl;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import com.ericsson.otp.erlang.OtpErlangAtom;
+import com.ericsson.otp.erlang.OtpErlangInt;
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
@@ -60,7 +61,13 @@ public class TestScriptTest {
 
     OtpErlangAtom level = new OtpErlangAtom("info");
 
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ level, messages });
+    OtpErlangInt pass = new OtpErlangInt(1);
+    OtpErlangInt fail = new OtpErlangInt(2);
+    OtpErlangInt skip = new OtpErlangInt(3);
+    OtpErlangInt cancel = new OtpErlangInt(4);
+    OtpErlangTuple numbers = new OtpErlangTuple(new OtpErlangObject[]{ pass, fail, skip, cancel });
+
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ level, numbers, messages });
 
     List<File> tests = Arrays.asList(new File("test1"), new File("test2"));
     File surefireDir = new File("surefireDir");
@@ -68,7 +75,10 @@ public class TestScriptTest {
 
     TestScript script = new TestScript(tests, surefireDir, suiteName);
     TestResult testResult = script.handle(result);
-    assertTrue(testResult.testsPassed());
+    assertEquals(1, testResult.passed());
+    assertEquals(2, testResult.failed());
+    assertEquals(3, testResult.skipped());
+    assertEquals(4, testResult.cancelled());
     testResult.logOutput(this.log);
 
     this.control.verify();
@@ -90,7 +100,13 @@ public class TestScriptTest {
 
     OtpErlangAtom level = new OtpErlangAtom("warn");
 
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ level, messages });
+    OtpErlangInt pass = new OtpErlangInt(1);
+    OtpErlangInt fail = new OtpErlangInt(2);
+    OtpErlangInt skip = new OtpErlangInt(3);
+    OtpErlangInt cancel = new OtpErlangInt(4);
+    OtpErlangTuple numbers = new OtpErlangTuple(new OtpErlangObject[]{ pass, fail, skip, cancel });
+
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ level, numbers, messages });
 
     List<File> tests = Arrays.asList(new File("test1"), new File("test2"));
     File surefireDir = new File("surefireDir");
@@ -98,7 +114,10 @@ public class TestScriptTest {
 
     TestScript script = new TestScript(tests, surefireDir, suiteName);
     TestResult testResult = script.handle(result);
-    assertTrue(testResult.testsPassed());
+    assertEquals(1, testResult.passed());
+    assertEquals(2, testResult.failed());
+    assertEquals(3, testResult.skipped());
+    assertEquals(4, testResult.cancelled());
     testResult.logOutput(this.log);
 
     this.control.verify();
@@ -120,7 +139,13 @@ public class TestScriptTest {
 
     OtpErlangAtom level = new OtpErlangAtom("error");
 
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ level, messages });
+    OtpErlangInt pass = new OtpErlangInt(1);
+    OtpErlangInt fail = new OtpErlangInt(2);
+    OtpErlangInt skip = new OtpErlangInt(3);
+    OtpErlangInt cancel = new OtpErlangInt(4);
+    OtpErlangTuple numbers = new OtpErlangTuple(new OtpErlangObject[]{ pass, fail, skip, cancel });
+
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ level, numbers, messages });
 
     List<File> tests = Arrays.asList(new File("test1"), new File("test2"));
     File surefireDir = new File("surefireDir");
@@ -128,7 +153,10 @@ public class TestScriptTest {
 
     TestScript script = new TestScript(tests, surefireDir, suiteName);
     TestResult testResult = script.handle(result);
-    assertFalse(testResult.testsPassed());
+    assertEquals(1, testResult.passed());
+    assertEquals(2, testResult.failed());
+    assertEquals(3, testResult.skipped());
+    assertEquals(4, testResult.cancelled());
     testResult.logOutput(this.log);
 
     this.control.verify();

@@ -1,7 +1,6 @@
 package eu.lindenbaum.maven.mojo.rel;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -95,9 +94,11 @@ public final class ResourceGenerator extends ErlangMojo {
     Set<String> artifactIds = MavenUtils.getArtifactIds(artifacts);
     artifactIds.addAll(Arrays.asList("kernel", "stdlib", "sasl"));
 
-    List<File> codePaths = new ArrayList<File>(Arrays.asList(p.targetLib()));
+    File base = p.targetLayout().base();
+
+    List<File> codePaths = p.codePaths();
     codePaths.addAll(runtimeInfo.getPaths());
-    codePaths.removeAll(Arrays.asList(p.target()));
+    codePaths.removeAll(Arrays.asList(base));
     Collections.reverse(codePaths);
 
     log.debug("Application lookup path is: " + codePaths);
@@ -114,22 +115,22 @@ public final class ResourceGenerator extends ErlangMojo {
 
     log.debug("Created mappings: " + replacements);
 
-    File relFile = p.targetRelFile();
-    checkReleaseFile(log, p.relFile());
-    FileUtils.copyFile(p.relFile(), relFile, replacements);
+    File relFile = p.targetLayout().relFile();
+    checkReleaseFile(log, p.sourceLayout().relFile());
+    FileUtils.copyFile(p.sourceLayout().relFile(), relFile, replacements);
     log.debug("Copied release file to " + relFile + " .");
 
-    File relupFile = p.targetRelupFile();
-    checkReleaseUpgradeFile(log, p.relupFile());
-    FileUtils.copyFile(p.relupFile(), relupFile, replacements);
+    File relupFile = p.targetLayout().relupFile();
+    checkReleaseUpgradeFile(log, p.sourceLayout().relupFile());
+    FileUtils.copyFile(p.sourceLayout().relupFile(), relupFile, replacements);
     log.debug("Copied release upgrade file to " + relupFile + " .");
 
-    File sysConfigFile = p.targetSysConfigFile();
-    checkSystemConfig(log, p.sysConfigFile());
-    FileUtils.copyFile(p.sysConfigFile(), sysConfigFile, replacements);
+    File sysConfigFile = p.targetLayout().sysConfigFile();
+    checkSystemConfig(log, p.sourceLayout().sysConfigFile());
+    FileUtils.copyFile(p.sourceLayout().sysConfigFile(), sysConfigFile, replacements);
     log.debug("Copied system configuration file to " + sysConfigFile + " .");
 
-    Script<GenericScriptResult> script = new MakeScriptScript(relFile, p.target(), this.scriptOptions);
+    Script<GenericScriptResult> script = new MakeScriptScript(relFile, base, this.scriptOptions);
     GenericScriptResult makeScriptResult = MavenSelf.get(p.cookie()).exec(p.node(), script);
     makeScriptResult.logOutput(log);
     if (!makeScriptResult.success()) {

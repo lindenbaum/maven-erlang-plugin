@@ -2,7 +2,6 @@ package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -41,34 +40,32 @@ public final class TestResourceGenerator extends ErlangMojo {
       return;
     }
 
-    Collection<File> current;
+    File priv = p.sourceLayout().priv();
+    File testPriv = p.sourceLayout().testPriv();
+    File targetPriv = p.targetLayout().testPriv();
 
-    FileUtils.removeDirectory(p.targetTestPriv());
-    current = FileUtils.copyDirectory(p.priv(), p.targetTestPriv(), FileUtils.NULL_FILTER);
-    current.addAll(FileUtils.copyDirectory(p.test_priv(), p.targetTestPriv(), FileUtils.NULL_FILTER));
-    if (current.size() > 0) {
-      log.debug("Copied test resources:");
-      MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
-    }
-    else {
-      FileUtils.removeEmptyDirectory(p.targetTest());
-    }
+    FileUtils.removeDirectory(targetPriv);
 
-    current = new ArrayList<File>();
+    Collection<File> current = FileUtils.copyDirectory(priv, targetPriv, FileUtils.NULL_FILTER);
+    current.addAll(FileUtils.copyDirectory(testPriv, targetPriv, FileUtils.NULL_FILTER));
     for (Artifact artifact : MavenUtils.getForeignDependencies(p.project())) {
       File source = artifact.getFile();
-      File destination = new File(p.targetTestPriv(), source.getName());
+      File destination = new File(targetPriv, source.getName());
       try {
         org.codehaus.plexus.util.FileUtils.copyFile(source, destination);
         current.add(source);
       }
       catch (IOException e) {
-        log.error("Failed to copy artifact " + source.getPath() + " to " + p.targetPriv() + ".", e);
+        log.error("Failed to copy artifact " + source.getPath() + " to " + targetPriv + ".", e);
       }
     }
+
     if (current.size() > 0) {
-      log.debug("Copied foreign artifacts:");
+      log.debug("Copied test resources:");
       MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
+    }
+    else {
+      FileUtils.removeEmptyDirectory(p.targetLayout().test());
     }
   }
 }

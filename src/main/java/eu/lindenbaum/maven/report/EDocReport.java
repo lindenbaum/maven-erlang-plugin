@@ -8,7 +8,6 @@ import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.EDocScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
-import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 
@@ -57,10 +56,10 @@ public class EDocReport extends ErlangReport {
 
     String application = p.project().getArtifactId();
     File outdir = new File(getReportOutputDirectory(), "edoc");
-    File overview = new File(p.target(), ErlConstants.OVERVIEW_EDOC);
+    File overview = p.targetLayout().overviewEdoc();
 
     FileUtils.ensureDirectories(outdir);
-    Script<Boolean> script = new EDocScript(application, p.src(), outdir, overview);
+    Script<Boolean> script = new EDocScript(application, p.sourceLayout().src(), outdir, overview);
     Boolean success = MavenSelf.get(p.cookie()).exec(p.node(), script);
     if (!success) {
       throw new MojoExecutionException("failed to generate documentation");
