@@ -5,5 +5,5 @@ if (!doc.isFile()) {
 
 File edoc = new File(basedir, "target/overview.edoc");
 if (!edoc.isFile()) {
-    throw new IllegalStateException("Overview file " + doc + " was missing.");
+    throw new IllegalStateException("Overview file " + edoc + " was missing.");
 }
