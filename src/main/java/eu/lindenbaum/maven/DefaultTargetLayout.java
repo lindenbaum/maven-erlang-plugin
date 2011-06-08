@@ -132,6 +132,11 @@ public class DefaultTargetLayout implements TargetLayout {
   }
 
   @Override
+  public File coverageReports() {
+    return new File(this.base, "coverage-reports");
+  }
+
+  @Override
   public File profilingReports() {
     return new File(this.base, "profiling-reports");
   }

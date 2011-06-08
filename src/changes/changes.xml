@@ -4,6 +4,16 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="update">
+        Changed binding for site generation, pre-site now invokes 
+        'erlang:coverage' and 'erlang:profile' in order to be able to build
+        reports.
+      </action>
+      <action dev="olle-t" type="update">
+        Changed coverage report, splitting it into an 'erlang:coverage' goal, 
+        that only produces coverage data TXT-file, and an 
+        'erlang:coverage-report' goal, that builds the HTML report.
+      </action>
       <action dev="schlagert" type="fix">
         Fixed problems when erlang runtime paths contain duplicate slashes
         (sometimes discovered on Linux and MacOS).

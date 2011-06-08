@@ -46,6 +46,18 @@
               <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
             </phases>
           </lifecycle>
+          <lifecycle>
+            <id>site</id>
+            <phases>
+              <pre-site>
+                eu.lindenbaum:maven-erlang-plugin:profile,
+                eu.lindenbaum:maven-erlang-plugin:coverage                
+              </pre-site>
+              <site>org.apache.maven.plugins:maven-site-plugin:site</site>
+              <post-site>org.apache.maven.plugins:maven-site-plugin:post-site</post-site>
+              <site-deploy>org.apache.maven.plugins:maven-site-plugin:site-deploy</site-deploy>
+            </phases>
+          </lifecycle>
         </lifecycles>
       </configuration>
     </component>
@@ -93,6 +105,18 @@
               <verify></verify>
               <install>org.apache.maven.plugins:maven-install-plugin:install</install>
               <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+            </phases>
+          </lifecycle>
+          <lifecycle>
+            <id>site</id>
+            <phases>
+              <pre-site>
+                eu.lindenbaum:maven-erlang-plugin:profile,
+                eu.lindenbaum:maven-erlang-plugin:coverage                
+              </pre-site>
+              <site>org.apache.maven.plugins:maven-site-plugin:site</site>
+              <post-site>org.apache.maven.plugins:maven-site-plugin:post-site</post-site>
+              <site-deploy>org.apache.maven.plugins:maven-site-plugin:site-deploy</site-deploy>
             </phases>
           </lifecycle>
         </lifecycles>

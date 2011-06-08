@@ -103,6 +103,11 @@ public interface TargetLayout {
   public File surefireReports();
 
   /**
+   * Returns the directory where coverage reports will be put.
+   */
+  public File coverageReports();
+
+  /**
    * Returns the directory where profiling reports will be put.
    */
   public File profilingReports();

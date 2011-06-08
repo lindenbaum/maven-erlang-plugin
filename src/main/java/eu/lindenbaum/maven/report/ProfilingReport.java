@@ -1,22 +1,14 @@
 package eu.lindenbaum.maven.report;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import eu.lindenbaum.maven.ErlangReport;
 import eu.lindenbaum.maven.Properties;
-import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.erlang.ProfilingResult;
+import eu.lindenbaum.maven.erlang.ProfilingResult.Report;
+import eu.lindenbaum.maven.erlang.ProfilingResult.Report.Row;
 import eu.lindenbaum.maven.util.FileUtils;
 
 import org.apache.maven.doxia.sink.Sink;
@@ -34,9 +26,6 @@ import org.apache.maven.plugin.logging.Log;
  * @since 2.1.0
  */
 public class ProfilingReport extends ErlangReport {
-  private volatile Pattern modulesPattern;
-  private volatile List<String[]> profilingResults = new ArrayList<String[]>();
-
   @Override
   public String getDescription(Locale l) {
     return "Profiling results, as reported by erlang:profiling analysis.";
@@ -53,109 +42,24 @@ public class ProfilingReport extends ErlangReport {
   }
 
   @Override
-  protected void execute(Log log, Locale l, Properties p) throws MojoExecutionException {
+  protected void execute(Log log, Locale locale, Properties p) throws MojoExecutionException {
     File profilingReportDir = p.targetLayout().profilingReports();
     List<File> profilingReports = FileUtils.getFilesRecursive(profilingReportDir, ".txt");
     if (profilingReports.size() < 1) {
       log.info("Nothing to do.");
       return;
     }
-
-    parse(profilingReports.get(0), log, p);
-
+    Report report = new ProfilingResult.Report(profilingReports.get(0), p);
     File outdir = new File(getReportOutputDirectory(), "profiling");
     FileUtils.ensureDirectories(outdir);
-
-    generate(log, l);
+    generate(report, log, locale);
+    log.info("Successfully generated profiling report.");
   }
 
-  void parse(File report, Log log, Properties p) throws MojoExecutionException {
-    log.debug("Parsing profiling report file " + report.getName());
-    makeModulesPattern(log, p);
-    parseProfilingReportFile(report, log);
-  }
-
-  void makeModulesPattern(Log log, Properties p) {
-    File src = p.sourceLayout().src();
-    List<File> modules = FileUtils.getFilesRecursive(src, ErlConstants.ERL_SUFFIX);
-    StringBuilder patternString = new StringBuilder();
-    boolean afterFirst = false;
-    patternString.append("^(");
-    for (File file : modules) {
-      if (afterFirst) {
-        patternString.append("|");
-      }
-      String moduleName = file.getName().replace(ErlConstants.ERL_SUFFIX, "");
-      patternString.append(moduleName);
-      afterFirst = true;
-    }
-    patternString.append("):.*$");
-    this.modulesPattern = Pattern.compile(patternString.toString());
-  }
-
-  void parseProfilingReportFile(File report, Log log) throws MojoExecutionException {
-    BufferedReader reader = null;
-    FileReader file = null;
-    try {
-      file = new FileReader(report);
-      reader = new BufferedReader(file);
-      String line;
-      while ((line = reader.readLine()) != null) {
-        Matcher matcher = this.modulesPattern.matcher(line);
-        if (matcher.matches()) {
-          parseProfilingReportLine(line);
-        }
-      }
-    }
-    catch (FileNotFoundException e) {
-      throw new MojoExecutionException("Unable to parse profiling file.", e);
-    }
-    catch (IOException e) {
-      throw new MojoExecutionException("Unable to read profiling file.", e);
-    }
-    finally {
-      if (reader != null) {
-        try {
-          reader.close();
-        }
-        catch (IOException e) {
-          // ignored
-        }
-      }
-      if (file != null) {
-        try {
-          file.close();
-        }
-        catch (IOException e) {
-          // ignored
-        }
-      }
-    }
-  }
-
-  /**
-   * Lines to parse are always in the following well known format:
-   * 
-   * <pre>
-   * FUNCTION     CALLS       %       TIME  [uS / CALLS]
-   * mod:fun/2        1    0.00          0  [      0.00]
-   * </pre>
-   */
-  void parseProfilingReportLine(String line) {
-    StringTokenizer tokenizer = new StringTokenizer(line);
-    String moduleFunctionArity = tokenizer.nextToken();
-    String calls = tokenizer.nextToken();
-    tokenizer.nextToken();
-    String time = tokenizer.nextToken();
-    tokenizer.nextToken();
-    String microSecondsPerCall = tokenizer.nextToken().replace("]", "");
-    this.profilingResults.add(new String[]{ moduleFunctionArity, calls, time, microSecondsPerCall });
-  }
-
-  void generate(Log log, Locale locale) {
-    log.debug("Generating profling HTML report from " + this.profilingResults.size() + " result lines.");
+  void generate(Report report, Log log, Locale locale) {
+    log.debug("Generating profling HTML report from " + report.getNumberOfRows() + " result lines.");
     generateReportHeader(getSink(), locale);
-    generateReportTable(getSink(), locale);
+    generateReportTable(report, getSink(), locale);
     generateReportFooter(getSink(), locale);
   }
 
@@ -178,7 +82,7 @@ public class ProfilingReport extends ErlangReport {
   }
 
   @SuppressWarnings("unused")
-  void generateReportTable(Sink sink, Locale locale) {
+  void generateReportTable(Report report, Sink sink, Locale locale) {
     sink.section2();
     sink.sectionTitle2();
     sink.text("Profiled functions");
@@ -191,19 +95,12 @@ public class ProfilingReport extends ErlangReport {
     sinkTableHeader(sink, "Time");
     sinkTableHeader(sink, "µS/Call");
     sink.tableRow_();
-    Collections.sort(this.profilingResults, new Comparator<String[]>() {
-      @Override
-      public int compare(String[] that, String[] other) {
-        return Double.valueOf(that[3]).compareTo(Double.valueOf(other[3]));
-      }
-    });
-    Collections.reverse(this.profilingResults);
-    for (String[] values : this.profilingResults) {
+    for (Row row : report.getRows()) {
       sink.tableRow();
-      sinkCell(sink, values[0]);
-      sinkCell(sink, values[1]);
-      sinkCell(sink, values[2]);
-      sinkCell(sink, values[3]);
+      sinkCell(sink, row.name);
+      sinkCell(sink, row.calls);
+      sinkCell(sink, row.time);
+      sinkCell(sink, row.microSecondsPerCall);
       sink.tableRow_();
     }
     sink.table_();
@@ -228,5 +125,13 @@ public class ProfilingReport extends ErlangReport {
     sink.tableCell();
     sink.text(text);
     sink.tableCell_();
+  }
+
+  private void sinkCell(Sink sink, float microSecondsPerCall) {
+    sinkCell(sink, Float.toString(microSecondsPerCall));
+  }
+
+  private void sinkCell(Sink sink, int calls) {
+    sinkCell(sink, Integer.toString(calls));
   }
 }

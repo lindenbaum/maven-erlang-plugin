@@ -2,12 +2,15 @@ package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.ProfilingResult;
+import eu.lindenbaum.maven.erlang.ProfilingResult.Report;
+import eu.lindenbaum.maven.erlang.ProfilingResult.Report.Row;
 import eu.lindenbaum.maven.erlang.ProfilingScript;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.report.ProfilingReport;
@@ -29,6 +32,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal profile
  * @execute phase="test-compile"
+ * @phase pre-site lifecycle="site"
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  * @since 2.1.0
  * @see ProfilingReport
@@ -49,6 +53,22 @@ public final class Profiler extends ErlangMojo {
    * @parameter expression="${timeout}" default-value=600
    */
   private int timeout;
+
+  /**
+   * Setting this to {@code true} will silent the console output and only
+   * generate the profiling output file.
+   * 
+   * @parameter expression="${silent}" default-value="false"
+   */
+  private boolean silent;
+
+  /**
+   * Setting this to {@code true} will print the complete profiling results, and
+   * not only the profiling top-10.
+   * 
+   * @parameter expression="${details}" default-value="false"
+   */
+  private boolean details;
 
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
@@ -88,12 +108,42 @@ public final class Profiler extends ErlangMojo {
                                                          profilingReportsDir,
                                                          profilingReportName,
                                                          this.timeout);
-    log.debug(script.get());
+    log.info("Running profiling tests...");
     ProfilingResult result = MavenSelf.get(p.cookie()).exec(p.testNode(), script);
-    result.logOutput(log);
 
     if (!result.testsPassed()) {
+      result.logOutput(log);
       throw new MojoFailureException("There were test failures.");
     }
+
+    if (this.silent) {
+      log.info("Successfully generated profiling.");
+      return;
+    }
+
+    List<File> reports = FileUtils.getFilesRecursive(profilingReportsDir, ".txt");
+    if (reports.isEmpty()) {
+      throw new MojoExecutionException("No profiling report files found at: " + profilingReportsDir);
+    }
+    Report report = new ProfilingResult.Report(reports.get(0), p);
+    printProfiling(report, log);
+    log.info("Successfully generated profiling.");
+  }
+
+  private void printProfiling(Report report, Log log) {
+    final int maxItems = this.details ? report.getRows().size() : 10;
+    Iterator<Row> rows = report.getRows().iterator();
+    log.info(MavenUtils.SEPARATOR + "--------------------");
+    log.info("FUNCTIONS                                                             CALLS   TIME  uS/CALLS");
+    log.info(MavenUtils.FAT_SEPARATOR + "====================");
+    for (int i = maxItems; i > 0 && rows.hasNext(); i--) {
+      Row row = rows.next();
+      log.info(String.format("%1$-68s %2$6d %3$6d %4$9.2f",
+                             row.name,
+                             row.calls,
+                             row.time,
+                             row.microSecondsPerCall));
+    }
+    log.info(MavenUtils.SEPARATOR + "--------------------");
   }
 }

@@ -23,12 +23,20 @@ public class CoverageReportScript extends AbstractScript<CoverageReportResult> {
   private final List<File> tests;
   private final File testDir;
   private final List<File> sources;
+  private final File coverageReportDir;
+  private final String coverageReportName;
 
-  public CoverageReportScript(File testDir, List<File> tests, List<File> sources) throws MojoExecutionException {
+  public CoverageReportScript(File testDir,
+                              List<File> tests,
+                              List<File> sources,
+                              File coverageReportDir,
+                              String coverageReportName) throws MojoExecutionException {
     super();
     this.testDir = testDir;
     this.tests = tests;
     this.sources = sources;
+    this.coverageReportDir = coverageReportDir;
+    this.coverageReportName = coverageReportName;
   }
 
   @Override
@@ -36,7 +44,12 @@ public class CoverageReportScript extends AbstractScript<CoverageReportResult> {
     String testPath = this.testDir.getAbsolutePath();
     String testModuleList = ErlUtils.toModuleList(this.tests, "'", "'");
     String sourceModuleList = ErlUtils.toModuleList(this.sources, "'", "'");
-    return String.format(this.script, testPath, testModuleList, sourceModuleList);
+    return String.format(this.script,
+                         testPath,
+                         testModuleList,
+                         sourceModuleList,
+                         this.coverageReportDir,
+                         this.coverageReportName);
   }
 
   @Override
@@ -59,11 +72,6 @@ public class CoverageReportScript extends AbstractScript<CoverageReportResult> {
             MavenUtils.logMultiLineString(log, LogLevel.ERROR, message);
           }
         }
-      }
-
-      @Override
-      public Report getReport() {
-        return new Report(resultList);
       }
     };
   }

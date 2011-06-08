@@ -149,7 +149,7 @@ Maven Erlang Plug-In
  
  * {{{./edoc-mojo.html}edoc}}
  
- * {{{./coverage-mojo.html}coverage}}
+ * {{{./coverage-mojo.html}coverage}} and {{{./coverage-report-mojo.html}coverage-report}}
  
  * {{{./profile-mojo.html}profile}} and {{{./profiling-report-mojo.html}profiling-report}}
 

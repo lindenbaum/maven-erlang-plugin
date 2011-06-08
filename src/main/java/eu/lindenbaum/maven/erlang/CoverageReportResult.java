@@ -1,17 +1,17 @@
 package eu.lindenbaum.maven.erlang;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ericsson.otp.erlang.OtpErlangList;
-import com.ericsson.otp.erlang.OtpErlangObject;
-import com.ericsson.otp.erlang.OtpErlangTuple;
-
-import eu.lindenbaum.maven.util.ErlUtils;
-
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -37,14 +37,6 @@ public interface CoverageReportResult {
   public boolean failed();
 
   /**
-   * Returns the coverage report results data, that can be used to generate
-   * report output.
-   * 
-   * @return coverage report results data
-   */
-  public Report getReport();
-
-  /**
    * Contains the coverage report data, available as a summary report for the
    * complete coverage report and each module and with a map of the modules that
    * were part of the coverage report.
@@ -60,10 +52,11 @@ public interface CoverageReportResult {
     private int numberOfNotCoveredLines;
 
     /**
-     * @param resultList to build the result data from
+     * @param reportFile to build the result data from
+     * @throws MojoExecutionException 
      */
-    public Report(OtpErlangList resultList) {
-      parseResultList(resultList);
+    public Report(File reportFile) throws MojoExecutionException {
+      parseResultList(reportFile);
       calculateNumberOfModules();
       calculateNumberOfFunctions();
       calculateNumberOfClauses();
@@ -73,39 +66,70 @@ public interface CoverageReportResult {
       calculateCoverage();
     }
 
-    private void parseResultList(OtpErlangList resultList) {
-      for (int i = 0; i < resultList.arity(); ++i) {
-        OtpErlangTuple row = (OtpErlangTuple) resultList.elementAt(i);
-        String type = ErlUtils.toString(row.elementAt(0));
-        if ("module".equals(type)) {
-          OtpErlangObject module = row.elementAt(1);
-          OtpErlangObject covered = row.elementAt(2);
-          OtpErlangObject notCovered = row.elementAt(3);
-          add(new Module(module, covered, notCovered));
+    private void parseResultList(File reportFile) throws MojoExecutionException {
+      BufferedReader reader = null;
+      FileReader file = null;
+      try {
+        file = new FileReader(reportFile);
+        reader = new BufferedReader(file);
+        String line;
+        while ((line = reader.readLine()) != null) {
+          String[] elements = line.split(" ");
+          String type = elements[0];
+          if ("module".equals(type)) {
+            String module = elements[1];
+            int covered = Integer.parseInt(elements[2]);
+            int notCovered = Integer.parseInt(elements[3]);
+            add(new Module(module, covered, notCovered));
+          }
+          if ("function".equals(type)) {
+            String module = elements[1];
+            String function = elements[2];
+            int arity = Integer.parseInt(elements[3]);
+            int covered = Integer.parseInt(elements[4]);
+            int notCovered = Integer.parseInt(elements[5]);
+            add(new Function(module, function, arity, covered, notCovered));
+          }
+          if ("clause".equals(type)) {
+            String module = elements[1];
+            String function = elements[2];
+            int arity = Integer.parseInt(elements[3]);
+            int index = Integer.parseInt(elements[4]);
+            int covered = Integer.parseInt(elements[5]);
+            int notCovered = Integer.parseInt(elements[6]);
+            add(new Clause(module, function, arity, index, covered, notCovered));
+          }
+          if ("line".equals(type)) {
+            String module = elements[1];
+            int lineNumber = Integer.parseInt(elements[2]);
+            int covered = Integer.parseInt(elements[3]);
+            int notCovered = Integer.parseInt(elements[4]);
+            add(new Line(module, lineNumber, covered, notCovered));
+          }
         }
-        if ("function".equals(type)) {
-          OtpErlangObject module = row.elementAt(1);
-          OtpErlangObject function = row.elementAt(2);
-          OtpErlangObject arity = row.elementAt(3);
-          OtpErlangObject covered = row.elementAt(4);
-          OtpErlangObject notCovered = row.elementAt(5);
-          add(new Function(module, function, arity, covered, notCovered));
+      }
+      catch (FileNotFoundException e) {
+        throw new MojoExecutionException("Unable to parse coverage file.", e);
+      }
+      catch (IOException e) {
+        throw new MojoExecutionException("Unable to read coverage file.", e);
+      }
+      finally {
+        if (reader != null) {
+          try {
+            reader.close();
+          }
+          catch (IOException e) {
+            // ignored
+          }
         }
-        if ("clause".equals(type)) {
-          OtpErlangObject module = row.elementAt(1);
-          OtpErlangObject function = row.elementAt(2);
-          OtpErlangObject arity = row.elementAt(3);
-          OtpErlangObject index = row.elementAt(4);
-          OtpErlangObject covered = row.elementAt(5);
-          OtpErlangObject notCovered = row.elementAt(6);
-          add(new Clause(module, function, arity, index, covered, notCovered));
-        }
-        if ("line".equals(type)) {
-          OtpErlangObject module = row.elementAt(1);
-          OtpErlangObject lineNumber = row.elementAt(2);
-          OtpErlangObject covered = row.elementAt(3);
-          OtpErlangObject notCovered = row.elementAt(4);
-          add(new Line(module, lineNumber, covered, notCovered));
+        if (file != null) {
+          try {
+            file.close();
+          }
+          catch (IOException e) {
+            // ignored
+          }
         }
       }
     }
@@ -214,10 +238,16 @@ public interface CoverageReportResult {
       private final int numberOfCoveredLines;
       private final int numberOfNotCoveredLines;
 
-      public Module(OtpErlangObject name, OtpErlangObject covered, OtpErlangObject notCovered) {
-        this.moduleName = ErlUtils.toString(name);
-        this.numberOfCoveredLines = ErlUtils.toInt(covered);
-        this.numberOfNotCoveredLines = ErlUtils.toInt(notCovered);
+      /**
+       * @param name of this module
+       * @param covered lines
+       * @param notCovered lines
+       * @since 2.1.0
+       */
+      public Module(String name, int covered, int notCovered) {
+        this.moduleName = name;
+        this.numberOfCoveredLines = covered;
+        this.numberOfNotCoveredLines = notCovered;
         this.coverage = calculateCoverage(this.numberOfCoveredLines, this.numberOfNotCoveredLines);
       }
 
@@ -286,15 +316,19 @@ public interface CoverageReportResult {
       private final int numberOfCoveredLines;
       private final int numberOfNotCoveredLines;
 
-      public Function(OtpErlangObject module,
-                      OtpErlangObject name,
-                      OtpErlangObject arity,
-                      OtpErlangObject covered,
-                      OtpErlangObject notCovered) {
-        this.moduleName = ErlUtils.toString(module);
-        this.functionName = ErlUtils.toString(name) + "/" + ErlUtils.toInt(arity);
-        this.numberOfCoveredLines = ErlUtils.toInt(covered);
-        this.numberOfNotCoveredLines = ErlUtils.toInt(notCovered);
+      /**
+       * @param module name
+       * @param name of this function
+       * @param arity of this function
+       * @param covered lines in this function
+       * @param notCovered lines in this function
+       * @since 2.1.0
+       */
+      public Function(String module, String name, int arity, int covered, int notCovered) {
+        this.moduleName = module;
+        this.functionName = name + "/" + arity;
+        this.numberOfCoveredLines = covered;
+        this.numberOfNotCoveredLines = notCovered;
         this.coverage = calculateCoverage(this.numberOfCoveredLines, this.numberOfNotCoveredLines);
       }
 
@@ -335,15 +369,19 @@ public interface CoverageReportResult {
       private final String moduleName;
       private final String functionName;
 
+      /**
+       * @param module name
+       * @param function name
+       * @param arity of the function
+       * @param index the clause in within the function
+       * @param covered lines in this clause
+       * @param notCovered lines in this clause
+       * @since 2.1.0
+       */
       @SuppressWarnings("unused")
-      public Clause(OtpErlangObject module,
-                    OtpErlangObject function,
-                    OtpErlangObject arity,
-                    OtpErlangObject index,
-                    OtpErlangObject covered,
-                    OtpErlangObject notCovered) {
-        this.moduleName = ErlUtils.toString(module);
-        this.functionName = ErlUtils.toString(function) + "/" + ErlUtils.toInt(arity);
+      public Clause(String module, String function, int arity, int index, int covered, int notCovered) {
+        this.moduleName = module;
+        this.functionName = function + "/" + arity;
       }
 
       public String getFunctionName() {
@@ -360,15 +398,17 @@ public interface CoverageReportResult {
       private final int lineNumber;
       private final boolean isCovered;
 
-      public Line(OtpErlangObject module,
-                  OtpErlangObject lineNumber,
-                  OtpErlangObject covered,
-                  OtpErlangObject notCovered) {
-        this.moduleName = ErlUtils.toString(module);
-        this.lineNumber = ErlUtils.toInt(lineNumber);
-        int cov = ErlUtils.toInt(covered);
-        int not = ErlUtils.toInt(notCovered);
-        this.isCovered = checkIfCovered(cov, not);
+      /**
+       * @param module name
+       * @param lineNumber for this line
+       * @param covered {@code 1} if this line is covered {@code 0} otherwise
+       * @param notCovered {@code 1} if this line isn't covered {@code 0} otherwise
+       * @since 2.1.0
+       */
+      public Line(String module, int lineNumber, int covered, int notCovered) {
+        this.moduleName = module;
+        this.lineNumber = lineNumber;
+        this.isCovered = checkIfCovered(covered, notCovered);
       }
 
       private boolean checkIfCovered(int cov, int not) {

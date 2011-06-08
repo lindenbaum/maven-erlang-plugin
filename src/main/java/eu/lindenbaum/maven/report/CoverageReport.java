@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -14,41 +13,27 @@ import eu.lindenbaum.maven.erlang.CoverageReportResult;
 import eu.lindenbaum.maven.erlang.CoverageReportResult.Report;
 import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Function;
 import eu.lindenbaum.maven.erlang.CoverageReportResult.Report.Module;
-import eu.lindenbaum.maven.erlang.CoverageReportScript;
-import eu.lindenbaum.maven.erlang.MavenSelf;
-import eu.lindenbaum.maven.erlang.Script;
+import eu.lindenbaum.maven.mojo.app.Coverage;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
-import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Generates a test coverage report with: project summary, showing the number of
- * functions, clauses executable lines and their test coverage percentage. A
- * module list with individual coverage reports and an extensive source code
- * report, with lines annotated in red or green, showing the exact coverage.
- * <p>
- * ISSUE If a test purges or unloads a module to do coverage for, the coverage
- * compilation information will be gone and the coverage report will fail.
- * </p>
+ * Generates a test coverage HTML report from the results produced by the 
+ * {@link Coverage} mojo i.e. the {@code coverage}-goal. The report contains a
+ * project summary, showing the number of functions, clauses executable lines 
+ * and their test coverage percentage. A module list with individual coverage 
+ * reports and an extensive source code report, with lines annotated in red or 
+ * green, showing the exact coverage.
  * 
- * @goal coverage
- * @execute phase="test"
+ * @goal coverage-report
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
+ * @since 2.1.0
  */
 public class CoverageReport extends ErlangReport {
-  /**
-   * Setting this to {@code true} will supress the console output and only
-   * generate the coverage report output HTML file.
-   * 
-   * @parameter expression="${silent}" default-value="false"
-   * @since 2.0
-   */
-  private boolean silent;
-
   private static final String LINE_PATTERN = "<span {0}><a name=\"{3}-{1}\">{1,number,0000}</a>: {2}</span>\n";
   private static final String RED_LINE_ANNOTATION = "style=\"background: #faa;\"";
   private static final String GREEN_LINE_ANNOTATION = "style=\"background: #afa;\"";
@@ -71,98 +56,25 @@ public class CoverageReport extends ErlangReport {
 
   @Override
   protected void execute(Log log, Locale locale, Properties p) throws MojoExecutionException {
-    log.info(MavenUtils.SEPARATOR);
-    log.info(" C O V E R A G E");
-    log.info(MavenUtils.SEPARATOR);
-
-    File testEbin = p.targetLayout().testEbin();
-    if (!testEbin.exists()) {
+    File coverageReportsDir = p.targetLayout().coverageReports();
+    List<File> coverageReports = FileUtils.getFilesRecursive(coverageReportsDir, ".txt");
+    if (coverageReports.size() < 1) {
       log.info("Nothing to do.");
       return;
     }
-    else {
-      File[] testFiles = testEbin.listFiles(FileUtils.BEAM_FILTER);
-      if (testFiles == null || testFiles.length == 0) {
-        log.info("Nothing to do.");
-        return;
-      }
-    }
-
-    List<File> tests = new ArrayList<File>();
-    tests.addAll(FileUtils.getFilesRecursive(testEbin, "_test" + ErlConstants.BEAM_SUFFIX));
-    tests.addAll(FileUtils.getFilesRecursive(testEbin, "_tests" + ErlConstants.BEAM_SUFFIX));
-
-    File src = p.sourceLayout().src();
-    List<File> sources = FileUtils.getFilesRecursive(src, ErlConstants.ERL_SUFFIX);
-
+    Report report = new CoverageReportResult.Report(coverageReports.get(0));
     File outdir = new File(getReportOutputDirectory(), "coverage");
     FileUtils.ensureDirectories(outdir);
-
-    Script<CoverageReportResult> script = new CoverageReportScript(testEbin, tests, sources);
-    CoverageReportResult result = MavenSelf.get(p.cookie()).exec(p.testNode(), script);
-
-    if (result.failed()) {
-      result.logOutput(getLog());
-      throw new MojoExecutionException("failed to generate coverage report");
-    }
-    else {
-      generateReport(this.silent, locale, result);
-      log.info("Successfully generated coverage report.");
-    }
+    generateReport(locale, report);
+    log.info("Successfully generated coverage report.");
   }
 
-  private void generateReport(boolean silent, Locale locale, CoverageReportResult result) {
-    if (!silent) {
-      printModulesSummary(getLog(), locale, result.getReport());
-      printReportSummary(getLog(), locale, result.getReport());
-    }
-    generateReportHeader(getSink(), locale, result.getReport());
-    generateReportSummary(getSink(), locale, result.getReport());
-    generateReportModulesSummary(getSink(), locale, result.getReport());
-    generateReportForEachModule(getSink(), locale, result.getReport());
-    generateReportFooter(getSink(), locale, result.getReport());
-  }
-
-  @SuppressWarnings("unused")
-  private void printModulesSummary(Log log, Locale locale, Report report) {
-    log.info("MODULES");
-    log.info(MavenUtils.FAT_SEPARATOR);
-    for (Module module : report.getModules()) {
-      String name = module.getName() + ErlConstants.ERL_SUFFIX;
-      int padding = 69 - name.length();
-      String covered = module.getCoverage() == 100 ? "COVERED" : "NOT COVERED!";
-      log.info(String.format("> %1$s %2$" + padding + "s", name, covered));
-      log.info(MavenUtils.SEPARATOR);
-      log.info(String.format("Coverage: %1$23d%% | Lines: %2$28d",
-                             module.getCoverage(),
-                             module.getNumberOfLines()));
-      log.info(String.format("Functions: %1$23d | Covered lines: %2$20d",
-                             module.getNumberOfFunctions(),
-                             module.getNumberOfCoveredLines()));
-      log.info(String.format("Clauses: %1$25d | Not covered lines: %2$16d",
-                             module.getNumberOfClauses(),
-                             module.getNumberOfNotCoveredLines()));
-      log.info(MavenUtils.SEPARATOR);
-    }
-    log.info("");
-  }
-
-  @SuppressWarnings("unused")
-  private void printReportSummary(Log log, Locale locale, Report report) {
-    log.info("SUMMARY");
-    log.info(MavenUtils.FAT_SEPARATOR);
-    log.info(String.format("Total coverage:%1$56d%%", report.getCoverage()));
-    log.info(MavenUtils.SEPARATOR);
-    log.info(String.format("Modules:%1$26d | Lines:%2$29d",
-                           report.getNumberOfModules(),
-                           report.getNumberOfLines()));
-    log.info(String.format("Functions:%1$24d | Covered lines:%2$21d",
-                           report.getNumberOfFunctions(),
-                           report.getNumberOfCoveredLines()));
-    log.info(String.format("Clauses:%1$26d | Not covered lines:%2$17d",
-                           report.getNumberOfClauses(),
-                           report.getNumberOfNotCoveredLines()));
-    log.info("");
+  private void generateReport(Locale locale, CoverageReportResult.Report report) {
+    generateReportHeader(getSink(), locale, report);
+    generateReportSummary(getSink(), locale, report);
+    generateReportModulesSummary(getSink(), locale, report);
+    generateReportForEachModule(getSink(), locale, report);
+    generateReportFooter(getSink(), locale, report);
   }
 
   @SuppressWarnings("unused")
