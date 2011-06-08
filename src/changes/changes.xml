@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t, schlagert" type="add">
+        Added 'compileFirst' and 'testCompileFirst' parameters for users to be
+        able to define compile priority of project modules manually.
+      </action>
       <action dev="olle-t" type="update">
         Changed binding for site generation, pre-site now invokes 
         'erlang:coverage' and 'erlang:profile' in order to be able to build

@@ -145,16 +145,19 @@ public final class FileUtils {
 
   /**
    * Returns the file object of a certain file contained in a given list. The
-   * files name will be compared to {@link File#getName()}.
+   * file will be retrieved with a path match against the absolute path of the
+   * files in the {@link Collection}. So for example in a list containing the
+   * file <code>/foo/bar/file.erl</code> one could look up <code>file.erl</code>
+   * as well as <code>bar/file.erl</code>
    * 
-   * @param name file name to look for
+   * @param pathPostfix a postfix to match against an absolute path
    * @param files to examine for the corresponding file object
    * @return The {@link File} referring to the given name or {@code null} if no
    *         file with the file name could be found.
    */
-  public static File getFile(String name, Collection<File> files) {
+  public static File getFile(String pathPostfix, Collection<File> files) {
     for (File file : files) {
-      if (name.equals(file.getName())) {
+      if (file.getAbsolutePath().endsWith(pathPostfix)) {
         return file;
       }
     }

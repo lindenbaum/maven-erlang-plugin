@@ -2,6 +2,7 @@ OutDir = "%s",
 Includes = %s,
 CustomOptions = %s,
 Files = %s,
+FirstFiles = %s,
 
 Options = [return, {outdir, OutDir}] ++ Includes ++ CustomOptions,
 
@@ -43,55 +44,48 @@ TargetFilePath = fun(File, Extension) ->
 			 filename:join(OutDir, ModuleName)
 		 end,
 
-%% returns true if the given source file exports the specific
-%% function, defined by {Fun, Arity}.
-ModuleExports = fun(SrcFile, {Fun, Arity} = Function) ->
-			case epp_dodger:quick_parse_file(SrcFile) of
-			    {ok, Forms} ->
-				E = lists:foldl(
-				      fun({attribute, _, export, Es}, Acc) ->
-					      Es ++ Acc;
-					 (_, Acc) ->
-					      Acc
-				      end, [], Forms),
-				lists:member(Function, E);
-			    _ ->
-				false
-			end
-		end,
+%% retrieve a list of attributes from the abstract forms of a specific
+%% source file
+GetModuleAttributes = fun(SrcFile) ->
+			      case epp_dodger:quick_parse_file(SrcFile) of
+				  {ok, Forms} ->
+				      lists:foldl(
+					fun({attribute, _, export, Exports}, Acc) ->
+						[{export, E} || E <- Exports] ++ Acc;
+					   ({attribute, _, behaviour, Behaviour}, Acc) ->
+						[{behaviour, Behaviour}] ++ Acc;
+					   (_, Acc) ->
+						Acc
+					end, [], Forms);
+				_ ->
+				      []
+			      end
+		       end,
 
-%% sorting function that places source files defining custom
-%% behaviours to the front of the list
-BehaviourModulesFirst = fun(SrcFiles) ->
-				lists:foldl(
-				  fun(SrcFile, Acc) ->
-					  case ModuleExports(SrcFile, {behaviour_info, 1}) of
-					      true ->
-						  [SrcFile | Acc];
-					      false ->
-						  Acc ++ [SrcFile]
-					  end
-				  end, [], SrcFiles)
-			end,
-
-%% sorting function that places source files exporting parse_transform/2
-%% at the front of the list
-ParseTransformModulesFirst = fun(SrcFiles) ->
-				     lists:foldl(
-				       fun(SrcFile, Acc) ->
-					       case ModuleExports(SrcFile, {parse_transform, 2}) of
-						   true ->
-						       [SrcFile | Acc];
-						   false ->
-						       Acc ++ [SrcFile]
-					       end
-				       end, [], SrcFiles)
-			     end,
+%% returns true if a source module specifies one of the given attributes,
+%% attributes must be in the form {export, {Fun, Arity}},
+%% {behaviour, BehaviourName}, ...
+Defines = fun(File, Attributes) ->
+		  A = GetModuleAttributes(File),
+		  lists:any(
+		    fun(Attr) -> lists:member(Attr, A) end,
+		    Attributes)
+	  end,
 
 %% sorts the files to compile so that dependencies between modules are
 %% resolved during compilation
-SortFiles = fun(SrcFiles) ->
-		    ParseTransformModulesFirst(BehaviourModulesFirst(SrcFiles))
+SortFiles = fun(Files) ->
+		    ParseTransform = [{export, {parse_transform, 2}}],
+		    {Pts, NonPts} = lists:partition(
+				      fun(File) ->
+					      Defines(File, ParseTransform)
+				      end, Files),
+		    Behaviour = [{export, {behaviour_info, 1}}],
+		    {Bhvs, NonBhvs} = lists:partition(
+					fun(File) ->
+						Defines(File, Behaviour)
+					end, NonPts),
+		    Pts ++ Bhvs ++ NonBhvs
 	    end,
 
 %% iterates over the files and compiles
@@ -116,4 +110,4 @@ lists:foldl(
 		   Errors ++ FormatCompileReport(E),
 		   Warnings ++ FormatCompileReport(W)}
 	  end
-  end, {[], [], [], []}, SortFiles(Files)).
+  end, {[], [], [], []}, FirstFiles ++ SortFiles(Files)).

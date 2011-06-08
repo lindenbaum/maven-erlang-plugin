@@ -20,11 +20,12 @@ public class BeamCompilerScriptTest {
   @Test
   public void testGet() throws MojoExecutionException {
     List<File> files = Arrays.asList(new File("file"));
+    List<File> firstFiles = Arrays.asList(new File("file"));
     File outdir = new File("outdir");
     List<File> includes = Arrays.asList(new File("include"));
     List<String> options = Arrays.asList("option");
 
-    BeamCompilerScript script = new BeamCompilerScript(files, outdir, includes, options);
+    BeamCompilerScript script = new BeamCompilerScript(files, firstFiles, outdir, includes, options);
     String expression = script.get();
     assertNotNull(expression);
     assertFalse(expression.isEmpty());
@@ -34,6 +35,7 @@ public class BeamCompilerScriptTest {
   @Test
   public void testHandle() throws MojoExecutionException {
     List<File> files = Arrays.asList(new File("file"));
+    List<File> firstFiles = Arrays.asList(new File("file"));
     File outdir = new File("outdir");
     List<File> includes = Arrays.asList(new File("include"));
     List<String> options = Arrays.asList("option");
@@ -51,7 +53,7 @@ public class BeamCompilerScriptTest {
     OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ failedList, compiledList, errorList,
                                                                      warningList });
 
-    BeamCompilerScript script = new BeamCompilerScript(files, outdir, includes, options);
+    BeamCompilerScript script = new BeamCompilerScript(files, firstFiles, outdir, includes, options);
     CompilerResult compilerResult = script.handle(result);
 
     assertNotNull(compilerResult);

@@ -42,6 +42,14 @@ public final class Compiler extends ErlangMojo {
    */
   private String compilerOptions;
 
+  /**
+   * Optional list of files that will be compiled first (and in the given
+   * order).
+   * 
+   * @parameter expression="${compileFirst}"
+   */
+  private String[] compileFirst;
+
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
     log.info(MavenUtils.SEPARATOR);
@@ -52,15 +60,25 @@ public final class Compiler extends ErlangMojo {
     FileUtils.ensureDirectories(ebin);
 
     List<File> files = FileUtils.getFilesRecursive(p.sourceLayout().src(), ErlConstants.ERL_SUFFIX);
-    if (!files.isEmpty()) {
 
+    List<File> firstFiles = new ArrayList<File>();
+    if (this.compileFirst != null) {
+      for (String compileFirstFile : this.compileFirst) {
+        File file = FileUtils.getFile(compileFirstFile, files);
+        firstFiles.add(file);
+        files.remove(file);
+      }
+    }
+
+    if (!files.isEmpty() || !firstFiles.isEmpty()) {
       List<String> options = new ArrayList<String>();
       if (this.compilerOptions != null && !this.compilerOptions.isEmpty()) {
         log.info("Using additional compiler options: " + this.compilerOptions);
         options.add(this.compilerOptions);
       }
 
-      Script<CompilerResult> script = new BeamCompilerScript(files, ebin, p.includePaths(), options);
+      List<File> includes = p.includePaths();
+      Script<CompilerResult> script = new BeamCompilerScript(files, firstFiles, ebin, includes, options);
       CompilerResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
 
       List<File> compiled = result.getCompiled();

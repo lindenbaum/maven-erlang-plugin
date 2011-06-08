@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 public final class BeamCompilerScript extends AbstractScript<CompilerResult> {
   private final List<File> files;
+  private final List<File> firstFiles;
   private final File outdir;
   private final List<File> includes;
   private final List<String> options;
@@ -30,15 +31,21 @@ public final class BeamCompilerScript extends AbstractScript<CompilerResult> {
    * Creates a compiler script for a {@link List} of erlang files.
    * 
    * @param files a list of files to compile
+   * @param firstFiles a list of files to compile before compiling other files
    * @param outdir the destination directory for the compiled .beam
    * @param includes a list of include directories
    * @param options a list of compiler options according to the erlang docs
    * @see <a
    *      href="http://www.erlang.org/doc/man/compile.html">http://www.erlang.org/doc/man/compile.html</a>
    */
-  public BeamCompilerScript(List<File> files, File outdir, List<File> includes, List<String> options) throws MojoExecutionException {
+  public BeamCompilerScript(List<File> files,
+                            List<File> firstFiles,
+                            File outdir,
+                            List<File> includes,
+                            List<String> options) throws MojoExecutionException {
     super();
     this.files = files;
+    this.firstFiles = firstFiles;
     this.outdir = outdir;
     this.includes = includes;
     this.options = options;
@@ -50,7 +57,8 @@ public final class BeamCompilerScript extends AbstractScript<CompilerResult> {
     String incs = ErlUtils.toFileList(this.includes, "{i, \"", "\"}");
     String opts = ErlUtils.toList(this.options, null, "", "");
     String files = ErlUtils.toFileList(this.files, "\"", "\"");
-    return String.format(this.script, out, incs, opts, files);
+    String firstFiles = ErlUtils.toFileList(this.firstFiles, "\"", "\"");
+    return String.format(this.script, out, incs, opts, files, firstFiles);
   }
 
   /**
