@@ -12,7 +12,7 @@
 
 -behaviour(application).
 
--include("../include/test.hrl").
+-include_lib("test_std/include/test.hrl").
 
 %% Application callbacks
 -export([start/2, stop/1]).
