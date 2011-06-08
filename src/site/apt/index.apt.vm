@@ -157,8 +157,16 @@ Maven Erlang Plug-In
 
  The default directory structure that is supported for projects depends on the
  project's packaging. For further information please refer to the documentation
- of the specific {{{./apidocs/eu/lindenbaum/maven/PackagingType.html}PackagingType}}.
- Please note that target folder structure is omitted in this listing.
+ of the specific {{{./apidocs/eu/lindenbaum/maven/PackagingType.html}PackagingType}}:
+
+ * {{{./apidocs/eu/lindenbaum/maven/ErlangOtpLayout.html}ErlangOtpLayout}}
+
+ * {{{./apidocs/eu/lindenbaum/maven/ErlangStdLayout.html}ErlangStdLayout}}
+
+ * {{{./apidocs/eu/lindenbaum/maven/ErlangRelLayout.html}ErlangRelLayout}}
+
+ Please note that the target folder structure might be subject to constant
+ change.
 
 ** Goals
 

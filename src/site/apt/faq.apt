@@ -105,6 +105,17 @@ Frequently Asked Questions
  compilation. This may be used for private header files (e.g. testing purposes)
  that will not be packaged along.
 
+* How should the application's include files be used?
+
+ An application should include its include files as if they were placed in the
+ same directory as the including source. The plug-in will pull in the needed
+ include directives for compilation automatically. Alternatively, the
+ <<<-include_lib>>> directive can be used for the applications includes as
+ well as the dependency applications includes. This has the advantage that one
+ can see directly which application provides the specific include. However,
+ the <<<-include_lib>>> directive can not be applied to private header files as
+ described in the section above.
+ 
 * How does the plug-in deal with resources and test resources?
 
  The plug-in supports random resources that will be put into the target
@@ -239,11 +250,12 @@ Frequently Asked Questions
 
 * Does the plug-in support the edoc application overview file?
 
- The EDoc application overview is supported by the edoc report mojo. The file
- <<<overview.edoc>>> has to be located in the <<<src/site>>> directory. The
- packaging variables <<<$\{ARTIFACT\}>>>, <<<$\{DESCRIPTION\}>>>, <<<$\{ID\}>>>
- and <<<$\{VERSION\}>>> are available to the overview file and may be used
- accordingly.
+ The EDoc application overview is supported by the edoc report mojo. While in
+ <<<erlang-otp>>> projects the file <<<overview.edoc>>> has to be located in the
+ <<<src/site>>> directory, in <<<erlang-std>>> project will expect the file in
+ the <<<doc>>> directory. The packaging variables <<<$\{ARTIFACT\}>>>,
+ <<<$\{DESCRIPTION\}>>>, <<<$\{ID\}>>> and <<<$\{VERSION\}>>> are available to
+ the overview file and may be used accordingly.
 
 * How to deal with non-maven packaged erlang projects?
 

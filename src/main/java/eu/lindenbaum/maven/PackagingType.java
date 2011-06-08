@@ -24,15 +24,12 @@ public enum PackagingType {
    *    +-- src/main/erlang ([ARTIFACTID].app, [ARTIFACTID].appup, *.erl, private *.hrl)
    *    +-- src/main/include (*.hrl)
    *    +-- src/main/priv (*)
-   *    +-- src/site (overview.edoc, site.xml)
-   *    +-- src/site/apt (*.apt)
+   *    +-- src/site (overview.edoc)
    *    +-- src/test/include (*.hrl)
    *    +-- src/test/erlang (*.erl)
    *    +-- src/test/priv (*)
    *    +-- target (build artifacts)
    *    +-- pom.xml
-   *    +-- *.rel
-   *    +-- *.relup
    * </pre>
    */
   ERLANG_OTP("erlang-otp"),
@@ -42,16 +39,15 @@ public enum PackagingType {
    * 
    * <pre>
    *  BASE
+   *    +-- doc (overview.edoc)
    *    +-- ebin ([ARTIFACTID].app, [ARTIFACTID].appup)
    *    +-- include (*.hrl)
    *    +-- priv (*)
    *    +-- src (*.erl, private *.hrl)
-   *    +-- src/changes (changes.xml)
-   *    +-- src/site (overview.edoc, site.xml)
-   *    +-- src/site/apt (*.apt)
    *    +-- test_include (*.hrl)
    *    +-- test_priv (*)
    *    +-- test_src (*.erl)
+   *    +-- test (*.erl)
    *    +-- target (build artifacts)
    *    +-- pom.xml
    * </pre>
@@ -64,9 +60,9 @@ public enum PackagingType {
    *  BASE
    *    +-- target (build artifacts)
    *    +-- pom.xml
-   *    +-- sys.config
    *    +-- [ARTIFACTID].rel
-   *    +-- [ARTIFACTID].relup
+   *    +-- relup
+   *    +-- sys.config
    * </pre>
    */
   ERLANG_REL("erlang-rel"),
