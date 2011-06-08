@@ -2,6 +2,7 @@ package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -40,25 +41,10 @@ public final class TestResourceGenerator extends ErlangMojo {
       return;
     }
 
-    File priv = p.sourceLayout().priv();
-    File testPriv = p.sourceLayout().testPriv();
-    File targetPriv = p.targetLayout().testPriv();
-
-    FileUtils.removeDirectory(targetPriv);
-
-    Collection<File> current = FileUtils.copyDirectory(priv, targetPriv, FileUtils.NULL_FILTER);
-    current.addAll(FileUtils.copyDirectory(testPriv, targetPriv, FileUtils.NULL_FILTER));
-    for (Artifact artifact : MavenUtils.getForeignDependencies(p.project())) {
-      File source = artifact.getFile();
-      File destination = new File(targetPriv, source.getName());
-      try {
-        org.codehaus.plexus.util.FileUtils.copyFile(source, destination);
-        current.add(source);
-      }
-      catch (IOException e) {
-        log.error("Failed to copy artifact " + source.getPath() + " to " + targetPriv + ".", e);
-      }
-    }
+    Collection<File> current = new ArrayList<File>();
+    current.addAll(copyIncludes(p));
+    current.addAll(copyResources(p));
+    current.addAll(copyNonErlangDependencies(log, p));
 
     if (current.size() > 0) {
       log.debug("Copied test resources:");
@@ -67,5 +53,46 @@ public final class TestResourceGenerator extends ErlangMojo {
     else {
       FileUtils.removeEmptyDirectory(p.targetLayout().test());
     }
+  }
+
+  private static Collection<File> copyIncludes(Properties p) throws MojoExecutionException {
+    File include = p.sourceLayout().include();
+    File testInclude = p.sourceLayout().testInclude();
+    File targetInclude = p.targetLayout().testInclude();
+    FileUtils.removeDirectory(targetInclude);
+
+    Collection<File> copied = new ArrayList<File>();
+    copied.addAll(FileUtils.copyDirectory(include, targetInclude, FileUtils.SOURCE_FILTER));
+    copied.addAll(FileUtils.copyDirectory(testInclude, targetInclude, FileUtils.SOURCE_FILTER));
+    return copied;
+  }
+
+  private static Collection<File> copyResources(Properties p) throws MojoExecutionException {
+    File priv = p.sourceLayout().priv();
+    File testPriv = p.sourceLayout().testPriv();
+    File targetPriv = p.targetLayout().testPriv();
+    FileUtils.removeDirectory(targetPriv);
+
+    Collection<File> copied = new ArrayList<File>();
+    copied.addAll(FileUtils.copyDirectory(priv, targetPriv, FileUtils.NULL_FILTER));
+    copied.addAll(FileUtils.copyDirectory(testPriv, targetPriv, FileUtils.NULL_FILTER));
+    return copied;
+  }
+
+  private static Collection<File> copyNonErlangDependencies(Log log, Properties p) {
+    File targetPriv = p.targetLayout().testPriv();
+    Collection<File> copied = new ArrayList<File>();
+    for (Artifact artifact : MavenUtils.getForeignDependencies(p.project())) {
+      File source = artifact.getFile();
+      File destination = new File(targetPriv, source.getName());
+      try {
+        org.codehaus.plexus.util.FileUtils.copyFile(source, destination);
+        copied.add(source);
+      }
+      catch (IOException e) {
+        log.error("Failed to copy artifact " + source.getPath() + " to " + targetPriv + ".", e);
+      }
+    }
+    return copied;
   }
 }

@@ -34,12 +34,18 @@ import org.apache.maven.plugin.logging.Log;
 public final class ResourceGenerator extends ErlangMojo {
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
-    Collection<File> current;
+    copySources(log, p);
+    copyIncludes(log, p);
+    copyResources(log, p);
+    copyNonErlangDependencies(log, p);
+    copyDocumentationResources(log, p);
+  }
 
+  private static void copySources(Log log, Properties p) throws MojoExecutionException {
     File src = p.sourceLayout().src();
     File targetSrc = p.targetLayout().src();
     FileUtils.removeDirectory(targetSrc);
-    current = FileUtils.copyDirectory(src, targetSrc, FileUtils.SOURCE_FILTER);
+    Collection<File> current = FileUtils.copyDirectory(src, targetSrc, FileUtils.SOURCE_FILTER);
     if (current.size() > 0) {
       log.debug("Copied sources:");
       MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
@@ -47,11 +53,13 @@ public final class ResourceGenerator extends ErlangMojo {
     else {
       FileUtils.removeEmptyDirectory(targetSrc);
     }
+  }
 
+  private static void copyIncludes(Log log, Properties p) throws MojoExecutionException {
     File include = p.sourceLayout().include();
     File targetInclude = p.targetLayout().include();
     FileUtils.removeDirectory(targetInclude);
-    current = FileUtils.copyDirectory(include, targetInclude, FileUtils.SOURCE_FILTER);
+    Collection<File> current = FileUtils.copyDirectory(include, targetInclude, FileUtils.SOURCE_FILTER);
     if (current.size() > 0) {
       log.debug("Copied includes:");
       MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
@@ -59,11 +67,13 @@ public final class ResourceGenerator extends ErlangMojo {
     else {
       FileUtils.removeEmptyDirectory(targetInclude);
     }
+  }
 
+  private static void copyResources(Log log, Properties p) throws MojoExecutionException {
     File priv = p.sourceLayout().priv();
     File targetPriv = p.targetLayout().priv();
     FileUtils.removeDirectory(targetPriv);
-    current = FileUtils.copyDirectory(priv, targetPriv, FileUtils.NULL_FILTER);
+    Collection<File> current = FileUtils.copyDirectory(priv, targetPriv, FileUtils.NULL_FILTER);
     if (current.size() > 0) {
       log.debug("Copied resources:");
       MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
@@ -71,8 +81,11 @@ public final class ResourceGenerator extends ErlangMojo {
     else {
       FileUtils.removeEmptyDirectory(targetPriv);
     }
+  }
 
-    current = new ArrayList<File>();
+  private static void copyNonErlangDependencies(Log log, Properties p) {
+    File targetPriv = p.targetLayout().priv();
+    Collection<File> current = new ArrayList<File>();
     for (Artifact artifact : MavenUtils.getForeignDependenciesToPackage(p.project())) {
       File source = artifact.getFile();
       File destination = new File(targetPriv, source.getName());
@@ -88,7 +101,9 @@ public final class ResourceGenerator extends ErlangMojo {
       log.debug("Copied foreign artifacts:");
       MavenUtils.logCollection(log, LogLevel.DEBUG, current, " * ");
     }
+  }
 
+  private static void copyDocumentationResources(Log log, Properties p) throws MojoExecutionException {
     Map<String, String> replacements = new HashMap<String, String>();
     replacements.put("${ARTIFACT}", p.project().getArtifactId());
     replacements.put("${DESCRIPTION}", p.project().getDescription());
@@ -99,7 +114,6 @@ public final class ResourceGenerator extends ErlangMojo {
     if (overviewEdoc.isFile()) {
       File targetOverviewEdoc = p.targetLayout().overviewEdoc();
       FileUtils.copyFile(overviewEdoc, targetOverviewEdoc, replacements);
-      current.add(overviewEdoc);
       log.debug("Copied documentation resources:");
       log.debug(" * " + overviewEdoc);
     }

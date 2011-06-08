@@ -85,6 +85,12 @@ public interface TargetLayout {
   public File testEbin();
 
   /**
+   * Returns the directory where the include for test compilation will be placed
+   * into.
+   */
+  public File testInclude();
+
+  /**
    * Returns the directory where the main and test resources will be put into
    * (test resources will override main resources). This will be accessibly
    * during the test phase by calling <code>code:lib_dir($APPNAME, priv)</code>.

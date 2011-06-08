@@ -31,6 +31,7 @@ public class DefaultTargetLayout implements TargetLayout {
    *   +-- [ARTIFACTID]-[Version]/src (*.erl)
    *   +-- [ARTIFACTID]-[Version]-test
    *   +-- [ARTIFACTID]-[Version]-test/ebin (*.beam)
+   *   +-- [ARTIFACTID]-[Version]-test/include (*.hrl)
    *   +-- [ARTIFACTID]-[Version]-test/priv (*)
    *   +-- surefire-reports (*.html)
    *   +-- profiling-reports (*.html)
@@ -114,6 +115,11 @@ public class DefaultTargetLayout implements TargetLayout {
   @Override
   public File testEbin() {
     return new File(test(), "ebin");
+  }
+
+  @Override
+  public File testInclude() {
+    return new File(test(), "include");
   }
 
   @Override
