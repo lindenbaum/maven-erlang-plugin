@@ -11,7 +11,7 @@ test_round2_test() ->
     ?assertMatch(ok, test_server:test_round(0, 0)).
 
 priv_dir_test() ->
-    case code:priv_dir('package') of
+    case code:priv_dir(package_otp) of
         {error, _} -> ?assert(false);
         _ -> ok
     end.

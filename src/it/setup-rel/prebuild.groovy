@@ -2,7 +2,7 @@
   new File(basedir, "src/site/site.xml"),
   new File(basedir, "src/site/apt/index.apt.vm"),
   new File(basedir, "src/changes/changes.xml"),
-  new File(basedir, "setup-rel.rel"),
+  new File(basedir, "setup_rel.rel"),
   new File(basedir, "relup"),
   new File(basedir, "sys.config")
 ].each { file ->

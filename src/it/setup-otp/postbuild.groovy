@@ -2,8 +2,8 @@
   new File(basedir, "src/site/site.xml"),
   new File(basedir, "src/site/apt/index.apt.vm"),
   new File(basedir, "src/changes/changes.xml"),
-  new File(basedir, "src/main/erlang/setup-otp.app"),
-  new File(basedir, "src/main/erlang/setup-otp.appup")
+  new File(basedir, "src/main/erlang/setup_otp.app"),
+  new File(basedir, "src/main/erlang/setup_otp.appup")
 ].each { file ->
   if (!file.isFile()) {
     throw new IllegalStateException("The target file: " + file + " should have been created by the setup goal.");
