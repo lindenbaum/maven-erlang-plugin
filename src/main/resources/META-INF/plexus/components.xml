@@ -54,8 +54,8 @@
                 eu.lindenbaum:maven-erlang-plugin:coverage                
               </pre-site>
               <site>org.apache.maven.plugins:maven-site-plugin:site</site>
-              <post-site>org.apache.maven.plugins:maven-site-plugin:post-site</post-site>
-              <site-deploy>org.apache.maven.plugins:maven-site-plugin:site-deploy</site-deploy>
+              <post-site></post-site>
+              <site-deploy>org.apache.maven.plugins:maven-site-plugin:deploy</site-deploy>
             </phases>
           </lifecycle>
         </lifecycles>
@@ -115,8 +115,8 @@
                 eu.lindenbaum:maven-erlang-plugin:coverage                
               </pre-site>
               <site>org.apache.maven.plugins:maven-site-plugin:site</site>
-              <post-site>org.apache.maven.plugins:maven-site-plugin:post-site</post-site>
-              <site-deploy>org.apache.maven.plugins:maven-site-plugin:site-deploy</site-deploy>
+              <post-site></post-site>
+              <site-deploy>org.apache.maven.plugins:maven-site-plugin:deploy</site-deploy>
             </phases>
           </lifecycle>
         </lifecycles>
