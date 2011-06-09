@@ -55,9 +55,17 @@ public final class TestCompiler extends ErlangMojo {
 
   /**
    * Optional list of files that will be compiled first (and in the given
-   * order).
+   * order). For example
+   * <pre>
+   *   &lt;testCompileFirst&gt;
+   *     &lt;file&gt;foo.erl&lt;/file&gt;
+   *     &lt;file&gt;bar.erl&lt;/file&gt;
+   *     &lt;file&gt;baz.erl&lt;/file&gt;
+   *   &lt;/testCompileFirst&gt;
+   * </pre>
    * 
    * @parameter expression="${testCompileFirst}"
+   * @since 2.1.0
    */
   private String[] testCompileFirst;
 

@@ -43,10 +43,18 @@ public final class Compiler extends ErlangMojo {
   private String compilerOptions;
 
   /**
-   * Optional list of files that will be compiled first (and in the given
-   * order).
+   * Optional list of source files that will be compiled first (and in the given
+   * order). For example:
+   * <pre>
+   *   &lt;compileFirst&gt;
+   *     &lt;file&gt;foo.erl&lt;/file&gt;
+   *     &lt;file&gt;bar.erl&lt;/file&gt;
+   *     &lt;file&gt;baz.erl&lt;/file&gt;
+   *   &lt;/compileFirst&gt;
+   * </pre>
    * 
    * @parameter expression="${compileFirst}"
+   * @since 2.1.0
    */
   private String[] compileFirst;
 
