@@ -35,8 +35,8 @@ public class UploadScript extends AbstractScript<GenericScriptResult> {
 
   @Override
   public String get() {
-    String beamFileList = ErlUtils.toFileList(this.beamFiles, "\"", "\"");
-    String appFileList = ErlUtils.toFileList(this.appFiles, "\"", "\"");
+    String beamFileList = ErlUtils.toFilenameList(this.beamFiles, "\"", "\"");
+    String appFileList = ErlUtils.toFilenameList(this.appFiles, "\"", "\"");
     return String.format(this.script, this.remoteNode, beamFileList, appFileList);
   }
 

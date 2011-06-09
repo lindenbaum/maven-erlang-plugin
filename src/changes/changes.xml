@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="fix">
+        Dialyzer mojo now checks for existing .erl-files before execution.
+        Solves the problem with packaging projects not containing any source
+        files (only includes).
+      </action>
       <action dev="olle-t, schlagert" type="add">
         Added 'compileFirst' and 'testCompileFirst' parameters for users to be
         able to define compile priority of project modules manually.

@@ -140,7 +140,7 @@ public final class MavenSelf {
    * @throws MojoExecutionException
    */
   public <T> T exec(String peer, Script<T> script, List<File> codePaths) throws MojoExecutionException {
-    String toExec = String.format(execScript, ErlUtils.toFileList(codePaths, "\"", "\""), script.get());
+    String toExec = String.format(execScript, ErlUtils.toFilenameList(codePaths, "\"", "\""), script.get());
     return script.handle(eval(peer, toExec));
   }
 

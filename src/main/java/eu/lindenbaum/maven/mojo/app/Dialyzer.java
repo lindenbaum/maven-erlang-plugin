@@ -99,11 +99,18 @@ public final class Dialyzer extends ErlangMojo {
         sources.add(p.targetLayout().lib());
       }
 
+      List<File> filesToDialyze = FileUtils.getFilesRecursive(sources, ErlConstants.ERL_SUFFIX);
+      if (filesToDialyze.isEmpty()) {
+        log.info("Nothing to to.");
+        return;
+      }
+
       DialyzerScript script = new DialyzerScript(sources, p.includePaths(), this.dialyzerOptions);
       String[] output = MavenSelf.get(p.cookie()).exec(p.node(), script);
 
       List<File> files = FileUtils.getFilesRecursive(p.sourceLayout().src(), ErlConstants.ERL_SUFFIX);
       files.addAll(FileUtils.getFilesRecursive(p.targetLayout().lib(), ErlConstants.ERL_SUFFIX));
+
       Collection<String> warnings = MojoUtils.parseDialyzerOutput(output, files);
       if (warnings.size() > 0) {
         log.warn("Warnings:");

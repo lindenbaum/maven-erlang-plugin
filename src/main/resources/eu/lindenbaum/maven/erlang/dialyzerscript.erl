@@ -1,9 +1,9 @@
-Files = %s,
+Directories = %s,
 Includes = %s,
 WarnOptions = %s,
 Options = [{from, src_code},
            {get_warnings, true},
-           {files_rec, Files},
+           {files_rec, Directories},
            {include_dirs, Includes},
            {warnings, WarnOptions}],
 lists:map(

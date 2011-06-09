@@ -54,10 +54,10 @@ public final class BeamCompilerScript extends AbstractScript<CompilerResult> {
   @Override
   public String get() {
     String out = this.outdir.getAbsolutePath();
-    String incs = ErlUtils.toFileList(this.includes, "{i, \"", "\"}");
+    String incs = ErlUtils.toFilenameList(this.includes, "{i, \"", "\"}");
     String opts = ErlUtils.toList(this.options, null, "", "");
-    String files = ErlUtils.toFileList(this.files, "\"", "\"");
-    String firstFiles = ErlUtils.toFileList(this.firstFiles, "\"", "\"");
+    String files = ErlUtils.toFilenameList(this.files, "\"", "\"");
+    String firstFiles = ErlUtils.toFilenameList(this.firstFiles, "\"", "\"");
     return String.format(this.script, out, incs, opts, files, firstFiles);
   }
 

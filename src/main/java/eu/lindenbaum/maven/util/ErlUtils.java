@@ -71,19 +71,19 @@ public final class ErlUtils {
   }
 
   /**
-   * Converts a {@link Collection} of files into a string containing a valid
-   * erlang list. The files will be converted using
-   * {@link File#getAbsolutePath()}. The files will be checked for {@code null}
-   * and existence. The prefix and postfix {@link String}s will be
+   * Converts a {@link Collection} of file objects into a string containing a 
+   * valid erlang filename list. The list of files will be converted using
+   * {@link File#getAbsolutePath()}. The file entries will be checked for 
+   * {@code null} and existence. The prefix and postfix {@link String}s will be
    * prepended/appended to every element of the list. This may be used to quote
    * the returned paths correctly as erlang strings.
    * 
    * @param list to convert
    * @param prefix to prepend to an entry
    * @param postfix to append to an entry
-   * @return a string representing a valid erlang list
+   * @return a string representing a valid erlang list of filenames
    */
-  public static String toFileList(Collection<File> list, String prefix, String postfix) {
+  public static String toFilenameList(Collection<File> list, String prefix, String postfix) {
     StringBuilder result = new StringBuilder("[");
     int i = 0;
     for (File file : list) {

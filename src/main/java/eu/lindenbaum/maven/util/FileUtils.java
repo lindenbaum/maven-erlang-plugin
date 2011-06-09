@@ -144,6 +144,24 @@ public final class FileUtils {
   }
 
   /**
+   * Get a flattened list of all files matching the specified file extension in 
+   * <b>all</b> of the given root directories. NOTE: this method takes no
+   * special care for possible duplicate files.
+   * 
+   * @param directories used for recursive lookup, aggregated into one result 
+   * @param suffix file extension to match, for example {@code ".erl"}.
+   * @return a {@link List} of all the found files 
+   * @see #getFilesRecursive(File, String)
+   */
+  public static List<File> getFilesRecursive(List<File> directories, String suffix) {
+    final List<File> result = new ArrayList<File>();
+    for (File dir : directories) {
+      result.addAll(getFilesRecursive(dir, suffix));
+    }
+    return result;
+  }
+
+  /**
    * Returns the file object of a certain file contained in a given list. The
    * file will be retrieved with a path match against the absolute path of the
    * files in the {@link Collection}. So for example in a list containing the

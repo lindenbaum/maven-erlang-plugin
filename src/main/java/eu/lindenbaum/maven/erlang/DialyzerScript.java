@@ -16,7 +16,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class DialyzerScript extends AbstractScript<String[]> {
-  private final List<File> files;
+  private final List<File> directories;
   private final List<File> includes;
   private final String options;
 
@@ -24,15 +24,15 @@ public final class DialyzerScript extends AbstractScript<String[]> {
    * Creates a dialyzer script for a {@link List} of erlang source files,
    * includes.
    * 
-   * @param files a list of files to dialyze (from source)
+   * @param directories a list of source directories to dialyze (from source)
    * @param includes a list of include files
    * @param options a list of dialyzer options according to the erlang docs
    * @see <a
    *      href="http://www.erlang.org/doc/man/dialyzer.html">http://www.erlang.org/doc/man/dialyzer.html</a>
    */
-  public DialyzerScript(List<File> files, List<File> includes, String options) throws MojoExecutionException {
+  public DialyzerScript(List<File> directories, List<File> includes, String options) throws MojoExecutionException {
     super();
-    this.files = files;
+    this.directories = directories;
     this.includes = includes;
     this.options = options;
   }
@@ -42,10 +42,10 @@ public final class DialyzerScript extends AbstractScript<String[]> {
    */
   @Override
   public String get() {
-    String files = ErlUtils.toFileList(this.files, "\"", "\"");
-    String incs = ErlUtils.toFileList(this.includes, "\"", "\"");
+    String directories = ErlUtils.toFilenameList(this.directories, "\"", "\"");
+    String incs = ErlUtils.toFilenameList(this.includes, "\"", "\"");
     String opts = "[" + (this.options != null ? this.options : "") + "]";
-    return String.format(this.script, files, incs, opts);
+    return String.format(this.script, directories, incs, opts);
   }
 
   /**
