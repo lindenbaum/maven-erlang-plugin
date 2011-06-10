@@ -9,9 +9,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import eu.lindenbaum.maven.erlang.DialyzerScript;
+import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.NodeShutdownHook;
+import eu.lindenbaum.maven.erlang.Script;
 
 import com.ericsson.otp.erlang.OtpAuthException;
+import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpPeer;
 import com.ericsson.otp.erlang.OtpSelf;
 
@@ -59,9 +62,10 @@ public final class MojoUtils {
    * @param cmd path to the {@code erl} command
    * @param nodeName name of the backend to connect to
    * @param nodeCookie cookie of the backend to connect to
+   * @param cwd the backend node's current working directory
    * @throws MojoExecutionException
    */
-  public static void startBackend(Log log, String cmd, String nodeName, String nodeCookie) throws MojoExecutionException {
+  public static void startBackend(Log log, String cmd, String nodeName, String nodeCookie, final File cwd) throws MojoExecutionException {
     OtpPeer peer = new OtpPeer(nodeName);
     try {
       try {
@@ -88,6 +92,18 @@ public final class MojoUtils {
           throw new MojoExecutionException("Failed to start " + peer + ".");
         }
         log.debug("Node " + peer + " sucessfully started.");
+
+        MavenSelf.get(nodeCookie).exec(nodeName, new Script<Void>() {
+          @Override
+          public String get() {
+            return "ok = file:set_cwd(\"" + cwd.getAbsolutePath() + "\").";
+          }
+
+          @Override
+          public Void handle(OtpErlangObject result) {
+            return null;
+          }
+        });
       }
       try {
         Runtime.getRuntime().addShutdownHook(NodeShutdownHook.get(nodeName, nodeCookie));

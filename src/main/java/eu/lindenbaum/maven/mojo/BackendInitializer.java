@@ -1,7 +1,10 @@
 package eu.lindenbaum.maven.mojo;
 
+import java.io.File;
+
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
+import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
@@ -22,6 +25,8 @@ import org.apache.maven.plugin.logging.Log;
 public class BackendInitializer extends ErlangMojo {
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
-    MojoUtils.startBackend(log, p.erlCommand(), p.node(), p.cookie());
+    File buildDir = p.targetLayout().base();
+    FileUtils.ensureDirectories(buildDir);
+    MojoUtils.startBackend(log, p.erlCommand(), p.node(), p.cookie(), buildDir);
   }
 }

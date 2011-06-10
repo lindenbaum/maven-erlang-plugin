@@ -28,5 +28,6 @@ one(Arg) ->
  Or optionally, specifying the <<<-DdialyzerWarningsAreErrors>>> will ensure
  that the build immediately fails.
 
- For projects with dependencies the parameter <<<-DdialyzerWithDependencies>>> 
- is handy, and might provide an even better check.
+ For projects with dependencies the plug-in will automatically include these in
+ the dialyzer analysis. This can be turned off using the parameter
+ <<<-DdialyzerWithDependencies=false>>>.

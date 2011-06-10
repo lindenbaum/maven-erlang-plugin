@@ -1,7 +1,7 @@
-package eu.lindenbaum.maven.mojo.rel;
+package eu.lindenbaum.maven.mojo;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,13 +22,19 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * <p>
- * This {@link Mojo} runs the erlang {@code dialyzer} tool on the release
- * dependencies. The {@code dialyzer} can be skipped using the
- * {@code skipDialyzer} parameter.
+ * This {@link Mojo} runs the erlang {@code dialyzer} tool on the project
+ * sources as well as the project includes. This means dialyzer will run over
+ * the complete project code (excluding test modules).
+ * </p>
+ * <p>
+ * The {@code dialyzer} can be skipped using the {@code skipDialyzer} parameter.
+ * Additionally, the user can choose to run {@code dialyzer} also on the
+ * projects dependencies using the {@code dialyzerWithDependencies} parameter.
+ * This will be done by default.
  * </p>
  * 
- * @goal dialyzer-release
- * @phase compile
+ * @goal dialyzer
+ * @phase prepare-package
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  */
@@ -39,6 +45,14 @@ public final class Dialyzer extends ErlangMojo {
    * @parameter expression="${skipDialyzer}" default-value=false
    */
   private boolean skipDialyzer;
+
+  /**
+   * Setting this to {@code true} will include the projects dependencies into
+   * the {@code dialyzer} run. Note: This may take very long.
+   * 
+   * @parameter expression="${dialyzerWithDependencies}" default-value=true
+   */
+  private boolean dialyzerWithDependencies;
 
   /**
    * Setting this to {@code true} will break the build when a {@code dialyzer}
@@ -69,30 +83,28 @@ public final class Dialyzer extends ErlangMojo {
       return;
     }
 
-    File lib = p.targetLayout().lib();
-    List<File> directories = Arrays.asList(lib);
     File lastBuildIndicator = p.targetLayout().dialyzerOk();
+    List<File> directories = new ArrayList<File>();
+    maybeAddDirectory(p.sourceLayout().src(), directories);
+    maybeAddDirectory(p.sourceLayout().include(), directories);
+
+    if (this.dialyzerWithDependencies) {
+      maybeAddDirectory(p.targetLayout().lib(), directories);
+    }
 
     if (MojoUtils.newerFilesThan(lastBuildIndicator, directories)) {
       FileUtils.removeFiles(lastBuildIndicator);
-      log.info("Running dialyzer on " + lib);
 
-      String[] dependenciesToAnalyze = lib.list();
-      if (dependenciesToAnalyze == null || dependenciesToAnalyze.length == 0) {
-        if (this.dialyzerWarningsAreErrors) {
-          throw new MojoFailureException("No sources to analyze.");
-        }
-        else {
-          log.warn("No sources to analyze.");
-        }
+      List<File> filesToDialyze = FileUtils.getFilesRecursive(directories, ErlConstants.ERL_SUFFIX);
+      if (filesToDialyze.isEmpty()) {
+        log.info("Nothing to to.");
         return;
       }
 
       DialyzerScript script = new DialyzerScript(directories, p.includePaths(), this.dialyzerOptions);
       String[] output = MavenSelf.get(p.cookie()).exec(p.node(), script);
 
-      List<File> files = FileUtils.getFilesRecursive(lib, ErlConstants.ERL_SUFFIX);
-      Collection<String> warnings = MojoUtils.parseDialyzerOutput(output, files);
+      Collection<String> warnings = MojoUtils.parseDialyzerOutput(output, filesToDialyze);
       if (warnings.size() > 0) {
         log.warn("Warnings:");
         MavenUtils.logCollection(log, LogLevel.WARN, warnings, "");
@@ -107,6 +119,12 @@ public final class Dialyzer extends ErlangMojo {
     }
     else {
       log.info("Last dialyzer run is still up to date.");
+    }
+  }
+
+  private static void maybeAddDirectory(File toAdd, List<File> toAddTo) {
+    if (toAdd != null && toAdd.isDirectory()) {
+      toAddTo.add(toAdd);
     }
   }
 }

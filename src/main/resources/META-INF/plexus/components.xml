@@ -149,10 +149,10 @@
               <validate></validate>
               <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
-              <process-sources>eu.lindenbaum:maven-erlang-plugin:reload-release-dependencies</process-sources>
+              <process-sources>eu.lindenbaum:maven-erlang-plugin:reload-dependencies</process-sources>
               <generate-resources>eu.lindenbaum:maven-erlang-plugin:generate-release-resources</generate-resources>
               <process-resources></process-resources>
-              <compile>eu.lindenbaum:maven-erlang-plugin:dialyzer-release</compile>
+              <compile></compile>
               <generate-test-sources></generate-test-sources>
               <process-test-sources></process-test-sources>
               <generate-test-resources></generate-test-resources>
@@ -160,7 +160,7 @@
               <test-compile></test-compile>
               <process-test-classes></process-test-classes>
               <test>eu.lindenbaum:maven-erlang-plugin:test-release</test>
-              <prepare-package></prepare-package>
+              <prepare-package>eu.lindenbaum:maven-erlang-plugin:dialyzer</prepare-package>
               <package>eu.lindenbaum:maven-erlang-plugin:package-release</package>
               <verify></verify>
               <install>org.apache.maven.plugins:maven-install-plugin:install</install>

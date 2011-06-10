@@ -1,4 +1,4 @@
-package eu.lindenbaum.maven.mojo.app;
+package eu.lindenbaum.maven.mojo;
 
 import java.io.File;
 import java.util.List;
