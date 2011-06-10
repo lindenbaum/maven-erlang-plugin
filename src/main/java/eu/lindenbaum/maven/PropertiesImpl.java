@@ -62,8 +62,8 @@ final class PropertiesImpl implements Properties {
 
     this.packagingType = type;
     this.erlCommand = erlCommand;
-    this.node = DEFAULT_BACKEND;
-    this.testNode = DEFAULT_TEST_BACKEND;
+    this.node = project.getArtifactId() + "-" + DEFAULT_BACKEND;
+    this.testNode = project.getArtifactId() + "-" + DEFAULT_TEST_BACKEND;
     this.cookie = cookie;
 
     this.targetLayout = new DefaultTargetLayout(project);
