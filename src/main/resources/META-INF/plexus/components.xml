@@ -24,7 +24,7 @@
           <lifecycle>
             <id>default</id>
             <phases>
-              <validate></validate>
+              <validate>eu.lindenbaum:maven-erlang-plugin:validate</validate>
               <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
               <process-sources>eu.lindenbaum:maven-erlang-plugin:reload-dependencies</process-sources>
@@ -85,7 +85,7 @@
           <lifecycle>
             <id>default</id>
             <phases>
-              <validate></validate>
+              <validate>eu.lindenbaum:maven-erlang-plugin:validate</validate>
               <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
               <process-sources>eu.lindenbaum:maven-erlang-plugin:reload-dependencies</process-sources>
@@ -146,7 +146,7 @@
           <lifecycle>
             <id>default</id>
             <phases>
-              <validate></validate>
+              <validate>eu.lindenbaum:maven-erlang-plugin:validate</validate>
               <initialize>eu.lindenbaum:maven-erlang-plugin:initialize</initialize>
               <generate-sources>eu.lindenbaum:maven-erlang-plugin:extract-dependencies</generate-sources>
               <process-sources>eu.lindenbaum:maven-erlang-plugin:reload-dependencies</process-sources>

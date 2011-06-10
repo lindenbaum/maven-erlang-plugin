@@ -57,7 +57,8 @@
 	 app=undefined,
 	 deploy=install,
 	 goal="install:install-file",
-	 classifier=undefined
+	 classifier=undefined,
+	 subdirs=["ebin", "priv", "include"]
 	}
        ).
 
@@ -88,7 +89,12 @@ eapp2mvn(Args) ->
     TmpFile = string:substr(RawTmpFile, 1, length(RawTmpFile)-1),
 
     try
-	Files = find_files(Path),
+	Files = lists:foldl(fun(SubDir, Acc) ->
+				    Acc ++ find_files(filename:join([Path, SubDir]))
+			    end,
+			    [],
+			    State#state.subdirs
+			   ),
 	TarFiles = [{State#state.app ++
 		     "-" ++
 		     Vsn ++
@@ -197,7 +203,7 @@ file_info(File) ->
 	{ok, FileInfo} -> FileInfo;  
 	{error, Reason} -> throw({"Could not read file", File, Reason})
     end.
-	
+
 find_files(Dir) ->
     find_files(Dir, []).
 

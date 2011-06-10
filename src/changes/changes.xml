@@ -4,6 +4,9 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t, schlagert" type="add">
+        Added validator mojo to check the project credentials for legal values.
+      </action>
       <action dev="schlagert" type="update">
         Changed the working directory of the backend nodes to the project's
         build directory.
