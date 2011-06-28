@@ -11,8 +11,6 @@ import eu.lindenbaum.maven.erlang.GenericScriptResult;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.erlang.UploadScript;
-import eu.lindenbaum.maven.util.ErlConstants;
-import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.plugin.Mojo;
@@ -22,13 +20,15 @@ import org.apache.maven.plugin.logging.Log;
 /**
  * <p>
  * This {@link Mojo} uploads an application's modules compiled for test
- * execution and the application's tests onto a remote node. This will not
- * upload the application's resource files. The modules will be purged once as
+ * execution and the application's tests onto a remote node. This will also
+ * upload the application's resource files making them available to the remote
+ * node using <code>code:priv_dir/1</code>. The modules will be purged once as
  * if <code>c:c/1</code> would have been called on a shell.
  * </p>
  * 
  * @goal upload-tests
  * @execute phase="test-compile" lifecycle="testupload"
+ * @requiresDependencyResolution test
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @since 2.0.0
  */
@@ -71,24 +71,13 @@ public final class TestUploader extends ErlangMojo {
       throw new MojoExecutionException("Mojo does not support packaging type " + packagingType + ".");
     }
 
-    File testEbin = p.targetLayout().testEbin();
-    List<File> modules = FileUtils.getFilesRecursive(testEbin, ErlConstants.BEAM_SUFFIX);
-    modules.removeAll(p.testSupportArtifacts());
-    if (this.withDependencies) {
-      File lib = p.targetLayout().lib();
-      modules.addAll(FileUtils.getFilesRecursive(lib, ErlConstants.BEAM_SUFFIX));
-    }
-
     String target = "'" + this.remote + "'";
-    Script<GenericScriptResult> script = new UploadScript(target, modules, new ArrayList<File>());
+    List<File> modules = p.modules(true, this.withDependencies);
+    List<File> resources = p.resources(true, this.withDependencies);
+    Script<GenericScriptResult> script = new UploadScript(target, modules, new ArrayList<File>(), resources);
     GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
-    if (result.success()) {
-      log.info("Successfully uploaded tests to " + target + ".");
-      result.logOutput(log);
-    }
-    else {
-      log.error("Uploading tests to " + target + " failed.");
-      result.logOutput(log);
+    result.logOutput(log);
+    if (!result.success()) {
       throw new MojoExecutionException("Uploading tests failed.");
     }
   }

@@ -2,7 +2,6 @@ package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -15,6 +14,7 @@ import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,8 +31,6 @@ import org.apache.maven.plugin.logging.Log;
  * @author Olivier Sambourg
  */
 public final class TestRunner extends ErlangMojo {
-  private static final String EUNIT_TESTS_SUFFIX = "_tests" + ErlConstants.BEAM_SUFFIX;
-
   /**
    * Setting this to {@code true} will skip the test compilation.
    * 
@@ -58,15 +56,12 @@ public final class TestRunner extends ErlangMojo {
       return;
     }
 
-    File testEbin = p.targetLayout().testEbin();
-
     List<File> tests = new ArrayList<File>();
     if (this.test == null || this.test.isEmpty()) {
-      List<File> candidates = FileUtils.getFilesRecursive(testEbin, ErlConstants.BEAM_SUFFIX);
-      tests.addAll(filterTests(p, candidates));
+      tests.addAll(MojoUtils.getEunitTestSet(p.modules(true, false), p.testSupportArtifacts()));
     }
     else {
-      File test = new File(testEbin, this.test + ErlConstants.BEAM_SUFFIX);
+      File test = new File(p.targetLayout().testEbin(), this.test + ErlConstants.BEAM_SUFFIX);
       if (test.isFile()) {
         tests.add(test);
       }
@@ -111,22 +106,5 @@ public final class TestRunner extends ErlangMojo {
                               cancelled));
       throw new MojoFailureException("There were test failures.");
     }
-  }
-
-  private static List<File> filterTests(Properties p, List<File> tests) {
-    List<File> filtered = new ArrayList<File>(tests);
-    filtered.removeAll(p.testSupportArtifacts());
-
-    Iterator<File> iterator = filtered.iterator();
-    while (iterator.hasNext()) {
-      String testPath = iterator.next().getAbsolutePath();
-      if (testPath.endsWith(EUNIT_TESTS_SUFFIX)) {
-        String impl = testPath.replace(EUNIT_TESTS_SUFFIX, ErlConstants.BEAM_SUFFIX);
-        if (tests.contains(new File(impl))) {
-          iterator.remove();
-        }
-      }
-    }
-    return filtered;
   }
 }

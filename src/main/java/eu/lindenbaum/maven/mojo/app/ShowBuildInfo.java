@@ -65,8 +65,8 @@ public class ShowBuildInfo extends ErlangMojo {
 
     logKeyValue(log, SOURCE_DIR, p.sourceLayout().src());
     logKeyValues(log, TEST_SOURCE_DIRS, p.sourceLayout().testSrcs());
-    logKeyValues(log, INCLUDE_DIRS, p.includePaths());
-    logKeyValues(log, CODE_PATHS, p.codePaths());
+    logKeyValues(log, INCLUDE_DIRS, p.includePaths(false));
+    logKeyValues(log, CODE_PATHS, p.codePaths(false));
   }
 
   private void logKeyValues(Log log, String key, Collection<File> values) {

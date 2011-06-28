@@ -17,6 +17,7 @@ import eu.lindenbaum.maven.report.ProfilingReport;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -80,15 +81,12 @@ public final class Profiler extends ErlangMojo {
       throw new IllegalArgumentException("timeout must be a positive integer");
     }
 
-    File testEbin = p.targetLayout().testEbin();
-
     List<File> tests = new ArrayList<File>();
     if (this.test == null || this.test.isEmpty()) {
-      tests.addAll(FileUtils.getFilesRecursive(testEbin, "_test" + ErlConstants.BEAM_SUFFIX));
-      tests.addAll(FileUtils.getFilesRecursive(testEbin, "_tests" + ErlConstants.BEAM_SUFFIX));
+      tests.addAll(MojoUtils.getEunitTestSet(p.modules(true, false), p.testSupportArtifacts()));
     }
     else {
-      File test = new File(testEbin, this.test + ErlConstants.BEAM_SUFFIX);
+      File test = new File(p.targetLayout().testEbin(), this.test + ErlConstants.BEAM_SUFFIX);
       if (test.isFile()) {
         tests.add(test);
       }

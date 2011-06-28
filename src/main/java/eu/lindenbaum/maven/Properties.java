@@ -63,26 +63,20 @@ public interface Properties {
   /**
    * Gathers a complete {@link List} of directories used as code paths in a
    * project's build process.
+   * 
+   * @param withTestCodePaths will also return the code paths needed for test
+   *          execution
    */
-  public List<File> codePaths();
-
-  /**
-   * Gathers a complete {@link List} of directories used as code paths in a
-   * project's test build process.
-   */
-  public List<File> testCodePaths();
+  public List<File> codePaths(boolean withTestCodePaths);
 
   /**
    * Gathers a complete {@link List} of directories used as include directories
    * in a standard build process.
+   * 
+   * @param withTestIncludePaths will also return the include paths needed to
+   *          compile test sources
    */
-  public List<File> includePaths();
-
-  /**
-   * Gathers a complete {@link List} of directories used as include directories
-   * in a test build process.
-   */
-  public List<File> testIncludePaths();
+  public List<File> includePaths(boolean withTestIncludePaths);
 
   /**
    * Returns a list of script files used by the plugin to provide a proper test
@@ -96,4 +90,43 @@ public interface Properties {
    * {@link #getTestSupportScripts(Properties)}.
    */
   public List<File> testSupportArtifacts();
+
+  /**
+   * Returns a list of the project's compiled modules.
+   * 
+   * @param withTests includes test modules into the returned list
+   * @param withDependencies includes modules from the project's maven
+   *          dependencies (will also include test scope dependencies if
+   *          <code>withTestModules</code> is set to {@code true}
+   */
+  public List<File> modules(boolean withTests, boolean withDependencies);
+
+  /**
+   * Returns a list of containing the compiled modules from the project's maven
+   * dependencies.
+   * 
+   * @param withTestScopeDependencies includes modules from the project's maven
+   *          test scope dependencies
+   */
+  public List<File> dependencyModules(boolean withTestScopeDependencies);
+
+  /**
+   * Returns a list containing the projects application resource file.
+   * optionally the application resource files from the project's maven
+   * dependencies are also included.
+   * 
+   * @param withDependencies includes application resource files from the
+   *          project's maven dependencies
+   */
+  public List<File> applicationFiles(boolean withDependencies);
+
+  /**
+   * Returns a list of the project's private resource files.
+   * 
+   * @param withTests includes test resources into the returned list
+   * @param withDependencies includes private resources from the project's maven
+   *          dependencies (will also include test scope dependency resources if
+   *          <code>withTestModules</code> is set to {@code true}
+   */
+  public List<File> resources(boolean withTests, boolean withDependencies);
 }

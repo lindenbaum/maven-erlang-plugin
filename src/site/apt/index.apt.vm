@@ -252,21 +252,20 @@ Maven Erlang Plug-In
  
  * {{{./relup-mojo.html}relup}}
 
-** Run Application Projects
+** Run Projects
 
- There is a plug-in goal to run application projects (optionally even on a
- remote node) for testing purposes. Simply typing <<<mvn clean erlang:run>>> 
- will start the application and all required (transitive) applications needed.
+ There is a plug-in goal to run erlang projects (optionally on a remote node)
+ for testing purposes. Simply typing <<<mvn clean erlang:run>>> will start the
+ project's application(s) and all required (transitive) applications needed.
  On successfull start the build will be paused to allow you to connect to the 
  running application using the erlang remote shell. To shutdown the application 
  just finish the build by pressing <ENTER>.
 
  When specifying a running remote node using <<<-Dremote={REMOTE_NODE}>>> the 
- application code will be uploaded to the specified node (without resources) 
- and the application will be started there. To additionally upload the projects
- transitive dependencies specify <<<-DwithDependencies>>>. Please note that the
- applications started on the remote node will not be stopped when the build
- finishes. The node owner has to take care of that.
+ project code and resources will be uploaded to the specified node and the
+ application(s) will be started there. Please note that the applications started
+ on the remote node will not be stopped when the build finishes. The node owner
+ has to take care of that.
  
  More information:
  
@@ -276,13 +275,13 @@ Maven Erlang Plug-In
 
  The upload goal will upload the compiled artifacts of an erlang project on a
  remote node specified by the <<<-Dremote>>> parameter. In case of application
- projects the compiled source code will be uploaded (except for project
- resource files). The dependencies of the project will only be uploaded when
+ projects the compiled source code and the application resources will be
+ uploaded. The dependencies of the project will only be uploaded when
  specifying the <<<withDependencies>>> parameter. In case of release projects
  the packaged release .tar.gz will be uploaded into the remote node's
- <<<releases>>> directory. Please note that the remote node's process will have
- to have write access to its <<<releases>>> directory to be able to successfully
- execute this goal.
+ <<<releases>>> directory. Please note that the remote node's process must have
+ write access to its <<<releases>>> directory to be able to successfully execute
+ this goal.
  
  More information:
 

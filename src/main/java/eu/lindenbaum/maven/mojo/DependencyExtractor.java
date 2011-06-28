@@ -3,14 +3,17 @@ package eu.lindenbaum.maven.mojo;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import eu.lindenbaum.maven.ErlangMojo;
+import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.archiver.TarGzUnarchiver;
+import eu.lindenbaum.maven.util.CollectionUtils;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.Predicate;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -34,7 +37,10 @@ public final class DependencyExtractor extends ErlangMojo {
     File lib = p.targetLayout().lib();
     FileUtils.ensureDirectories(lib);
     TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), lib);
-    Set<Artifact> artifacts = MavenUtils.getErlangArtifacts(p.project());
+    Collection<Artifact> artifacts = MavenUtils.getErlangArtifacts(p.project());
+    if (p.packagingType() == PackagingType.ERLANG_REL) {
+      artifacts = filterTestScopeDependencies(artifacts);
+    }
     if (artifacts.size() > 0) {
       log.info("Processed project dependencies:");
       for (Artifact artifact : artifacts) {
@@ -49,7 +55,7 @@ public final class DependencyExtractor extends ErlangMojo {
    */
   private static void extractArtifact(Log log, Artifact artifact, TarGzUnarchiver unarchiver) throws MojoExecutionException {
     File artifactFile = artifact.getFile();
-    String artifactdirectory = getArtifactDirectory(artifact);
+    String artifactdirectory = MavenUtils.getArtifactDirectory(artifact);
     File cachedDependency = new File(unarchiver.getDestination(), artifactdirectory);
     if (!cachedDependency.isDirectory() || artifactFile.lastModified() > cachedDependency.lastModified()) {
       if (cachedDependency.isDirectory()) {
@@ -71,10 +77,10 @@ public final class DependencyExtractor extends ErlangMojo {
   /**
    * Removes obsolete dependencies from previous build runs.
    */
-  private static void cleanupArtifacts(Log log, File targetLib, Set<Artifact> artifacts) {
+  private static void cleanupArtifacts(Log log, File targetLib, Collection<Artifact> artifacts) {
     List<String> excludes = new ArrayList<String>();
     for (Artifact artifact : artifacts) {
-      excludes.add(getArtifactDirectory(artifact));
+      excludes.add(MavenUtils.getArtifactDirectory(artifact));
     }
     List<File> obsoleteDependencies = FileUtils.getDirectories(targetLib, excludes);
     if (obsoleteDependencies.size() > 0) {
@@ -87,9 +93,15 @@ public final class DependencyExtractor extends ErlangMojo {
   }
 
   /**
-   * Returns the directory name for the given {@link Artifact}.
+   * Removes {@link Artifact} with scope test from the given collection of
+   * artifacts. The input collection is not modified.
    */
-  private static String getArtifactDirectory(Artifact artifact) {
-    return artifact.getFile().getName().replace("." + artifact.getType(), "");
+  private static Collection<Artifact> filterTestScopeDependencies(Collection<Artifact> artifacts) {
+    return CollectionUtils.filter(new Predicate<Artifact>() {
+      @Override
+      public boolean pred(Artifact artifact) {
+        return !Artifact.SCOPE_TEST.equals(artifact.getScope());
+      }
+    }, artifacts);
   }
 }

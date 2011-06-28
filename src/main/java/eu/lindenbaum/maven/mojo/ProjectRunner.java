@@ -7,40 +7,33 @@ import java.util.Collections;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
-import eu.lindenbaum.maven.PackagingType;
 import eu.lindenbaum.maven.Properties;
+import eu.lindenbaum.maven.erlang.CheckRelResult;
+import eu.lindenbaum.maven.erlang.CheckRelScript;
 import eu.lindenbaum.maven.erlang.GenericScriptResult;
 import eu.lindenbaum.maven.erlang.MavenSelf;
+import eu.lindenbaum.maven.erlang.RunProjectScript;
 import eu.lindenbaum.maven.erlang.Script;
-import eu.lindenbaum.maven.erlang.StartApplicationScript;
-import eu.lindenbaum.maven.erlang.StartResult;
-import eu.lindenbaum.maven.erlang.StopApplicationScript;
 import eu.lindenbaum.maven.erlang.UploadScript;
-import eu.lindenbaum.maven.util.ErlConstants;
-import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 
 import com.ericsson.otp.erlang.OtpPeer;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
  * <p>
- * A {@link Mojo} that runs erlang applications packaged with packaging type
- * {@link PackagingType#ERLANG_OTP} or {@link PackagingType#ERLANG_STD} on a
- * specific (remote) node. This will start the application with all dependent
- * applications and all modules pre-loaded. When finished the {@link Mojo} will
- * stop and unload the started applications.
- * </p>
- * <p>
- * TODO: release projects cannot be run
+ * A {@link Mojo} that runs erlang projects on a specific (remote) node. This
+ * will start the project along with all dependent applications and all modules
+ * pre-loaded. In case the project is run on the backend node the build will be
+ * paused to give the user the possibilty to interact with the running project.
  * </p>
  * 
  * @goal run
  * @execute phase="package" lifecycle="run"
+ * @requiresDependencyResolution runtime
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class ProjectRunner extends ErlangMojo {
@@ -72,74 +65,80 @@ public final class ProjectRunner extends ErlangMojo {
     log.info(" R U N N E R");
     log.info(MavenUtils.SEPARATOR);
 
-    PackagingType packagingType = p.packagingType();
-    if (PackagingType.ERLANG_OTP == packagingType || PackagingType.ERLANG_STD == packagingType) {
-      runApplication(log, p, this.remote, this.withDependencies);
-    }
-    else {
-      throw new MojoExecutionException("Mojo does not (yet) support packaging type " + packagingType + ".");
-    }
-  }
-
-  private static void runApplication(Log log, Properties p, String remote, boolean withDependencies) throws MojoExecutionException {
-    boolean runOnRemoteNode = remote != null;
-    String target = runOnRemoteNode ? "'" + remote + "'" : "node()";
+    boolean runOnRemoteNode = this.remote != null;
+    String target = runOnRemoteNode ? "'" + this.remote + "'" : "node()";
     String targetPeer = new OtpPeer(runOnRemoteNode ? target : p.node()).toString();
-
-    // retrieve dependency applications to start
-    List<String> applications = new ArrayList<String>();
-    applications.add(p.project().getArtifactId());
-    for (Artifact artifact : MavenUtils.getErlangReleaseArtifacts(p.project())) {
-      applications.add(artifact.getArtifactId());
-    }
-    Collections.reverse(applications);
 
     // load needed .beam/.app files when running on remote node
     if (runOnRemoteNode) {
-      File ebin = p.targetLayout().ebin();
-      List<File> modules = FileUtils.getFilesRecursive(ebin, ErlConstants.BEAM_SUFFIX);
-      List<File> applicationFiles = FileUtils.getFilesRecursive(ebin, ErlConstants.APP_SUFFIX);
-      if (withDependencies) {
-        File lib = p.targetLayout().lib();
-        modules.addAll(FileUtils.getFilesRecursive(lib, ErlConstants.BEAM_SUFFIX));
-        applicationFiles.addAll(FileUtils.getFilesRecursive(lib, ErlConstants.APP_SUFFIX));
-      }
-      Script<GenericScriptResult> script = new UploadScript(target, modules, applicationFiles);
-      GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
-      if (!result.success()) {
-        log.error("Uploading files to " + targetPeer + " failed.");
-        result.logOutput(log);
-        throw new MojoExecutionException("Uploading needed files failed.");
-      }
+      upload(log, p, target, targetPeer, this.withDependencies);
     }
-
-    // start applications
-    Script<StartResult> startScript = new StartApplicationScript(target, applications);
-    StartResult startResult = MavenSelf.get(p.cookie()).exec(p.node(), startScript);
-    if (startResult.startSucceeded()) {
-      String cookie = p.cookie() != null ? " -setcookie " + p.cookie() + " " : "";
-      log.info("Application started successfully on " + targetPeer + ".");
-      log.info("For a remote shell use 'erl" + cookie + " -remsh " + targetPeer + " -sname yournode'");
-    }
-    else {
-      log.error("Failed to run project:");
-      startResult.logError(log);
-      throw new MojoExecutionException("Failed to run application on " + targetPeer + ".");
-    }
+    start(log, p, target, targetPeer);
 
     // wait for user input when starting applications on backend node instead of remote node
     if (!runOnRemoteNode) {
-      if (startResult.startSucceeded()) {
-        log.info("Press [ENTER] complete the build and shutdown the backend node.");
-        try {
-          System.in.read();
-        }
-        catch (IOException e) {
-          // ignored
-        }
-        Script<Void> stopScript = new StopApplicationScript(startResult.getBeforeApplications());
-        MavenSelf.get(p.cookie()).exec(p.node(), stopScript);
+      log.info("Press [ENTER] to complete the build and shutdown the backend node.");
+      try {
+        System.in.read();
       }
+      catch (IOException e) {
+        // ignored
+      }
+    }
+  }
+
+  /**
+   * Starts a project on a (possibly) remote node. The project may either be an
+   * application or a release.
+   */
+  private static void start(Log log, Properties p, String target, String targetPeer) throws MojoExecutionException {
+    Script<GenericScriptResult> script;
+    switch (p.packagingType()) {
+      case ERLANG_OTP:
+      case ERLANG_STD: {
+        List<String> applications = new ArrayList<String>();
+        applications.add(p.project().getArtifactId());
+        applications.addAll(MavenUtils.getArtifactIds(MavenUtils.getErlangReleaseArtifacts(p.project())));
+        Collections.reverse(applications);
+        script = new RunProjectScript(target, applications);
+        break;
+      }
+
+      default: {
+        Script<CheckRelResult> checkScript = new CheckRelScript(p.targetLayout().relFile());
+        CheckRelResult relResult = MavenSelf.get(p.cookie()).exec(p.node(), checkScript);
+        List<String> applications = new ArrayList<String>();
+        applications.addAll(relResult.getApplications().keySet());
+        script = new RunProjectScript(target, applications, p.targetLayout().sysConfigFile());
+        break;
+      }
+    }
+    GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
+    result.logOutput(log);
+    if (result.success()) {
+      String cookie = p.cookie() != null ? " -setcookie " + p.cookie() + " " : "";
+      log.info("Successfully running project on " + targetPeer + ".");
+      log.info("For a remote shell use 'erl" + cookie + " -remsh " + targetPeer + " -name mynode@myhost'");
+    }
+    else {
+      throw new MojoExecutionException("Failed to run project on " + targetPeer + ".");
+    }
+  }
+
+  /**
+   * Uploads an application onto a remote node optionally including the
+   * applications dependencies. Application resources will be uploaded into a
+   * temporary directory if possible.
+   */
+  private static void upload(Log log, Properties p, String target, String targetPeer, boolean withDependencies) throws MojoExecutionException {
+    List<File> modules = p.modules(false, withDependencies);
+    List<File> applicationFiles = p.applicationFiles(withDependencies);
+    List<File> resourceFiles = p.resources(false, withDependencies);
+    Script<GenericScriptResult> script = new UploadScript(target, modules, applicationFiles, resourceFiles);
+    GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
+    result.logOutput(log);
+    if (!result.success()) {
+      throw new MojoExecutionException("Failed to upload applications to " + targetPeer + ".");
     }
   }
 }

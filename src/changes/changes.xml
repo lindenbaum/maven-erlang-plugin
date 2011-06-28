@@ -4,6 +4,17 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="schlagert, lti" type="fix">
+        Avoid to unpack test scope dependencies when building a release project.
+      </action>
+      <action dev="schlagert" type="add">
+        Resources will now be uploaded along with the modules and application
+        files for the upload and run goals unless no temporary directory could
+        be found on the target system. This fact will issue a warning message.
+      </action>
+      <action dev="schlagert, lti" type="add">
+        Implemented the goal 'erlang:run' for release projects.
+      </action>
       <action dev="schlagert" type="add">
         Unique backend nodes will now be started per project in order to support
         parallel builds of different projects.

@@ -45,6 +45,7 @@ public final class Compiler extends ErlangMojo {
   /**
    * Optional list of source files that will be compiled first (and in the given
    * order). For example:
+   * 
    * <pre>
    *   &lt;compileFirst&gt;
    *     &lt;file&gt;foo.erl&lt;/file&gt;
@@ -85,7 +86,7 @@ public final class Compiler extends ErlangMojo {
         options.add(this.compilerOptions);
       }
 
-      List<File> includes = p.includePaths();
+      List<File> includes = p.includePaths(false);
       Script<CompilerResult> script = new BeamCompilerScript(files, firstFiles, ebin, includes, options);
       CompilerResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
 

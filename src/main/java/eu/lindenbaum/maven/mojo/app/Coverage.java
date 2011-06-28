@@ -1,7 +1,6 @@
 package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -16,18 +15,18 @@ import eu.lindenbaum.maven.report.CoverageReport;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Runs a test coverage analysis on the modules in of the project, optionally 
- * printing the result to console. The coverage data is saved as a simple text 
- * file (<tt>COVERAGE-${project.artifactId}.txt</tt>) with simple space 
- * separated list of results, with coverage levels for: modules, functions, 
- * clauses and lines. See also {@link CoverageReport}, i.e. the 
+ * Runs a test coverage analysis on the modules in of the project, optionally
+ * printing the result to console. The coverage data is saved as a simple text
+ * file (<tt>COVERAGE-${project.artifactId}.txt</tt>) with simple space
+ * separated list of results, with coverage levels for: modules, functions,
+ * clauses and lines. See also {@link CoverageReport}, i.e. the
  * {@code coverage-report} goal.
- *
  * <p>
  * ISSUE If a test purges or unloads a module to do coverage for, the coverage
  * compilation information will be gone and the coverage report will fail.
@@ -63,27 +62,16 @@ public class Coverage extends ErlangMojo {
     log.info(" C O V E R A G E");
     log.info(MavenUtils.SEPARATOR);
 
-    File testEbin = p.targetLayout().testEbin();
-
-    if (!testEbin.exists()) {
+    List<File> tests = MojoUtils.getEunitTestSet(p.modules(true, false), p.testSupportArtifacts());
+    if (tests.isEmpty()) {
       log.info("Nothing to do.");
       return;
     }
-
-    File[] testFiles = testEbin.listFiles(FileUtils.BEAM_FILTER);
-    if (testFiles == null || testFiles.length == 0) {
-      log.info("Nothing to do.");
-      return;
-    }
-
-    List<File> tests = new ArrayList<File>();
-    tests.addAll(FileUtils.getFilesRecursive(testEbin, "_test" + ErlConstants.BEAM_SUFFIX));
-    tests.addAll(FileUtils.getFilesRecursive(testEbin, "_tests" + ErlConstants.BEAM_SUFFIX));
 
     File src = p.sourceLayout().src();
-
     List<File> sources = FileUtils.getFilesRecursive(src, ErlConstants.ERL_SUFFIX);
 
+    File testEbin = p.targetLayout().testEbin();
     File coverageReportDir = p.targetLayout().coverageReports();
     FileUtils.ensureDirectories(coverageReportDir);
     String coverageReportName = p.project().getArtifactId();

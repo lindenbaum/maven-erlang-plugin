@@ -81,8 +81,8 @@ public final class Packager extends ErlangMojo {
 
     String projectVersion = p.project().getVersion();
 
+    List<File> modules = p.modules(false, false);
     Set<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
-    List<File> modules = FileUtils.getFilesRecursive(p.targetLayout().ebin(), ErlConstants.BEAM_SUFFIX);
     Script<String> registeredScript = new GetAttributesScript(modules, "registered");
     String registeredNames = MavenSelf.get(p.cookie()).exec(p.node(), registeredScript);
 

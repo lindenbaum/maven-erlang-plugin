@@ -205,7 +205,7 @@ public final class MavenUtils {
       @Override
       public boolean pred(Artifact artifact) {
         String scope = artifact.getScope();
-        return !"test".equals(scope) && !"provided".equals(scope);
+        return !Artifact.SCOPE_TEST.equals(scope) && !Artifact.SCOPE_PROVIDED.equals(scope);
       }
     }, getErlangArtifacts(project)));
   }
@@ -225,7 +225,7 @@ public final class MavenUtils {
       @Override
       public boolean pred(Artifact artifact) {
         String scope = artifact.getScope();
-        return !"test".equals(scope) && !"provided".equals(scope);
+        return !Artifact.SCOPE_TEST.equals(scope) && !Artifact.SCOPE_PROVIDED.equals(scope);
       }
     }, getErlangDependencies(project)));
   }
@@ -282,7 +282,7 @@ public final class MavenUtils {
       @Override
       public boolean pred(Artifact artifact) {
         String scope = artifact.getScope();
-        return !"test".equals(scope) && !"provided".equals(scope);
+        return !Artifact.SCOPE_TEST.equals(scope) && !Artifact.SCOPE_PROVIDED.equals(scope);
       }
     }, getForeignDependencies(project)));
   }
@@ -299,9 +299,8 @@ public final class MavenUtils {
     return new HashSet<Artifact>(filter(new Predicate<Artifact>() {
       @Override
       public boolean pred(Artifact artifact) {
-        String type = artifact.getType();
-        return !PackagingType.ERLANG_OTP.isA(type) && !PackagingType.ERLANG_STD.isA(type)
-               && !PackagingType.ERLANG_REL.isA(type);
+        PackagingType type = PackagingType.fromString(artifact.getType());
+        return type == PackagingType.UNSUPPORTED;
       }
     }, getDependencies(project)));
   }
@@ -330,21 +329,6 @@ public final class MavenUtils {
     @SuppressWarnings("unchecked")
     Set<Artifact> artifacts = project.getArtifacts();
     return new HashSet<Artifact>(artifacts);
-  }
-
-  /**
-   * Returns a {@link Collection} of {@link Artifact}s based on the given
-   * {@link Collection} excluding the {@link Artifact}s with test scope.
-   * 
-   * @param artifacts to exclude test scope dependencies from
-   */
-  public static Collection<Artifact> excludeTestScopeArtifacts(Collection<Artifact> artifacts) {
-    return new HashSet<Artifact>(filter(new Predicate<Artifact>() {
-      @Override
-      public boolean pred(Artifact artifact) {
-        return !"test".equals(artifact.getScope());
-      }
-    }, artifacts));
   }
 
   /**

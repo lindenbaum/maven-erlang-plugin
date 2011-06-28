@@ -1,7 +1,6 @@
 package eu.lindenbaum.maven.erlang;
 
 import static org.easymock.EasyMock.createStrictControl;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -20,7 +19,7 @@ import org.easymock.IMocksControl;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StartApplicationScriptTest {
+public class RunProjectScriptTest {
   private IMocksControl control;
   private Log log;
 
@@ -34,7 +33,7 @@ public class StartApplicationScriptTest {
   public void testGetHandle() throws MojoExecutionException {
     String node = "node";
     List<String> applications = Arrays.asList("application");
-    StartApplicationScript script = new StartApplicationScript(node, applications);
+    RunProjectScript script = new RunProjectScript(node, applications);
     String expression = script.get();
     assertNotNull(expression);
     assertFalse(expression.isEmpty());
@@ -43,48 +42,53 @@ public class StartApplicationScriptTest {
 
   @Test
   public void testHandleSuccess() throws MojoExecutionException {
+    this.log.info("Applications successfully started:");
+    this.log.info(" * application");
+    this.log.info("");
+
     this.control.replay();
 
-    OtpErlangAtom success = new OtpErlangAtom("ok");
-    OtpErlangAtom beforeApp = new OtpErlangAtom("beforeApp");
-    OtpErlangList beforeApps = new OtpErlangList(new OtpErlangObject[]{ beforeApp });
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ success, beforeApps });
+    OtpErlangAtom application = new OtpErlangAtom("application");
+    OtpErlangList successList = new OtpErlangList(new OtpErlangObject[]{ application });
+    OtpErlangList failedList = new OtpErlangList();
+
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ successList, failedList });
 
     String node = "node";
     List<String> applications = Arrays.asList("application");
-    StartApplicationScript script = new StartApplicationScript(node, applications);
-    StartResult startResult = script.handle(result);
-    startResult.logError(this.log);
-    assertTrue(startResult.startSucceeded());
-    List<String> apps = startResult.getBeforeApplications();
-    assertEquals(1, apps.size());
-    assertEquals("beforeApp", apps.get(0));
+    RunProjectScript script = new RunProjectScript(node, applications);
+    GenericScriptResult startResult = script.handle(result);
+    startResult.logOutput(this.log);
+    assertTrue(startResult.success());
 
     this.control.verify();
   }
 
   @Test
   public void testHandleFailure() throws MojoExecutionException {
-    this.log.error("{error,what}");
+    this.log.error("Applications that could not be started:");
+    this.log.error(" * {application,{error,what}}");
 
     this.control.replay();
 
-    OtpErlangAtom success = new OtpErlangAtom("error");
+    OtpErlangAtom application = new OtpErlangAtom("application");
+
+    OtpErlangAtom error = new OtpErlangAtom("error");
     OtpErlangAtom what = new OtpErlangAtom("what");
-    OtpErlangTuple error = new OtpErlangTuple(new OtpErlangObject[]{ success, what });
-    OtpErlangAtom beforeApp = new OtpErlangAtom("beforeApp");
-    OtpErlangList beforeApps = new OtpErlangList(new OtpErlangObject[]{ beforeApp });
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ error, beforeApps });
+    OtpErlangTuple errorTuple = new OtpErlangTuple(new OtpErlangObject[]{ error, what });
+    OtpErlangTuple failedTuple = new OtpErlangTuple(new OtpErlangObject[]{ application, errorTuple });
+
+    OtpErlangList successList = new OtpErlangList();
+    OtpErlangList failedList = new OtpErlangList(new OtpErlangObject[]{ failedTuple });
+
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ successList, failedList });
 
     String node = "node";
     List<String> applications = Arrays.asList("application");
-    StartApplicationScript script = new StartApplicationScript(node, applications);
-    StartResult startResult = script.handle(result);
-    startResult.logError(this.log);
-    assertFalse(startResult.startSucceeded());
-    List<String> apps = startResult.getBeforeApplications();
-    assertEquals(1, apps.size());
-    assertEquals("beforeApp", apps.get(0));
+    RunProjectScript script = new RunProjectScript(node, applications);
+    GenericScriptResult startResult = script.handle(result);
+    startResult.logOutput(this.log);
+    assertFalse(startResult.success());
 
     this.control.verify();
   }

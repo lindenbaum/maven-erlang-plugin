@@ -11,8 +11,6 @@ import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.erlang.UploadReleaseScript;
 import eu.lindenbaum.maven.erlang.UploadScript;
-import eu.lindenbaum.maven.util.ErlConstants;
-import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 
 import org.apache.maven.plugin.Mojo;
@@ -23,12 +21,15 @@ import org.apache.maven.plugin.logging.Log;
  * <p>
  * This {@link Mojo} uploads a project onto a remote node. In case of
  * application projects this includes remote loading of the compiled application
- * modules loading of the application resource file using
- * <code>application:load/1</code>. The modules will be purged once as if
- * <code>c:c/1</code> would have been called on a shell. In case of a release
- * project the release package (<code>.tar.gz</code>) will be uploaded in the
- * remote nodes {@code releases} directory ready to be unpacked and installed
- * using the {@code release_handler}.
+ * modules, loading of the application resource file using
+ * <code>application:load/1</code> and uploading the project's private resources
+ * making them available using <code>code:priv_dir/1</code>. To achieve this the
+ * temporary upload directory is added to the remote node's code path. The
+ * modules will be purged once as if <code>c:c/1</code> would have been called
+ * on a shell. In case of a release project the release package (
+ * <code>.tar.gz</code>) will be uploaded in the remote nodes {@code releases}
+ * directory ready to be unpacked and installed using the
+ * {@code release_handler}.
  * </p>
  * <p>
  * Note: Uploading of releases will require that the remote erlang process has
@@ -37,6 +38,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal upload
  * @execute phase="package" lifecycle="upload"
+ * @requiresDependencyResolution runtime
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @since 2.0.0
  */
@@ -86,28 +88,17 @@ public final class ProjectUploader extends ErlangMojo {
 
   /**
    * Uploads an application onto a remote node optionally including the
-   * applications dependencies. Application resources will not be uploaded (only
-   * the compiled application code and the application resource file).
+   * applications dependencies. Application resources will be uploaded into a
+   * temporary directory if possible.
    */
   private static void uploadApplication(Log log, Properties p, String target, boolean withDependencies) throws MojoExecutionException {
-    File ebin = p.targetLayout().ebin();
-    List<File> modules = FileUtils.getFilesRecursive(ebin, ErlConstants.BEAM_SUFFIX);
-    List<File> applicationFiles = FileUtils.getFilesRecursive(ebin, ErlConstants.APP_SUFFIX);
-    if (withDependencies) {
-      File lib = p.targetLayout().lib();
-      modules.addAll(FileUtils.getFilesRecursive(lib, ErlConstants.BEAM_SUFFIX));
-      applicationFiles.addAll(FileUtils.getFilesRecursive(lib, ErlConstants.APP_SUFFIX));
-    }
-
-    Script<GenericScriptResult> script = new UploadScript(target, modules, applicationFiles);
+    List<File> modules = p.modules(false, withDependencies);
+    List<File> applicationFiles = p.applicationFiles(withDependencies);
+    List<File> resourceFiles = p.resources(false, withDependencies);
+    Script<GenericScriptResult> script = new UploadScript(target, modules, applicationFiles, resourceFiles);
     GenericScriptResult result = MavenSelf.get(p.cookie()).exec(p.node(), script);
-    if (result.success()) {
-      log.info("Successfully uploaded application to " + target + ".");
-      result.logOutput(log);
-    }
-    else {
-      log.error("Uploading application to " + target + " failed.");
-      result.logOutput(log);
+    result.logOutput(log);
+    if (!result.success()) {
       throw new MojoExecutionException("Uploading application failed.");
     }
   }

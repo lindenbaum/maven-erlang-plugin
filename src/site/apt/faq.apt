@@ -82,16 +82,17 @@ Frequently Asked Questions
  dependencies will not be packaged into the release and need not be contained
  in the application resource or release file. 
 
-* Can the plug-in run my application (and its dependencies) for testing
-  purposes?
+* Can the plug-in run my project (and its dependencies) for testing purposes?
 
- Yes, the {{{./run-mojo.html}run}} mojo provides a convenient way to run an
- application project (with all dependency applications) for basic testing
- purposes (optionally on a remote node). The only configuration available 
- will be the configuration specified in the specific application resource
- file. The plug-in will give an advice about how to connect to the (remote)
- node running the application. Please note that application resources will
- be available when running the application on a remote node. 
+ Yes, the {{{./run-mojo.html}run}} mojo provides a convenient way to run either
+ application projects or the applications contained in release projects (with
+ all dependency applications) for basic testing purposes (optionally on a remote
+ node). When running releases the project's <<<sys.config>>> will be loaded into
+ the environment before starting the applications. All resource files
+ (application <<<priv>>> directories) will be available to the runtime system
+ and can be retrieved using <<<code:priv_dir/1>>> for a specific application.
+ The plug-in will give an advice about how to connect to the (remote) node
+ running the application(s). 
 
 * Does the plug-in suppport structured source directories?
 
@@ -121,7 +122,7 @@ Frequently Asked Questions
  The plug-in supports random resources that will be put into the target
  <<<priv>>> directory. Resources from the test priv directory will override the
  default resources in the test phase. The <<<priv>>> directory can be obtained
- at test runtime using <<<code:priv_dir(APPNAME)>>>. 
+ at test runtime using <<<code:priv_dir/1>>>. 
 
 * How does the plug-in support unit testing?
 

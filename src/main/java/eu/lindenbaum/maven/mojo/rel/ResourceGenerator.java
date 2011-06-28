@@ -96,7 +96,7 @@ public final class ResourceGenerator extends ErlangMojo {
 
     File base = p.targetLayout().base();
 
-    List<File> codePaths = p.codePaths();
+    List<File> codePaths = p.codePaths(false);
     codePaths.addAll(runtimeInfo.getPaths());
     codePaths.removeAll(Arrays.asList(base));
     Collections.reverse(codePaths);

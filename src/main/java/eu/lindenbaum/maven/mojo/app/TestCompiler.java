@@ -56,6 +56,7 @@ public final class TestCompiler extends ErlangMojo {
   /**
    * Optional list of files that will be compiled first (and in the given
    * order). For example
+   * 
    * <pre>
    *   &lt;testCompileFirst&gt;
    *     &lt;file&gt;foo.erl&lt;/file&gt;
@@ -111,7 +112,7 @@ public final class TestCompiler extends ErlangMojo {
         options.add(this.testCompilerOptions);
       }
 
-      List<File> includes = p.testIncludePaths();
+      List<File> includes = p.includePaths(true);
       Script<CompilerResult> script = new BeamCompilerScript(files, firstFiles, out, includes, options);
       CompilerResult result = MavenSelf.get(p.cookie()).exec(p.testNode(), script);
 

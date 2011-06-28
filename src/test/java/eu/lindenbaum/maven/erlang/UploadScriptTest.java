@@ -9,7 +9,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangString;
@@ -36,7 +35,8 @@ public class UploadScriptTest {
     String remoteNode = "node@otherhost.de";
     List<File> modules = Arrays.asList(new File("module"));
     List<File> appFiles = Arrays.asList(new File("appFile"));
-    UploadScript script = new UploadScript(remoteNode, modules, appFiles);
+    List<File> resources = Arrays.asList(new File("resourceFile"));
+    UploadScript script = new UploadScript(remoteNode, modules, appFiles, resources);
     String expression = script.get();
     assertNotNull(expression);
     assertFalse(expression.isEmpty());
@@ -45,17 +45,22 @@ public class UploadScriptTest {
 
   @Test
   public void testHandleOk() throws MojoExecutionException {
-    this.log.info("[\"module\"]");
+    this.log.info("Files uploaded successfully to node@otherhost.de:");
+    this.log.info(" * module");
+    this.log.info("");
 
     this.control.replay();
 
     OtpErlangString module = new OtpErlangString("module");
-    OtpErlangList result = new OtpErlangList(new OtpErlangObject[]{ module });
+    OtpErlangList succeeded = new OtpErlangList(new OtpErlangObject[]{ module });
+    OtpErlangList failed = new OtpErlangList();
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ succeeded, failed });
 
     String remoteNode = "node@otherhost.de";
     List<File> modules = Arrays.asList(new File("module"));
     List<File> appFiles = Arrays.asList(new File("appFile"));
-    UploadScript script = new UploadScript(remoteNode, modules, appFiles);
+    List<File> resources = Arrays.asList(new File("resourceFile"));
+    UploadScript script = new UploadScript(remoteNode, modules, appFiles, resources);
     GenericScriptResult genericScriptResult = script.handle(result);
     assertTrue(genericScriptResult.success());
     genericScriptResult.logOutput(this.log);
@@ -65,18 +70,25 @@ public class UploadScriptTest {
 
   @Test
   public void testHandleError() throws MojoExecutionException {
-    this.log.error("{error,reason}");
+    this.log.info("Files uploaded successfully to node@otherhost.de:");
+    this.log.info(" * module");
+    this.log.info("");
+    this.log.error("Files that could not be uploaded to node@otherhost.de:");
+    this.log.error(" * resource");
 
     this.control.replay();
 
-    OtpErlangAtom error = new OtpErlangAtom("error");
-    OtpErlangAtom reason = new OtpErlangAtom("reason");
-    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ error, reason });
+    OtpErlangString module = new OtpErlangString("module");
+    OtpErlangString resource = new OtpErlangString("resource");
+    OtpErlangList succeeded = new OtpErlangList(new OtpErlangObject[]{ module });
+    OtpErlangList failed = new OtpErlangList(new OtpErlangObject[]{ resource });
+    OtpErlangTuple result = new OtpErlangTuple(new OtpErlangObject[]{ succeeded, failed });
 
     String remoteNode = "node@otherhost.de";
     List<File> modules = Arrays.asList(new File("module"));
     List<File> appFiles = Arrays.asList(new File("appFile"));
-    UploadScript script = new UploadScript(remoteNode, modules, appFiles);
+    List<File> resources = Arrays.asList(new File("resourceFile"));
+    UploadScript script = new UploadScript(remoteNode, modules, appFiles, resources);
     GenericScriptResult genericScriptResult = script.handle(result);
     assertFalse(genericScriptResult.success());
     genericScriptResult.logOutput(this.log);

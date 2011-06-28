@@ -97,7 +97,8 @@ public enum PackagingType {
 
   /**
    * Returns a {@link PackagingType} for a packaging id. If the string does not
-   * match a specific enum type an {@link IllegalArgumentException} is thrown.
+   * match a specific enum type an {@link PackagingType#UNSUPPORTED} is
+   * returned.
    * 
    * @param id used to instantiate a {@link PackagingType}
    * @return the matching packaging type
