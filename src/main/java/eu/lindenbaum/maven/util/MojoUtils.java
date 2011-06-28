@@ -1,5 +1,7 @@
 package eu.lindenbaum.maven.util;
 
+import static eu.lindenbaum.maven.util.CollectionUtils.filter;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +34,8 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class MojoUtils {
   private static final String WINDOWS = "WINDOWS";
-  public static final Pattern DIALYZER_WARNING = Pattern.compile("(.+):(\\d+): (.+)");
+  private static final String EUNIT_TESTS_SUFFIX = "_tests" + ErlConstants.BEAM_SUFFIX;
+  private static final Pattern DIALYZER_WARNING = Pattern.compile("(.+):(\\d+): (.+)");
 
   /**
    * Returns whether the executing JVM is running under Microsoft Windows or
@@ -178,5 +181,34 @@ public final class MojoUtils {
       }
     }
     return warnings;
+  }
+
+  /**
+   * Filters a given list of compiled test files and returns a list of files
+   * that must be run (using eunit) to cover all modules that could possibly
+   * contain tests. In fact this will remove a module ending with
+   * <code>_tests.beam</code> from the list whenever another module is contained
+   * without this suffix (the according test will be run by eunit
+   * automatically). The input list will not be modified.
+   * 
+   * @param tests list of test modules to find the tests to execute for.
+   * @param excludes list of infrastructure modules that should be excluded from
+   *          test execution
+   * @return a non-{@code null} list of test modules
+   */
+  public static List<File> getEunitTestSet(final Collection<File> tests, Collection<File> excludes) {
+    ArrayList<File> prefiltered = new ArrayList<File>(tests);
+    prefiltered.removeAll(excludes);
+    return new ArrayList<File>(filter(new Predicate<File>() {
+      @Override
+      public boolean pred(File object) {
+        String testPath = object.getAbsolutePath();
+        if (testPath.endsWith(EUNIT_TESTS_SUFFIX)) {
+          String impl = testPath.replace(EUNIT_TESTS_SUFFIX, ErlConstants.BEAM_SUFFIX);
+          return !tests.contains(new File(impl));
+        }
+        return true;
+      }
+    }, prefiltered));
   }
 }

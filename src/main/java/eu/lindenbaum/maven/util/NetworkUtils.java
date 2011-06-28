@@ -1,5 +1,7 @@
 package eu.lindenbaum.maven.util;
 
+import static eu.lindenbaum.maven.util.CollectionUtils.filter;
+
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -80,17 +82,15 @@ public final class NetworkUtils {
    *          addresses, otherwise only IPv6 addresses will be contained
    * @return a filtered {@link Collection}
    */
-  public static Collection<InetAddress> filterInetAddresses(Collection<InetAddress> in, boolean ipv4only) {
-    ArrayList<InetAddress> filtered = new ArrayList<InetAddress>();
-    for (InetAddress address : in) {
-      if (!address.isAnyLocalAddress() && !address.isMulticastAddress()) {
-        if (ipv4only && address instanceof Inet4Address //
-            || !ipv4only && address instanceof Inet6Address) {
-          filtered.add(address);
-        }
+  public static Collection<InetAddress> filterInetAddresses(Collection<InetAddress> in, final boolean ipv4only) {
+    return filter(new Predicate<InetAddress>() {
+      @Override
+      public boolean pred(InetAddress address) {
+        return !address.isAnyLocalAddress() && !address.isMulticastAddress()
+               && (ipv4only && address instanceof Inet4Address //
+               || !ipv4only && address instanceof Inet6Address);
       }
-    }
-    return filtered;
+    }, in);
   }
 
   /**

@@ -1,5 +1,8 @@
 package eu.lindenbaum.maven.util;
 
+import static eu.lindenbaum.maven.util.CollectionUtils.filter;
+import static eu.lindenbaum.maven.util.CollectionUtils.map;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -9,6 +12,8 @@ import java.util.Set;
 
 import eu.lindenbaum.maven.MavenComponents;
 import eu.lindenbaum.maven.PackagingType;
+import eu.lindenbaum.maven.mojo.DependencyExtractor;
+import eu.lindenbaum.maven.util.CollectionUtils.MapFunction;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -158,11 +163,20 @@ public final class MavenUtils {
    * @return a non-{@code null} {@link Set} object containing artifactIds.
    */
   public static Set<String> getArtifactIds(Collection<Artifact> artifacts) {
-    Set<String> result = new HashSet<String>();
-    for (Artifact artifact : artifacts) {
-      result.add(artifact.getArtifactId());
-    }
-    return result;
+    return new HashSet<String>(map(new MapFunction<Artifact, String>() {
+      @Override
+      public String apply(Artifact a) {
+        return a.getArtifactId();
+      }
+    }, artifacts));
+  }
+
+  /**
+   * Returns the directory name for the given {@link Artifact}. This is used by
+   * the {@link DependencyExtractor} to construct dependency directory names.
+   */
+  public static String getArtifactDirectory(Artifact artifact) {
+    return artifact.getFile().getName().replace("." + artifact.getType(), "");
   }
 
   /**
@@ -187,14 +201,13 @@ public final class MavenUtils {
    * @return a non-{@code null} {@link Set} of dependency artifacts
    */
   public static Set<Artifact> getErlangReleaseArtifacts(MavenProject project) {
-    Set<Artifact> result = new HashSet<Artifact>();
-    for (Artifact artifact : getErlangArtifacts(project)) {
-      String scope = artifact.getScope();
-      if (!"test".equals(scope) && !"provided".equals(scope)) {
-        result.add(artifact);
+    return new HashSet<Artifact>(filter(new Predicate<Artifact>() {
+      @Override
+      public boolean pred(Artifact artifact) {
+        String scope = artifact.getScope();
+        return !"test".equals(scope) && !"provided".equals(scope);
       }
-    }
-    return result;
+    }, getErlangArtifacts(project)));
   }
 
   /**
@@ -208,14 +221,13 @@ public final class MavenUtils {
    * @return a non-{@code null} {@link Set} of dependency artifacts
    */
   public static Set<Artifact> getErlangDependenciesToPackage(MavenProject project) {
-    Set<Artifact> result = new HashSet<Artifact>();
-    for (Artifact artifact : getErlangDependencies(project)) {
-      String scope = artifact.getScope();
-      if (!"test".equals(scope) && !"provided".equals(scope)) {
-        result.add(artifact);
+    return new HashSet<Artifact>(filter(new Predicate<Artifact>() {
+      @Override
+      public boolean pred(Artifact artifact) {
+        String scope = artifact.getScope();
+        return !"test".equals(scope) && !"provided".equals(scope);
       }
-    }
-    return result;
+    }, getErlangDependencies(project)));
   }
 
   /**
@@ -228,14 +240,13 @@ public final class MavenUtils {
    * @return a non-{@code null} {@link Set} of dependency artifacts
    */
   public static Set<Artifact> getErlangArtifacts(MavenProject project) {
-    Set<Artifact> result = new HashSet<Artifact>();
-    for (Artifact artifact : getArtifacts(project)) {
-      String type = artifact.getType();
-      if (PackagingType.ERLANG_OTP.isA(type) || PackagingType.ERLANG_STD.isA(type)) {
-        result.add(artifact);
+    return new HashSet<Artifact>(filter(new Predicate<Artifact>() {
+      @Override
+      public boolean pred(Artifact artifact) {
+        String type = artifact.getType();
+        return PackagingType.ERLANG_OTP.isA(type) || PackagingType.ERLANG_STD.isA(type);
       }
-    }
-    return result;
+    }, getArtifacts(project)));
   }
 
   /**
@@ -248,14 +259,13 @@ public final class MavenUtils {
    * @return a non-{@code null} {@link Set} of dependency artifacts
    */
   public static Set<Artifact> getErlangDependencies(MavenProject project) {
-    Set<Artifact> result = new HashSet<Artifact>();
-    for (Artifact artifact : getDependencies(project)) {
-      String type = artifact.getType();
-      if (PackagingType.ERLANG_OTP.isA(type) || PackagingType.ERLANG_STD.isA(type)) {
-        result.add(artifact);
+    return new HashSet<Artifact>(filter(new Predicate<Artifact>() {
+      @Override
+      public boolean pred(Artifact artifact) {
+        String type = artifact.getType();
+        return PackagingType.ERLANG_OTP.isA(type) || PackagingType.ERLANG_STD.isA(type);
       }
-    }
-    return result;
+    }, getDependencies(project)));
   }
 
   /**
@@ -268,14 +278,13 @@ public final class MavenUtils {
    * @return a non-{@code null} {@link Set} of dependency artifacts
    */
   public static Set<Artifact> getForeignDependenciesToPackage(MavenProject project) {
-    Set<Artifact> result = new HashSet<Artifact>();
-    for (Artifact artifact : getForeignDependencies(project)) {
-      String scope = artifact.getScope();
-      if (!"test".equals(scope) && !"provided".equals(scope)) {
-        result.add(artifact);
+    return new HashSet<Artifact>(filter(new Predicate<Artifact>() {
+      @Override
+      public boolean pred(Artifact artifact) {
+        String scope = artifact.getScope();
+        return !"test".equals(scope) && !"provided".equals(scope);
       }
-    }
-    return result;
+    }, getForeignDependencies(project)));
   }
 
   /**
@@ -287,16 +296,14 @@ public final class MavenUtils {
    * @return a non-{@code null} {@link Set} of dependency artifacts
    */
   public static Set<Artifact> getForeignDependencies(MavenProject project) {
-    Set<Artifact> result = new HashSet<Artifact>();
-    for (Artifact artifact : getDependencies(project)) {
-      String type = artifact.getType();
-      if (!PackagingType.ERLANG_OTP.isA(type) //
-          && !PackagingType.ERLANG_STD.isA(type) //
-          && !PackagingType.ERLANG_REL.isA(type)) {
-        result.add(artifact);
+    return new HashSet<Artifact>(filter(new Predicate<Artifact>() {
+      @Override
+      public boolean pred(Artifact artifact) {
+        String type = artifact.getType();
+        return !PackagingType.ERLANG_OTP.isA(type) && !PackagingType.ERLANG_STD.isA(type)
+               && !PackagingType.ERLANG_REL.isA(type);
       }
-    }
-    return result;
+    }, getDependencies(project)));
   }
 
   /**
@@ -323,6 +330,21 @@ public final class MavenUtils {
     @SuppressWarnings("unchecked")
     Set<Artifact> artifacts = project.getArtifacts();
     return new HashSet<Artifact>(artifacts);
+  }
+
+  /**
+   * Returns a {@link Collection} of {@link Artifact}s based on the given
+   * {@link Collection} excluding the {@link Artifact}s with test scope.
+   * 
+   * @param artifacts to exclude test scope dependencies from
+   */
+  public static Collection<Artifact> excludeTestScopeArtifacts(Collection<Artifact> artifacts) {
+    return new HashSet<Artifact>(filter(new Predicate<Artifact>() {
+      @Override
+      public boolean pred(Artifact artifact) {
+        return !"test".equals(artifact.getScope());
+      }
+    }, artifacts));
   }
 
   /**
