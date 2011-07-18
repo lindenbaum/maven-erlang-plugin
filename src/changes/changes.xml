@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="schlagert, olle-t" type="fix">
+        Copying of files will now preserve the executable bit. Uploaded
+        resources will be flagged executable by default (on the remote machine).
+      </action>
       <action dev="schlagert, lti" type="fix">
         Avoid to unpack test scope dependencies when building a release project.
       </action>

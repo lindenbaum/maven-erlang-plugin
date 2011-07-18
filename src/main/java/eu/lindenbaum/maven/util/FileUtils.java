@@ -144,13 +144,13 @@ public final class FileUtils {
   }
 
   /**
-   * Get a flattened list of all files matching the specified file extension in 
+   * Get a flattened list of all files matching the specified file extension in
    * <b>all</b> of the given root directories. NOTE: this method takes no
    * special care for possible duplicate files.
    * 
-   * @param directories used for recursive lookup, aggregated into one result 
+   * @param directories used for recursive lookup, aggregated into one result
    * @param suffix file extension to match, for example {@code ".erl"}.
-   * @return a {@link List} of all the found files 
+   * @return a {@link List} of all the found files
    * @see #getFilesRecursive(File, String)
    */
   public static List<File> getFilesRecursive(List<File> directories, String suffix) {
@@ -377,13 +377,8 @@ public final class FileUtils {
           ensureDirectories(dest);
         }
         else {
-          try {
-            org.codehaus.plexus.util.FileUtils.copyFile(src, dest);
-            copied.add(src);
-          }
-          catch (IOException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-          }
+          copyFile(src, dest);
+          copied.add(src);
         }
       }
       for (File src : toCopy) {
@@ -458,7 +453,7 @@ public final class FileUtils {
       if (parent != null) {
         ensureDirectories(parent);
       }
-      writeFile(to, content);
+      writeFile(to, content, from.canExecute());
     }
     catch (IOException e) {
       throw new MojoExecutionException(e.getMessage(), e);
@@ -476,27 +471,38 @@ public final class FileUtils {
   public static void copyFiles(File destination, File... files) throws MojoExecutionException {
     ensureDirectories(destination);
     for (File file : files) {
-      File dest = new File(destination, file.getName());
-      try {
-        org.codehaus.plexus.util.FileUtils.copyFile(file, dest);
-      }
-      catch (IOException e) {
-        throw new MojoExecutionException("Failed to copy " + file + ".");
-      }
+      copyFile(file, new File(destination, file.getName()));
     }
   }
 
   /**
    * Writes data to a destination file. The file will be created if it doesn't
-   * exist.
+   * exist. The resulting file will not be executable.
    * 
    * @param destination to write to
    * @param data to write
+   * @see #writeFile(File, String, boolean)
    * @throws MojoExecutionException
    */
   public static void writeFile(File destination, String data) throws MojoExecutionException {
+    writeFile(destination, data, false);
+  }
+
+  /**
+   * Writes data to a destination file. The file will be created if it doesn't
+   * exist. Optionally, the file can be flagged as executable.
+   * 
+   * @param destination to write to
+   * @param data to write
+   * @param executable {@code true} if destination should be flagged executable
+   * @throws MojoExecutionException
+   */
+  public static void writeFile(File destination, String data, boolean executable) throws MojoExecutionException {
     try {
       org.codehaus.plexus.util.FileUtils.fileWrite(destination.getAbsolutePath(), "UTF-8", data);
+      if (executable) {
+        destination.setExecutable(true, false);
+      }
     }
     catch (IOException e) {
       throw new MojoExecutionException("Failed to write " + destination + ": " + e.getMessage());
@@ -612,6 +618,23 @@ public final class FileUtils {
     }
     else {
       throw new MojoExecutionException("Could not find resource " + resource + ".");
+    }
+  }
+
+  /**
+   * Copies a file using
+   * {@link org.codehaus.plexus.util.FileUtils#copyFile(File, File)}. If the
+   * source file is executble the destiantion file will also be executable.
+   */
+  private static void copyFile(File src, File dest) throws MojoExecutionException {
+    try {
+      org.codehaus.plexus.util.FileUtils.copyFile(src, dest);
+      if (src.canExecute()) {
+        dest.setExecutable(true, false);
+      }
+    }
+    catch (IOException e) {
+      throw new MojoExecutionException("Failed to copy " + src + ".", e);
     }
   }
 }
