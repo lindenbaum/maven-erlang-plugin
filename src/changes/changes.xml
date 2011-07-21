@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t, schlagert" type="fix">
+        Changed method that adds uploaded resources to the path (patha), solves
+        path issues when running a project on a remote node.
+      </action>
       <action dev="schlagert, olle-t" type="fix">
         Copying of files will now preserve the executable bit. Uploaded
         resources will be flagged executable by default (on the remote machine).
