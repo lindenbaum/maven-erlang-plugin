@@ -3,11 +3,11 @@ package eu.lindenbaum.maven;
 /**
  * Enum for the supported packaging types.
  * <ul>
- * <li>erlang-otp: packaging type for erlang/OTP applications (with maven
+ * <li>erlang-otp: packaging type for Erlang/OTP applications (with maven
  * standard directory layout)</li>
- * <li>erlang-std: packaging type for erlang/OTP applications (with OTP standard
+ * <li>erlang-std: packaging type for Erlang/OTP applications (with OTP standard
  * directory layout)</li>
- * <li>erlang-rel: packaging type for erlang/OTP releases</li>
+ * <li>erlang-rel: packaging type for Erlang/OTP releases</li>
  * </ul>
  * 
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
@@ -15,7 +15,7 @@ package eu.lindenbaum.maven;
  */
 public enum PackagingType {
   /**
-   * Packaging type for erlang/OTP applications with maven standard directory
+   * Packaging type for Erlang/OTP applications with maven standard directory
    * layout:
    * 
    * <pre>
@@ -34,7 +34,7 @@ public enum PackagingType {
    */
   ERLANG_OTP("erlang-otp"),
   /**
-   * Packaging type for erlang/OTP applications with erlang/OTP standard
+   * Packaging type for Erlang/OTP applications with Erlang/OTP standard
    * directory layout:
    * 
    * <pre>
@@ -54,7 +54,7 @@ public enum PackagingType {
    */
   ERLANG_STD("erlang-std"),
   /**
-   * Packaging type for erlang/OTP releases with trivial directory layout:
+   * Packaging type for Erlang/OTP releases with trivial directory layout:
    * 
    * <pre>
    *  BASE

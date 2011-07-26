@@ -57,7 +57,7 @@ Setting up a new Erlang/OTP release project
 </project>
 +--
 
- Note: This release is configured to be created using the erlang/OTP standard
+ Note: This release is configured to be created using the Erlang/OTP standard
  applications from <<<R13B04>>>. Thus the executing backend node must run this
  OTP release. By default the backend node is spawned using the <<<erl>>> command
  in the system path. To use another OTP version the <<<erlCommand>>> can be set

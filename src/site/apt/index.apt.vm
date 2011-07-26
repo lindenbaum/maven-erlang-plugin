@@ -91,10 +91,10 @@ Maven Erlang Plug-In
  * <<<erlang-std>>> - An application development project, aimed at supporting 
  the conventions of the Erlang
  {{{http://www.erlang.org/doc/design_principles/users_guide.html}OTP Design Principles}}
- respecting the default erlang/OTP directory layout.
+ respecting the default Erlang/OTP directory layout.
 
  * <<<erlang-rel>>> - A release and packaging project that supports building
- an erlang/OTP packaged and distributable solution.  
+ an Erlang/OTP packaged and distributable solution.  
  
 ** Configuration
 

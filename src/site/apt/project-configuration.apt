@@ -105,7 +105,7 @@ Project Configuration
 
  * consistency of configured application dependencies
 
- * consistency of required erlang/OTP release the release will be based on
+ * consistency of required Erlang/OTP release the release will be based on
 
 ** Release Upgrade File Checking
 

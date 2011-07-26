@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="update">
+        Changed resolution of required Erlang/OTP version to allow a trailing
+        wildcard "*" - making it possible to require any maintenance release of
+        some specified version, for example "R14B*".
+      </action>
       <action dev="olle-t, schlagert" type="fix">
         Changed method that adds uploaded resources to the path (patha), solves
         path issues when running a project on a remote node.
@@ -196,7 +201,7 @@
       </action>
       <action dev="schlagert, olle-t" type="update" issue="3166835" due-to="ghaskins">
         Refined dependency management of releases by choosing the standard
-        erlang/OTP application versions from a specific OTP release.
+        Erlang/OTP application versions from a specific OTP release.
         Availability of the required release is checked (but may be skipped for
         testing purposes).
       </action>
@@ -257,7 +262,7 @@
         since the plugin can use the emacs distel node or vice versa.
       </action>
       <action dev="schlagert" type="add">
-        Added packaging type erlang-std which respects the default erlang/OTP
+        Added packaging type erlang-std which respects the default Erlang/OTP
         application directory layout.
       </action>
       <action dev="schlagert" type="add">
@@ -306,7 +311,7 @@
       </action>
       <action dev="schlagert" type="add">
         Added run goal for packaging erlang-otp to compile/test and run an
-        erlang/OTP application for easy testing.
+        Erlang/OTP application for easy testing.
       </action>
       <action dev="schlagert" type="add">
         Release file generation and management support.
@@ -353,7 +358,7 @@
         Initial feature set: Execute eunit tests
       </action>
       <action dev="schlagert" type="add">
-        Initial feature set: Execute dialyzer on erlang/OTP applications and
+        Initial feature set: Execute dialyzer on Erlang/OTP applications and
         releases
       </action>
       <action dev="schlagert" type="add">
@@ -362,11 +367,11 @@
         coverage
       </action>
       <action dev="schlagert" type="add">
-        Initial feature set: Package erlang/OTP applications
+        Initial feature set: Package Erlang/OTP applications
       </action>
       <action dev="schlagert" type="add">
-        Initial feature set: Package erlang/OTP releases (consisting of
-        erlang/OTP applications)
+        Initial feature set: Package Erlang/OTP releases (consisting of
+        Erlang/OTP applications)
       </action>
       <action dev="olle-t" type="add">
         Initial feature set: Project setup-goal, with defaults for site and

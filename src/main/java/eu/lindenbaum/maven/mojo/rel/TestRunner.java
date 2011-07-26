@@ -35,7 +35,7 @@ public final class TestRunner extends ErlangMojo {
   /**
    * Setting this to {@code true will} will skip comparison of the OTP release
    * version against the required OTP version. The release build will fail if
-   * the backend node doesn't run the required erlang/OTP release specified by
+   * the backend node doesn't run the required Erlang/OTP release specified by
    * {@link #otpRelease}.
    * 
    * @parameter expression="${skipReleaseTest}" default-value=false
@@ -45,11 +45,12 @@ public final class TestRunner extends ErlangMojo {
 
   /**
    * <p>
-   * This <b>must</b> be set to the erlang/OTP release version this release has
-   * to be based on. The version must be given as it would be returned by
-   * <code>erlang:system_info(otp_release)</code>. All standard OTP dependencies
-   * like {@code kernel}, {@code stdlib}, ... will be configured to the version
-   * of the configured erlang/OTP release.
+   * This <b>must</b> be set to the Erlang/OTP release version this release 
+   * will be based on. The version should be given as it would be returned by
+   * <code>erlang:system_info(otp_release)</code> or optionally with a trailing
+   * wildcard character "*" for partial version matching (e.g. "R14B*"). All 
+   * standard OTP dependencies like {@code kernel}, {@code stdlib}, ... will be 
+   * configured to the version of the configured Erlang/OTP release.
    * </p>
    * <p>
    * In order to do this the executing backend node has to run the required OTP
@@ -76,7 +77,7 @@ public final class TestRunner extends ErlangMojo {
     }
     else {
       log.warn("Warnings:");
-      log.warn(" * erlang/OTP release version check is skipped, standard erlang/OTP");
+      log.warn(" * Erlang/OTP release version check is skipped, standard Erlang/OTP");
       log.warn("   applications will be included from release '" + runtimeInfo.getOtpRelease() + "'");
     }
 
@@ -102,15 +103,30 @@ public final class TestRunner extends ErlangMojo {
   }
 
   /**
-   * Checks whether the required erlang/OTP release version needed to build the
+   * Checks whether the required Erlang/OTP release version needed to build the
    * release is actually available to the backend node.
+   * <p>
+   * The expected version is checked as either the exact matching version string
+   * or, when the given version ends with the wildcard "*", matches the 
+   * beginning of the system version. NOTE: only a trailing wildcard is valid.
+   * </p>
+   * <p>For example: passing "R14B*" will match "R14B01", "R14B02" etc, but 
+   * "R14B" will match only that exact system release.
+   * </p> 
    */
   private static void checkOtpReleaseVersion(Log log, String expected, String actual) throws MojoFailureException {
-    if (!actual.equals(expected)) {
+    final boolean otpReleaseVersionMismatch;
+    if (expected != null && expected.endsWith("*")) {
+      otpReleaseVersionMismatch = !actual.startsWith(expected.replaceAll("\\*", ""));
+    }
+    else {
+      otpReleaseVersionMismatch = !actual.equals(expected);
+    }
+    if (otpReleaseVersionMismatch) {
       log.error("Errors:");
-      log.error(" * backend node does not run the required erlang/OTP release, required");
+      log.error(" * backend node does not run the required Erlang/OTP release, required");
       log.error("   release is '" + expected + "' while backend node runs '" + actual + "'");
-      String msg = "Required erlang/OTP release not available '" + expected + "' != '" + actual + "'.";
+      String msg = "Required Erlang/OTP release not available '" + expected + "' != '" + actual + "'.";
       throw new MojoFailureException(msg);
     }
   }

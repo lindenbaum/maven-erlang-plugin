@@ -5,7 +5,7 @@
 %%% @doc
 %%% An {@link eunit_listener} capturing {@link eunit_tty}-like output into a
 %%% list of lines, sending them to a specific process. This is based on the
-%%% eunit_tty.erl module provided along with the standard erlang/OTP
+%%% eunit_tty.erl module provided along with the standard Erlang/OTP
 %%% distribution. License is LGPL.
 %%% @end
 %%% @copyright 2006-2009 Richard Carlsson

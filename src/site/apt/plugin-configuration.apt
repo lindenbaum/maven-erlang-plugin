@@ -73,13 +73,13 @@ Grouped Parameter Summary
  from the backend node's erlang installation along with the release package. For
  further information see {{./package-release-mojo.html}}.
 
- * <<<otpRelease>>>: mandatory parameter that must be set to the erlang/OTP
+ * <<<otpRelease>>>: mandatory parameter that must be set to the Erlang/OTP
  release version (as returned by <<<erlang:system_info(otp_release)>>>) the
- required erlang/OTP standard applications will be included from (by version).
- Note: The backend node as to run this version of erlang/OTP to be able to find
- the needed versions of the erlang/OTP standard applications.
+ required Erlang/OTP standard applications will be included from (by version).
+ Note: The backend node as to run this version of Erlang/OTP to be able to find
+ the needed versions of the Erlang/OTP standard applications.
 
- * <<<skipReleaseTest>>>: will skip the check for the required erlang/OTP
+ * <<<skipReleaseTest>>>: will skip the check for the required Erlang/OTP
  release version the build will be based on. Skipping this check will include
- the standard erlang/OTP applications in the version available on the backend
+ the standard Erlang/OTP applications in the version available on the backend
  node regardless if these versions are suitable for your own applications.

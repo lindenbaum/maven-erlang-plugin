@@ -24,7 +24,7 @@ import org.apache.maven.plugin.logging.Log;
  * </p>
  * <p>
  * This will typically replace the functionality given by a Maven archetype,
- * checking and creating any missing resource. Regarding erlang/OTP applications
+ * checking and creating any missing resource. Regarding Erlang/OTP applications
  * this could be:
  * </p>
  * <ul>
@@ -38,7 +38,7 @@ import org.apache.maven.plugin.logging.Log;
  * <li>test priv folder</li>
  * </ul>
  * <p>
- * Regarding erlang/OTP releases this could be:
+ * Regarding Erlang/OTP releases this could be:
  * </p>
  * <ul>
  * <li>release file <code>[artifactId].rel</code></li>

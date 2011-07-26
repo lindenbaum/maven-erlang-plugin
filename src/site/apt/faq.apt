@@ -7,7 +7,7 @@ Frequently Asked Questions
 
  For application projects there are two possible directory layouts. The
  <<<erlang-otp>>> packaging type assumes the standard maven directory layout
- while the <<<erlang-std>>> packaging type assumes the erlang/OTP standard
+ while the <<<erlang-std>>> packaging type assumes the Erlang/OTP standard
  directory layout. Release projects don't have a specific directory layout (flat
  top level directory) since they only consist of a <<<pom.xml>>>, a release
  file, a release upgrade file and a system configuration file.
@@ -67,11 +67,11 @@ Frequently Asked Questions
  available application types may be mixed up in a release or in an application's
  dependencies.
 
- The plug-in is <<not>> intendended to manage standard erlang/OTP application
+ The plug-in is <<not>> intendended to manage standard Erlang/OTP application
  dependencies. When packaging a release it is assumed that this code is
  automatically available to the backend node. This is guaranteed by checking the
- erlang/OTP release version running on the backend node against the required
- erlang/OTP release version of a release as configured in its <<<pom.xml>>>.
+ Erlang/OTP release version running on the backend node against the required
+ Erlang/OTP release version of a release as configured in its <<<pom.xml>>>.
 
  Release projects can be seen as packaging projects that do not contain code but
  manage a versioned set of versioned application dependencies. Applications or
@@ -210,15 +210,15 @@ Frequently Asked Questions
  point the release must be built on a backend node that can deliver the
  required versions of applications. The maven dependencies (applications
  packaged by the plug-in) will be put into the code paths automatically by the
- plug-in. Standard erlang/OTP applications will be taken from the backend node's
+ plug-in. Standard Erlang/OTP applications will be taken from the backend node's
  code path.
  
  The <<<${APPLICATIONS}>>> and <<<${AUTODEPS}>>> variables expand to all
  transitive maven dependencies as required by the release files applications
  section and will also put in the required transitive dependencies to standard
- erlang/OTP applications (e.g. mnesia, sasl, ...). The version of the standard
+ Erlang/OTP applications (e.g. mnesia, sasl, ...). The version of the standard
  applications are those available to the backend node. To achieve a correct
- dependency management a release project must configure what erlang/OTP release
+ dependency management a release project must configure what Erlang/OTP release
  should be used as release base (the standard application versions will then
  be taken from this release). The build will fail if either the OTP release
  base variable (<<<otpRelease>>>) is not configured or the backend node does not

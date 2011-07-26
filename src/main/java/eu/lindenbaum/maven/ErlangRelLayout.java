@@ -11,7 +11,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * Implementation of the {@link SourceLayout} interface for projects with
  * packaging type {@link PackagingType#ERLANG_REL}. Packaging type for
- * erlang/OTP releases with trivial directory layout:
+ * Erlang/OTP releases with trivial directory layout:
  * 
  * <pre>
  *  BASE

@@ -88,7 +88,7 @@ application.
 </project>
 +--
 
- Please note that we chose to build the release on <<<erlang/OTP R14B01>>> and
+ Please note that we chose to build the release on <<<Erlang/OTP R14B01>>> and
  that the erlang backend node on our machine runs this release of erlang. The
  generated <<<relup>>> file was altered to the minimalistic content
  <<<\{$\{VERSION\}, [], []\}.>>>. Now packaging the release using
