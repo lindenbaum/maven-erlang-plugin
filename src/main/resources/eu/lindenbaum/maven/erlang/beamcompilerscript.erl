@@ -99,29 +99,48 @@ fun(Files) ->
 	Pts ++ Bhvs ++ NonBhvs
 end,
 
+%% loads the compiled file, for the given source, from the current target
+%% dir, ensuring that the code is properly purged and deleted before.
+Load =
+fun(Source) ->
+        Module = filename:basename(Source, ".erl"),
+        Target = TargetFilePath(Source, ".erl"),
+        case code:load_abs(Target) of
+            {module, _} ->
+                ok;
+            {error, not_purged} ->
+                code:purge(Module),
+                code:delete(Module),
+                code:purge(Module),
+                {module, _} = code:load_abs(Target),
+                ok;
+            {error, Reason} ->
+                {error, Reason}
+        end
+end,
+
 %%--------------------------------------------------------------------------
 %% Script Section
 %%--------------------------------------------------------------------------
 
 lists:foldl(
   fun(Source, {Failed, Compiled, Errors, Warnings}) ->
-	  case Compile(Source) of
-	      {Source, [], []} ->
-		  {module, _} = code:load_abs(TargetFilePath(Source, ".erl")),
-		  {Failed,
-		   [Source|Compiled],
-		   Errors,
-		   Warnings};
-	      {Source, [], W} ->
-		  {module, _} = code:load_abs(TargetFilePath(Source, ".erl")),
-		  {Failed,
-		   [Source|Compiled],
-		   Errors,
-		   Warnings ++ FormatCompileReport(W)};
-	      {Source, E, W} ->
-		  {[Source|Failed],
-		   Compiled,
-		   Errors ++ FormatCompileReport(E),
-		   Warnings ++ FormatCompileReport(W)}
-	  end
+          case Compile(Source) of
+              {Source, [], []} ->
+                  ok = Load(Source),
+                  {Failed,
+                   [Source | Compiled],
+                   Errors,
+                   Warnings};
+              {Source, [], W} ->
+                  ok = Load(Source),
+                  {Failed, 
+                   [Source | Compiled],
+                   Errors, Warnings ++ FormatCompileReport(W)};
+              {Source, E, W} ->
+                  {[Source | Failed],
+                   Compiled,
+                   Errors ++ FormatCompileReport(E),
+                   Warnings ++ FormatCompileReport(W)}
+          end
   end, {[], [], [], []}, FirstFiles ++ SortFiles(Files)).
