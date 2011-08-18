@@ -33,6 +33,12 @@ public interface TargetLayout {
    */
   public File dialyzerOk();
 
+  /**
+   * Returns a {@link File} used to write the output generated from the plugin's
+   * backend nodes to.
+   */
+  public File backendLog();
+
   // applications (erlang-std/erlang-otp) *************************************/
 
   /**

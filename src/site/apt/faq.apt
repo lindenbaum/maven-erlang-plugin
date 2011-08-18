@@ -153,7 +153,9 @@ Frequently Asked Questions
  uploading all needed modules (tests and project modules compiled with debug
  information) to a specified node. The {{{./upload-tests-mojo.html}upload-tests}}
  goal will upload everything you need to an (already started) node the user can
- run/debug tests on.
+ run/debug tests on. A lightweight alternative to re-running the unit tests on
+ a separate node could be to examine the output of the backend nodes which is
+ written to the file <<<target/backend.log>>>.
  
 * How does application packaging of <<<erlang-otp>>> and <<<erlang-std>>>
   projects work?

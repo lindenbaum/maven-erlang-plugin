@@ -37,6 +37,7 @@ public class TestInitializer extends ErlangMojo {
     }
     File buildDir = p.targetLayout().base();
     FileUtils.ensureDirectories(buildDir);
-    MojoUtils.startBackend(log, p.erlCommand(), p.testNode(), p.cookie(), buildDir);
+    File backendLog = p.targetLayout().backendLog();
+    MojoUtils.startBackend(log, p.erlCommand(), p.testNode(), p.cookie(), buildDir, backendLog);
   }
 }

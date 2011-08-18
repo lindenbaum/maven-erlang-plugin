@@ -139,14 +139,21 @@ public abstract class ErlangReport extends AbstractMavenReport {
    */
   @Override
   protected final void executeReport(Locale locale) throws MavenReportException {
+    Properties properties = getProperties();
+    File backendLog = properties.targetLayout().backendLog();
     try {
-      Properties properties = getProperties();
       execute(getLog(), locale, properties);
     }
     catch (MojoExecutionException e) {
+      getLog().info("");
+      getLog().info("The erlang backend node output is available in:");
+      getLog().info(backendLog.toString());
       throw new MavenReportException(e.getMessage());
     }
     catch (MojoFailureException e) {
+      getLog().info("");
+      getLog().info("The erlang backend node output is available in:");
+      getLog().info(backendLog.toString());
       throw new MavenReportException(e.getMessage());
     }
   }

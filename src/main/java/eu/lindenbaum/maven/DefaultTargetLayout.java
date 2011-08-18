@@ -39,6 +39,7 @@ public class DefaultTargetLayout implements TargetLayout {
    *   +-- sys.config
    *   +-- [ARTIFACTID].rel
    *   +-- .dialyzer.ok
+   *   +-- backend.log
    * </pre>
    * </p>
    * 
@@ -68,6 +69,11 @@ public class DefaultTargetLayout implements TargetLayout {
   @Override
   public File dialyzerOk() {
     return new File(this.base, ErlConstants.DIALYZER_OK);
+  }
+
+  @Override
+  public File backendLog() {
+    return new File(this.base, "backend.log");
   }
 
   // applications (erlang-std/erlang-otp) *************************************/

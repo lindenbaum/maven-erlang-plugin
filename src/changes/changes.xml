@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="schlagt, lti" type="add">
+        The plugin's backend nodes write their output to a logfile name
+        'backend.log' located in the build directory. This is useful for
+        debugging failed builds and unit test runs.
+      </action>
       <action dev="olle-t" type="update">
         Changed resolution of required Erlang/OTP version to allow a trailing
         wildcard "*" - making it possible to require any maintenance release of

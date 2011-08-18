@@ -2,8 +2,12 @@ package eu.lindenbaum.maven.util;
 
 import static eu.lindenbaum.maven.util.CollectionUtils.filter;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -66,9 +70,15 @@ public final class MojoUtils {
    * @param nodeName name of the backend to connect to
    * @param nodeCookie cookie of the backend to connect to
    * @param cwd the backend node's current working directory
+   * @param backendLog file to write the ouput from the backend nodes to
    * @throws MojoExecutionException
    */
-  public static void startBackend(Log log, String cmd, String nodeName, String nodeCookie, final File cwd) throws MojoExecutionException {
+  public static void startBackend(final Log log,
+                                  String cmd,
+                                  String nodeName,
+                                  String nodeCookie,
+                                  final File cwd,
+                                  final File backendLog) throws MojoExecutionException {
     OtpPeer peer = new OtpPeer(nodeName);
     try {
       try {
@@ -85,15 +95,43 @@ public final class MojoUtils {
         command.add("start_sasl");
         command.add("-name");
         command.add(peer.node());
-        command.add("-detached");
+        command.add("-noshell");
         if (nodeCookie != null) {
           command.add("-setcookie");
           command.add(nodeCookie);
         }
-        Process process = new ProcessBuilder(command).start();
-        if (process.waitFor() != 0) {
-          throw new MojoExecutionException("Failed to start " + peer + ".");
-        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.redirectErrorStream(true);
+        final Process process = processBuilder.start();
+
+        // write node output to log file
+        new Thread(new Runnable() {
+          @Override
+          public void run() {
+            InputStreamReader input = new InputStreamReader(process.getInputStream());
+            BufferedReader reader = new BufferedReader(input);
+            try {
+              PrintWriter writer = new PrintWriter(new FileWriter(backendLog, true));
+              String line = null;
+              try {
+                while ((line = reader.readLine()) != null) {
+                  writer.println(line);
+                }
+              }
+              catch (IOException e) {
+                writer.println("Failed to read node output: " + e);
+              }
+              finally {
+                writer.flush();
+                writer.close();
+              }
+            }
+            catch (Exception e) {
+              log.warn("Unable to write backend node log file " + backendLog, e);
+            }
+          }
+        }).start();
         log.debug("Node " + peer + " sucessfully started.");
 
         MavenSelf.get(nodeCookie).exec(nodeName, new Script<Void>() {
@@ -120,9 +158,6 @@ public final class MojoUtils {
     }
     catch (OtpAuthException e) {
       throw new MojoExecutionException("Failed to connect to " + peer + ".", e);
-    }
-    catch (InterruptedException e) {
-      throw new MojoExecutionException("Failed to start " + peer + ".", e);
     }
   }
 

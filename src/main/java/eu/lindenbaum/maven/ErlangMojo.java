@@ -112,7 +112,23 @@ public abstract class ErlangMojo extends AbstractMojo {
       getLog().info("Skipping invocation for packaging type: " + this.project.getPackaging());
       return;
     }
-    execute(getLog(), getProperties(type, getErlCommand()));
+    Properties properties = getProperties(type, getErlCommand());
+    File backendLog = properties.targetLayout().backendLog();
+    try {
+      execute(getLog(), properties);
+    }
+    catch (MojoExecutionException e) {
+      getLog().info("");
+      getLog().info("The erlang backend node output is available in:");
+      getLog().info(backendLog.toString());
+      throw e;
+    }
+    catch (MojoFailureException e) {
+      getLog().info("");
+      getLog().info("The erlang backend node output is available in:");
+      getLog().info(backendLog.toString());
+      throw e;
+    }
   }
 
   /**
