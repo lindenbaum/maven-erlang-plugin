@@ -28,7 +28,6 @@ public class BackendInitializer extends ErlangMojo {
     File buildDir = p.targetLayout().base();
     FileUtils.ensureDirectories(buildDir);
     File backendLog = p.targetLayout().backendLog();
-    FileUtils.removeFiles(backendLog);
     MojoUtils.startBackend(log, p.erlCommand(), p.node(), p.cookie(), buildDir, backendLog);
   }
 }

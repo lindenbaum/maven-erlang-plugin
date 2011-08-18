@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -118,15 +119,11 @@ public abstract class ErlangMojo extends AbstractMojo {
       execute(getLog(), properties);
     }
     catch (MojoExecutionException e) {
-      getLog().info("");
-      getLog().info("The erlang backend node output is available in:");
-      getLog().info(backendLog.toString());
+      MojoUtils.emitBackendLogInfo(getLog(), backendLog);
       throw e;
     }
     catch (MojoFailureException e) {
-      getLog().info("");
-      getLog().info("The erlang backend node output is available in:");
-      getLog().info(backendLog.toString());
+      MojoUtils.emitBackendLogInfo(getLog(), backendLog);
       throw e;
     }
   }

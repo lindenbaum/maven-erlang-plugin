@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 
 import eu.lindenbaum.maven.util.ErlConstants;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -145,15 +146,11 @@ public abstract class ErlangReport extends AbstractMavenReport {
       execute(getLog(), locale, properties);
     }
     catch (MojoExecutionException e) {
-      getLog().info("");
-      getLog().info("The erlang backend node output is available in:");
-      getLog().info(backendLog.toString());
+      MojoUtils.emitBackendLogInfo(getLog(), backendLog);
       throw new MavenReportException(e.getMessage());
     }
     catch (MojoFailureException e) {
-      getLog().info("");
-      getLog().info("The erlang backend node output is available in:");
-      getLog().info(backendLog.toString());
+      MojoUtils.emitBackendLogInfo(getLog(), backendLog);
       throw new MavenReportException(e.getMessage());
     }
   }

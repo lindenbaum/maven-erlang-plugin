@@ -106,7 +106,7 @@ public final class MojoUtils {
         final Process process = processBuilder.start();
 
         // write node output to log file
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
           @Override
           public void run() {
             InputStreamReader input = new InputStreamReader(process.getInputStream());
@@ -131,7 +131,9 @@ public final class MojoUtils {
               log.warn("Unable to write backend node log file " + backendLog, e);
             }
           }
-        }).start();
+        });
+        thread.setDaemon(true);
+        thread.start();
         log.debug("Node " + peer + " sucessfully started.");
 
         MavenSelf.get(nodeCookie).exec(nodeName, new Script<Void>() {
@@ -245,5 +247,20 @@ public final class MojoUtils {
         return true;
       }
     }, prefiltered));
+  }
+
+  /**
+   * Emits an info that backend node output is available in the given file if
+   * existing.
+   * 
+   * @param log logger to use
+   * @param backendLog referring to the backend log file.
+   */
+  public static void emitBackendLogInfo(Log log, File backendLog) {
+    if (backendLog.isFile()) {
+      log.info("");
+      log.info("The erlang backend node output is available in:");
+      log.info(backendLog.toString());
+    }
   }
 }
