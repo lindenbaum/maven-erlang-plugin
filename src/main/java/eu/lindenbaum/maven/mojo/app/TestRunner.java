@@ -39,7 +39,8 @@ public final class TestRunner extends ErlangMojo {
   private boolean skipTests;
 
   /**
-   * Setting this to a module name, will only run this test case.
+   * Setting this to some test module name, or a comma separated list of test 
+   * module names, will only run those tests.
    * 
    * @parameter expression="${test}"
    */
@@ -61,9 +62,12 @@ public final class TestRunner extends ErlangMojo {
       tests.addAll(MojoUtils.getEunitTestSet(p.modules(true, false), p.testSupportArtifacts()));
     }
     else {
-      File test = new File(p.targetLayout().testEbin(), this.test + ErlConstants.BEAM_SUFFIX);
-      if (test.isFile()) {
-        tests.add(test);
+      String[] testNames = this.test.split(",");
+      for (String testName : testNames) {
+        File test = new File(p.targetLayout().testEbin(), testName.trim() + ErlConstants.BEAM_SUFFIX);
+        if (test.isFile()) {
+          tests.add(test);
+        }
       }
     }
 
@@ -75,7 +79,7 @@ public final class TestRunner extends ErlangMojo {
     File surefireReports = p.targetLayout().surefireReports();
     FileUtils.ensureDirectories(surefireReports);
 
-    log.debug("Executing tests:");
+    log.debug(String.format("Executing %s test(s):", tests.size()));
     MavenUtils.logCollection(log, LogLevel.DEBUG, tests, " * ");
 
     String suiteName = p.project().getArtifactId();

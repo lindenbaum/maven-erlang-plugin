@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.1.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="update">
+        For test execution, the parameter 'test' now also supports a comma 
+        separated list of test modules to execute (-Dtest=foo,bar,baz) and not
+        only a single value.
+      </action>
       <action dev="schlagt, lti" type="add">
         The plugin's backend nodes write their output to a logfile name
         'backend.log' located in the build directory. This is useful for
