@@ -1,0 +1,29 @@
+RELEASE HOWTO:
+
+## Edit changes.xml with date of release, commit in CLI not IDE!
+> svn ci src/changes/changes.xml -m "Preparing for release M.m.p"
+
+## Make sure to run all the integration tests in a clean workspace.
+> mvn clean
+> mvn -Pit
+
+## Activate a shell at SF and just logout from ssh to return.
+> ssh -t <username>,erlang-plugin@shell.sf.net create
+> exit
+
+## Get hold of the GPG passphrase for signing, you will need it now.
+> mvn release:prepare
+> mvn release:perform
+
+## Now do the Nexus dance! Log in on Sonatype OSS at:
+ https://oss.sonatype.org
+
+## Now follow the release guide at:
+ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8.ReleaseIt
+
+## Check that the website is properly deployed & update the front page.
+
+## Optionally, upload new web-stuff using:
+> scp <src> <username>,erlang-plugin@web.sourceforge.net:htdocs/<target>
+
+DONE!
