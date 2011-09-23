@@ -74,9 +74,9 @@ body {
   background: #fff;
   /*background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#fff));*/
   /*background: -moz-linear-gradient(top,  #ddd,  #fff);*/
-  color: #706C0E;
+  color: #706940;
   padding: 0px 0px 10px 0px;
-  line-height: 1.35em;  
+  line-height: 1.5em;  
 }
 
 hgroup {
@@ -118,13 +118,19 @@ section.first header h1 {
 	position: relative;
 	top: 35px;
 	float: left;
-  color: #61624F;
+  color: #9E291B;
   font-size: 200%;
 }
 section.first h2 {
   font-weight: bold;
-	text-transform: uppercase;
-	color: #9e1812; /*430B08*/	
+  text-transform: uppercase;
+  color: #9e1812;  
+}
+section.first h3 {
+  font-weight: bold;
+	font-size: .8em;
+  text-transform: uppercase;
+  color: #9e1812;  
 }
 section.first p {
 	clear: both;
@@ -133,6 +139,9 @@ section.first p {
 }
 section.first footer {
   font-size: 80%;
+}
+section.first p time:first-child {
+	font-weight: 700;
 }
 
 /* ------  SECOND SECTION */
