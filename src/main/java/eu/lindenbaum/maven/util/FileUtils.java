@@ -114,7 +114,7 @@ public final class FileUtils {
    * be excluded.
    * 
    * @param root directory to start recursion from
-   * @param suffix file extension to match, can be e.g. eiter {@code ".erl"} or
+   * @param suffix file extension to match, can be e.g. either {@code ".erl"} or
    *          {@code "erl"}
    * @return a {@link List} of found files
    */

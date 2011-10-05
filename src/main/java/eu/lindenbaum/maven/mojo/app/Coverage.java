@@ -1,6 +1,8 @@
 package eu.lindenbaum.maven.mojo.app;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -12,10 +14,12 @@ import eu.lindenbaum.maven.erlang.CoverageReportScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.report.CoverageReport;
+import eu.lindenbaum.maven.util.CollectionUtils;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MojoUtils;
+import eu.lindenbaum.maven.util.Predicate;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -56,6 +60,25 @@ public class Coverage extends ErlangMojo {
    */
   private boolean details;
 
+  /**
+   * An optional list of module source files that should not be included when 
+   * calculating the test-coverage. This can typically be used for generated or
+   * transformed source code, that is hard or impossible to test and cover.
+   * Example:
+   * 
+   * <pre>
+   *   &lt;excludes&gt;
+   *     &lt;file&gt;foo.erl&lt;/file&gt;
+   *     &lt;file&gt;bar.erl&lt;/file&gt;
+   *     &lt;file&gt;baz.erl&lt;/file&gt;
+   *   &lt;/excludes&gt;
+   * </pre>
+   * 
+   * @parameter expression="${coverageExclude}"
+   * @since 2.2.0
+   */
+  private String[] coverageExclude;
+
   @Override
   protected void execute(Log log, Properties p) throws MojoExecutionException {
     log.info(MavenUtils.SEPARATOR);
@@ -68,17 +91,16 @@ public class Coverage extends ErlangMojo {
       return;
     }
 
-    File src = p.sourceLayout().src();
-    List<File> sources = FileUtils.getFilesRecursive(src, ErlConstants.ERL_SUFFIX);
-
-    File testEbin = p.targetLayout().testEbin();
+    Collection<File> modules = getModulesToCover(p.sourceLayout().src());
+    File testEbinDir = p.targetLayout().testEbin();
     File coverageReportDir = p.targetLayout().coverageReports();
-    FileUtils.ensureDirectories(coverageReportDir);
     String coverageReportName = p.project().getArtifactId();
 
-    Script<CoverageReportResult> script = new CoverageReportScript(testEbin,
+    FileUtils.ensureDirectories(testEbinDir, coverageReportDir);
+
+    Script<CoverageReportResult> script = new CoverageReportScript(testEbinDir,
                                                                    tests,
-                                                                   sources,
+                                                                   modules,
                                                                    coverageReportDir,
                                                                    coverageReportName);
 
@@ -107,6 +129,23 @@ public class Coverage extends ErlangMojo {
     }
     printReportSummary(getLog(), report);
     log.info("Successfully generated coverage.");
+  }
+
+  private Collection<File> getModulesToCover(File srcDir) {
+    final Collection<File> sources;
+    if (this.coverageExclude != null && this.coverageExclude.length > 0) {
+      final List<String> excludeList = Arrays.asList(this.coverageExclude);
+      sources = CollectionUtils.filter(new Predicate<File>() {
+        @Override
+        public boolean pred(File file) {
+          return !excludeList.contains(file.getName());
+        }
+      }, FileUtils.getFilesRecursive(srcDir, ErlConstants.ERL_SUFFIX));
+    }
+    else {
+      sources = FileUtils.getFilesRecursive(srcDir, ErlConstants.ERL_SUFFIX);
+    }
+    return sources;
   }
 
   private void printModulesSummary(Log log, Report report) {

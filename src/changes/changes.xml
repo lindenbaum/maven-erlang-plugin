@@ -3,6 +3,13 @@
     <title>Maven Erlang Plug-In Release Notes</title>
   </properties>
   <body>
+    <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="add">
+        Added 'coverageExclude' to coverage reporting, allowing for optional
+        exclusion of modules from the coverage report. Useful for generated or
+        transformed source code, that may be hard or impossible to test.
+      </action>
+    </release>
     <release version="2.1.0" date="2011-09-23" description="Feature and bugfix release">
       <action dev="olle-t" type="update">
         For test execution, the parameter 'test' now also supports a comma 

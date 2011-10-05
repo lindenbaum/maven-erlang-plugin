@@ -1,6 +1,7 @@
 package eu.lindenbaum.maven.erlang;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 import eu.lindenbaum.maven.util.ErlUtils;
@@ -22,13 +23,13 @@ import org.apache.maven.plugin.logging.Log;
 public class CoverageReportScript extends AbstractScript<CoverageReportResult> {
   private final List<File> tests;
   private final File testDir;
-  private final List<File> sources;
+  private final Collection<File> sources;
   private final File coverageReportDir;
   private final String coverageReportName;
 
   public CoverageReportScript(File testDir,
                               List<File> tests,
-                              List<File> sources,
+                              Collection<File> sources,
                               File coverageReportDir,
                               String coverageReportName) throws MojoExecutionException {
     super();
