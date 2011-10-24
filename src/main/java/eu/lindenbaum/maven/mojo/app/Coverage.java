@@ -61,17 +61,17 @@ public class Coverage extends ErlangMojo {
   private boolean details;
 
   /**
-   * An optional list of module source files that should not be included when 
+   * An optional list of module source files that should not be included when
    * calculating the test-coverage. This can typically be used for generated or
    * transformed source code, that is hard or impossible to test and cover.
    * Example:
    * 
    * <pre>
-   *   &lt;excludes&gt;
+   *   &lt;coverageExclude&gt;
    *     &lt;file&gt;foo.erl&lt;/file&gt;
    *     &lt;file&gt;bar.erl&lt;/file&gt;
    *     &lt;file&gt;baz.erl&lt;/file&gt;
-   *   &lt;/excludes&gt;
+   *   &lt;/coverageExclude&gt;
    * </pre>
    * 
    * @parameter expression="${coverageExclude}"
