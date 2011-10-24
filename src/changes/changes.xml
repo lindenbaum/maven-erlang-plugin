@@ -4,6 +4,12 @@
   </properties>
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="update">
+        Profiling is no longer performed from normal EUnit tests, one must write
+        test modules with the suffix `_prof.erl' profile code. NOTE: this change
+        requires user action for projects that upgrade the plug-in. Also see use
+        of the `-Dtest' parameter as an alternative solution.
+      </action>    
       <action dev="olle-t" type="add">
         Added 'coverageExclude' to coverage reporting, allowing for optional
         exclusion of modules from the coverage report. Useful for generated or

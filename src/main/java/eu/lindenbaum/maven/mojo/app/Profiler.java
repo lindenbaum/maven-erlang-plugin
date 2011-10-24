@@ -17,19 +17,18 @@ import eu.lindenbaum.maven.report.ProfilingReport;
 import eu.lindenbaum.maven.util.ErlConstants;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
-import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Runs the test modules, recording the number of function calls, and the
- * execution time, of modules in the current project using 
- * <a href="http://www.erlang.org/doc/man/eprof.html">eprof</a>. The profiling
- * result are filtered and written to a file
- * (<tt>PROFILING-${project.artifactId}.txt</tt>) that can be used to generate
- * a {@code profiling-report}.
+ * Performs function profiling using <a
+ * href="http://www.erlang.org/doc/man/eprof.html">eprof</a>, by executing any
+ * EUnit test modules, with the suffix {@code [module]_prof.erl}, found among
+ * the test sources. The profiling result are filtered and written out to the
+ * file (<tt>PROFILING-${project.artifactId}.txt</tt>), which may be used to
+ * generate a {@code profiling-report}.
  * 
  * @goal profile
  * @execute phase="test-compile"
@@ -40,7 +39,8 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class Profiler extends ErlangMojo {
   /**
-   * Setting this to a module name, will only run and profile that test module.
+   * Setting this to some test module name, or a comma separated list of test
+   * module names, will use only those tests for profiling.
    * 
    * @parameter expression="${test}"
    */
@@ -83,12 +83,16 @@ public final class Profiler extends ErlangMojo {
 
     List<File> tests = new ArrayList<File>();
     if (this.test == null || this.test.isEmpty()) {
-      tests.addAll(MojoUtils.getEunitTestSet(p.modules(true, false), p.testSupportArtifacts()));
+      tests.addAll(FileUtils.getFilesRecursive(p.targetLayout().testEbin(), "_prof"
+                                                                            + ErlConstants.BEAM_SUFFIX));
     }
     else {
-      File test = new File(p.targetLayout().testEbin(), this.test + ErlConstants.BEAM_SUFFIX);
-      if (test.isFile()) {
-        tests.add(test);
+      String[] testNames = this.test.split(",");
+      for (String testName : testNames) {
+        File test = new File(p.targetLayout().testEbin(), testName.trim() + ErlConstants.BEAM_SUFFIX);
+        if (test.isFile()) {
+          tests.add(test);
+        }
       }
     }
 
