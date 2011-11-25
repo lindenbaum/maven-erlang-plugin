@@ -14,28 +14,12 @@
         <artifactId>maven-erlang-plugin</artifactId>
         <version>@project.version@</version>
         <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>eu.lindenbaum</groupId>
-        <artifactId>maven-erlang-plugin</artifactId>
-        <version>@project.version@</version>
         <configuration>
           <coverageExclude>
             <file>mod_5.erl</file>
           </coverageExclude>
         </configuration>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>coverage</report>
-            </reports>
-          </reportSet>
-        </reportSets>
       </plugin>
     </plugins>
-  </reporting>
+  </build>
 </project>
