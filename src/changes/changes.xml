@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="fix">
+        Setting proper ownership of Temporary directory, for unpacked dependency
+        priv resources, solving problems with un-readable packed priv files.
+      </action>
       <action dev="olle-t" type="update">
         Profiling is no longer performed from normal EUnit tests, one must write
         test modules with the suffix `_prof.erl' profile code. NOTE: this change

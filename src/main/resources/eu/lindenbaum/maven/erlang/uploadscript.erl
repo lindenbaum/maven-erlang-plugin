@@ -116,7 +116,7 @@ fun(Resource, TmpDir) when is_list(TmpDir) ->
                         R = rpc:call(Node, file, write_file, WriteArgs),
                         case R of
                             ok ->
-                                ModeArgs = [Target, 755],
+                                ModeArgs = [Target, 8#00755],
                                 rpc:call(Node, file, change_mode, ModeArgs),
                                 Resource;
                             Error ->
