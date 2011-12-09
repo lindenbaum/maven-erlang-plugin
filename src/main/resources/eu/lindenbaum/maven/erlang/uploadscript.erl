@@ -73,8 +73,8 @@ fun(Resource, TmpDir) ->
                            (_, {PP, Dep}) ->
                                 {PP, Dep}
                         end, {[], []}, Es),
-        TargetPath = rpc:call(Node, filename, join, [[TmpDir, Dependency]]),
-        RelativeResource = rpc:call(Node, filename, join, [[PrivPath, File]]),
+        TargetPath = rpc:call(Node, filename, join, [[TmpDir] ++ Dependency]),
+        RelativeResource = rpc:call(Node, filename, join, [PrivPath ++ [File]]),
         {TargetPath, RelativeResource}
 end,
 
