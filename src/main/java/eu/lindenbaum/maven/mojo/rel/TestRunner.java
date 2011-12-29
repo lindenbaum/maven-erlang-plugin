@@ -47,15 +47,20 @@ public final class TestRunner extends ErlangMojo {
    * <p>
    * This <b>must</b> be set to the Erlang/OTP release version this release will
    * be based on. The version should be given as it would be returned by
-   * <code>erlang:system_info(otp_release)</code> or optionally with a trailing
-   * wildcard character "*" for partial version matching (e.g. "R14B*"). All
-   * standard OTP dependencies like {@code kernel}, {@code stdlib}, ... will be
-   * configured to the version of the configured Erlang/OTP release.
+   * <code>erlang:system_info(otp_release)</code>.
    * </p>
    * <p>
-   * In order to do this the executing backend node has to run the required OTP
-   * release. Release packaging will fail if the backend node doesn't do so
-   * unless the {@link #skipReleaseTest} parameter is specified.
+   * An extended syntax is allowed to express partial version matching, using a
+   * trailing wildcard character "*" (e.g. "R14B*") and optional version
+   * matching, using a pipe character "|" (e.g. "R14B04|R15B*"), matching
+   * either.
+   * </p>
+   * <p>
+   * All standard OTP dependencies like {@code kernel}, {@code stdlib}, ... will
+   * be configured to the version of the configured Erlang/OTP release. In order
+   * to do this the executing backend node has to run the required OTP release.
+   * Release packaging will fail if the backend node doesn't do so unless the
+   * {@link #skipReleaseTest} parameter is specified.
    * </p>
    * 
    * @parameter expression="${otpRelease}"
