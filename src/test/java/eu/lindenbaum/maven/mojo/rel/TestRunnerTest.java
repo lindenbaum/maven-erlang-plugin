@@ -21,10 +21,16 @@ public class TestRunnerTest {
 
   @Test
   public void allMinorReleasesForSingleMajorWithWildcardAreValid() throws MojoFailureException {
+    TestRunner.checkOtpReleaseVersion(this.log, "R14B*", "R14B");
     TestRunner.checkOtpReleaseVersion(this.log, "R14B*", "R14B01");
     TestRunner.checkOtpReleaseVersion(this.log, "R14B*", "R14B02");
     TestRunner.checkOtpReleaseVersion(this.log, "R14B*", "R14B03");
     TestRunner.checkOtpReleaseVersion(this.log, "R14B*", "R14B04");
+  }
+
+  @Test(expected = MojoFailureException.class)
+  public void nullCaseIsHandled() throws MojoFailureException {
+    TestRunner.checkOtpReleaseVersion(this.log, null, "R12B");
   }
 
   @Test(expected = MojoFailureException.class)
