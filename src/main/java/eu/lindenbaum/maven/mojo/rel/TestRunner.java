@@ -45,11 +45,11 @@ public final class TestRunner extends ErlangMojo {
 
   /**
    * <p>
-   * This <b>must</b> be set to the Erlang/OTP release version this release 
-   * will be based on. The version should be given as it would be returned by
+   * This <b>must</b> be set to the Erlang/OTP release version this release will
+   * be based on. The version should be given as it would be returned by
    * <code>erlang:system_info(otp_release)</code> or optionally with a trailing
-   * wildcard character "*" for partial version matching (e.g. "R14B*"). All 
-   * standard OTP dependencies like {@code kernel}, {@code stdlib}, ... will be 
+   * wildcard character "*" for partial version matching (e.g. "R14B*"). All
+   * standard OTP dependencies like {@code kernel}, {@code stdlib}, ... will be
    * configured to the version of the configured Erlang/OTP release.
    * </p>
    * <p>
@@ -107,27 +107,53 @@ public final class TestRunner extends ErlangMojo {
    * release is actually available to the backend node.
    * <p>
    * The expected version is checked as either the exact matching version string
-   * or, when the given version ends with the wildcard "*", matches the 
+   * or, when the given version ends with the wildcard "*", matches the
    * beginning of the system version. NOTE: only a trailing wildcard is valid.
    * </p>
-   * <p>For example: passing "R14B*" will match "R14B01", "R14B02" etc, but 
-   * "R14B" will match only that exact system release.
-   * </p> 
+   * <p>
+   * A pipe "|" may be used to denote "or" versions that also are considered
+   * valid versions.
+   * </p>
+   * <p>
+   * For example: passing "R14B*" will match "R14B01", "R14B02" etc, but "R14B"
+   * will match only that exact system release. Passing "R14B*|R15B*" will match
+   * all R14B or any R15B releases.
+   * </p>
    */
-  private static void checkOtpReleaseVersion(Log log, String expected, String actual) throws MojoFailureException {
-    final boolean otpReleaseVersionMismatch;
-    if (expected != null && expected.endsWith("*")) {
-      otpReleaseVersionMismatch = !actual.startsWith(expected.replaceAll("\\*", ""));
+  static void checkOtpReleaseVersion(Log log, String expected, String actual) throws MojoFailureException {
+    boolean otpReleaseVersionMismatch = true;
+
+    if (expected == null) {
+      throw new MojoFailureException("Missing required Erlang/OTP release specification.");
+    }
+
+    if (expected.contains("|")) {
+      String[] expects = expected.split("\\|");
+      for (String e : expects) {
+        if (versionsAreCompatible(e, actual)) {
+          otpReleaseVersionMismatch = false;
+        }
+      }
     }
     else {
-      otpReleaseVersionMismatch = !actual.equals(expected);
+      otpReleaseVersionMismatch = !versionsAreCompatible(expected, actual);
     }
+
     if (otpReleaseVersionMismatch) {
       log.error("Errors:");
       log.error(" * backend node does not run the required Erlang/OTP release, required");
-      log.error("   release is '" + expected + "' while backend node runs '" + actual + "'");
+      log.error("   release is '" + expected + "' but backend node runs '" + actual + "'");
       String msg = "Required Erlang/OTP release not available '" + expected + "' != '" + actual + "'.";
       throw new MojoFailureException(msg);
+    }
+  }
+
+  private static boolean versionsAreCompatible(String expected, String actual) {
+    if (expected.endsWith("*")) {
+      return actual.toLowerCase().startsWith(expected.replaceAll("\\*", "").toLowerCase());
+    }
+    else {
+      return actual.toLowerCase().equals(expected.toLowerCase());
     }
   }
 

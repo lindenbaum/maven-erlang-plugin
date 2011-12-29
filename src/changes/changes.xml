@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="update">
+        Updated resolution of required Erlang/OTP version, now also allowing an
+        "or" concept using pipe "|" separated version, for example
+        "R14B*|R15B*" - meaning any R14B or R15B version is valid. 
+      </action>
       <action dev="olle-t" type="fix">
         Setting proper ownership of Temporary directory, for unpacked dependency
         priv resources, solving problems with un-readable packed priv files.
