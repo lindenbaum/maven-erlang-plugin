@@ -106,6 +106,7 @@ public final class ResourceGenerator extends ErlangMojo {
   private static void copyDocumentationResources(Log log, Properties p) throws MojoExecutionException {
     Map<String, String> replacements = new HashMap<String, String>();
     replacements.put("${ARTIFACT}", p.project().getArtifactId());
+    replacements.put("${NAME}", p.project().getName());
     replacements.put("${DESCRIPTION}", p.project().getDescription());
     replacements.put("${ID}", p.project().getId());
     replacements.put("${VERSION}", p.project().getVersion());

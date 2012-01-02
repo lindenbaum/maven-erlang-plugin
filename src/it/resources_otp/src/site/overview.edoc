@@ -911,5 +911,6 @@ appreciated. Thank you.
 
 Replaced: ARTIFACT with ${ARTIFACT}
 Replaced: DESCRIPTION with ${DESCRIPTION}
+Replaced: NAME with ${NAME}
 Replaced: ID with ${ID}
 Replaced: VERSION with ${VERSION}

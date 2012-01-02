@@ -10,6 +10,7 @@ if (doc.trim() == "") {
 }
 
 ["Replaced: ARTIFACT with \${ARTIFACT}",
+ "Replaced: NAME with \${NAME}",
  "Replaced: DESCRIPTION with \${DESCRIPTION}",
  "Replaced: ID with \${ID}",
  "Replaced: VERSION with \${VERSION}"].each { entry ->

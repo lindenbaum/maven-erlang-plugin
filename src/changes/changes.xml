@@ -5,6 +5,10 @@
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
       <action dev="olle-t" type="update">
+        Resources may now also use the `${NAME}' property for interpolation of
+        the project name into resource files.
+      </action>
+      <action dev="olle-t" type="update">
         Updated resolution of required Erlang/OTP version, now also allowing an
         "or" concept using pipe "|" separated version, for example
         "R14B*|R15B*" - meaning any R14B or R15B version is valid. 
