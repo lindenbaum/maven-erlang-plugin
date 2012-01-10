@@ -10,7 +10,7 @@ Options = [return, {outdir, OutDir}] ++ Includes ++ CustomOptions,
 %% Utility Section
 %%--------------------------------------------------------------------------
 
-%% returns the flattened ouutput of io_lib:format
+%% returns the flattened output of io_lib:format
 FormatFlatten =
 fun(Format, Args) ->
 	lists:flatten(io_lib:format(Format, Args))

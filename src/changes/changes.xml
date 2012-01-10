@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="add">
+        Added automatic compilation of MIB files in either `src/main/mibs/' or
+        `mibs/', for OTP and standard layout respectively. Compiled MIBs are put
+        in the target `priv' directory.
+      </action>
       <action dev="olle-t" type="update">
         Resources may now also use the `${NAME}' property for interpolation of
         the project name into resource files.

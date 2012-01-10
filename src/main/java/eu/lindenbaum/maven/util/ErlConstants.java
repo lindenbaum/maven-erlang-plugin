@@ -49,6 +49,16 @@ public interface ErlConstants {
   public static final String SRC_SUFFIX = ".src";
 
   /**
+   * Suffix for MIB source files.
+   */
+  public static final String MIB_SUFFIX = ".mib";
+
+  /**
+   * Suffix for MIB binary files.
+   */
+  public static final String BIN_SUFFIX = ".bin";
+
+  /**
    * Suffix for tar gzipped files.
    */
   public static final String TARGZ_SUFFIX = ".tar.gz";

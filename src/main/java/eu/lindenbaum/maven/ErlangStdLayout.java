@@ -20,6 +20,7 @@ import org.apache.maven.project.MavenProject;
  *    +-- include (*.hrl)
  *    +-- priv (*)
  *    +-- src (*.erl, private *.hrl)
+ *    +-- mibs (*.mib)
  *    +-- test_include (*.hrl)
  *    +-- test_priv (*)
  *    +-- test_src (*.erl)
@@ -73,6 +74,11 @@ public class ErlangStdLayout implements SourceLayout {
   @Override
   public File src() {
     return new File(this.base, "src");
+  }
+
+  @Override
+  public File mibs() {
+    return new File(this.base, "mibs");
   }
 
   @Override

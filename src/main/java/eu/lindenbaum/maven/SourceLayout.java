@@ -51,6 +51,13 @@ public interface SourceLayout {
   public File src();
 
   /**
+   * Returns the directory where MIB soruces reside.
+   * 
+   * @since 2.2.0
+   */
+  public File mibs();
+
+  /**
    * Returns the directory where erlang include files for tests reside.
    */
   public File testInclude();

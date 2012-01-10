@@ -17,6 +17,7 @@ import org.apache.maven.project.MavenProject;
  *  BASE
  *    +-- src/main/erlang ([ARTIFACTID].app, [ARTIFACTID].appup, *.erl, private *.hrl)
  *    +-- src/main/include (*.hrl)
+ *    +-- src/main/mibs (*.mib)
  *    +-- src/main/priv (*)
  *    +-- src/test/include (*.hrl)
  *    +-- src/test/erlang (*.erl)
@@ -71,6 +72,11 @@ public class ErlangOtpLayout implements SourceLayout {
   @Override
   public File src() {
     return new File(this.base, "src/main/erlang");
+  }
+
+  @Override
+  public File mibs() {
+    return new File(this.base, "src/main/mibs");
   }
 
   @Override
