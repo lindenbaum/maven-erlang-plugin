@@ -4,6 +4,9 @@
   </properties>
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+      <action dev=schlagert type="add">
+        Added support for external config file inclusion in sys.config files.
+      </action>
       <action dev=schlagert type="fix">
         Fixed Maven3 compatibility problems regarding lazy project dependency
         resolution. Solves issues with missing erlang POM dependencies in

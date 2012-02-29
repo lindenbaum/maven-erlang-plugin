@@ -36,7 +36,16 @@ fun({Application, ParValList}) ->
 	lists:foreach(
 	  fun({Par, Val}) ->
 		  rpc:call(Node, application, set_env, [Application, Par, Val])
-	  end, ParValList)
+	  end, ParValList);
+
+   (File) when is_list(File) ->
+        case file:consult() of
+            {ok, [Config]} ->
+                lists:foreach(Apply, Config);
+
+            {error, _} ->
+                ignore
+        end
 end,
 
 
