@@ -21,6 +21,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal reload-test-dependencies
  * @phase process-test-sources
+ * @requiresDependencyResolution test
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class TestDependencyLoader extends ErlangMojo {

@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+      <action dev=schlagert type="fix">
+        Fixed Maven3 compatibility problems regarding lazy project dependency
+        resolution. Solves issues with missing erlang POM dependencies in
+        release projects.
+      </action>
       <action dev="olle-t" type="add">
         Added automatic compilation of MIB files in either `src/main/mibs/' or
         `mibs/', for OTP and standard layout respectively. Compiled MIBs are put

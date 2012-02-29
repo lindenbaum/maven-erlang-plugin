@@ -7,7 +7,6 @@ import com.ericsson.otp.erlang.OtpErlangAtom;
 
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
@@ -22,7 +21,7 @@ import org.apache.maven.project.MavenProject;
  */
 public final class Validator extends ErlangMojo {
   @Override
-  protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
+  protected void execute(Log log, Properties p) throws MojoExecutionException {
     MavenProject project = p.project();
 
     String applicationName = new OtpErlangAtom(project.getArtifactId()).toString();

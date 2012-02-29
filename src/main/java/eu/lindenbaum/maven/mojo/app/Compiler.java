@@ -26,6 +26,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal compile
  * @phase compile
+ * @requiresDependencyResolution compile
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>

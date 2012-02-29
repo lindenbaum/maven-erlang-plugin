@@ -29,6 +29,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal test-release
  * @phase test
+ * @requiresDependencyResolution test
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class TestRunner extends ErlangMojo {

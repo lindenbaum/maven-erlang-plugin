@@ -68,6 +68,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal package
  * @phase package
+ * @requiresDependencyResolution test
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Gregory Haskins <ghaskins@novell.com>

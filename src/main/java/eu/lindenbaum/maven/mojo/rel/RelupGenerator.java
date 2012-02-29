@@ -24,7 +24,6 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -36,6 +35,7 @@ import org.apache.maven.plugin.logging.Log;
  * The actual generation will be made using <code>systools:make_relup/4</code>.
  * 
  * @goal relup
+ * @requiresDependencyResolution test
  * @since 2.1.0
  * @execute phase="generate-resources" lifecycle="appup-relup"
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
@@ -44,7 +44,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public final class RelupGenerator extends ErlangMojo {
   @Override
-  protected void execute(Log log, Properties p) throws MojoExecutionException, MojoFailureException {
+  protected void execute(Log log, Properties p) throws MojoExecutionException {
     log.info(MavenUtils.SEPARATOR);
     log.info(" R E L U P - G E N E R A T O R");
     log.info(MavenUtils.SEPARATOR);

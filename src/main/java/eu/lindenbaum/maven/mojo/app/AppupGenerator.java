@@ -65,6 +65,7 @@ import org.apache.maven.plugin.logging.Log;
  * </p>
  * 
  * @goal appup
+ * @requiresDependencyResolution test
  * @since 2.1.0
  * @execute phase="package" lifecycle="appup-relup"
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>

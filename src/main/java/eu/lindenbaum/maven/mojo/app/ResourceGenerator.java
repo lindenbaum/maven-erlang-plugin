@@ -29,6 +29,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal generate-resources
  * @phase generate-resources
+ * @requiresDependencyResolution test
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */
 public final class ResourceGenerator extends ErlangMojo {

@@ -33,6 +33,7 @@ import org.apache.maven.plugin.logging.Log;
  * @goal profile
  * @execute phase="test-compile"
  * @phase pre-site lifecycle="site"
+ * @requiresDependencyResolution test
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  * @since 2.1.0
  * @see ProfilingReport

@@ -64,7 +64,7 @@ public final class CollectionUtils {
   }
 
   /**
-   * Removes elements from a collection which do not satisfy a given predicate.
+   * Returns the {@link Collection} of elements satisfying a given predicate.
    * The input collection is not modified.
    * 
    * @param p the predicate for testing elements

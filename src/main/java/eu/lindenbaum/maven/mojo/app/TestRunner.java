@@ -26,6 +26,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal test
  * @phase test
+ * @requiresDependencyResolution test
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  * @author Olivier Sambourg
@@ -39,7 +40,7 @@ public final class TestRunner extends ErlangMojo {
   private boolean skipTests;
 
   /**
-   * Setting this to some test module name, or a comma separated list of test 
+   * Setting this to some test module name, or a comma separated list of test
    * module names, will only run those tests.
    * 
    * @parameter expression="${test}"

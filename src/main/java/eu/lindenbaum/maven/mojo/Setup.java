@@ -103,6 +103,7 @@ import org.apache.maven.plugin.logging.Log;
  * </p>
  * 
  * @goal setup
+ * @requiresDependencyResolution test
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  */

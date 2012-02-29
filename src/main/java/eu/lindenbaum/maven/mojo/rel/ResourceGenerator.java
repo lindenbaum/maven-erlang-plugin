@@ -64,6 +64,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal generate-release-resources
  * @phase generate-resources
+ * @requiresDependencyResolution test
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Gregory Haskins <ghaskins@novell.com>
  */

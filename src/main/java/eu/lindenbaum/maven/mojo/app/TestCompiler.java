@@ -29,6 +29,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @goal test-compile
  * @phase test-compile
+ * @requiresDependencyResolution test
  * @author Olivier Sambourg
  * @author Tobias Schlager <tobias.schlager@lindenbaum.eu>
  * @author Olle Törnström <olle.toernstroem@lindenbaum.eu>
