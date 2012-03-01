@@ -1,0 +1,65 @@
+#!/bin/sh
+#
+# A simple start script for a specific target system.
+# The 'daemon' mode will utilise 'run_erl' to start the erlang runtime. Thus
+# it is possible to connect to the runtime using the 'to_erl' tool.
+#
+# ROOTDIR is taken from the command line and must point to the target system
+# root directory. The typical directory layout would then be:
+#
+# ROOTDIR
+#    |-- bin
+#    |-- erts-X.Y.Z
+#    |-- lib
+#    |-- log
+#    `-- releases
+#
+# ERL_EXEC_ARGS could be a collection of all valid command line switches that
+# 'erl' can handle (passed to the 'erlexec' starter).
+#
+################################################################################
+
+if [[ "$1" =~ ^(help|--help|-h)$ ]]
+then
+    echo "usage: $0 [daemon|--daemon|-daemon] <ROOTDIR> [ERL_EXEC_ARGS]"
+    exit 0
+fi
+
+DAEMON=false
+if [[ "$1" =~ ^(daemon|--daemon|-daemon)$ ]]
+then
+    DAEMON=true
+    shift
+fi
+
+export ROOTDIR=$1
+shift
+
+# set up the environment #######################################################
+
+export EMU=beam
+export PROGNAME=`echo $0 | sed 's/.*\///'`
+export RELDIR=${ROOTDIR}/releases
+
+START_ERL_DATA=${RELDIR}/start_erl.data
+VSN=`awk '{print $2}' ${START_ERL_DATA}`
+ERTS=`awk '{print $1}' ${START_ERL_DATA}`
+export BINDIR=${ROOTDIR}/erts-${ERTS}/bin/
+
+LOG_DIR=${ROOTDIR}/log
+ERL_EXEC=${BINDIR}/erlexec
+RUN_ERL=${BINDIR}/run_erl
+
+# determine how to start #######################################################
+
+CMD="${ERL_EXEC} -boot ${RELDIR}/${VSN}/start -config ${RELDIR}/${VSN}/sys $@"
+case "${DAEMON}" in
+    true)
+	${RUN_ERL} -daemon /tmp/ ${LOG_DIR} "exec ${CMD}"
+	exit $?
+	;;
+
+    false)
+	exec ${CMD}
+	exit $?
+esac

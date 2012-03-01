@@ -2,8 +2,6 @@ package eu.lindenbaum.maven.mojo.rel;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.PackagingType;
@@ -31,30 +29,16 @@ import org.apache.maven.plugin.logging.Log;
  * <code>sys.config</code> file found a default empty one will be included.
  * </p>
  * <p>
- * The resulting target system depends on a correct root directory
- * configuration. The plug-in will change the scripts to check for the
- * <code>${<i>ARTIFACTID</i>_TOP}</code> (upper case) environment variable. This
- * variable must be set by the user to guarantee a proper system behaviour.
- * Custom arguments like node name or cookie can be set by using the standard
- * erlang environment variables <code>$ERL_AFLAGS</code>,
- * <code>$ERL_ZFLAGS</code> or <code>$ERL_FLAGS</code>. If you wish to run
- * several releases on the same node the variable <code>${
- * <i>ARTIFACTID</i>_FLAGS}</code> (upper case) environment variable could be
- * used alternatively to ERL_FLAGS.
- * </p>
- * <p>
- * Example: If artifact id is <code>release</code> the environment variable
- * <code>${RELEASE_TOP}</code> must be set. Arguments could be specified by
- * setting <code>${RELEASE_FLAGS}</code> like that
- * <code>RELEASE_FLAGS="-sname some_node -setcookie some_cookie"</code>
+ * The resulting target system can be started either directly or as a daemon
+ * using the <code>bin/start</code> script. This script has to be provided with
+ * the correct root directory of the target system. Custom arguments like node
+ * name or cookie can be set by giving them as additional command line arguments
+ * to <code>bin/start</code>.
  * </p>
  * <p>
  * Note: The resulting target system is highly system dependent since it
  * contains the erlang emulator (C code) from the backend nodes erlang
  * installation.
- * </p>
- * <p>
- * Note: This mojo is currently working but still in experimental stage.
  * </p>
  * <ul>
  * <li>FIXME not supported on Microsoft Windows</li>
@@ -96,8 +80,6 @@ public final class TargetSystemPackager extends ErlangMojo {
       FileUtils.writeFile(readme, data);
     }
 
-    String releaseName = p.project().getArtifactId();
-
     // extract .tar.gz from systools:make_tar/2 to target/tmp
     File releaseTarGz = p.targetLayout().projectArtifact();
     TarGzUnarchiver unarchiver = new TarGzUnarchiver(p.node(), p.cookie(), tmp);
@@ -114,7 +96,6 @@ public final class TargetSystemPackager extends ErlangMojo {
     File tmpReleases = new File(tmp, "releases");
     File tmpErts = new File(tmp, "erts-" + runtimeInfo.getVersion());
     File tmpErtsBin = new File(tmpErts, "bin");
-    File tmpReleasesVersion = new File(tmpReleases, p.project().getVersion());
 
     // remove erl and start scripts from the erts-VERSION/bin directory
     FileUtils.removeFiles(new File(tmpErtsBin, "erl"), new File(tmpErtsBin, "start"));
@@ -126,25 +107,14 @@ public final class TargetSystemPackager extends ErlangMojo {
       FileUtils.writeFile(startErlData, data);
     }
 
-    // copy epmd, run_erl, start_erl & start.boot to top level bin directory
-    File epmd = new File(tmpErtsBin, "epmd");
-    File runErl = new File(tmpErtsBin, "run_erl");
-    File toErl = new File(tmpErtsBin, "to_erl");
-    File startBoot = new File(tmpReleasesVersion, "start.boot");
-    FileUtils.copyFiles(tmpBin, epmd, runErl, toErl, startBoot);
-
-    // copy the erl.src, start.src and start_erl.src files to top level bin directory
-    String releaseNameVariable = releaseName.toUpperCase().replace("-", "_");
-    HashMap<String, String> replacements = new HashMap<String, String>();
-    replacements.put("%EMU%", "beam");
-    replacements.put("%FINAL_ROOTDIR%", "${" + releaseNameVariable + "_TOP}");
-    replacements.put("$START_ERL_DATA", "${START_ERL_DATA} ${" + releaseNameVariable + "_FLAGS}");
-    FileUtils.copyDirectory(tmpErtsBin, tmpBin, FileUtils.SRC_FILTER, replacements);
-
-    // remove .src extension from files previously copied & cleanup
-    List<File> filesToRename = FileUtils.getFilesRecursive(tmpBin, ErlConstants.SRC_SUFFIX);
-    FileUtils.removeFileNameSuffix(ErlConstants.SRC_SUFFIX, filesToRename.toArray(new File[0]));
+    // remove all .src file from the erst-VERSION/bin directory
     FileUtils.removeFilesRecursive(tmpErtsBin, ErlConstants.SRC_SUFFIX);
+
+    // create the start and attach scripts in the top level bin directory
+    File start = new File(tmpBin, "start");
+    FileUtils.extractFileFromClassPath(getClass(), "", "start", start);
+    File attach = new File(tmpBin, "attach");
+    FileUtils.extractFileFromClassPath(getClass(), "", "attach", attach);
 
     // make files in bin directory executable
     for (File file : tmpBin.listFiles()) {

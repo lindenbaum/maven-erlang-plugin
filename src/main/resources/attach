@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# Attaches to a running erlang target system in daemon mode using the 'to_erl'
+# utility. The definition of ROOTDIR may be retrieved from the documentation
+# of 'start'.
+#
+################################################################################
+
+if [[ "$1" =~ ^(help|--help|-h)$ ]]
+then
+    echo "usage: $0 <ROOTDIR>"
+    exit 0
+fi
+
+export ROOTDIR=$1
+shift
+
+# set up the environment #######################################################
+
+export RELDIR=${ROOTDIR}/releases
+
+START_ERL_DATA=${RELDIR}/start_erl.data
+ERTS=`awk '{print $1}' ${START_ERL_DATA}`
+export BINDIR=${ROOTDIR}/erts-${ERTS}/bin/
+
+TO_ERL=${BINDIR}/to_erl
+
+# do it ########################################################################
+
+exec ${TO_ERL}
+exit $?

@@ -4,10 +4,14 @@
   </properties>
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
-      <action dev=schlagert type="add">
+      <action dev="schlagert, olle-t" type="update">
+        Enhanced the target system creation and execution by providing new start
+        and attach scripts. TODO: update target system example documentation
+      </action>
+      <action dev="schlagert" type="add">
         Added support for external config file inclusion in sys.config files.
       </action>
-      <action dev=schlagert type="fix">
+      <action dev="schlagert" type="fix">
         Fixed Maven3 compatibility problems regarding lazy project dependency
         resolution. Solves issues with missing erlang POM dependencies in
         release projects.
