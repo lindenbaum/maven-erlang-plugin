@@ -9,61 +9,64 @@ SysConfigFile = "%s",
 %% F = fun(Applications, StatusAcc, F) -> ok | Error
 Start =
 fun([], Acc, _) ->
-	Acc;
-
+        Acc;
+   
    ([A | Rest], Acc = {Succeeded, Failed}, Rec) ->
-	case rpc:call(Node, application, start, [A]) of
-	    ok ->
-		Rec(Rest, {[A | Succeeded], Failed}, Rec);
-
-	    {error, {already_started, _}} ->
-		Rec(Rest, Acc, Rec);
-
-	    {error, {not_started, Dep}} ->
-		Rec([Dep, A] ++ Rest, Acc, Rec);
-
-	    {error, Err = {"no such file or directory", AppFile}} ->
-		Msg = "maybe dependencies are missing, try a re-run using '-DwithDependencies'",
-		{Succeeded, [{A, {Err, Msg}} | Failed]};
-
-	    Error ->
-		{Succeeded, [{A, Error} | Failed]}
-	end
+        case rpc:call(Node, application, start, [A]) of
+            ok ->
+                Rec(Rest, {[A | Succeeded], Failed}, Rec);
+            
+            {error, {already_started, _}} ->
+                Rec(Rest, Acc, Rec);
+            
+            {error, {not_started, Dep}} ->
+                Rec([Dep, A] ++ Rest, Acc, Rec);
+            
+            {error, Err = {"no such file or directory", AppFile}} ->
+                Msg = "maybe dependencies are missing, try a re-run using '-DwithDependencies'",
+                {Succeeded, [{A, {Err, Msg}} | Failed]};
+            
+            Error ->
+                {Succeeded, [{A, Error} | Failed]}
+        end
 end,
 
 Apply =
-fun({Application, ParValList}) ->
-	lists:foreach(
-	  fun({Par, Val}) ->
-		  rpc:call(Node, application, set_env, [Application, Par, Val])
-	  end, ParValList);
-
-   (File) when is_list(File) ->
+fun({Application, ParValList}, ApplyFun) ->
+        lists:foreach(
+          fun({Par, Val}) ->
+                  rpc:call(Node, application, set_env, [Application, Par, Val])
+          end, ParValList);
+   
+   (File, ApplyFun) when is_list(File) ->
         case file:consult() of
             {ok, [Config]} ->
-                lists:foreach(Apply, Config);
-
+                lists:foreach(fun(Entry) ->
+                                      ApplyFun(Entry, ApplyFun)
+                              end, Config);
+            
             {error, _} ->
                 ignore
         end
 end,
 
-
 Configure =
 fun(SysConfig) ->
-	case filelib:is_regular(SysConfig) of
-	    true ->
-		case file:consult(SysConfig) of
-		    {ok, [Config]} ->
-			lists:foreach(Apply, Config);
-
-		    Error ->
-			{SysConfig, Error}
-		end;
-
-	    _ ->
-		ok
-	end
+        case filelib:is_regular(SysConfig) of
+            true ->
+                case file:consult(SysConfig) of
+                    {ok, [Config]} ->
+                        lists:foreach(fun(Entry) ->
+                                              Apply(Entry, Apply)
+                                      end, Config);
+                    
+                    Error ->
+                        {SysConfig, Error}
+                end;
+            
+            _ ->
+                ok
+        end
 end,
 
 %%------------------------------------------------------------------------------
@@ -72,9 +75,9 @@ end,
 
 case Configure(SysConfigFile) of
     ok ->
-	{S, F} = Start(Applications, {[], []}, Start),
-	{lists:reverse(S), lists:reverse(F)};
-
+        {S, F} = Start(Applications, {[], []}, Start),
+        {lists:reverse(S), lists:reverse(F)};
+    
     Error ->
-	{[], [Error]}
+        {[], [Error]}
 end.
