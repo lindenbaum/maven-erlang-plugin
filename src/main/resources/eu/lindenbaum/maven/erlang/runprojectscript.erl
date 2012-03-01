@@ -39,7 +39,7 @@ fun({Application, ParValList}, ApplyFun) ->
           end, ParValList);
    
    (File, ApplyFun) when is_list(File) ->
-        case file:consult() of
+        case file:consult(File) of
             {ok, [Config]} ->
                 lists:foreach(fun(Entry) ->
                                       ApplyFun(Entry, ApplyFun)
