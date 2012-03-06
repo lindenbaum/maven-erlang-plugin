@@ -67,8 +67,8 @@ public final class Compiler extends ErlangMojo {
     log.info(" C O M P I L E R");
     log.info(MavenUtils.SEPARATOR);
 
-    compileERLFiles(log, p);
     compileMIBFiles(log, p);
+    compileERLFiles(log, p);
   }
 
   private void compileERLFiles(Log log, Properties p) throws MojoFailureException, MojoExecutionException {

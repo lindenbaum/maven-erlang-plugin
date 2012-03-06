@@ -23,6 +23,8 @@ Project Configuration
  
  * <<<$\{ARTIFACT\}>>>: the projects artifact id (atom)
 
+ * <<<$\{NAME\}>>>: the project name (string)
+ 
  * <<<$\{DESCRIPTION\}>>>: the projects description (string)
 
  * <<<$\{ID\}>>>: the projects id (string)
@@ -54,9 +56,10 @@ Project Configuration
  * <<<$\{ERTS\}>>>: expands to the tuple <<<\{erts, "ERTS_VERSION"\}>>> with the
  version of erts available on the backend node (tuple)
 
- * <<<$\{APPLICATION_NAME\}>>>: will be replaced by the tuple
+ * <<<$\{"APPLICATION_NAME"\}>>>: will be replaced by the tuple
  <<<\{'APPLICATION_NAME', "APPLICATION_VERSION"\}>>> with the version available on
- the backend node (tuple)
+ the backend node (tuple). For example <<<$\{TV\}>>> on R15B would yield the
+ tuple <<<\{'tv', "2.1.4.8"\}>>>.
 
 ** File Generation
 

@@ -29,42 +29,42 @@ More on releases
 [INFO] Building An erlang-rel release. 1
 [INFO] ------------------------------------------------------------------------
 [INFO] 
-[INFO] >>> maven-erlang-plugin:2.2.0-SNAPSHOT:target-system (default-cli) @ rel >>>
+[INFO] >>> maven-erlang-plugin:${project.version}:target-system (default-cli) @ rel >>>
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:validate (default-validate) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:validate (default-validate) @ rel ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:initialize (default-initialize) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:initialize (default-initialize) @ rel ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:extract-dependencies (default-extract-dependencies) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:extract-dependencies (default-extract-dependencies) @ rel ---
 [INFO] Processed project dependencies:
 [INFO]  * app-1 (skipped)
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:reload-dependencies (default-reload-dependencies) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:reload-dependencies (default-reload-dependencies) @ rel ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:generate-release-resources (default-generate-release-resources) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:generate-release-resources (default-generate-release-resources) @ rel ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:test-release (default-test-release) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:test-release (default-test-release) @ rel ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  T E S T - R U N N E R
 [INFO] ------------------------------------------------------------------------
 [INFO] All tests passed.
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:dialyzer (default-dialyzer) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:dialyzer (default-dialyzer) @ rel ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  D I A L Y Z E R
 [INFO] ------------------------------------------------------------------------
 [INFO] Last dialyzer run is still up to date.
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:package-release (default-package-release) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:package-release (default-package-release) @ rel ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  P A C K A G E R
 [INFO] ------------------------------------------------------------------------
 [INFO] Successfully created release package:
 [INFO] /home/tobias/rel/target/rel-1.tar.gz
 [INFO] 
-[INFO] <<< maven-erlang-plugin:2.2.0-SNAPSHOT:target-system (default-cli) @ rel <<<
+[INFO] <<< maven-erlang-plugin:${project.version}:target-system (default-cli) @ rel <<<
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:target-system (default-cli) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:target-system (default-cli) @ rel ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  T A R G E T - S Y S T E M - P A C K A G E R
 [INFO] ------------------------------------------------------------------------
@@ -213,19 +213,19 @@ Eshell V5.9  (abort with ^G)
 [INFO] Building An erlang-otp application. 2
 [INFO] ------------------------------------------------------------------------
 [INFO] 
-[INFO] >>> maven-erlang-plugin:2.2.0-SNAPSHOT:appup (default-cli) @ app >>>
+[INFO] >>> maven-erlang-plugin:${project.version}:appup (default-cli) @ app >>>
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:validate (default-validate) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:validate (default-validate) @ app ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:initialize (default-initialize) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:initialize (default-initialize) @ app ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:extract-dependencies (default-extract-dependencies) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:extract-dependencies (default-extract-dependencies) @ app ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:reload-dependencies (default-reload-dependencies) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:reload-dependencies (default-reload-dependencies) @ app ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:generate-resources (default-generate-resources) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:generate-resources (default-generate-resources) @ app ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:compile (default-compile) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:compile (default-compile) @ app ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  C O M P I L E R
 [INFO] ------------------------------------------------------------------------
@@ -236,40 +236,40 @@ Eshell V5.9  (abort with ^G)
 [INFO] Successfully compiled the project sources.
 [INFO] No MIBs to compile.
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:test-initialize (default-test-initialize) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:test-initialize (default-test-initialize) @ app ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:reload-test-dependencies (default-reload-test-dependencies) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:reload-test-dependencies (default-reload-test-dependencies) @ app ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:generate-test-resources (default-generate-test-resources) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:generate-test-resources (default-generate-test-resources) @ app ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:test-compile (default-test-compile) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:test-compile (default-test-compile) @ app ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  T E S T - C O M P I L E R
 [INFO] ------------------------------------------------------------------------
 [INFO] Successfully compiled the project test sources.
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:test (default-test) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:test (default-test) @ app ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  T E S T - R U N N E R
 [INFO] ------------------------------------------------------------------------
 [WARNING]   There were no tests to run.
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:dialyzer (default-dialyzer) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:dialyzer (default-dialyzer) @ app ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  D I A L Y Z E R
 [INFO] ------------------------------------------------------------------------
 [INFO] Dialyzer run successful.
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:package (default-package) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:package (default-package) @ app ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  P A C K A G E R
 [INFO] ------------------------------------------------------------------------
 [INFO] Successfully packaged application:
 [INFO] /home/tobias/app/target/app-2.tar.gz
 [INFO] 
-[INFO] <<< maven-erlang-plugin:2.2.0-SNAPSHOT:appup (default-cli) @ app <<<
+[INFO] <<< maven-erlang-plugin:${project.version}:appup (default-cli) @ app <<<
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:appup (default-cli) @ app ---
+[INFO] --- maven-erlang-plugin:${project.version}:appup (default-cli) @ app ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  A P P U P - G E N E R A T O R
 [INFO] ------------------------------------------------------------------------
@@ -309,23 +309,23 @@ Eshell V5.9  (abort with ^G)
 [INFO] Building An erlang-rel release. 2
 [INFO] ------------------------------------------------------------------------
 [INFO] 
-[INFO] >>> maven-erlang-plugin:2.2.0-SNAPSHOT:relup (default-cli) @ rel >>>
+[INFO] >>> maven-erlang-plugin:${project.version}:relup (default-cli) @ rel >>>
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:validate (default-validate) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:validate (default-validate) @ rel ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:initialize (default-initialize) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:initialize (default-initialize) @ rel ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:extract-dependencies (default-extract-dependencies) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:extract-dependencies (default-extract-dependencies) @ rel ---
 [INFO] Processed project dependencies:
 [INFO]  * app-2 (extracted)
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:reload-dependencies (default-reload-dependencies) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:reload-dependencies (default-reload-dependencies) @ rel ---
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:generate-release-resources (default-generate-release-resources) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:generate-release-resources (default-generate-release-resources) @ rel ---
 [INFO] 
-[INFO] <<< maven-erlang-plugin:2.2.0-SNAPSHOT:relup (default-cli) @ rel <<<
+[INFO] <<< maven-erlang-plugin:${project.version}:relup (default-cli) @ rel <<<
 [INFO] 
-[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:relup (default-cli) @ rel ---
+[INFO] --- maven-erlang-plugin:${project.version}:relup (default-cli) @ rel ---
 [INFO] ------------------------------------------------------------------------
 [INFO]  R E L U P - G E N E R A T O R
 [INFO] ------------------------------------------------------------------------

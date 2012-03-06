@@ -85,10 +85,12 @@ public final class ResourceGenerator extends ErlangMojo {
 
     String releaseName = p.project().getArtifactId();
     String releaseVersion = p.project().getVersion();
+    String projectName = p.project().getName();
 
     Map<String, String> replacements = new HashMap<String, String>();
     replacements.put("${ARTIFACT}", "\"" + releaseName + "\"");
     replacements.put("${VERSION}", "\"" + releaseVersion + "\"");
+    replacements.put("${NAME}", projectName);
     replacements.put("${ERTS}", "{erts, \"" + runtimeInfo.getVersion() + "\"}");
 
     Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());
