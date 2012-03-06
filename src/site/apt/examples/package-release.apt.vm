@@ -102,31 +102,3 @@ application.
  backend node. The created release package <<<rel-1.tar.gz>>> can now be copied
  to a target system and installed using the standard erlang release handler as
  provided by the <<<sasl>>> application.
-
- On UNIX systems the user can also generate a basic target system package that
- contains the erlang emulator and the necessary start scripts using the target
- system goal. To do so type <<<mvn erlang:target-system>>>. 
-
-[../erlang-release-target-example.png] Packaging the release project as target
-system.
-
- The created target system package <<<rel-1-target-system.tar.gz>>> can be
- extracted and run on a random machine with compatible architecture and
- operating system.
-
- In our case we extract the release directly into a temporary directory in the
- <<<target>>> directory. Please note that the environment variable
- <RELEASE_NAME><<<_TOP>>> must be set to the target systems root directory when
- calling any start scripts of the target system. Node name and cookie can be set
- using the standard erlang variables <<<ERL_AFLAGS>>>, <<<ERL_ZFLAGS>>> or
- <<<ERL_FLAGS>>>. If you wish to run several releases on the same machine the
- variable <RELEASE_NAME><<<_FLAGS>>> could be used alternatively to <<<ERL_FLAGS>>>.
-
-[../erlang-release-run1-example.png] Extracting and running the target system.
-
- The target system was by default started with the boot script generated for
- this release. The application's supervision tree was started automatically.
- 
-[../erlang-release-run2-example.png] Loaded applications and modules.
- 
- The test application <<<app>>> is loaded with all its modules.

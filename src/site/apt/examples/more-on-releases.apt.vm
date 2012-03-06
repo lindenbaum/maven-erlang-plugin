@@ -1,0 +1,505 @@
+
+More on releases
+
+ The following example focuses on advanced features the maven-erlang-plugin
+ provides for release projects. Lets assume the following small application
+ project named <<<app>>>:
+
+[../erlang-release-app1-example.png] Version 1 of the <<<app>>> application.
+
+ After installing the application using <<<mvn install>>> the application is
+ available to release projects. The listing below shows an erlang release project
+ named <<<rel>>> depending on the <<<app>>> application.
+
+[../erlang-release-rel1-example.png] Version 1 of the <<<rel>>> release.
+
+* Target system creation
+
+ On UNIX systems the maven-erlang-plugin provides the possibility to create
+ target systems from release projects according to the OTP design principles.
+ The target system will contain the erlang emulator as well as the necessary
+ start and attach scripts. To create a target system simply type
+ <<<mvn erlang:target-system>>>. You'll see something like the following:
+
++--
+[tobias@tirana rel]$ mvn erlang:target-system
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building An erlang-rel release. 1
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] >>> maven-erlang-plugin:2.2.0-SNAPSHOT:target-system (default-cli) @ rel >>>
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:validate (default-validate) @ rel ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:initialize (default-initialize) @ rel ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:extract-dependencies (default-extract-dependencies) @ rel ---
+[INFO] Processed project dependencies:
+[INFO]  * app-1 (skipped)
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:reload-dependencies (default-reload-dependencies) @ rel ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:generate-release-resources (default-generate-release-resources) @ rel ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:test-release (default-test-release) @ rel ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  T E S T - R U N N E R
+[INFO] ------------------------------------------------------------------------
+[INFO] All tests passed.
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:dialyzer (default-dialyzer) @ rel ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  D I A L Y Z E R
+[INFO] ------------------------------------------------------------------------
+[INFO] Last dialyzer run is still up to date.
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:package-release (default-package-release) @ rel ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  P A C K A G E R
+[INFO] ------------------------------------------------------------------------
+[INFO] Successfully created release package:
+[INFO] /home/tobias/rel/target/rel-1.tar.gz
+[INFO] 
+[INFO] <<< maven-erlang-plugin:2.2.0-SNAPSHOT:target-system (default-cli) @ rel <<<
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:target-system (default-cli) @ rel ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  T A R G E T - S Y S T E M - P A C K A G E R
+[INFO] ------------------------------------------------------------------------
+[INFO] Successfully created target system package:
+[INFO] /home/tobias/rel/target/rel-1-target-system.tar.gz
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 8.204s
+[INFO] Finished at: Tue Mar 06 09:01:07 CET 2012
+[INFO] Final Memory: 9M/105M
+[INFO] ------------------------------------------------------------------------
+[INFO] Successfully shut down 'rel-maven-erlang-plugin-backend@192.168.100.29'
+[INFO] ------------------------------------------------------------------------
+[tobias@tirana rel]$ ls -l target/
+total 24544
+-rw-rw-r-- 1 tobias tobias        0  6. Mär 09:00 backend.log
+drwxrwxr-x 3 tobias tobias     4096  6. Mär 09:00 lib
+-rw-rw-r-- 1 tobias tobias     9954  6. Mär 09:01 rel-1.boot
+-rw-rw-r-- 1 tobias tobias      161  6. Mär 09:01 rel-1.rel
+-rw-rw-r-- 1 tobias tobias    12136  6. Mär 09:01 rel-1.script
+-rw-rw-r-- 1 tobias tobias 12548637  6. Mär 09:01 rel-1-target-system.tar.gz
+-rw-rw-r-- 1 tobias tobias 12539861  6. Mär 09:01 rel-1.tar.gz
+-rw-rw-r-- 1 tobias tobias       15  6. Mär 09:01 relup
+-rw-rw-r-- 1 tobias tobias        4  6. Mär 09:01 sys.config
+[tobias@tirana rel]$ 
++--
+
+ The target system is contained in the <<<target/rel-1-target-system.tar.gz>>>
+ archive. After unpacking it into a temporary folder we can list the content of
+ the archive.
+
++--
+[tobias@tirana tmp]$ mv ../rel/target/rel-1-target-system.tar.gz .
+[tobias@tirana tmp]$ tar xzf rel-1-target-system.tar.gz 
+[tobias@tirana tmp]$ ls -l
+total 12276
+drwxrwxr-x 2 tobias tobias     4096  6. Mär 09:02 bin
+drwxrwxr-x 3 tobias tobias     4096  6. Mär 09:02 erts-5.9
+drwxrwxr-x 8 tobias tobias     4096  6. Mär 09:02 lib
+drwxrwxr-x 2 tobias tobias     4096  6. Mär 09:02 log
+-rw-rw-r-- 1 tobias tobias 12548637  6. Mär 09:01 rel-1-target-system.tar.gz
+drwxrwxr-x 3 tobias tobias     4096  6. Mär 09:02 releases
+[tobias@tirana tmp]$ 
++--
+
+ The target system is started using the <<<bin/start>>> script. The target
+ system's root directory has to be given as parameter to the script. We will now
+ start the target system in non-daemon mode:
+
++--
+[tobias@tirana tmp]$ bin/start --help
+usage: bin/start [daemon|--daemon|-daemon] <ROOTDIR> [ERL_EXEC_ARGS]
+[tobias@tirana tmp]$ bin/start `pwd` -name test@localhost.localdomain -setcookie secret
+Erlang R15B (erts-5.9) [source] [64-bit] [smp:2:2] [async-threads:0] [hipe] [kernel-poll:false]
+
+
+=PROGRESS REPORT==== 6-Mar-2012::09:03:21 ===
+          supervisor: {local,sasl_safe_sup}
+             started: [{pid,<0.40.0>},
+                       {name,alarm_handler},
+                       {mfargs,{alarm_handler,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 6-Mar-2012::09:03:21 ===
+          supervisor: {local,sasl_safe_sup}
+             started: [{pid,<0.41.0>},
+                       {name,overload},
+                       {mfargs,{overload,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 6-Mar-2012::09:03:21 ===
+          supervisor: {local,sasl_sup}
+             started: [{pid,<0.39.0>},
+                       {name,sasl_safe_sup},
+                       {mfargs,
+                           {supervisor,start_link,
+                               [{local,sasl_safe_sup},sasl,safe]}},
+                       {restart_type,permanent},
+                       {shutdown,infinity},
+                       {child_type,supervisor}]
+
+=PROGRESS REPORT==== 6-Mar-2012::09:03:21 ===
+          supervisor: {local,sasl_sup}
+             started: [{pid,<0.42.0>},
+                       {name,release_handler},
+                       {mfargs,{release_handler,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 6-Mar-2012::09:03:21 ===
+         application: sasl
+          started_at: 'test@localhost.localdomain'
+
+=PROGRESS REPORT==== 6-Mar-2012::09:03:21 ===
+          supervisor: {local,app_sup}
+             started: [{pid,<0.48.0>},
+                       {name,app_server},
+                       {mfargs,{app_server,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 6-Mar-2012::09:03:21 ===
+         application: app
+          started_at: 'test@localhost.localdomain'
+
+=PROGRESS REPORT==== 6-Mar-2012::09:03:21 ===
+         application: gs
+          started_at: 'test@localhost.localdomain'
+
+=PROGRESS REPORT==== 6-Mar-2012::09:03:21 ===
+         application: tv
+          started_at: 'test@localhost.localdomain'
+Eshell V5.9  (abort with ^G)
+(test@localhost.localdomain)1> application:which_applications().
+[{tv,"tv Table Visualizer","2.1.4.8"},
+ {gs,"GS  The Graphics System","1.5.15"},
+ {app,"null","1"},
+ {sasl,"SASL  CXC 138 11","2.2"},
+ {stdlib,"ERTS  CXC 138 10","1.18"},
+ {kernel,"ERTS  CXC 138 10","2.15"}]
+(test@localhost.localdomain)2> 
++--
+
+ The target system is started with the boot script generated for this release.
+ All configured applications (including <<<app>>>) are started automatically.
+
+* Release upgrades
+
+ Now that we have a running target system we would like to see the magic of
+ erlang's hitless updates. To be able to upgrade to something we will slightly
+ modify the <<<app>>> application. We'll start by modifying the project
+ generating the <<<.appup>>> file.
+
++--
+[tobias@tirana app]$ mvn erlang:appup
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building An erlang-otp application. 2
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] >>> maven-erlang-plugin:2.2.0-SNAPSHOT:appup (default-cli) @ app >>>
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:validate (default-validate) @ app ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:initialize (default-initialize) @ app ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:extract-dependencies (default-extract-dependencies) @ app ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:reload-dependencies (default-reload-dependencies) @ app ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:generate-resources (default-generate-resources) @ app ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:compile (default-compile) @ app ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  C O M P I L E R
+[INFO] ------------------------------------------------------------------------
+[INFO] Compiled:
+[INFO]  * /home/tobias/app/src/main/erlang/app.erl
+[INFO]  * /home/tobias/app/src/main/erlang/app_sup.erl
+[INFO]  * /home/tobias/app/src/main/erlang/app_server.erl
+[INFO] Successfully compiled the project sources.
+[INFO] No MIBs to compile.
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:test-initialize (default-test-initialize) @ app ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:reload-test-dependencies (default-reload-test-dependencies) @ app ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:generate-test-resources (default-generate-test-resources) @ app ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:test-compile (default-test-compile) @ app ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  T E S T - C O M P I L E R
+[INFO] ------------------------------------------------------------------------
+[INFO] Successfully compiled the project test sources.
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:test (default-test) @ app ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  T E S T - R U N N E R
+[INFO] ------------------------------------------------------------------------
+[WARNING]   There were no tests to run.
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:dialyzer (default-dialyzer) @ app ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  D I A L Y Z E R
+[INFO] ------------------------------------------------------------------------
+[INFO] Dialyzer run successful.
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:package (default-package) @ app ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  P A C K A G E R
+[INFO] ------------------------------------------------------------------------
+[INFO] Successfully packaged application:
+[INFO] /home/tobias/app/target/app-2.tar.gz
+[INFO] 
+[INFO] <<< maven-erlang-plugin:2.2.0-SNAPSHOT:appup (default-cli) @ app <<<
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:appup (default-cli) @ app ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  A P P U P - G E N E R A T O R
+[INFO] ------------------------------------------------------------------------
+[INFO] artifact eu.lindenbaum:app: checking for updates from nexus
+[INFO] Successfully generated application upgrade template.
+[INFO] /home/tobias/app/target/app.appup:
+[INFO] {${VERSION},
+[INFO]  [{"1", [{load_module,app}, {update,app_sup,supervisor}, {update,app_server}]}],
+[INFO]  [{"1", [{load_module,app}, {update,app_sup,supervisor}, {update,app_server}]}]}.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 18.965s
+[INFO] Finished at: Tue Mar 06 09:06:01 CET 2012
+[INFO] Final Memory: 10M/105M
+[INFO] ------------------------------------------------------------------------
+[INFO] Successfully shut down 'app-maven-erlang-plugin-test-backend@192.168.100.29'
+[INFO] ------------------------------------------------------------------------
+[INFO] Successfully shut down 'app-maven-erlang-plugin-backend@192.168.100.29'
+[INFO] ------------------------------------------------------------------------
+[tobias@tirana app]$ cp target/app.appup src/main/erlang/
++--
+
+ Version 2 of the <<<app>>> application will now look like this:
+
+[../erlang-release-app2-example.png] Version 2 of the <<<app>>> application.
+
+ After installing the application with <<<mvn install>>> we move on to the
+ release project. We include version 2 of <<<app>>>, increase the release project
+ version and generate the relup file:
+
++--
+[tobias@tirana rel]$ mvn erlang:relup
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building An erlang-rel release. 2
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] >>> maven-erlang-plugin:2.2.0-SNAPSHOT:relup (default-cli) @ rel >>>
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:validate (default-validate) @ rel ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:initialize (default-initialize) @ rel ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:extract-dependencies (default-extract-dependencies) @ rel ---
+[INFO] Processed project dependencies:
+[INFO]  * app-2 (extracted)
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:reload-dependencies (default-reload-dependencies) @ rel ---
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:generate-release-resources (default-generate-release-resources) @ rel ---
+[INFO] 
+[INFO] <<< maven-erlang-plugin:2.2.0-SNAPSHOT:relup (default-cli) @ rel <<<
+[INFO] 
+[INFO] --- maven-erlang-plugin:2.2.0-SNAPSHOT:relup (default-cli) @ rel ---
+[INFO] ------------------------------------------------------------------------
+[INFO]  R E L U P - G E N E R A T O R
+[INFO] ------------------------------------------------------------------------
+[INFO] artifact eu.lindenbaum:rel: checking for updates from nexus
+[INFO] Successfully generated release upgrade file.
+[INFO] /home/tobias/rel/target/relup:
+[INFO] {${VERSION},
+[INFO]  [{"1",[],
+[INFO]    [{load_object_code,{app,"2",[app,app_sup,app_server]}},
+[INFO]     point_of_no_return,
+[INFO]     {load,{app,brutal_purge,brutal_purge}},
+[INFO]     {suspend,[app_sup]},
+[INFO]     {load,{app_sup,brutal_purge,brutal_purge}},
+[INFO]     {code_change,up,[{app_sup,[]}]},
+[INFO]     {resume,[app_sup]},
+[INFO]     {suspend,[app_server]},
+[INFO]     {load,{app_server,brutal_purge,brutal_purge}},
+[INFO]     {resume,[app_server]}]}],
+[INFO]  [{"1",[],
+[INFO]    [{load_object_code,{app,"1",[app,app_sup,app_server]}},
+[INFO]     point_of_no_return,
+[INFO]     {load,{app,brutal_purge,brutal_purge}},
+[INFO]     {suspend,[app_sup]},
+[INFO]     {load,{app_sup,brutal_purge,brutal_purge}},
+[INFO]     {code_change,down,[{app_sup,[]}]},
+[INFO]     {resume,[app_sup]},
+[INFO]     {suspend,[app_server]},
+[INFO]     {load,{app_server,brutal_purge,brutal_purge}},
+[INFO]     {resume,[app_server]}]}]}.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 9.215s
+[INFO] Finished at: Tue Mar 06 09:11:41 CET 2012
+[INFO] Final Memory: 10M/105M
+[INFO] ------------------------------------------------------------------------
+[INFO] Successfully shut down 'rel-maven-erlang-plugin-backend@192.168.100.29'
+[INFO] ------------------------------------------------------------------------
+[tobias@tirana rel]$ cp target/relup .
++--
+
+ The resulting release project will now look like this:
+
+[../erlang-release-rel2-example.png] Version 2 of the <<<rel>>> release.
+
+ After installing the release project the new release package is available in
+ the <<<target>>> directory. The release package can directly be copied into the
+ <<<releases>>> directory of our running target system (see previous section).
+
++--
+[tobias@tirana rel]$ ls -l target/
+total 48
+-rw-rw-r-- 1 tobias tobias  3418  6. Mär 09:11 backend.log
+drwxrwxr-x 3 tobias tobias  4096  6. Mär 09:11 lib
+drwxrwxr-x 4 tobias tobias  4096  6. Mär 09:11 rel-1
+-rw-rw-r-- 1 tobias tobias  9954  6. Mär 09:11 rel-2.boot
+-rw-rw-r-- 1 tobias tobias   161  6. Mär 09:11 rel-2.rel
+-rw-rw-r-- 1 tobias tobias 12138  6. Mär 09:11 rel-2.script
+-rw-rw-r-- 1 tobias tobias   771  6. Mär 09:11 relup
+-rw-rw-r-- 1 tobias tobias     4  6. Mär 09:11 sys.config
+[tobias@tirana rel]$ mv target/rel-2.tar.gz ../tmp/releases/
++--
+
+ Going back to the erlang shell on the running target system we can now install
+ the new release:
+
++--
+(test@localhost.localdomain)2> 
+(test@localhost.localdomain)2> release_handler:unpack_release("rel-2").
+{ok,"2"}
+(test@localhost.localdomain)3> app_server ! show_info. 
+
+=INFO REPORT==== 6-Mar-2012::09:16:30 ===
+Running version 1.
+show_info
+(test@localhost.localdomain)4> release_handler:install_release("2").
+{ok,"1",[]}
+(test@localhost.localdomain)5> app_server ! show_info.
+show_info
+
+=INFO REPORT==== 6-Mar-2012::09:16:53 ===
+Running version 2.
+(test@localhost.localdomain)6> release_handler:make_permanent("2").
+ok
+(test@localhost.localdomain)7> application:which_applications().
+[{tv,"tv Table Visualizer","2.1.4.8"},
+ {gs,"GS  The Graphics System","1.5.15"},
+ {app,"null","2"},
+ {sasl,"SASL  CXC 138 11","2.2"},
+ {stdlib,"ERTS  CXC 138 10","1.18"},
+ {kernel,"ERTS  CXC 138 10","2.15"}]
+(test@localhost.localdomain)8>
++--
+
+ The new release version is now the permanent release that will be booted on emulator
+ restart:
+
++--
+(test@localhost.localdomain)8> q().
+ok
+(test@localhost.localdomain)9> [tobias@tirana tmp]$ 
+[tobias@tirana tmp]$ bin/start `pwd` -name test@localhost.localdomain -setcookie secret
+Erlang R15B (erts-5.9) [source] [64-bit] [smp:2:2] [async-threads:0] [hipe] [kernel-poll:false]
+
+
+=PROGRESS REPORT==== 6-Mar-2012::10:13:48 ===
+          supervisor: {local,sasl_safe_sup}
+             started: [{pid,<0.40.0>},
+                       {name,alarm_handler},
+                       {mfargs,{alarm_handler,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 6-Mar-2012::10:13:48 ===
+          supervisor: {local,sasl_safe_sup}
+             started: [{pid,<0.41.0>},
+                       {name,overload},
+                       {mfargs,{overload,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 6-Mar-2012::10:13:48 ===
+          supervisor: {local,sasl_sup}
+             started: [{pid,<0.39.0>},
+                       {name,sasl_safe_sup},
+                       {mfargs,
+                           {supervisor,start_link,
+                               [{local,sasl_safe_sup},sasl,safe]}},
+                       {restart_type,permanent},
+                       {shutdown,infinity},
+                       {child_type,supervisor}]
+
+=PROGRESS REPORT==== 6-Mar-2012::10:13:48 ===
+          supervisor: {local,sasl_sup}
+             started: [{pid,<0.42.0>},
+                       {name,release_handler},
+                       {mfargs,{release_handler,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 6-Mar-2012::10:13:48 ===
+         application: sasl
+          started_at: 'test@localhost.localdomain'
+
+=PROGRESS REPORT==== 6-Mar-2012::10:13:48 ===
+          supervisor: {local,app_sup}
+             started: [{pid,<0.48.0>},
+                       {name,app_server},
+                       {mfargs,{app_server,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 6-Mar-2012::10:13:48 ===
+         application: app
+          started_at: 'test@localhost.localdomain'
+
+=PROGRESS REPORT==== 6-Mar-2012::10:13:48 ===
+         application: gs
+          started_at: 'test@localhost.localdomain'
+
+=PROGRESS REPORT==== 6-Mar-2012::10:13:48 ===
+         application: tv
+          started_at: 'test@localhost.localdomain'
+Eshell V5.9  (abort with ^G)
+(test@localhost.localdomain)1> application:which_applications().
+[{tv,"tv Table Visualizer","2.1.4.8"},
+ {gs,"GS  The Graphics System","1.5.15"},
+ {app,"null","2"},
+ {sasl,"SASL  CXC 138 11","2.2"},
+ {stdlib,"ERTS  CXC 138 10","1.18"},
+ {kernel,"ERTS  CXC 138 10","2.15"}]
+(test@localhost.localdomain)2> 
++--

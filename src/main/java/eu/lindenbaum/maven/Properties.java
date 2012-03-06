@@ -86,8 +86,7 @@ public interface Properties {
 
   /**
    * Returns a list of artifacts used by the plugin to provide a proper test
-   * phase, e.g. the compiled artifacts of
-   * {@link #getTestSupportScripts(Properties)}.
+   * phase, e.g. the compiled artifacts of {@link #testSupportScripts()}.
    */
   public List<File> testSupportArtifacts();
 
