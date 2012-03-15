@@ -172,7 +172,6 @@ final class PropertiesImpl implements Properties {
     List<File> files = new ArrayList<File>();
     File testEbin = this.targetLayout.testEbin();
     files.add(new File(testEbin, "surefire.erl"));
-    files.add(new File(testEbin, "cover2.erl"));
     files.add(new File(testEbin, "ttycapture.erl"));
     return files;
   }

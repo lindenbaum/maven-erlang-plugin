@@ -69,7 +69,7 @@
     <license>
       <name>EPL (Erlang Public License)</name>
       <url>http://www.erlang.org/EPLICENSE</url>
-      <comments>This license applies to the (modified) erlang code provided in the cover2.erl, surefire.erl and surefire_test.erl modules.</comments>
+      <comments>This license applies to the (modified) erlang code provided in the surefire.erl and surefire_test.erl modules.</comments>
     </license>
   </licenses>
   <distributionManagement>

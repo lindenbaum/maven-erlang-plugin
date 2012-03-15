@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="fix" issue="3502206">
+        Removed `cover2.erl', now using normal coverage tool, solving issue
+        with failing coverage reports when using the Meck mocking library.
+      </action>
       <action dev="schlagert, olle-t" type="update">
         Enhanced the target system creation and execution by providing new start
         and attach scripts. Updated example documentation for target systems.
