@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import eu.lindenbaum.maven.ErlangMojo;
@@ -105,13 +104,7 @@ public final class ResourceGenerator extends ErlangMojo {
   }
 
   private static void copyDocumentationResources(Log log, Properties p) throws MojoExecutionException {
-    Map<String, String> replacements = new HashMap<String, String>();
-    replacements.put("${ARTIFACT}", p.project().getArtifactId());
-    replacements.put("${NAME}", p.project().getName());
-    replacements.put("${DESCRIPTION}", p.project().getDescription());
-    replacements.put("${ID}", p.project().getId());
-    replacements.put("${VERSION}", p.project().getVersion());
-
+    Map<String, String> replacements = MavenUtils.getProjectReplacements(p.project(), "", "");
     File overviewEdoc = p.sourceLayout().overviewEdoc();
     if (overviewEdoc.isFile()) {
       File targetOverviewEdoc = p.targetLayout().overviewEdoc();

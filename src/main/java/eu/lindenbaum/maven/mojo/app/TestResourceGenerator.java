@@ -1,15 +1,19 @@
 package eu.lindenbaum.maven.mojo.app;
 
+import static eu.lindenbaum.maven.util.FileUtils.APP_FILTER;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import eu.lindenbaum.maven.ErlangMojo;
 import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,6 +47,7 @@ public final class TestResourceGenerator extends ErlangMojo {
     }
 
     Collection<File> current = new ArrayList<File>();
+    current.addAll(copyApplicationResourceFiles(p));
     current.addAll(copyIncludes(p));
     current.addAll(copyResources(p));
     current.addAll(copyNonErlangDependencies(log, p));
@@ -95,5 +100,12 @@ public final class TestResourceGenerator extends ErlangMojo {
       }
     }
     return copied;
+  }
+
+  private static Collection<File> copyApplicationResourceFiles(Properties p) throws MojoExecutionException {
+    File ebin = p.sourceLayout().ebin();
+    File targetEbin = p.targetLayout().testEbin();
+    Map<String, String> replacements = MojoUtils.getApplicationReplacements(p);
+    return FileUtils.copyDirectory(ebin, targetEbin, APP_FILTER, replacements);
   }
 }

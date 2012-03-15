@@ -21,7 +21,8 @@ Project Configuration
  <<<project packaging variables>>>. These will be replaced by values on project
  packaging time. Provided project packaging variables currently include:
  
- * <<<$\{ARTIFACT\}>>>: the projects artifact id (atom)
+ * <<<$\{ARTIFACT\}>>>: the projects artifact id (atom on application or string
+ on release projects)
 
  * <<<$\{NAME\}>>>: the project name (string)
  

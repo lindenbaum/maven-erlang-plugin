@@ -48,7 +48,10 @@ import org.apache.maven.plugin.logging.Log;
  * done by using one of the supported variables into the release file. Below is
  * a list of supported variables and their substitutions: </p>
  * <ul>
- * <li><code>${ARTIFACT}</code>: the projects artifact id (atom)</li>
+ * <li><code>${ARTIFACT}</code>: the projects artifact id (string)</li>
+ * <li><code>${DESCRIPTION}</code>: the projects description string (string)</li>
+ * <li><code>${ID}</code>: the project id (string)</li>
+ * <li><code>${NAME}</code>: the projects name (string)</li>
  * <li><code>${VERSION}</code>: the projects version (string)</li>
  * <li><code>${ERTS}</code>: expands to the tuple
  * <code>{erts, "ERTS_VERSION"}</code> with the version of erts available on the
@@ -83,14 +86,7 @@ public final class ResourceGenerator extends ErlangMojo {
     RuntimeInfoScript infoScript = new RuntimeInfoScript();
     RuntimeInfo runtimeInfo = MavenSelf.get(p.cookie()).exec(p.node(), infoScript);
 
-    String releaseName = p.project().getArtifactId();
-    String releaseVersion = p.project().getVersion();
-    String projectName = p.project().getName();
-
-    Map<String, String> replacements = new HashMap<String, String>();
-    replacements.put("${ARTIFACT}", "\"" + releaseName + "\"");
-    replacements.put("${VERSION}", "\"" + releaseVersion + "\"");
-    replacements.put("${NAME}", projectName);
+    Map<String, String> replacements = MavenUtils.getProjectReplacements(p.project(), "\"", "\"");
     replacements.put("${ERTS}", "{erts, \"" + runtimeInfo.getVersion() + "\"}");
 
     Set<Artifact> artifacts = MavenUtils.getErlangReleaseArtifacts(p.project());

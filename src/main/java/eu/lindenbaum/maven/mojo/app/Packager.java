@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +22,10 @@ import eu.lindenbaum.maven.erlang.GetAttributesScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.Script;
 import eu.lindenbaum.maven.util.ErlConstants;
-import eu.lindenbaum.maven.util.ErlUtils;
 import eu.lindenbaum.maven.util.FileUtils;
 import eu.lindenbaum.maven.util.MavenUtils;
 import eu.lindenbaum.maven.util.MavenUtils.LogLevel;
+import eu.lindenbaum.maven.util.MojoUtils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
@@ -51,7 +50,8 @@ import org.apache.maven.plugin.logging.Log;
  * <ul>
  * <li><code>${ARTIFACT}</code>: the projects artifact id (atom)</li>
  * <li><code>${DESCRIPTION}</code>: the projects description (string)</li>
- * <li><code>${ID}</code>: the projects id (string)</li>
+ * <li><code>${ID}</code>: the project id (string)</li>
+ * <li><code>${NAME}</code>: the projects name (string)</li>
  * <li><code>${VERSION}</code>: the projects version (string)</li>
  * <li><code>${MODULES}</code>: all compiled {@code .beam} files found in the
  * target ebin folder (list)</li>
@@ -80,26 +80,11 @@ public final class Packager extends ErlangMojo {
     log.info(" P A C K A G E R");
     log.info(MavenUtils.SEPARATOR);
 
-    String projectVersion = p.project().getVersion();
-
-    List<File> modules = p.modules(false, false);
-    Set<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
-    Script<String> registeredScript = new GetAttributesScript(modules, "registered");
-    String registeredNames = MavenSelf.get(p.cookie()).exec(p.node(), registeredScript);
-
-    Map<String, String> replacements = new HashMap<String, String>();
-    replacements.put("${ARTIFACT}", "\'" + p.project().getArtifactId() + "\'");
-    replacements.put("${DESCRIPTION}", "\"" + p.project().getDescription() + "\"");
-    replacements.put("${ID}", "\"" + p.project().getId() + "\"");
-    replacements.put("${VERSION}", "\"" + projectVersion + "\"");
-    replacements.put("${MODULES}", ErlUtils.toModuleList(modules, "'", "'"));
-    replacements.put("${REGISTERED}", registeredNames);
-    replacements.put("${APPLICATIONS}", ErlUtils.toArtifactIdListing(dependencies));
-
     // copy application resource files
     File ebin = p.sourceLayout().ebin();
     File targetEbin = p.targetLayout().ebin();
     FileUtils.ensureDirectories(ebin);
+    Map<String, String> replacements = MojoUtils.getApplicationReplacements(p);
     Collection<File> copied = FileUtils.copyDirectory(ebin, targetEbin, APP_FILTER, replacements);
     if (copied.size() > 0) {
       log.debug("Copied application resource files:");
@@ -124,9 +109,14 @@ public final class Packager extends ErlangMojo {
       throw new MojoFailureException("Failed to consult " + appFile + ".");
     }
 
+    String projectVersion = p.project().getVersion();
     checkApplicationName(log, appFile, p.project().getArtifactId(), appResult.getName());
     checkApplicationVersion(log, appFile, projectVersion, appResult.getVersion());
+
+    List<File> modules = p.modules(false, false);
     checkModules(log, modules, appResult.getModules());
+
+    Set<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
     checkApplications(log, dependencies, appResult.getApplications());
     checkStartModule(log, p, appResult);
 

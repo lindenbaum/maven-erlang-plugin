@@ -11,7 +11,11 @@ internal_fun_second_test() ->
     ?assertMatch(ok, test_app:internal_fun()).
 
 define_test() ->
-  ?assertMatch(ok, ?TEST_DEFINE).
-  
+    ?assertMatch(ok, ?TEST_DEFINE).
+
 test_define_test() ->
-  ?assertMatch(ok, ?TEST_INCLUDE_DEFINE).
+    ?assertMatch(ok, ?TEST_INCLUDE_DEFINE).
+
+start_stop_test() ->
+    ?assertEqual(ok, application:start(test_otp)),
+    ?assertEqual(ok, application:stop(test_otp)).

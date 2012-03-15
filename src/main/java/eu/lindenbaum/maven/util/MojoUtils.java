@@ -11,10 +11,14 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import eu.lindenbaum.maven.Properties;
 import eu.lindenbaum.maven.erlang.DialyzerScript;
+import eu.lindenbaum.maven.erlang.GetAttributesScript;
 import eu.lindenbaum.maven.erlang.MavenSelf;
 import eu.lindenbaum.maven.erlang.NodeShutdownHook;
 import eu.lindenbaum.maven.erlang.Script;
@@ -24,6 +28,7 @@ import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpPeer;
 import com.ericsson.otp.erlang.OtpSelf;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -247,6 +252,39 @@ public final class MojoUtils {
         return true;
       }
     }, prefiltered));
+  }
+
+  /**
+   * Returns a mapping of string replacements for application projects. The
+   * replacements will contain all mappings returned by
+   * {@link MavenUtils#getProjectReplacements(org.apache.maven.project.MavenProject)}
+   * and the following additional mappings:
+   * <ul>
+   * <li>"${MODULES}" -> a string containing an erlang list with all project
+   * modules</li>
+   * <li>"${REGISTERED}" -> a string containing an erlang list with all
+   * registered names of an application (based on the '-registered' module
+   * attribute)</li>
+   * <li>"${APPLICATIONS}" -> a string containing an erlang list with all
+   * (direct) dependencies of the project</li>
+   * </ul>
+   * Note: The compile phase must have run to be able to call this function.
+   * 
+   * @param p the build properties
+   * @return a non-{@code null} {@link Map} of string mappings
+   * @throws MojoExecutionException when failing to get module attributes
+   */
+  public static Map<String, String> getApplicationReplacements(Properties p) throws MojoExecutionException {
+    List<File> modules = p.modules(false, false);
+    Set<Artifact> dependencies = MavenUtils.getErlangDependenciesToPackage(p.project());
+    Script<String> registeredScript = new GetAttributesScript(modules, "registered");
+    String registeredNames = MavenSelf.get(p.cookie()).exec(p.node(), registeredScript);
+
+    Map<String, String> replacements = MavenUtils.getProjectReplacements(p.project(), "'", "\"");
+    replacements.put("${MODULES}", ErlUtils.toModuleList(modules, "'", "'"));
+    replacements.put("${REGISTERED}", registeredNames);
+    replacements.put("${APPLICATIONS}", ErlUtils.toArtifactIdListing(dependencies));
+    return replacements;
   }
 
   /**

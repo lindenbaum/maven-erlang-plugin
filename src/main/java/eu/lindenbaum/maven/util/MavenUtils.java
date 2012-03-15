@@ -6,8 +6,10 @@ import static eu.lindenbaum.maven.util.CollectionUtils.map;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import eu.lindenbaum.maven.MavenComponents;
@@ -329,6 +331,33 @@ public final class MavenUtils {
     @SuppressWarnings("unchecked")
     Set<Artifact> artifacts = project.getArtifacts();
     return new HashSet<Artifact>(artifacts);
+  }
+
+  /**
+   * Returns a mapping of string replacements for project related values:
+   * <ul>
+   * <li>"${ARTIFACT}" -> the projects artifact id</li>
+   * <li>"${DESCRIPTION}" -> the projects description string</li>
+   * <li>"${ID}" -> the project id</li>
+   * <li>"${NAME}" -> the projects name</li>
+   * <li>"${VERSION}" -> the projects version</li>
+   * </ul>
+   * 
+   * @param project the project object to retrieve values from
+   * @param artifactQuote the quote character used for the ${ARTIFACT} mapping
+   * @param commonQuote the quote character used all other mappings
+   * @return a non-{@code null} {@link Map} of string mappings
+   */
+  public static Map<String, String> getProjectReplacements(MavenProject project,
+                                                           String artifactQuote,
+                                                           String commonQuote) {
+    Map<String, String> replacements = new HashMap<String, String>();
+    replacements.put("${ARTIFACT}", artifactQuote + project.getArtifactId() + artifactQuote);
+    replacements.put("${DESCRIPTION}", commonQuote + project.getDescription() + commonQuote);
+    replacements.put("${ID}", commonQuote + project.getId() + commonQuote);
+    replacements.put("${NAME}", commonQuote + project.getName() + commonQuote);
+    replacements.put("${VERSION}", commonQuote + project.getVersion() + commonQuote);
+    return replacements;
   }
 
   /**
