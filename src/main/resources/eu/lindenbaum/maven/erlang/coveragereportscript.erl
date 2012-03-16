@@ -69,7 +69,7 @@ WriteToFile = fun(TableResults) ->
                       ok = file:close(File)
               end,
 
-case cover:compile_beam_directory(Dir) of %%, [debug_info, export_all, {d, 'TEST'}]) of
+case cover2:compile_beam_directory(Dir, [debug_info, export_all, {d, 'TEST'}]) of
     {error, Reason} ->
         {error, [lists:flatten(io_lib:format("~p", [Reason]))]};
     
@@ -78,7 +78,7 @@ case cover:compile_beam_directory(Dir) of %%, [debug_info, export_all, {d, 'TEST
             ok ->
                 begin 
                     Levels = [module, function, clause, line],
-                    Results = [{L, cover:analyse(M, coverage, L)} || M <- Modules, L <- Levels],
+                    Results = [{L, cover2:analyse(M, coverage, L)} || M <- Modules, L <- Levels],
                     SortedResults = SortCoverageReports(Results),
                     Table = TableifyCoverageReport(SortedResults),
                     FlatTable = lists:flatten(Table),
