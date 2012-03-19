@@ -1,0 +1,17 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>@project.groupId@.@project.artifactId@.it</groupId>
+  <artifactId>mod_std</artifactId>
+  <version>0</version>
+  <packaging>pom</packaging>
+  <name>Parent</name>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <modules>
+    <module>app_1</module>
+    <module>app_2</module>
+    <module>app_3</module>
+    <module>rel</module>
+  </modules>
+</project>

@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle-t" type="fix" due-to="charpi">
+        Translation of .tar.gz dependencies into clean artifact names, solves
+        issues with modular projects where sibling projects were not properly
+        extracted.
+      </action>
       <action dev="schlagert" type="fix" issue="3502210" due-to="charpi">
         Made the application resource and upgrade files available during the
         test phase of application projects. This allows unit tests to call

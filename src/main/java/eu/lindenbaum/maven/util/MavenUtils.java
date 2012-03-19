@@ -178,7 +178,10 @@ public final class MavenUtils {
    * the {@link DependencyExtractor} to construct dependency directory names.
    */
   public static String getArtifactDirectory(Artifact artifact) {
-    return artifact.getFile().getName().replace("." + artifact.getType(), "");
+    return artifact.getFile()
+                   .getName()
+                   .replace("." + artifact.getType(), "")
+                   .replace(ErlConstants.TARGZ_SUFFIX, "");
   }
 
   /**
@@ -273,7 +276,7 @@ public final class MavenUtils {
   /**
    * Returns the direct non-erlang dependencies of a project using
    * {@link MavenProject#getDependencyArtifacts()}. All erlang artifacts will be
-   * filtered out. This will return all {@link Artifact} with scopes other than
+   * filtered out. This will return all {@link Artifact}s with scopes other than
    * {@code test} and {@code provided}.
    * 
    * @param project to get the dependencies for

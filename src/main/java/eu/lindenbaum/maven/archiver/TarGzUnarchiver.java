@@ -86,7 +86,7 @@ public final class TarGzUnarchiver {
   }
 
   private static final class TarGzUnarchiverScript implements Script<String> {
-    private static final String script = "erl_tar:extract(\"%s\", [compressed, {cwd, \"%s\"}]).";
+    private static final String script = "ok = erl_tar:extract(\"%s\", [compressed, {cwd, \"%s\"}]).";
 
     private final File archive;
     private final File destination;
