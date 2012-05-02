@@ -4,6 +4,9 @@
   </properties>
   <body>
     <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+      <action dev="schlagert, olle-t" type="add">
+        Pre-compile sorting now supports the R15 `callback' attribute.
+      </action>
       <action dev="olle-t" type="fix" due-to="charpi">
         Translation of .tar.gz dependencies into clean artifact names, solves
         issues with modular projects where sibling projects were not properly
@@ -67,7 +70,7 @@
         separated list of test modules to execute (-Dtest=foo,bar,baz) and not
         only a single value.
       </action>
-      <action dev="schlagt, lti" type="add">
+      <action dev="schlagert, lti" type="add">
         The plugin's backend nodes write their output to a logfile name
         'backend.log' located in the build directory. This is useful for
         debugging failed builds and unit test runs.

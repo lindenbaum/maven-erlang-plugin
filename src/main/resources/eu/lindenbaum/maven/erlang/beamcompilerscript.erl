@@ -56,19 +56,19 @@ end,
 %% source file
 GetModuleAttributes =
 fun(SrcFile) ->
-	case epp_dodger:quick_parse_file(SrcFile) of
-	    {ok, Forms} ->
-		lists:foldl(
-		  fun({attribute, _, export, Exports}, Acc) ->
-			  [{export, E} || E <- Exports] ++ Acc;
-		     ({attribute, _, behaviour, Behaviour}, Acc) ->
-			  [{behaviour, Behaviour}] ++ Acc;
-		     (_, Acc) ->
-			  Acc
-		  end, [], Forms);
-	    _ ->
-		[]
-	end
+        case epp_dodger:quick_parse_file(SrcFile) of
+            {ok, Forms} ->
+                lists:foldl(
+                  fun({attribute, _, export, Exports}, Acc) ->
+                          [{export, E} || E <- Exports] ++ Acc;
+                     ({attribute, _, callback, _}, Acc) ->
+                          [{export, {behaviour_info, 1}}] ++ Acc;
+                     (_, Acc) ->
+                          Acc
+                  end, [], Forms);
+            _ ->
+                []
+        end
 end,
 
 %% returns true if a source module specifies one of the given attributes,
