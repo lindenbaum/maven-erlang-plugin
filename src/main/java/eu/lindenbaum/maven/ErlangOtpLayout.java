@@ -75,8 +75,18 @@ public class ErlangOtpLayout implements SourceLayout {
   }
 
   @Override
+  public File generated() {
+    return new File(this.base, "target/generated-sources");
+  }
+
+  @Override
   public File mibs() {
     return new File(this.base, "src/main/mibs");
+  }
+
+  @Override
+  public File yecc() {
+    return new File(generated(), "yecc");
   }
 
   @Override

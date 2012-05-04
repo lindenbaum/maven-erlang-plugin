@@ -59,6 +59,11 @@ public interface ErlConstants {
   public static final String BIN_SUFFIX = ".bin";
 
   /**
+   * Suffix for yrl (yecc) files.
+   */
+  public static final String YRL_SUFFIX = ".yrl";
+
+  /**
    * Suffix for tar gzipped files.
    */
   public static final String TARGZ_SUFFIX = ".tar.gz";
@@ -87,4 +92,5 @@ public interface ErlConstants {
    * Name of the dialyzer ok file.
    */
   public static final String DIALYZER_OK = ".dialyzer.ok";
+
 }

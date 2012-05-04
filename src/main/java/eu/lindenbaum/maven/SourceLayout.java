@@ -51,11 +51,28 @@ public interface SourceLayout {
   public File src();
 
   /**
-   * Returns the directory where MIB soruces reside.
+   * Returns the directory where generated sources reside. NOTE: this is still
+   * very much a part of the source layout, even though it most certainly will
+   * use the projects `target' directory location as its parent.
+   * 
+   * @since 2.3.0
+   */
+  public File generated();
+
+  /**
+   * Returns the directory where MIB sources reside.
    * 
    * @since 2.2.0
    */
   public File mibs();
+
+  /**
+   * Returns the directory where any, by `yecc', generated parser source files
+   * reside.
+   * 
+   * @since 2.3.0
+   */
+  public File yecc();
 
   /**
    * Returns the directory where erlang include files for tests reside.

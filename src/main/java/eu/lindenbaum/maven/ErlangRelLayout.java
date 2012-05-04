@@ -70,7 +70,17 @@ public class ErlangRelLayout implements SourceLayout {
   }
 
   @Override
+  public File generated() {
+    return null;
+  }
+
+  @Override
   public File mibs() {
+    return null;
+  }
+
+  @Override
+  public File yecc() {
     return null;
   }
 
