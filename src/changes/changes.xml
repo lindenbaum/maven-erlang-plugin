@@ -3,7 +3,7 @@
     <title>Maven Erlang Plug-In Release Notes</title>
   </properties>
   <body>
-    <release version="2.2.0" date="TBA" description="Feature and bugfix release">
+    <release version="2.2.0" date="2012-05-04" description="Feature and bugfix release">
       <action dev="schlagert, olle-t" type="add">
         Pre-compile sorting now supports the R15 `callback' attribute.
       </action>
