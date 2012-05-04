@@ -26,4 +26,13 @@ RELEASE HOWTO:
 ## Optionally, upload new web-stuff using:
 > scp <src> <username>,erlang-plugin@web.sourceforge.net:htdocs/<target>
 
+## SourceForge only:
+> update the download section with the created jar packages
+> update the maven-erlang-plugin-x.x.x-readme.txt file
+>> mvn changes:announcement-generate
+>> copy the new changes from target/announcement/announcemenet.vm into
+   the src/changes/maven-erlang-plugin-readme.txt file
+>> copy it to maven-erlang-plugin-x.x.x-readme.txt and upload the
+   copied file
+
 DONE!
