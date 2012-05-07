@@ -85,6 +85,11 @@ public class ErlangRelLayout implements SourceLayout {
   }
 
   @Override
+  public File leex() {
+    return null;
+  }
+
+  @Override
   public File testInclude() {
     return null;
   }

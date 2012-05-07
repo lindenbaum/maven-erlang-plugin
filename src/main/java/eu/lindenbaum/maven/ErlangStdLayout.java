@@ -92,6 +92,11 @@ public class ErlangStdLayout implements SourceLayout {
   }
 
   @Override
+  public File leex() {
+    return new File(generated(), "leex");
+  }
+
+  @Override
   public File testInclude() {
     return new File(this.base, "test_include");
   }

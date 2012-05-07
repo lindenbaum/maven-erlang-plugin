@@ -119,6 +119,7 @@ public final class Compiler extends ErlangMojo {
     List<File> sourceFiles = new ArrayList<File>();
     sourceFiles.addAll(FileUtils.getFilesRecursive(p.sourceLayout().src(), ErlConstants.ERL_SUFFIX));
     sourceFiles.addAll(FileUtils.getFilesRecursive(p.sourceLayout().yecc(), ErlConstants.ERL_SUFFIX));
+    sourceFiles.addAll(FileUtils.getFilesRecursive(p.sourceLayout().leex(), ErlConstants.ERL_SUFFIX));
 
     List<File> firstFiles = new ArrayList<File>();
     if (this.compileFirst != null) {

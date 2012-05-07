@@ -64,6 +64,11 @@ public interface ErlConstants {
   public static final String YRL_SUFFIX = ".yrl";
 
   /**
+   * Suffix for xrl (leex) files.
+   */
+  public static final String XRL_SUFFIX = ".xrl";
+
+  /**
    * Suffix for tar gzipped files.
    */
   public static final String TARGZ_SUFFIX = ".tar.gz";

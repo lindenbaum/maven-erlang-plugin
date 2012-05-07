@@ -75,6 +75,14 @@ public interface SourceLayout {
   public File yecc();
 
   /**
+   * Returns the directory where any, by `leex', generated lexer source files
+   * reside.
+   * 
+   * @since 2.3.0
+   */
+  public File leex();
+
+  /**
    * Returns the directory where erlang include files for tests reside.
    */
   public File testInclude();
@@ -114,4 +122,5 @@ public interface SourceLayout {
    * {@link File} is not guaranteed to exist.
    */
   public File sysConfigFile();
+
 }
