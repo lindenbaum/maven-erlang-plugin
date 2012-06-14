@@ -173,6 +173,15 @@
               <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
             </phases>
           </lifecycle>
+          <lifecycle>
+            <id>site</id>
+            <phases>
+              <pre-site></pre-site>
+              <site>org.apache.maven.plugins:maven-site-plugin:site</site>
+              <post-site></post-site>
+              <site-deploy>org.apache.maven.plugins:maven-site-plugin:deploy</site-deploy>
+            </phases>
+          </lifecycle>
         </lifecycles>
       </configuration>
     </component>

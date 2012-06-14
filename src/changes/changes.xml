@@ -4,6 +4,10 @@
   </properties>
   <body>
     <release version="2.3.0" date="TBA" description="Feature and bugfix release">
+      <action dev="olle" type="update">
+        Site lifecycle for erlang-rel projects now explicitly without pre- and
+        post-phase invocations - simple site only. 
+      </action>
       <action dev="olle" type="add">
         Added support for `leex' generated sources.
       </action>
