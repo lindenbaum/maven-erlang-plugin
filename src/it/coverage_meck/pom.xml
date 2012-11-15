@@ -9,7 +9,7 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>io.alind</groupId>
+      <groupId>eu.lindenbaum.thirdparty</groupId>
       <artifactId>meck</artifactId>
       <version>0.7.1-SNAPSHOT</version>
       <type>erlang-std</type>
