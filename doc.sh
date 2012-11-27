@@ -10,7 +10,7 @@
 #   ./doc.sh deploy - will do the above and deploy to github
 
 # create site documentation
-mvn clean && mvn -Pit && mvn site
+mvn clean && mvn -U -Pit && mvn site
 
 VERSION=`grep version pom.xml | head -1 | awk '{print $1}' | sed 's/<version>//' | sed 's/<\/version>//'`
 
