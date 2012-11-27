@@ -31,16 +31,13 @@ third party Erlang/OTP applications and libraries available in the
 
 __Enjoy!__
  
-Previous releases
------------------
+### Previous releases
 
-### 2011-09-23:
-
+__2011-09-23__:
 [Maven Erlang Plug-In version 2.1.0](http://lindenbaum.github.com/maven-erlang-plugin/2.1.0/)
 | [Release Notes](http://lindenbaum.github.com/maven-erlang-plugin/2.1.0/changes-report)
 
-### 2011-03-18:
-
+__2011-03-18__:
 [Maven Erlang Plug-In version 2.1.0](http://lindenbaum.github.com/maven-erlang-plugin/2.0.0/)
 | [Release Notes](http://lindenbaum.github.com/maven-erlang-plugin/2.0.0/changes-report)
 
