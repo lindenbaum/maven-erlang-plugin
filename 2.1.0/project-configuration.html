@@ -1,0 +1,304 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Maven Erlang Plug-In - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Maven Erlang Plug-In
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2011-09-23
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                   <h5>Overview</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="index.html">Introduction</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-configuration.html">Plugin Configuration</a>
+          </li>
+              
+    <li class="none">
+              <strong>Project Configuration</strong>
+        </li>
+              
+    <li class="none">
+                    <a href="changes-report.html">Releasenotes</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-info.html">Goals</a>
+          </li>
+              
+    <li class="none">
+                    <a href="faq.html">FAQ</a>
+          </li>
+          </ul>
+              <h5>Examples</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="examples/setup.html">- Create an application project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/compile.html">- Compiling and testing an application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/release-setup.html">- Create a release project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/coverage.html">- Generate a coverage report</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/dialyzer.html">- Running dialyzer on a project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/running.html">- Running your application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/uploading.html">- Uploading code on a remote node</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/package-release.html">- Packaging a release</a>
+          </li>
+          </ul>
+              <h5>Project</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="project-summary.html">Summary</a>
+          </li>
+              
+    <li class="none">
+                    <a href="team-list.html">Team</a>
+          </li>
+              
+    <li class="none">
+                    <a href="license.html">License</a>
+          </li>
+              
+    <li class="none">
+                    <a href="source-repository.html">Source code</a>
+          </li>
+              
+    <li class="none">
+                    <a href="issue-tracking.html">Issue tracking</a>
+          </li>
+          </ul>
+              <h5>Development</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="https://sourceforge.net/projects/erlang-plugin/" class="externalLink">Sourceforge</a>
+          </li>
+              
+    <li class="none">
+                    <a href="development.html">Overview</a>
+          </li>
+          </ul>
+              <h5>Reports</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="surefire-report.html">Unit tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="invoker-report.html">Integration tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="cobertura/index.html">Test coverage</a>
+          </li>
+              
+    <li class="none">
+                    <a href="taglist.html">Tag list</a>
+          </li>
+              
+    <li class="none">
+                    <a href="apidocs/index.html">Java API</a>
+          </li>
+          </ul>
+              <h5>Dependencies</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="dependencies.html">Dependencies</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-management.html">Plug-In management</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugins.html">Plug-Ins</a>
+          </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <div class="section"><h2>Project Configuration</h2>
+<div class="section"><h3>Application Resource, Application Upgrade, Release and Release Upgrade Files</h3>
+<p>The following sections describe the ways the plugin can support a projects application resource, upgrade and release file management. For further information about application resource, upgrade and release files see:</p>
+<ul><li><a class="externalLink" href="http://www.erlang.org/doc/man/app.html">http://www.erlang.org/doc/man/app.html</a></li>
+<li><a class="externalLink" href="http://www.erlang.org/doc/man/appup.html">http://www.erlang.org/doc/man/appup.html</a></li>
+<li><a class="externalLink" href="http://www.erlang.org/doc/man/rel.html">http://www.erlang.org/doc/man/rel.html</a></li>
+<li><a class="externalLink" href="http://www.erlang.org/doc/man/relup.html">http://www.erlang.org/doc/man/relup.html</a></li>
+</ul>
+<div class="section"><h4>File Management</h4>
+<p>The plugin supports the management of erlang resource files by providing <tt>project packaging variables</tt>. These will be replaced by values on project packaging time. Provided project packaging variables currently include:</p>
+<ul><li><tt>${ARTIFACT}</tt>: the projects artifact id (atom)</li>
+<li><tt>${DESCRIPTION}</tt>: the projects description (string)</li>
+<li><tt>${ID}</tt>: the projects id (string)</li>
+<li><tt>${VERSION}</tt>: the projects version (string)<p>Only <tt>erlang-otp</tt> and <tt>erlang-std</tt>:</p>
+</li>
+<li><tt>${MODULES}</tt>: all compiled <tt>.beam</tt> files found in the target ebin folder (list)</li>
+<li><tt>${REGISTERED}</tt>: all registered names of the application, based on the <tt>-registered(Names).</tt> attribute retrieved from the compiled <tt>.beam</tt> files (list)</li>
+<li><tt>${APPLICATIONS}</tt>: all dependency applications of the project as configured in the project's <tt>pom.xml</tt> (string)<p>Only <tt>erlang-rel</tt>:</p>
+</li>
+<li><tt>${APPLICATIONS}</tt>: the project dependencies application and version tuples including all transitive application dependencies as available to the backend node(s) (tuple listing)</li>
+<li><tt>${AUTODEPS}</tt>: the project dependencies application and version tuples including all transitive application dependencies as available to the backend node(s) (list)</li>
+<li><tt>${ERTS}</tt>: expands to the tuple <tt>{erts, &quot;ERTS_VERSION&quot;}</tt> with the version of erts available on the backend node (tuple)</li>
+<li><tt>${APPLICATION_NAME}</tt>: will be replaced by the tuple <tt>{'APPLICATION_NAME', &quot;APPLICATION_VERSION&quot;}</tt> with the version available on the backend node (tuple)</li>
+</ul>
+</div>
+<div class="section"><h4>File Generation</h4>
+<p>The plug-in can generate default versions of the needed resource files for a project. This is done by the setup mojo. For further information please refer to the <a href="./setup-mojo.html">mojos documentation</a>.</p>
+<p>Because application and release upgrade files are way more complicated the plug-in offers several goals to generate more sensible defaults than the <a href="./setup-mojo.html">setup</a> goal can. These mojos will compute the templates using already installed/deployed versions of the project. For more information about appup and relup generation please refer to the specific documentation:</p>
+<ul><li><a href="./appup-mojo.html">appup</a></li>
+<li><a href="./relup-mojo.html">relup</a></li>
+</ul>
+</div>
+<div class="section"><h4>Application Resource File Checking</h4>
+<p>Will be performed on <tt>erlang-otp</tt> or <tt>erlang-std</tt> project packaging. Checks include:</p>
+<ul><li>consistency of application file and pom project name (artifactId)</li>
+<li>consistency of application file and pom project version</li>
+<li>consistency of compiled and configured modules</li>
+<li>consistency of configured start module (exists and implements correct behaviour)</li>
+<li>consistency of configured application dependencies</li>
+</ul>
+</div>
+<div class="section"><h4>Application Upgrade File Checking</h4>
+<p>Will be performed on <tt>erlang-otp</tt> or <tt>erlang-std</tt> project packaging. Checks whether upgrade file has correct term structure.</p>
+</div>
+<div class="section"><h4>Release File Checking</h4>
+<p>Will be performed on <tt>erlang-rel</tt> project packaging. Checks include:</p>
+<ul><li>consistency of release file and pom project name (artifactId)</li>
+<li>consistency of release file and pom project version</li>
+<li>consistency of configured application dependencies</li>
+<li>consistency of required Erlang/OTP release the release will be based on</li>
+</ul>
+</div>
+<div class="section"><h4>Release Upgrade File Checking</h4>
+<p>The release upgrade file <tt>relup</tt> is only checked for existence.</p>
+</div>
+<div class="section"><h4>System Configuration File Checking</h4>
+<p>The system configuration file <tt>sys.config</tt> is only checked for existence.</p>
+</div>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2011
+    
+          Lindenbaum GmbH
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

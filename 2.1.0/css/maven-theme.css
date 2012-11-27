@@ -1,0 +1,170 @@
+body {
+  background: #fff;
+  color: #706C0E;
+  padding: 0px 0px 10px 0px;
+  line-height: 1.35em;
+}
+body, td, select, input, li, p {
+  font-family: Helvetica, Arial, Verdana sans-serif;
+  font-size: 15px;
+}
+code {
+  font-family: Monaco, Courier, monospace;
+  font-size: 15px;
+}
+tt {
+   color: #333;
+   font-size: 90%;
+}
+a, a:link {
+  text-decoration: none;
+  color:#36a;
+}
+a:visited  {
+  color:#47a;
+}
+a:active, a:hover {
+  color:#69c;
+}
+#legend li.externalLink {
+  background: url(../images/external.png) left top no-repeat;
+  padding-left: 18px;
+}
+a.externalLink, a.externalLink:link, a.externalLink:visited, a.externalLink:active, a.externalLink:hover {
+  background: url(../images/external.png) right center no-repeat;
+  padding-right: 18px;
+}
+#legend li.newWindow {
+  background: url(../images/newwindow.png) left top no-repeat;
+  padding-left: 18px;
+}
+a.newWindow, a.newWindow:link, a.newWindow:visited, a.newWindow:active, a.newWindow:hover {
+  background: url(../images/newwindow.png) right center no-repeat;
+  padding-right: 18px;
+}
+h2 {
+  padding: 10px;
+  color: #900;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#eee));
+  background: -moz-linear-gradient(#ddd, #eee);
+  font-weight:900;
+  font-size: x-large;
+}
+h3 {
+  padding: 10px;
+  color: #900;
+  background: #eee;  
+  background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#eee));
+  background: -moz-linear-gradient(#ddd, #eee);
+  font-weight: normal;
+  font-size: large;
+}
+h4 {
+  padding: 7px;
+  color: #900;
+  background: #eee;  
+  background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#eee));
+  background: -moz-linear-gradient(#ddd, #eee);
+  font-weight: normal;
+  font-size: large;
+}
+h5 {
+  padding: 4px 4px 4px 6px;
+  color: #900;
+  font-size: normal;
+  background: #eee;  
+  background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#eee));
+  background: -moz-linear-gradient(#ddd, #eee);
+}
+#breadcrumbs {
+  font-size: 90%;
+  text-transform: uppercase;
+  background: #eee;
+  padding: 15px 0px 5px 10px;
+  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
+  background: -moz-linear-gradient(#fff, #eee);
+  color: #666;
+}
+#leftColumn {
+  width: 200px;	
+  margin: 10px 0 0 5px;
+  border: 1px solid #999;
+  background-color: #DADCB7;
+}
+#navcolumn h5 {
+  background: none;
+  color: #333;
+}
+#navcolumn h5, #navcolumn li {
+  font-size: 1.1em;
+}
+table.bodyTable th {
+  color: white;
+  background-color: #bbb;
+  text-align: left;
+  font-weight: bold;
+}
+
+table.bodyTable th, table.bodyTable td {
+  font-size: 1em;
+}
+
+table.bodyTable tr.a {
+  background-color: #ddd;
+}
+
+table.bodyTable tr.b {
+  background-color: #eee;
+}
+
+.source {
+  border: 1px solid #999;
+  color: #000;
+  font-size: 90%;
+  line-height: 115%;
+}
+dl {
+  padding: 4px 4px 4px 6px;
+  border: 1px solid #aaa;
+  background-color: #ffc;
+}
+dt {
+  color: #900;
+}
+#organizationLogo img, #projectLogo img, #projectLogo span{
+  margin: 8px;
+}
+#banner {
+  padding: 10px;
+  border-bottom: 1px solid #fff;
+}
+#bannerLeft {
+	width: 250px;
+	height: 83px;
+	background: #fff url(../images/lindenbaum-sl-250-neu.png) left top no-repeat;
+	font-size: 1px;
+	color: #fff;
+        display: block;
+}
+#bannerLeft img {
+	display: none;
+}
+.errormark, .warningmark, .donemark, .infomark {
+  background: url(../images/icon_error_sml.gif) no-repeat;
+}
+
+.warningmark {
+  background-image: url(../images/icon_warning_sml.gif);
+}
+
+.donemark {
+  background-image: url(../images/icon_success_sml.gif);
+}
+
+.infomark {
+  background-image: url(../images/icon_info_sml.gif);
+}
+
+#bodyColumn {
+    margin-left: 227px;
+}

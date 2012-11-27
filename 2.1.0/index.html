@@ -1,0 +1,481 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Maven Erlang Plug-In - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Maven Erlang Plug-In
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2011-09-23
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                   <h5>Overview</h5>
+            <ul>
+              
+    <li class="none">
+              <strong>Introduction</strong>
+        </li>
+              
+    <li class="none">
+                    <a href="plugin-configuration.html">Plugin Configuration</a>
+          </li>
+              
+    <li class="none">
+                    <a href="project-configuration.html">Project Configuration</a>
+          </li>
+              
+    <li class="none">
+                    <a href="changes-report.html">Releasenotes</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-info.html">Goals</a>
+          </li>
+              
+    <li class="none">
+                    <a href="faq.html">FAQ</a>
+          </li>
+          </ul>
+              <h5>Examples</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="examples/setup.html">- Create an application project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/compile.html">- Compiling and testing an application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/release-setup.html">- Create a release project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/coverage.html">- Generate a coverage report</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/dialyzer.html">- Running dialyzer on a project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/running.html">- Running your application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/uploading.html">- Uploading code on a remote node</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/package-release.html">- Packaging a release</a>
+          </li>
+          </ul>
+              <h5>Project</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="project-summary.html">Summary</a>
+          </li>
+              
+    <li class="none">
+                    <a href="team-list.html">Team</a>
+          </li>
+              
+    <li class="none">
+                    <a href="license.html">License</a>
+          </li>
+              
+    <li class="none">
+                    <a href="source-repository.html">Source code</a>
+          </li>
+              
+    <li class="none">
+                    <a href="issue-tracking.html">Issue tracking</a>
+          </li>
+          </ul>
+              <h5>Development</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="https://sourceforge.net/projects/erlang-plugin/" class="externalLink">Sourceforge</a>
+          </li>
+              
+    <li class="none">
+                    <a href="development.html">Overview</a>
+          </li>
+          </ul>
+              <h5>Reports</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="surefire-report.html">Unit tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="invoker-report.html">Integration tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="cobertura/index.html">Test coverage</a>
+          </li>
+              
+    <li class="none">
+                    <a href="taglist.html">Tag list</a>
+          </li>
+              
+    <li class="none">
+                    <a href="apidocs/index.html">Java API</a>
+          </li>
+          </ul>
+              <h5>Dependencies</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="dependencies.html">Dependencies</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-management.html">Plug-In management</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugins.html">Plug-Ins</a>
+          </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <div class="section"><h2>Maven Erlang Plug-In</h2>
+<p>The Maven Erlang Plug-In manages Erlang projects under Maven, enabling building, testing, deployment and of course Erlang/OTP project dependency management - as expected by Maven users.</p>
+<p>This project is based on the ideas of <a class="externalLink" href="http://maven-erlang.sourceforge.net/erlang-plugin/">maven-erlang</a>, created by Paul Guyot and Olivier Sambourg, but is maintained under this new regime in order to improve and extend it. This incarnation also provides a little bit more definition for <a href="./development.html">development</a> - be sure to check it out if you are interested in contributing.</p>
+<div class="section"><h3>Requirements</h3>
+<p>You will need to have <a class="externalLink" href="http://maven.apache.org/download.html"> Maven</a> and <a class="externalLink" href="http://www.erlang.org/download.html"> Erlang/OTP</a> version <b>R13B04</b> or later installed.</p>
+</div>
+<div class="section"><h3>Getting started</h3>
+<p>The plug-in is available from the Sonatype OSS Repository <a class="externalLink" href="https://repository.sonatype.org/">https://repository.sonatype.org/</a>. Add this to your POM <a href="#plugins">plugins</a> section:</p>
+<div class="source"><pre>...
+&lt;plugin&gt;
+  &lt;groupId&gt;eu.lindenbaum&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-erlang-plugin&lt;/artifactId&gt;
+  &lt;version&gt;2.1.0&lt;/version&gt;
+  &lt;extensions&gt;true&lt;/extensions&gt;
+&lt;/plugin&gt;
+...</pre>
+</div>
+<p>Or you may check out the latest development source code from the repository and install it locally.</p>
+<div class="source"><pre> svn co https://erlang-plugin.svn.sourceforge.net/svnroot/erlang-plugin/trunk/maven-erlang-plugin maven-erlang-plugin
+ cd maven-erlang-plugin/
+ mvn install</pre>
+</div>
+<p>This will build, test, package and install the plug-in.</p>
+<p>To install the download version of the plug-in you need to extract the provided package and install the .jar artifacts with the following:</p>
+<div class="source"><pre> tar xzvf maven-erlang-plugin-2.1.0.tar.gz
+ 
+ cd maven-erlang-plugin-2.1.0
+ 
+ mvn install:install-file \
+    -Dfile=maven-erlang-plugin-2.1.0.jar \
+    -DgroupId=eu.lindenbaum \
+    -DartifactId=maven-erlang-plugin \
+    -Dversion=2.1.0 \
+    -Dpackaging=jar
+ 
+ mvn install:install-file \
+    -Dfile=maven-erlang-plugin-2.1.0-javadoc.jar \
+    -DgroupId=eu.lindenbaum \
+    -DartifactId=maven-erlang-plugin \
+    -Dversion=2.1.0 \
+    -Dpackaging=jar \
+    -Dclassifier=javadoc
+ 
+ mvn install:install-file \
+    -Dfile=maven-erlang-plugin-2.1.0-sources.jar \
+    -DgroupId=eu.lindenbaum \
+    -DartifactId=maven-erlang-plugin \
+    -Dversion=2.1.0 \
+    -Dpackaging=jar \
+    -Dclassifier=sources</pre>
+</div>
+<div class="section"><h4>Packaging Type</h4>
+<p>Three custom components are defined in the plug-in, and can be used by configuring the <tt>packaging</tt> type of a project.</p>
+<ul><li><tt>erlang-otp</tt> - An application development project, aimed at supporting the conventions of the Erlang <a class="externalLink" href="http://www.erlang.org/doc/design_principles/users_guide.html">OTP Design Principles</a> respecting the default <tt>maven2</tt> directory layout.</li>
+<li><tt>erlang-std</tt> - An application development project, aimed at supporting the conventions of the Erlang <a class="externalLink" href="http://www.erlang.org/doc/design_principles/users_guide.html">OTP Design Principles</a> respecting the default Erlang/OTP directory layout.</li>
+<li><tt>erlang-rel</tt> - A release and packaging project that supports building an Erlang/OTP packaged and distributable solution. </li>
+</ul>
+</div>
+<div class="section"><h4>Configuration</h4>
+<p>Here is an example of the minimum required configuration for any project that wishes to use the Maven Erlang Plug-In:</p>
+<div class="source"><pre>&lt;project&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;[your-gropupId]&lt;/groupId&gt;
+  &lt;artifactId&gt;[your-artifactId]&lt;/artifactId&gt;
+  &lt;version&gt;[your-version]&lt;/version&gt;
+  &lt;packaging&gt;erlang-std&lt;/packaging&gt;                       &lt;-- erlang-std, erlang-otp or erlang-erl
+  &lt;build&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;eu.lindenbaum&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-erlang-plugin&lt;/artifactId&gt;
+        &lt;version&gt;2.1.0&lt;/version&gt;
+        &lt;extensions&gt;true&lt;/extensions&gt;                     &lt;-- required
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+&lt;/project&gt; </pre>
+</div>
+<p>To generate erlang specific output for site generation you may also configure the plug-in into the <tt>reporting</tt> section of your project's pom:</p>
+<div class="source"><pre>  &lt;reporting&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;eu.lindenbaum&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-erlang-plugin&lt;/artifactId&gt;
+        &lt;version&gt;2.1.0&lt;/version&gt;
+        &lt;reportSets&gt;
+          &lt;reportSet&gt;
+            &lt;reports&gt;
+              &lt;report&gt;edoc&lt;/report&gt;
+              &lt;report&gt;coverage&lt;/report&gt;
+              &lt;report&gt;profiling&lt;/report&gt;
+            &lt;/reports&gt;
+          &lt;/reportSet&gt;
+        &lt;/reportSets&gt;
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+  &lt;/reporting&gt;</pre>
+</div>
+<p>For more information about project reports please refer to:</p>
+<ul><li><a href="./edoc-mojo.html">edoc</a></li>
+<li><a href="./coverage-mojo.html">coverage</a> and <a href="./coverage-report-mojo.html">coverage-report</a></li>
+<li><a href="./profile-mojo.html">profile</a> and <a href="./profiling-report-mojo.html">profiling-report</a></li>
+</ul>
+</div>
+<div class="section"><h4>Directory Structure</h4>
+<p>The default directory structure that is supported for projects depends on the project's packaging. For further information please refer to the documentation of the specific <a href="./apidocs/eu/lindenbaum/maven/PackagingType.html">PackagingType</a>:</p>
+<ul><li><a href="./apidocs/eu/lindenbaum/maven/ErlangOtpLayout.html">ErlangOtpLayout</a></li>
+<li><a href="./apidocs/eu/lindenbaum/maven/ErlangStdLayout.html">ErlangStdLayout</a></li>
+<li><a href="./apidocs/eu/lindenbaum/maven/ErlangRelLayout.html">ErlangRelLayout</a><p>Please note that the target folder structure might be subject to constant change.</p>
+</li>
+</ul>
+</div>
+<div class="section"><h4>Goals</h4>
+<p>The tables below shows how the plug-in goals are mapped to the Maven default lifecycle. </p>
+<div class="section"><h5><tt>erlang-otp</tt> and <tt>erlang-std</tt></h5>
+<table class="bodyTable"><tbody><tr class="a"><td align="left"><b>Maven lifecycle phase</b></td>
+<td align="left"><b>Goal in the Maven Erlang Plug-In</b></td>
+</tr>
+<tr class="b"><td align="left">initialize</td>
+<td align="left"><a href="./initialize-mojo.html">initialize</a></td>
+</tr>
+<tr class="a"><td align="left">generate-sources</td>
+<td align="left"><a href="./extract-dependencies-mojo.html">extract-dependencies</a></td>
+</tr>
+<tr class="b"><td align="left">process-sources</td>
+<td align="left"><a href="./reload-dependencies-mojo.html">reload-dependencies</a></td>
+</tr>
+<tr class="a"><td align="left">generate-resources</td>
+<td align="left"><a href="./generate-resources-mojo.html">generate-resources</a></td>
+</tr>
+<tr class="b"><td align="left">compile</td>
+<td align="left"><a href="./compile-mojo.html">compile</a></td>
+</tr>
+<tr class="a"><td align="left">generate-test-sources</td>
+<td align="left"><a href="./test-initialize-mojo.html">test-initialize</a></td>
+</tr>
+<tr class="b"><td align="left">process-test-sources</td>
+<td align="left"><a href="./reload-test-dependencies-mojo.html">reload-test-dependencies</a></td>
+</tr>
+<tr class="a"><td align="left">generate-test-resources</td>
+<td align="left"><a href="./generate-test-resources-mojo.html">generate-test-resources</a></td>
+</tr>
+<tr class="b"><td align="left">test-compile</td>
+<td align="left"><a href="./test-compile-mojo.html">test-compile</a></td>
+</tr>
+<tr class="a"><td align="left">test</td>
+<td align="left"><a href="./test-mojo.html">test</a></td>
+</tr>
+<tr class="b"><td align="left">prepare-package</td>
+<td align="left"><a href="./dialyzer-mojo.html">dialyzer</a></td>
+</tr>
+<tr class="a"><td align="left">package</td>
+<td align="left"><a href="./package-mojo.html">package</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section"><h5><tt>erlang-rel</tt></h5>
+<table class="bodyTable"><tbody><tr class="b"><td align="left"><b>Maven lifecycle phase</b></td>
+<td align="left"><b>Goal in the Maven Erlang Plug-In</b></td>
+</tr>
+<tr class="a"><td align="left">initialize</td>
+<td align="left"><a href="./initialize-mojo.html">initialize</a></td>
+</tr>
+<tr class="b"><td align="left">generate-sources</td>
+<td align="left"><a href="./extract-dependencies-mojo.html">extract-dependencies</a></td>
+</tr>
+<tr class="a"><td align="left">process-sources</td>
+<td align="left"><a href="./reload-release-dependencies-mojo.html">reload-release-dependencies</a></td>
+</tr>
+<tr class="b"><td align="left">generate-resources</td>
+<td align="left"><a href="./generate-release-resources-mojo.html">generate-release-resources</a></td>
+</tr>
+<tr class="a"><td align="left">compile</td>
+<td align="left"><a href="./dialyzer-release-mojo.html">dialyzer-release</a></td>
+</tr>
+<tr class="b"><td align="left">test</td>
+<td align="left"><a href="./test-release-mojo.html">test-release</a></td>
+</tr>
+<tr class="a"><td align="left">package</td>
+<td align="left"><a href="./package-release-mojo.html">package-release</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section"><h4>Setup</h4>
+<p>Provides the option to generate <i>sensible</i> defaults for erlang projects, replacing the need for a maven archetype.</p>
+<p>More information:</p>
+<ul><li><a href="./setup-mojo.html">setup</a></li>
+</ul>
+</div>
+<div class="section"><h4>Application Upgrade File Generation</h4>
+<p>The plug-in can generate a sensible application upgrade file template for a project based on all available (local and remote repositories) earlier versions of the project.</p>
+<p>More information:</p>
+<ul><li><a href="./appup-mojo.html">appup</a></li>
+</ul>
+</div>
+<div class="section"><h4>Release Upgrade File Generation</h4>
+<p>The plug-in can generate a sensible release upgrade file template for a project based on all available (local and remote repositories) earlier versions of the project. The generation will use <tt>systools:make_relup/4</tt> internally.</p>
+<p>More information:</p>
+<ul><li><a href="./relup-mojo.html">relup</a></li>
+</ul>
+</div>
+<div class="section"><h4>Run Projects</h4>
+<p>There is a plug-in goal to run erlang projects (optionally on a remote node) for testing purposes. Simply typing <tt>mvn clean erlang:run</tt> will start the project's application(s) and all required (transitive) applications needed. On successfull start the build will be paused to allow you to connect to the running application using the erlang remote shell. To shutdown the application just finish the build by pressing <i>ENTER</i>.</p>
+<p>When specifying a running remote node using <tt>-Dremote=<a name="REMOTE_NODE">REMOTE_NODE</a></tt> the project code and resources will be uploaded to the specified node and the application(s) will be started there. Please note that the applications started on the remote node will not be stopped when the build finishes. The node owner has to take care of that.</p>
+<p>More information:</p>
+<ul><li><a href="./run-mojo.html">run</a></li>
+</ul>
+</div>
+<div class="section"><h4>Upload</h4>
+<p>The upload goal will upload the compiled artifacts of an erlang project on a remote node specified by the <tt>-Dremote</tt> parameter. In case of application projects the compiled source code and the application resources will be uploaded. The dependencies of the project will only be uploaded when specifying the <tt>withDependencies</tt> parameter. In case of release projects the packaged release .tar.gz will be uploaded into the remote node's <tt>releases</tt> directory. Please note that the remote node's process must have write access to its <tt>releases</tt> directory to be able to successfully execute this goal.</p>
+<p>More information:</p>
+<ul><li><a href="./upload-mojo.html">upload</a></li>
+</ul>
+</div>
+<div class="section"><h4>Upload Tests</h4>
+<p>The upload tests goal is useful for debugging of unit tests. It works similar to the previously mentioned <a href="./upload-mojo.html">upload</a> goal except that the project's test modules will also be uploaded and all modules (except the dependencies) are compiled with debug information.</p>
+<p>More information:</p>
+<ul><li><a href="./upload-tests-mojo.html">upload-tests</a></li>
+</ul>
+</div>
+<div class="section"><h4>Target-System</h4>
+<p>On UNIX hosts the target-system goal will package a release as a startable target system according to the official documentation on <a class="externalLink" href="http://www.erlang.org/doc/system_principles/create_target.html">erlang.org</a>. Please note that a target system is highly system dependent since the runtime of the current backend node (binaries) is packaged along with the target system.</p>
+<p>More information:</p>
+<ul><li><a href="./target-system-mojo.html">target-system</a></li>
+</ul>
+</div>
+<div class="section"><h4>Help</h4>
+<p>Prints a generated list of the available goals and their documentation.</p>
+<p>More information:</p>
+<ul><li><a href="./help-mojo.html">help</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2011
+    
+          Lindenbaum GmbH
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

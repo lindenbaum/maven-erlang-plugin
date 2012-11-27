@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Maven Erlang Plug-In - erlang:test-edoc</title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Maven Erlang Plug-In
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2010-09-22
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                   <h5>Overview</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="index.html">Introduction</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-info.html">Goals</a>
+          </li>
+          </ul>
+              <h5>Examples</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="examples/compile.html">Compile</a>
+          </li>
+          </ul>
+              <h5>Reports</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="changes-report.html">Releasenotes</a>
+          </li>
+              
+    <li class="none">
+                    <a href="apidocs/index.html">Java API</a>
+          </li>
+              
+    <li class="none">
+                    <a href="surefire-report.html">Unit tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="invoker-report.html">Integration tests</a>
+          </li>
+          </ul>
+              <h5>Development</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="development.html">Overview</a>
+          </li>
+          </ul>
+              <h5>Project</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="project-summary.html">Summary</a>
+          </li>
+              
+    <li class="none">
+                    <a href="team-list.html">Team</a>
+          </li>
+              
+    <li class="none">
+                    <a href="license.html">License</a>
+          </li>
+              
+    <li class="none">
+                    <a href="source-repository.html">Source code</a>
+          </li>
+              
+    <li class="none">
+                    <a href="issue-tracking.html">Issue tracking</a>
+          </li>
+          </ul>
+              <h5>Dependencies</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="dependencies.html">Dependencies</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-management.html">Plug-In management</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugins.html">Plug-Ins</a>
+          </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <div class="section"><h2><a name="erlang:test-edoc"></a>erlang:test-edoc</h2>
+<p><strong>Note</strong>:This goal should be used as a Maven report.</p>
+<p><strong>Full name</strong>:</p>
+<p>eu.lindenbaum:maven-erlang-plugin:1.0.0-SNAPSHOT:test-edoc</p>
+<p><strong>Description</strong>:</p>
+<div>Generate the EDoc report for test sources.</div><p><strong>Attributes</strong>:</p>
+<ul><li>Requires a Maven 2.0 project to be executed.</li>
+<li>Binds by default to the lifecycle phase: <code>generate-test-sources</code>.</li>
+</ul>
+<div class="section"><h3><a name="Required_Parameters"></a>Required Parameters</h3>
+<table class="bodyTable"><tr class="a"><th>Name</th>
+<th>Type</th>
+<th>Since</th>
+<th>Description</th>
+</tr>
+<tr class="b"><td><strong><a href="#srcTestErlang">srcTestErlang</a></strong></td>
+<td><code>File</code></td>
+<td><code>-</code></td>
+<td>Directory where the test sources reside.<br />
+</td>
+</tr>
+<tr class="a"><td><strong><a href="#testDocOutput">testDocOutput</a></strong></td>
+<td><code>File</code></td>
+<td><code>-</code></td>
+<td>Directory to generate the EDoc report into.<br />
+<strong>Default value is</strong>: <code>${project.reporting.outputDirectory}/test-doc</code>.</td>
+</tr>
+</table>
+</div>
+<div class="section"><h3><a name="Optional_Parameters"></a>Optional Parameters</h3>
+<table class="bodyTable"><tr class="b"><th>Name</th>
+<th>Type</th>
+<th>Since</th>
+<th>Description</th>
+</tr>
+<tr class="a"><td><strong><a href="#eDocOptions">eDocOptions</a></strong></td>
+<td><code>String[]</code></td>
+<td><code>-</code></td>
+<td>Additional options for EDoc.<br />
+</td>
+</tr>
+</table>
+</div>
+<div class="section"><h3><a name="Parameter_Details"></a>Parameter Details</h3>
+<p><strong><a name="eDocOptions">eDocOptions</a>:</strong></p>
+<div>Additional options for EDoc.</div><ul><li><strong>Type</strong>: <code>java.lang.String[]</code></li>
+<li><strong>Required</strong>: <code>No</code></li>
+</ul>
+<hr />
+<p><strong><a name="srcTestErlang">srcTestErlang</a>:</strong></p>
+<div>Directory where the test sources reside.</div><ul><li><strong>Type</strong>: <code>java.io.File</code></li>
+<li><strong>Required</strong>: <code>Yes</code></li>
+<li><strong>Expression</strong>: <code>${basedir}/src/test/erlang/</code></li>
+</ul>
+<hr />
+<p><strong><a name="testDocOutput">testDocOutput</a>:</strong></p>
+<div>Directory to generate the EDoc report into.</div><ul><li><strong>Type</strong>: <code>java.io.File</code></li>
+<li><strong>Required</strong>: <code>Yes</code></li>
+<li><strong>Default</strong>: <code>${project.reporting.outputDirectory}/test-doc</code></li>
+</ul>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2010
+    
+          Lindenbaum GmbH
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

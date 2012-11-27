@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Maven Erlang Plug-In - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Maven Erlang Plug-In
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2012-05-04
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                   <h5>Overview</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="index.html">Introduction</a>
+          </li>
+              
+    <li class="none">
+              <strong>Plugin Configuration</strong>
+        </li>
+              
+    <li class="none">
+                    <a href="project-configuration.html">Project Configuration</a>
+          </li>
+              
+    <li class="none">
+                    <a href="changes-report.html">Releasenotes</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-info.html">Goals</a>
+          </li>
+              
+    <li class="none">
+                    <a href="faq.html">FAQ</a>
+          </li>
+          </ul>
+              <h5>Examples</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="examples/setup.html">- Create an application project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/compile.html">- Compiling and testing an application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/release-setup.html">- Create a release project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/coverage.html">- Generate a coverage report</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/dialyzer.html">- Running dialyzer on a project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/running.html">- Running your application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/uploading.html">- Uploading code on a remote node</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/package-release.html">- Packaging a release</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/more-on-releases.html">- More on releases</a>
+          </li>
+          </ul>
+              <h5>Project</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="project-summary.html">Summary</a>
+          </li>
+              
+    <li class="none">
+                    <a href="team-list.html">Team</a>
+          </li>
+              
+    <li class="none">
+                    <a href="license.html">License</a>
+          </li>
+              
+    <li class="none">
+                    <a href="source-repository.html">Source code</a>
+          </li>
+              
+    <li class="none">
+                    <a href="issue-tracking.html">Issue tracking</a>
+          </li>
+          </ul>
+              <h5>Development</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="https://sourceforge.net/projects/erlang-plugin/" class="externalLink">Sourceforge</a>
+          </li>
+              
+    <li class="none">
+                    <a href="development.html">Overview</a>
+          </li>
+          </ul>
+              <h5>Reports</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="surefire-report.html">Unit tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="invoker-report.html">Integration tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="cobertura/index.html">Test coverage</a>
+          </li>
+              
+    <li class="none">
+                    <a href="taglist.html">Tag list</a>
+          </li>
+              
+    <li class="none">
+                    <a href="apidocs/index.html">Java API</a>
+          </li>
+          </ul>
+              <h5>Dependencies</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="dependencies.html">Dependencies</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-management.html">Plug-In management</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugins.html">Plug-Ins</a>
+          </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <div class="section"><h2>Plugin Configuration</h2>
+<p>This plugin can be configured several ways:</p>
+<ul><li>pom parameters<div class="source"><pre>&lt;plugin&gt;
+  &lt;configuration&gt;
+    &lt;parameter1&gt;value&lt;/parameter1&gt;
+    ...
+  &lt;/configuration&gt;
+&lt;/plugin&gt;</pre>
+</div>
+</li>
+<li>defines given to the maven command line<div class="source"><pre>mvn -Dparameter1=value ...</pre>
+</div>
+</li>
+</ul>
+</div>
+<div class="section"><h2>Grouped Parameter Summary</h2>
+<p>For the default values please refer to the specific mojo documentation.</p>
+<div class="section"><h3>General</h3>
+<ul><li><tt>cookie</tt>: specifies the cookie used for the plugin nodes</li>
+<li><tt>erlCommand</tt>: specifies the erlang command used to start an erlang backend node (must exist and the destination must be executable), if the given command does not fullfill these requirements <tt>erl</tt> is used (assuming the command is part of the hosts <tt>PATH</tt>, please note that <tt>erlCommand</tt> must not contain any arguments passed to the command</li>
+</ul>
+</div>
+<div class="section"><h3>Compiler</h3>
+<ul><li><tt>compilerOptions</tt>: will be passed to <tt>erlc</tt> when compiling sources, see <a class="externalLink" href="http://www.erlang.org/doc/man/compile.html">http://www.erlang.org/doc/man/compile.html</a></li>
+<li><tt>testCompilerOptions</tt>: will be passed to <tt>erlc</tt> when compiling test sources, see <a class="externalLink" href="http://www.erlang.org/doc/man/compile.html">http://www.erlang.org/doc/man/compile.html</a></li>
+</ul>
+</div>
+<div class="section"><h3>Dialyzer</h3>
+<ul><li><tt>skipDialyzer</tt>: will skip the <tt>dialyzer</tt> analysis when packaging</li>
+<li><tt>dialyzerOptions</tt>: will be passed to <tt>dialyzer</tt>, see <a class="externalLink" href="http://www.erlang.org/doc/man/dialyzer.html">http://www.erlang.org/doc/man/dialyzer.html</a></li>
+<li><tt>dialyzerWarningsAreErrors</tt>: will break the build when a <tt>dialyzer</tt> run returns warnings</li>
+<li><tt>dialyzerWithDependencies</tt>: will include the projects dependencies into the <tt>dialyzer</tt> run. This is enabled by default.</li>
+</ul>
+</div>
+<div class="section"><h3>Application Testing</h3>
+<ul><li><tt>test</tt>: will only run this module (using <tt>eunit</tt>) </li>
+<li><tt>skipTests</tt>: will skip test compilation and running</li>
+</ul>
+</div>
+<div class="section"><h3>Release Packaging</h3>
+<ul><li><tt>tarOptions</tt>: will be passed to <tt>systools:make_tar/2</tt>, see <a class="externalLink" href="http://www.erlang.org/doc/man/systools.html">http://www.erlang.org/doc/man/systools.html</a></li>
+<li><tt>scriptOptions</tt>: will be passed to <tt>systools:make_script/2</tt>, see <a class="externalLink" href="http://www.erlang.org/doc/man/systools.html">http://www.erlang.org/doc/man/systools.html</a></li>
+<li><tt>includeErts</tt>: will package the system dependent erlang emulator taken from the backend node's erlang installation along with the release package. For further information see <a href="./package-release-mojo.html">./package-release-mojo.html</a>.</li>
+<li><tt>otpRelease</tt>: mandatory parameter that must be set to the Erlang/OTP release version (as returned by <tt>erlang:system_info(otp_release)</tt>) the required Erlang/OTP standard applications will be included from (by version). Note: The backend node as to run this version of Erlang/OTP to be able to find the needed versions of the Erlang/OTP standard applications.</li>
+<li><tt>skipReleaseTest</tt>: will skip the check for the required Erlang/OTP release version the build will be based on. Skipping this check will include the standard Erlang/OTP applications in the version available on the backend node regardless if these versions are suitable for your own applications.</li>
+</ul>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2012
+    
+          Lindenbaum GmbH
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

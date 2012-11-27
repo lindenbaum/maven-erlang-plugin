@@ -1,0 +1,1023 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Maven Erlang Plug-In - </title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Maven Erlang Plug-In
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2012-05-04
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                   <h5>Overview</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="index.html">Introduction</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-configuration.html">Plugin Configuration</a>
+          </li>
+              
+    <li class="none">
+                    <a href="project-configuration.html">Project Configuration</a>
+          </li>
+              
+    <li class="none">
+                    <a href="changes-report.html">Releasenotes</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-info.html">Goals</a>
+          </li>
+              
+    <li class="none">
+                    <a href="faq.html">FAQ</a>
+          </li>
+          </ul>
+              <h5>Examples</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="examples/setup.html">- Create an application project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/compile.html">- Compiling and testing an application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/release-setup.html">- Create a release project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/coverage.html">- Generate a coverage report</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/dialyzer.html">- Running dialyzer on a project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/running.html">- Running your application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/uploading.html">- Uploading code on a remote node</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/package-release.html">- Packaging a release</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/more-on-releases.html">- More on releases</a>
+          </li>
+          </ul>
+              <h5>Project</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="project-summary.html">Summary</a>
+          </li>
+              
+    <li class="none">
+                    <a href="team-list.html">Team</a>
+          </li>
+              
+    <li class="none">
+                    <a href="license.html">License</a>
+          </li>
+              
+    <li class="none">
+                    <a href="source-repository.html">Source code</a>
+          </li>
+              
+    <li class="none">
+                    <a href="issue-tracking.html">Issue tracking</a>
+          </li>
+          </ul>
+              <h5>Development</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="https://sourceforge.net/projects/erlang-plugin/" class="externalLink">Sourceforge</a>
+          </li>
+              
+    <li class="none">
+                    <a href="development.html">Overview</a>
+          </li>
+          </ul>
+              <h5>Reports</h5>
+            <ul>
+              
+    <li class="none">
+              <strong>Unit tests</strong>
+        </li>
+              
+    <li class="none">
+                    <a href="invoker-report.html">Integration tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="cobertura/index.html">Test coverage</a>
+          </li>
+              
+    <li class="none">
+                    <a href="taglist.html">Tag list</a>
+          </li>
+              
+    <li class="none">
+                    <a href="apidocs/index.html">Java API</a>
+          </li>
+          </ul>
+              <h5>Dependencies</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="dependencies.html">Dependencies</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-management.html">Plug-In management</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugins.html">Plug-Ins</a>
+          </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <h2><a name="Summary"></a>Summary</h2>
+<div class="section">[<a href="#Summary">Summary</a>][<a href="#Package_List">Package List</a>][<a href="#Test_Cases">Test Cases</a>]</div>
+<table class="bodyTable"><tr class="a"></tr>
+<tr class="b"></tr>
+</table>
+<table class="bodyTable"><tr class="a"><th>Tests</th>
+<th>Errors </th>
+<th>Failures</th>
+<th>Success Rate</th>
+<th>Time</th>
+</tr>
+<tr class="b"><td>95</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.35</td>
+</tr>
+</table>
+<br />
+Note: failures are anticipated and checked for with assertions while errors are unanticipated.<table class="bodyTable"><tr class="a"></tr>
+<tr class="b"></tr>
+</table>
+<h2><a name="Package_List"></a>Package List</h2>
+<div class="section">[<a href="#Summary">Summary</a>][<a href="#Package_List">Package List</a>][<a href="#Test_Cases">Test Cases</a>]</div>
+<table class="bodyTable"><tr class="a"></tr>
+<tr class="b"></tr>
+</table>
+<table class="bodyTable"><tr class="a"><th>Package</th>
+<th>Tests</th>
+<th>Errors </th>
+<th>Failures</th>
+<th>Success Rate</th>
+<th>Time</th>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.mojo.app">eu.lindenbaum.maven.mojo.app</a></td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.util">eu.lindenbaum.maven.util</a></td>
+<td>25</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.09</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.mojo.rel">eu.lindenbaum.maven.mojo.rel</a></td>
+<td>6</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlang">eu.lindenbaum.maven.erlang</a></td>
+<td>63</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.25</td>
+</tr>
+</table>
+<br />
+Note: package statistics are not computed recursively, they only sum up all of its testsuites numbers.<h3><a name="eu.lindenbaum.maven.mojo.app"></a>eu.lindenbaum.maven.mojo.app</h3>
+<table class="bodyTable"><tr class="b"><th></th>
+<th>Class</th>
+<th>Tests</th>
+<th>Errors </th>
+<th>Failures</th>
+<th>Success Rate</th>
+<th>Time</th>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.mojo.appProfilerTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.mojo.appProfilerTest">ProfilerTest</a></td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.util"></a>eu.lindenbaum.maven.util</h3>
+<table class="bodyTable"><tr class="b"><th></th>
+<th>Class</th>
+<th>Tests</th>
+<th>Errors </th>
+<th>Failures</th>
+<th>Success Rate</th>
+<th>Time</th>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.utilCollectionUtilsTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.utilCollectionUtilsTest">CollectionUtilsTest</a></td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.utilErlUtilsTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.utilErlUtilsTest">ErlUtilsTest</a></td>
+<td>14</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.02</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.utilFileUtilsTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.utilFileUtilsTest">FileUtilsTest</a></td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.05</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.utilNetworkUtilsTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.utilNetworkUtilsTest">NetworkUtilsTest</a></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.mojo.rel"></a>eu.lindenbaum.maven.mojo.rel</h3>
+<table class="bodyTable"><tr class="a"><th></th>
+<th>Class</th>
+<th>Tests</th>
+<th>Errors </th>
+<th>Failures</th>
+<th>Success Rate</th>
+<th>Time</th>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.mojo.relTestRunnerTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.mojo.relTestRunnerTest">TestRunnerTest</a></td>
+<td>6</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlang"></a>eu.lindenbaum.maven.erlang</h3>
+<table class="bodyTable"><tr class="a"><th></th>
+<th>Class</th>
+<th>Tests</th>
+<th>Errors </th>
+<th>Failures</th>
+<th>Success Rate</th>
+<th>Time</th>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangBeamCompilerScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangBeamCompilerScriptTest">BeamCompilerScriptTest</a></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangCheckAppScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangCheckAppScriptTest">CheckAppScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangCheckAppUpScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangCheckAppUpScriptTest">CheckAppUpScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangCheckRelScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangCheckRelScriptTest">CheckRelScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangCoverageReportResultTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangCoverageReportResultTest">CoverageReportResultTest</a></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangCoverageReportScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangCoverageReportScriptTest">CoverageReportScriptTest</a></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.04</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangCreateRELEASESScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangCreateRELEASESScriptTest">CreateRELEASESScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.02</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangDialyzerScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangDialyzerScriptTest">DialyzerScriptTest</a></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.04</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangEDocScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangEDocScriptTest">EDocScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangFilterForAttributeScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangFilterForAttributeScriptTest">FilterForAttributeScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangGetAppupDirectiveScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangGetAppupDirectiveScriptTest">GetAppupDirectiveScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangGetAttributesScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangGetAttributesScriptTest">GetAttributesScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangLoadModulesScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangLoadModulesScriptTest">LoadModulesScriptTest</a></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangMakeRelupScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangMakeRelupScriptTest">MakeRelupScriptTest</a></td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangMakeScriptScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangMakeScriptScriptTest">MakeScriptScriptTest</a></td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangMakeTarScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangMakeTarScriptTest">MakeTarScriptTest</a></td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangPurgeModulesScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangPurgeModulesScriptTest">PurgeModulesScriptTest</a></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangRunProjectScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangRunProjectScriptTest">RunProjectScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangRuntimeInfoScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangRuntimeInfoScriptTest">RuntimeInfoScriptTest</a></td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangTestScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangTestScriptTest">TestScriptTest</a></td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+<tr class="b"><td><a href="#eu.lindenbaum.maven.erlangUploadReleaseScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangUploadReleaseScriptTest">UploadReleaseScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.02</td>
+</tr>
+<tr class="a"><td><a href="#eu.lindenbaum.maven.erlangUploadScriptTest"><img src="images/icon_success_sml.gif" /></a></td>
+<td><a href="#eu.lindenbaum.maven.erlangUploadScriptTest">UploadScriptTest</a></td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>100.00%</td>
+<td>0.01</td>
+</tr>
+</table>
+<table class="bodyTable"><tr class="b"></tr>
+<tr class="a"></tr>
+</table>
+<h2><a name="Test_Cases"></a>Test Cases</h2>
+<div class="section">[<a href="#Summary">Summary</a>][<a href="#Package_List">Package List</a>][<a href="#Test_Cases">Test Cases</a>]</div>
+<h3><a name="eu.lindenbaum.maven.erlangBeamCompilerScriptTest"></a>BeamCompilerScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandle</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangCheckAppScriptTest"></a>CheckAppScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandle</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleDefault</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangCheckAppUpScriptTest"></a>CheckAppUpScriptTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleNoError</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleWithError</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangCheckRelScriptTest"></a>CheckRelScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandle</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleDefault</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangCoverageReportResultTest"></a>CoverageReportResultTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testCalculateCoverage</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testPlainTextFormatting</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangCoverageReportScriptTest"></a>CoverageReportScriptTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.03</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testCoverageFailed</td>
+<td>0.01</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangCreateRELEASESScriptTest"></a>CreateRELEASESScriptTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.02</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleOk</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleError</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangDialyzerScriptTest"></a>DialyzerScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.02</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandle</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangEDocScriptTest"></a>EDocScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleError</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleSuccess</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangFilterForAttributeScriptTest"></a>FilterForAttributeScriptTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleEmpty</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleNotEmpty</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangGetAppupDirectiveScriptTest"></a>GetAppupDirectiveScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleEmpty</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleNotEmpty</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangGetAttributesScriptTest"></a>GetAttributesScriptTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleEmpty</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleNotEmpty</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangLoadModulesScriptTest"></a>LoadModulesScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandle</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangMakeRelupScriptTest"></a>MakeRelupScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandle</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleWithError</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleWithWarning</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangMakeScriptScriptTest"></a>MakeScriptScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandle</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleWithError</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleWithWarning</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangMakeTarScriptTest"></a>MakeTarScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandle</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleWithError</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleWithWarning</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangPurgeModulesScriptTest"></a>PurgeModulesScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandle</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangRunProjectScriptTest"></a>RunProjectScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleSuccess</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGetHandle</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleFailure</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangRuntimeInfoScriptTest"></a>RuntimeInfoScriptTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandle</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangTestScriptTest"></a>TestScriptTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleTestsPassed</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleTestsPassedWithWarnings</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleTestsFailed</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangUploadReleaseScriptTest"></a>UploadReleaseScriptTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleOk</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleError</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.erlangUploadScriptTest"></a>UploadScriptTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGet</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleOk</td>
+<td>0.01</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testHandleError</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.mojo.appProfilerTest"></a>ProfilerTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testPlainTextFormatting</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.mojo.relTestRunnerTest"></a>TestRunnerTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>allMinorReleasesForSingleMajorWithWildcardAreValid</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>nullCaseIsHandled</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>lowerMajorVersionCausesErrorToBeThrown</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>exactMatchingVersionsAreValid</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>twoOptionalMajorVersionsAreBothValid</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>noneOfTwoOptionalMajorVersionsAreValid</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.utilCollectionUtilsTest"></a>CollectionUtilsTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testMapMapFunctionOfABCollectionOfA</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testMapMapFunctionOfOtpErlangObjectBOtpErlangList</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testFilter</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testFoldl</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.utilErlUtilsTest"></a>ErlUtilsTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testToListNull</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testToListNonNull</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testToFileListNull</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testToFileListNonNull</td>
+<td>0.01</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testToModuleListNull</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testToStringIsNotNullSafe</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testStringToString</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testAtomToString</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testListToString</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testEmptyListToString</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>ensureToIntIsNullSafe</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>ensureToIntDiscardsBadType</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>ensureToIntSilentlyEatsOverflowException</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testToInt</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.utilFileUtilsTest"></a>FileUtilsTest</h3>
+<table class="bodyTable"><tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGetFilesRecursive</td>
+<td>0.01</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGetFilesAndDirectoriesRecursive</td>
+<td>0.03</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testCopyDirectory</td>
+<td>0.00</td>
+</tr>
+<tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testCopyDirectoryEmpty</td>
+<td>0.00</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testGetDirectoriesRecursive</td>
+<td>0.00</td>
+</tr>
+</table>
+<h3><a name="eu.lindenbaum.maven.utilNetworkUtilsTest"></a>NetworkUtilsTest</h3>
+<table class="bodyTable"><tr class="a"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testRetrieveIP</td>
+<td>0.01</td>
+</tr>
+<tr class="b"><td><img src="images/icon_success_sml.gif" /></td>
+<td>testSortInetAddresses</td>
+<td>0.00</td>
+</tr>
+</table>
+<table class="bodyTable"><tr class="a"></tr>
+<tr class="b"></tr>
+</table>
+<table class="bodyTable"><tr class="a"></tr>
+<tr class="b"></tr>
+</table>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2012
+    
+          Lindenbaum GmbH
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

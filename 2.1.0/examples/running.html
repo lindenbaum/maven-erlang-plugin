@@ -1,0 +1,279 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Maven Erlang Plug-In - </title>
+    <style type="text/css" media="all">
+      @import url("../css/maven-base.css");
+      @import url("../css/maven-theme.css");
+      @import url("../css/site.css");
+    </style>
+    <link rel="stylesheet" href="../css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Maven Erlang Plug-In
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2011-09-23
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                   <h5>Overview</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="../index.html">Introduction</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../plugin-configuration.html">Plugin Configuration</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../project-configuration.html">Project Configuration</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../changes-report.html">Releasenotes</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../plugin-info.html">Goals</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../faq.html">FAQ</a>
+          </li>
+          </ul>
+              <h5>Examples</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="../examples/setup.html">- Create an application project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../examples/compile.html">- Compiling and testing an application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../examples/release-setup.html">- Create a release project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../examples/coverage.html">- Generate a coverage report</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../examples/dialyzer.html">- Running dialyzer on a project</a>
+          </li>
+              
+    <li class="none">
+              <strong>- Running your application</strong>
+        </li>
+              
+    <li class="none">
+                    <a href="../examples/uploading.html">- Uploading code on a remote node</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../examples/package-release.html">- Packaging a release</a>
+          </li>
+          </ul>
+              <h5>Project</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="../project-summary.html">Summary</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../team-list.html">Team</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../license.html">License</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../source-repository.html">Source code</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../issue-tracking.html">Issue tracking</a>
+          </li>
+          </ul>
+              <h5>Development</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="https://sourceforge.net/projects/erlang-plugin/" class="externalLink">Sourceforge</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../development.html">Overview</a>
+          </li>
+          </ul>
+              <h5>Reports</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="../surefire-report.html">Unit tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../invoker-report.html">Integration tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../cobertura/index.html">Test coverage</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../taglist.html">Tag list</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../apidocs/index.html">Java API</a>
+          </li>
+          </ul>
+              <h5>Dependencies</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="../dependencies.html">Dependencies</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../plugin-management.html">Plug-In management</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../plugins.html">Plug-Ins</a>
+          </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="../images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <div class="section"><h2>Running your application project</h2>
+<p>Running a basic application for testing purposes is fairly easy. First of all we'll need an application project. For this example we'll use the application we already used in the <a href="./package-release.html">release packaging example</a>.</p>
+<div class="section"><h3>Test setup</h3>
+<p>Our test project <tt>app</tt> consists of three modules. An application callback, a top-level supervisor and a test server.</p>
+<img src="../erlang-release-code1-example.png" alt="Code for the application callback and the top-level supervisor." /><img src="../erlang-release-code2-example.png" alt="Code for the test server." /><p>The application resource file <tt>app.app</tt> and the application upgrade file <tt>app.appup</tt> for this application are listed below. Please note that we have to add the correct start module for non-library applications.</p>
+<div class="source"><pre>app.app:
+ {application, ${ARTIFACT},
+   [{description, ${DESCRIPTION}},
+    {id, ${ID}},
+    {vsn, ${VERSION}},
+    {modules, ${MODULES}},
+    {maxT, infinity},
+    {registered, ${REGISTERED}},
+    {included_applications, []},
+    {applications, [kernel, stdlib, sasl]},
+    {mod, {app, []}},
+    {env, []},
+    {start_phases, []}]}.</pre>
+</div>
+<div class="source"><pre>app.appup:
+ {${VERSION}, [], []}.</pre>
+</div>
+<p>The plug-in provides two possibilities of running an application project. The local mode will run the application (and its transitive dependency applications) on the local machine using the plug-in's own backend node. The remote node will upload all needed code to a specified node, load the application files and start the application(s).</p>
+</div>
+<div class="section"><h3>Local mode</h3>
+<p>The basic command <tt>mvn erlang:run</tt> will run the application in local mode.</p>
+<img src="../erlang-run-local1-example.png" alt="Starting the application." /><p>As soon as the application's have been started the build will be paused so the user can interact with the running application. Node credentials will be printed. To shutdown the previously started applications simply hit <i>ENTER</i> to complete the build.</p>
+<img src="../erlang-run-local2-example.png" alt="Stopping the application." /></div>
+<div class="section"><h3>Remote mode</h3>
+<p>To run an application project in remote mode the remote node must be specified. Please note that the remote node must be running before invoking the run command. For this example we will use the node <tt>test@wega.lbaum.eu</tt>. As can be seen there are no applications running except the vital applications <tt>kernel</tt> and <tt>stdlib</tt>.</p>
+<img src="../erlang-run-remote1-example.png" alt="Clean started remote node." /><p>Now running the application using <tt>mvn erlang:run -Dcookie=test -Dremote=test@wega.lbaum.eu</tt> issues the following output. Again the credentials of the remote node are printed.</p>
+<img src="../erlang-run-remote2-example.png" alt="Starting the application." /><p>Changing back to the remote node we can see that <tt>sasl</tt> was started as a dependency of <tt>app</tt>.</p>
+<img src="../erlang-run-remote3-example.png" alt="Remote node with started application." /><p>Now we can interact with the running application, e.g. by sending a message to the started <tt>app_server</tt> process.</p>
+<img src="../erlang-run-remote4-example.png" alt="Interacting with the application on the remote node." /></div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2011
+    
+          Lindenbaum GmbH
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

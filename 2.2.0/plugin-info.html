@@ -1,0 +1,843 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Maven Erlang Plug-In - Plugin Documentation</title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Maven Erlang Plug-In
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2012-05-04
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                   <h5>Overview</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="index.html">Introduction</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-configuration.html">Plugin Configuration</a>
+          </li>
+              
+    <li class="none">
+                    <a href="project-configuration.html">Project Configuration</a>
+          </li>
+              
+    <li class="none">
+                    <a href="changes-report.html">Releasenotes</a>
+          </li>
+              
+    <li class="none">
+              <strong>Goals</strong>
+        </li>
+              
+    <li class="none">
+                    <a href="faq.html">FAQ</a>
+          </li>
+          </ul>
+              <h5>Examples</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="examples/setup.html">- Create an application project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/compile.html">- Compiling and testing an application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/release-setup.html">- Create a release project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/coverage.html">- Generate a coverage report</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/dialyzer.html">- Running dialyzer on a project</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/running.html">- Running your application</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/uploading.html">- Uploading code on a remote node</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/package-release.html">- Packaging a release</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/more-on-releases.html">- More on releases</a>
+          </li>
+          </ul>
+              <h5>Project</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="project-summary.html">Summary</a>
+          </li>
+              
+    <li class="none">
+                    <a href="team-list.html">Team</a>
+          </li>
+              
+    <li class="none">
+                    <a href="license.html">License</a>
+          </li>
+              
+    <li class="none">
+                    <a href="source-repository.html">Source code</a>
+          </li>
+              
+    <li class="none">
+                    <a href="issue-tracking.html">Issue tracking</a>
+          </li>
+          </ul>
+              <h5>Development</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="https://sourceforge.net/projects/erlang-plugin/" class="externalLink">Sourceforge</a>
+          </li>
+              
+    <li class="none">
+                    <a href="development.html">Overview</a>
+          </li>
+          </ul>
+              <h5>Reports</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="surefire-report.html">Unit tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="invoker-report.html">Integration tests</a>
+          </li>
+              
+    <li class="none">
+                    <a href="cobertura/index.html">Test coverage</a>
+          </li>
+              
+    <li class="none">
+                    <a href="taglist.html">Tag list</a>
+          </li>
+              
+    <li class="none">
+                    <a href="apidocs/index.html">Java API</a>
+          </li>
+          </ul>
+              <h5>Dependencies</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="dependencies.html">Dependencies</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-management.html">Plug-In management</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugins.html">Plug-Ins</a>
+          </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <a name="Plugin_Documentation"></a><div class="section"><h2>Plugin Documentation</h2>
+<p>Goals available for this plugin:</p>
+<table class="bodyTable"><tr class="a"><th>Goal</th>
+<th>Report?</th>
+<th>Description</th>
+</tr>
+<tr class="b"><td><a href="appup-mojo.html">erlang:appup</a></td>
+<td>No</td>
+<td><p>This <code>Mojo</code> will generate an application upgrade file
+template for an application. In order to do so all available
+non-SNAPSHOT versions of the project will be resolved (also from
+remote repositories). All versions smaller than the current version
+will be included in the generation. The resulting application
+upgrade file's location will be prompted on success as well as its
+content.</p>
+
+<p>The generation algorithm is outlined in the following
+description:</p>
+
+<ul>
+<li>Find added modules and add a <code>{load_module, Module}</code>
+statements for them.</li>
+
+<li>Find updated modules and invoke the
+<code>GetAppupDirectiveScript</code> on them.</li>
+
+<li>Find deleted modules and add a <code>{delete_module,
+Module}</code> statements for them.</li>
+</ul>
+
+<br />
+<br />
+ 
+
+<p>The <code>GetAppupDirectiveScript</code> works as described
+below:</p>
+
+<ul>
+<li>Add a <code>{update, Module, supervisor}</code> statement if
+<code>Module</code> is a supervisor.</li>
+
+<li>Add a <code>{update, Module}</code> statement if
+<code>Module</code> exports <code>code_change/3</code>.</li>
+
+<li>Add a <code>{load_module, Module}</code> statement if
+<code>Module</code> does not meet the previous conditions.</li>
+</ul>
+
+<br />
+<br /></td>
+</tr>
+<tr class="a"><td><a href="compile-mojo.html">erlang:compile</a></td>
+<td>No</td>
+<td>This <code>Mojo</code> compiles the projects Erlang sources and MIB
+files.</td>
+</tr>
+<tr class="b"><td><a href="coverage-mojo.html">erlang:coverage</a></td>
+<td>No</td>
+<td>Runs a test coverage analysis on the modules in of the project,
+optionally printing the result to console. The coverage data is
+saved as a simple text file
+(<tt>COVERAGE-${project.artifactId}.txt</tt>) with simple space
+separated list of results, with coverage levels for: modules,
+functions, clauses and lines. See also <code>CoverageReport</code>,
+i.e. the <code>coverage-report</code> goal. 
+
+<p>ISSUE If a test purges or unloads a module to do coverage for,
+the coverage compilation information will be gone and the coverage
+report will fail.</p></td>
+</tr>
+<tr class="a"><td><a href="coverage-report-mojo.html">erlang:coverage-report</a></td>
+<td>Yes</td>
+<td>Generates a test coverage HTML report from the results produced by
+the <code>Coverage</code> mojo i.e. the <code>coverage</code>-goal.
+The report contains a project summary, showing the number of
+functions, clauses executable lines and their test coverage
+percentage. A module list with individual coverage reports and an
+extensive source code report, with lines annotated in red or green,
+showing the exact coverage.</td>
+</tr>
+<tr class="b"><td><a href="dialyzer-mojo.html">erlang:dialyzer</a></td>
+<td>No</td>
+<td><p>This <code>Mojo</code> runs the erlang <code>dialyzer</code>
+tool on the project sources as well as the project includes. This
+means dialyzer will run over the complete project code (excluding
+test modules).</p>
+
+<p>The <code>dialyzer</code> can be skipped using the
+<code>skipDialyzer</code> parameter. Additionally, the user can
+choose to run <code>dialyzer</code> also on the projects
+dependencies using the <code>dialyzerWithDependencies</code>
+parameter. This will be done by default.</p></td>
+</tr>
+<tr class="a"><td><a href="edoc-mojo.html">erlang:edoc</a></td>
+<td>Yes</td>
+<td>This <code>Mojo</code> will generate source code documentation for
+an application.</td>
+</tr>
+<tr class="b"><td><a href="extract-dependencies-mojo.html">erlang:extract-dependencies</a></td>
+<td>No</td>
+<td>Unpack <code>erlang-otp</code> or <code>erlang-std</code>
+dependencies. This will unpack all dependencies of this
+<code>MavenProject</code> into the <code>target/lib</code>
+directory. This is done only in case the dependency has changed
+since the last unpack process.</td>
+</tr>
+<tr class="a"><td><a href="generate-release-resources-mojo.html">erlang:generate-release-resources</a></td>
+<td>No</td>
+<td>Copies all resource files into that target directory structure.
+Copied resources contain: 
+
+<ul>
+<li>release file (*.rel)</li>
+
+<li>release upgrade file (relup)</li>
+
+<li>boot scripts, etc. as returned from
+<code>systools:make_script</code></li>
+</ul>
+
+The build of script files can be customized by passing user options
+through the <code>scriptOptions</code> parameter. In order to
+manage the project over the project pom there is the possibility to
+let the <code>Mojo</code> automatically fill in values from the
+project pom into the <code>.rel</code> file. This can be done by
+using one of the supported variables into the release file. Below
+is a list of supported variables and their substitutions: <br />
+<br />
+ 
+
+<ul>
+<li><code>${ARTIFACT}</code>: the projects artifact id
+(string)</li>
+
+<li><code>${DESCRIPTION}</code>: the projects description string
+(string)</li>
+
+<li><code>${ID}</code>: the project id (string)</li>
+
+<li><code>${NAME}</code>: the projects name (string)</li>
+
+<li><code>${VERSION}</code>: the projects version (string)</li>
+
+<li><code>${ERTS}</code>: expands to the tuple <code>{erts,
+"ERTS_VERSION"}</code> with the version of erts available on the
+backend node (tuple)</li>
+
+<li><code>${APPLICATIONS}</code>: a comma separated listing with
+all transitive dependency applications of the project (tuple
+listing)</li>
+
+<li><code>${AUTODEPS}</code>: an erlang list with all transitive
+dependency applications of the project (list)</li>
+
+<li><code>${<i>APPLICATION_NAME</i>}</code>: will be replaced by
+the tuple <code>{'APPLICATION_NAME', "APPLICATION_VERSION"}</code>
+with the version available on the backend node (tuple)</li>
+</ul></td>
+</tr>
+<tr class="b"><td><a href="generate-resources-mojo.html">erlang:generate-resources</a></td>
+<td>No</td>
+<td>Copies all resource files into that target directory structure.
+Copied resources contain: 
+
+<ul>
+<li>erlang source files (*.erl)</li>
+
+<li>erlang include files (*.hrl)</li>
+
+<li>edoc overviews (overview.edoc)</li>
+
+<li>resources (*)</li>
+</ul></td>
+</tr>
+<tr class="a"><td><a href="generate-test-resources-mojo.html">erlang:generate-test-resources</a></td>
+<td>No</td>
+<td>Copies all test resource files into that target directory
+structure. Copied resources contain: 
+
+<ul>
+<li>resources (*)</li>
+
+<li>test resources (*)</li>
+</ul></td>
+</tr>
+<tr class="b"><td><a href="help-mojo.html">erlang:help</a></td>
+<td>No</td>
+<td>Display help information on maven-erlang-plugin.<br />
+ Call 
+
+<pre>
+  mvn erlang:help -Ddetail=true -Dgoal=&lt;goal-name&gt;
+</pre>
+
+to display parameter details.</td>
+</tr>
+<tr class="a"><td><a href="initialize-mojo.html">erlang:initialize</a></td>
+<td>No</td>
+<td><code>Mojo</code> that starts the erlang node used as a backend for
+rpcs made by the plugin. The node will only be started if it is not
+already running. The node will be shutdown when the executing JVM
+exits. This is done by a <code>Runtime.addShutdownHook()</code>
+which will only be added <b>once</b> each JVM execution.</td>
+</tr>
+<tr class="b"><td><a href="package-mojo.html">erlang:package</a></td>
+<td>No</td>
+<td><p>This <code>Mojo</code> packages all application artifacts into a
+single <code>.tar.gz</code> package. This includes
+<code>.beam</code> files, the <code>.hrl</code> include files and
+private data from the <code>priv</code> directory.</p>
+
+<p>Besides that this <code>Mojo</code> also copies the erlang
+application resource file. In order to manage the project over the
+project pom there is the possibility to let the <code>Mojo</code>
+automatically fill in values from the project pom into the
+<code>.app</code> and <code>.appup</code> files. This can be done
+by using one of the supported variables into the application
+resource files. Below is a list of supported variables and their
+substitutions:</p>
+
+<ul>
+<li><code>${ARTIFACT}</code>: the projects artifact id (atom)</li>
+
+<li><code>${DESCRIPTION}</code>: the projects description
+(string)</li>
+
+<li><code>${ID}</code>: the project id (string)</li>
+
+<li><code>${NAME}</code>: the projects name (string)</li>
+
+<li><code>${VERSION}</code>: the projects version (string)</li>
+
+<li><code>${MODULES}</code>: all compiled <code>.beam</code> files
+found in the target ebin folder (list)</li>
+
+<li><code>${REGISTERED}</code>: all registered names, based on the
+<code>-registered(Names).</code> attribute retrieved from the
+compiled <code>.beam</code> files (list)</li>
+
+<li><code>${APPLICATIONS}</code>: all dependency applications of
+the project as configured in the project's <code>pom.xml</code>
+(string)</li>
+</ul>
+
+<p>The resulting application resource file as well as the
+application upgrade file will be checked for plausability.</p></td>
+</tr>
+<tr class="a"><td><a href="package-release-mojo.html">erlang:package-release</a></td>
+<td>No</td>
+<td>This <code>Mojo</code> packages/creates a release
+<code>.tar.gz</code> using the erlang <code>systools</code>
+modules. The build can be customized by providing additional
+options through the <code>tarOptions</code> parameter.</td>
+</tr>
+<tr class="b"><td><a href="profile-mojo.html">erlang:profile</a></td>
+<td>No</td>
+<td>Performs function profiling using <a
+href="http://www.erlang.org/doc/man/eprof.html">eprof</a>, by
+executing any EUnit test modules, with the suffix
+<code>[module]_prof.erl</code>, found among the test sources. The
+profiling result are filtered and written out to the file
+(<tt>PROFILING-${project.artifactId}.txt</tt>), which may be used
+to generate a <code>profiling-report</code>.</td>
+</tr>
+<tr class="a"><td><a href="profiling-report-mojo.html">erlang:profiling-report</a></td>
+<td>Yes</td>
+<td>Generates a profiling report from the output of an already executed
+<code>profile</code> goal. NOTE: this report does not invoke any
+other lifecycle, it is required that a profiling is already run
+before the report can be generated.</td>
+</tr>
+<tr class="b"><td><a href="reload-dependencies-mojo.html">erlang:reload-dependencies</a></td>
+<td>No</td>
+<td><code>Mojo</code> that first purges all dynamically loaded modules
+on the backend node and reloads the modules provided by (unpacked)
+dependencies.</td>
+</tr>
+<tr class="a"><td><a href="reload-test-dependencies-mojo.html">erlang:reload-test-dependencies</a></td>
+<td>No</td>
+<td><code>Mojo</code> that first purges all dynamically loaded modules
+on the test backend node and reloads the modules provided by
+(unpacked) dependencies.</td>
+</tr>
+<tr class="b"><td><a href="relup-mojo.html">erlang:relup</a></td>
+<td>No</td>
+<td>This <code>Mojo</code> will generate a release upgrade file
+template for a release project. In order to do so all available
+non-SNAPSHOT versions of the project will be resolved (also from
+remote repositories). All versions smaller than the current version
+will be included in the generation. The resulting release upgrade
+file's location will be prompted on success as well as its content.
+The actual generation will be made using
+<code>systools:make_relup/4</code>.</td>
+</tr>
+<tr class="a"><td><a href="run-mojo.html">erlang:run</a></td>
+<td>No</td>
+<td><p>A <code>Mojo</code> that runs erlang projects on a specific
+(remote) node. This will start the project along with all dependent
+applications and all modules pre-loaded. In case the project is run
+on the backend node the build will be paused to give the user the
+possibilty to interact with the running project.</p></td>
+</tr>
+<tr class="b"><td><a href="setup-mojo.html">erlang:setup</a></td>
+<td>No</td>
+<td><p>Utility goal that will setup a new Erlang/OTP Maven project,
+creating the basic resources and folders required, from a <em>best
+practice</em> point of view.</p>
+
+<p>This will typically replace the functionality given by a Maven
+archetype, checking and creating any missing resource. Regarding
+Erlang/OTP applications this could be:</p>
+
+<ul>
+<li>source folder</li>
+
+<li>application resource file <code>[artifactId].app</code></li>
+
+<li>application upgrade file <code>[artifactId].appup</code></li>
+
+<li>include folder</li>
+
+<li>priv folder</li>
+
+<li>test source folder</li>
+
+<li>test include folder</li>
+
+<li>test priv folder</li>
+</ul>
+
+<p>Regarding Erlang/OTP releases this could be:</p>
+
+<ul>
+<li>release file <code>[artifactId].rel</code></li>
+
+<li>system configuration <code>sys.config</code></li>
+</ul>
+
+<p>By default some extras for project management are also
+generated:</p>
+
+<ul>
+<li>site folder with <code>site.xml</code></li>
+
+<li>apt source folder with <code>index.apt[.vm]</code></li>
+
+<li>changelog folder with <code>changes.xml</code></li>
+</ul>
+
+<p>The default application resource file will look like (this would
+be sufficient for library applications):</p>
+
+<pre>
+{application, ${ARTIFACT},
+ [{description, ${DESCRIPTION}},
+  {id, ${ID}},
+   {vsn, ${VERSION}},
+   {modules, ${MODULES}},
+   {maxT, infinity},
+   {registered, ${REGISTERED}},
+   {included_applications, []},
+   {applications, [kernel, stdlib]},
+   {env, []}, 
+   {start_phases, []}]}.
+</pre>
+
+<br />
+<br />
+ 
+
+<p>The default application upgrade file will look like:</p>
+
+<pre>
+{${VERSION}, [EDIT HERE], [EDIT HERE]}.
+</pre>
+
+<br />
+<br />
+ 
+
+<p>The default release file will look like:</p>
+
+<pre>
+{release,
+ {${ARTIFACT}, ${VERSION}},
+ ${ERTS},
+ ${AUTODEPS}}.
+</pre>
+
+<br />
+<br />
+ 
+
+<p>The default release upgrade file will look like:</p>
+
+<pre>
+{${VERSION}, [EDIT HERE], [EDIT HERE]}.
+</pre>
+
+<br />
+<br />
+ 
+
+<p>The default system configuration file will look like:</p>
+
+<pre>
+[].
+</pre>
+
+<br />
+<br /></td>
+</tr>
+<tr class="a"><td><a href="show-build-info-mojo.html">erlang:show-build-info</a></td>
+<td>No</td>
+<td><p>This <code>Mojo</code> outputs the build information ascertained
+by maven to compile Erlang sources. The output is supposed to
+enable other tools (like emacs) to reconstruct compilation
+commands.</p>
+
+<p>The output is logged at info level and contains:</p>
+
+<ul>
+<li>source folder for main erlang sources</li>
+
+<li>source folder for unit-test erlang sources</li>
+
+<li>include directories that may contain erlang header files</li>
+
+<li>code path directories including those of dependend projects in
+the target directory of the maven build</li>
+</ul>
+
+The output consists of one line per item. Each item consists of two
+elements: <code>InfoType ": " InfoValue</code> where
+<code>InfoType</code> is one of: 
+
+<ul>
+<li><code>src_dir</code></li>
+
+<li><code>test_src_dir</code></li>
+
+<li><code>include_dir</code></li>
+
+<li><code>code_path</code></li>
+</ul>
+
+<code>InfoValue</code> is a file path. Both elements a seperated by
+the string ": " (colon, space). <br />
+<br /></td>
+</tr>
+<tr class="b"><td><a href="target-system-mojo.html">erlang:target-system</a></td>
+<td>No</td>
+<td><p>This <code>Mojo</code> creates a target system release package
+<code>.tar.gz</code> according to the official documentation. If
+there's no <code>sys.config</code> file found a default empty one
+will be included.</p>
+
+<p>The resulting target system can be started either directly or as
+a daemon using the <code>bin/start</code> script. This script has
+to be provided with the correct root directory of the target
+system. Custom arguments like node name or cookie can be set by
+giving them as additional command line arguments to
+<code>bin/start</code>.</p>
+
+<p>Note: The resulting target system is highly system dependent
+since it contains the erlang emulator (C code) from the backend
+nodes erlang installation.</p>
+
+<ul>
+<li>FIXME not supported on Microsoft Windows</li>
+</ul></td>
+</tr>
+<tr class="a"><td><a href="test-mojo.html">erlang:test</a></td>
+<td>No</td>
+<td>A <code>Mojo</code> that runs test modules using
+<code>eunit</code>.</td>
+</tr>
+<tr class="b"><td><a href="test-compile-mojo.html">erlang:test-compile</a></td>
+<td>No</td>
+<td>Compile erlang test sources and recompile erlang sources with the
+options <code>debug_info</code>, <code>export_all</code> and
+<code>{d, 'TEST'}</code>. This will also compile the supporting
+erlang sources provided along with the plugin.</td>
+</tr>
+<tr class="a"><td><a href="test-initialize-mojo.html">erlang:test-initialize</a></td>
+<td>No</td>
+<td><code>Mojo</code> that starts the test erlang node used as a
+backend for rpcs made by the plugin. The node will only be started
+if it is not already running. The node will be shutdown when the
+executing JVM exits. This is done by a
+<code>Runtime.addShutdownHook()</code> which will only be added
+<b>once</b> each JVM execution.</td>
+</tr>
+<tr class="b"><td><a href="test-release-mojo.html">erlang:test-release</a></td>
+<td>No</td>
+<td>This <code>Mojo</code> checks the release file for plausability.
+This is done by checking the release version, the release name as
+well as checking all dependencies for correct versioning and
+existence.</td>
+</tr>
+<tr class="a"><td><a href="upload-mojo.html">erlang:upload</a></td>
+<td>No</td>
+<td><p>This <code>Mojo</code> uploads a project onto a remote node. In
+case of application projects this includes remote loading of the
+compiled application modules, loading of the application resource
+file using <code>application:load/1</code> and uploading the
+project's private resources making them available using
+<code>code:priv_dir/1</code>. To achieve this the temporary upload
+directory is added to the remote node's code path. The modules will
+be purged once as if <code>c:c/1</code> would have been called on a
+shell. In case of a release project the release package (
+<code>.tar.gz</code>) will be uploaded in the remote nodes
+<code>releases</code> directory ready to be unpacked and installed
+using the <code>release_handler</code>.</p>
+
+<p>Note: Uploading of releases will require that the remote erlang
+process has write access to its <code>releases</code>
+directory.</p></td>
+</tr>
+<tr class="b"><td><a href="upload-tests-mojo.html">erlang:upload-tests</a></td>
+<td>No</td>
+<td><p>This <code>Mojo</code> uploads an application's modules compiled
+for test execution and the application's tests onto a remote node.
+This will also upload the application's resource files making them
+available to the remote node using <code>code:priv_dir/1</code>.
+The modules will be purged once as if <code>c:c/1</code> would have
+been called on a shell.</p></td>
+</tr>
+<tr class="a"><td><a href="validate-mojo.html">erlang:validate</a></td>
+<td>No</td>
+<td><code>Mojo</code> that checks the project configuration for legal
+values.</td>
+</tr>
+</table>
+<a name="System_Requirements"></a><div class="section"><h3>System Requirements</h3>
+<p>The following specifies the minimum requirements to run this Maven plugin:</p>
+<table class="bodyTable"><tr class="b"><td>Maven</td>
+<td>2.0</td>
+</tr>
+<tr class="a"><td>JDK</td>
+<td>1.6</td>
+</tr>
+<tr class="b"><td>Memory</td>
+<td>No minimum requirement.</td>
+</tr>
+<tr class="a"><td>Disk Space</td>
+<td>No minimum requirement.</td>
+</tr>
+</table>
+</div>
+<a name="Usage"></a><div class="section"><h3>Usage</h3>
+<p>You should specify the version in your project's plugin configuration:</p>
+<div class="source"><pre>&lt;project&gt;
+  ...
+  &lt;build&gt;
+    &lt;!-- To define the plugin version in your parent POM --&gt;
+    &lt;pluginManagement&gt;
+      &lt;plugins&gt;
+        &lt;plugin&gt;
+          &lt;groupId&gt;eu.lindenbaum&lt;/groupId&gt;
+          &lt;artifactId&gt;maven-erlang-plugin&lt;/artifactId&gt;
+          &lt;version&gt;2.2.0&lt;/version&gt;
+        &lt;/plugin&gt;
+        ...
+      &lt;/plugins&gt;
+    &lt;/pluginManagement&gt;
+    &lt;!-- To use the plugin goals in your POM or parent POM --&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;eu.lindenbaum&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-erlang-plugin&lt;/artifactId&gt;
+        &lt;version&gt;2.2.0&lt;/version&gt;
+      &lt;/plugin&gt;
+      ...
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+  ...
+  &lt;!-- To use the report goals in your POM or parent POM --&gt;
+  &lt;reporting&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;eu.lindenbaum&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-erlang-plugin&lt;/artifactId&gt;
+        &lt;version&gt;2.2.0&lt;/version&gt;
+      &lt;/plugin&gt;
+      ...
+    &lt;/plugins&gt;
+  &lt;/reporting&gt;
+  ...
+&lt;/project&gt;
+</pre>
+</div>
+<p>For more information, see <a class="externalLink" href="http://maven.apache.org/guides/mini/guide-configuring-plugins.html">&quot;Guide to Configuring Plug-ins&quot;</a></p>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2012
+    
+          Lindenbaum GmbH
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>
