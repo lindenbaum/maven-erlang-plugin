@@ -1,0 +1,14 @@
+language: erlang
+otp_release:
+  - R16B
+  - R15B03
+  - R15B01
+  - R15B
+before_install:
+  - sudo apt-get install -qq openjdk-7-jdk
+  - sudo apt-get install -qq openjdk-7-jre-headless
+  - sudo apt-get install -qq openjdk-7-jre-lib
+  - sudo apt-get install -qq maven
+  - sudo dpkg --get-selections
+install: true
+script: mvn clean && mvn -Pit verify
