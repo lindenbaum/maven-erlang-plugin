@@ -21,7 +21,7 @@
         <version>@project.version@</version>
         <extensions>true</extensions>
         <configuration>
-          <otpRelease>R15B*</otpRelease>
+          <otpRelease>R*</otpRelease>
         </configuration>
       </plugin>
     </plugins>
