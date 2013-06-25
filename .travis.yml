@@ -3,5 +3,8 @@ jdk:
   - oraclejdk7
 before_install:
   - sudo apt-get install -y -q erlang
-install: dialyzer --build_plt --apps erts kernel stdlib
+install:
+  - dialyzer --build_plt  --apps erts
+  - dialyzer --add_to_plt --apps kernel
+  - dialyzer --add_to_plt --apps stdlib
 script: mvn clean && mvn -Pit verify -Dinvoker.streamLogs=true
