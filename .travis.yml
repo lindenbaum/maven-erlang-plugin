@@ -2,7 +2,10 @@ language: java
 jdk:
   - oraclejdk7
 before_install:
-  - sudo apt-get install -y -q erlang
+  - deb http://binaries.erlang-solutions.com/debian precise contrib
+  - sudo wget -O - http://binaries.erlang-solutions.com/debian/erlang_solutions.asc | sudo apt-key add -
+  - sudo apt-get update -y -q
+  - sudo apt-get install -y -q esl-erlang
 install:
   - dialyzer --build_plt  --apps erts
   - dialyzer --add_to_plt --apps kernel
