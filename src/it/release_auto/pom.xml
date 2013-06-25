@@ -15,7 +15,7 @@
         <version>@project.version@</version>
         <extensions>true</extensions>
         <configuration>
-          <otpRelease>R*</otpRelease>
+          <otpRelease>*</otpRelease>
           <skipReleaseTest>true</skipReleaseTest>
         </configuration>
       </plugin>

@@ -4,4 +4,4 @@ jdk:
 before_install:
   - sudo apt-get install -y -q erlang
 install: true
-script: mvn clean && mvn -Pit verify
+script: mvn clean && mvn -Pit verify -Dinvoker.streamLogs=true

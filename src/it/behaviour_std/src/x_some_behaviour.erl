@@ -1,8 +1,5 @@
 -module(x_some_behaviour).
 
--export([behaviour_info/1]).
-
-behaviour_info(callbacks) ->
-    [{a, 1},
-     {b, 1},
-     {c, 1}].
+-callback a(any()) -> any().
+-callback b(any()) -> any().
+-callback c(any()) -> any().
