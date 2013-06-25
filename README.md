@@ -1,4 +1,5 @@
-<img src="http://lindenbaum.github.com/maven-erlang-plugin/images/maven-erlang-plugin-icon-med.png" alt="erlang maven plug-in"/>
+![erlang maven plug-in](http://lindenbaum.github.com/maven-erlang-plugin/images/maven-erlang-plugin-icon-med.png)
+[![Build Status](https://travis-ci.org/lindenbaum/maven-erlang-plugin.png?branch=master)](https://travis-ci.org/lindenbaum/maven-erlang-plugin)
 
 The Maven Erlang Plug-In
 ========================
@@ -30,7 +31,7 @@ third party Erlang/OTP applications and libraries available in the
 [Sonatype OSS Repository](https://oss.sonatype.org/index.html#nexus-search;quick~eu.lindenbaum.thirdparty*).
 
 __Enjoy!__
- 
+
 ### Previous releases
 
 __2011-09-23__:
