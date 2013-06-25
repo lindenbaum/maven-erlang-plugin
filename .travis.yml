@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk7
 before_install:
-  - deb http://binaries.erlang-solutions.com/debian precise contrib
+  - sudo echo "deb http://binaries.erlang-solutions.com/debian precise contrib" >> /etc/apt/sources.list
   - sudo wget -O - http://binaries.erlang-solutions.com/debian/erlang_solutions.asc | sudo apt-key add -
   - sudo apt-get update -y -q
   - sudo apt-get install -y -q esl-erlang
