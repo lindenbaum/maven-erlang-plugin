@@ -1,7 +1,5 @@
-![erlang maven plug-in](http://lindenbaum.github.com/maven-erlang-plugin/images/maven-erlang-plugin-icon-med.png)
-
-The Maven Erlang Plug-In [![Build Status](https://travis-ci.org/lindenbaum/maven-erlang-plugin.png?branch=master)](https://travis-ci.org/lindenbaum/maven-erlang-plugin)
-========================================================================================================================================================================
+![erlang maven plug-in](http://lindenbaum.github.com/maven-erlang-plugin/images/maven-erlang-plugin-icon-med.png) The Maven Erlang Plug-In [![Build Status](https://travis-ci.org/lindenbaum/maven-erlang-plugin.png?branch=master)](https://travis-ci.org/lindenbaum/maven-erlang-plugin)
+==========================================================================================================================================================================================================================================================================================
 
 This plug-in for Maven makes it very easy to build, test, package and deploy
 Erlang applications and projects. It manages dependencies and artifacts and
