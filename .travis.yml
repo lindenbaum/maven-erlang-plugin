@@ -6,5 +6,4 @@ before_install:
 install:
   - dialyzer --build_plt  --apps erts
   - dialyzer --add_to_plt --apps kernel
-  - dialyzer --add_to_plt --apps stdlib
 script: mvn clean && mvn -Pit verify -Dinvoker.streamLogs=true
