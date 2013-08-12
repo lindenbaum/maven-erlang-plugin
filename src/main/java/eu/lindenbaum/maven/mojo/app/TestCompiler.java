@@ -23,7 +23,7 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * Compile erlang test sources and recompile erlang sources with the options
- * {@code debug_info}, {@code export_all} and <code>{d, 'TEST'}</code>. This
+ * {@code debug_info} and <code>{d, 'TEST'}</code>. This
  * will also compile the supporting erlang sources provided along with the
  * plugin.
  * 
@@ -106,7 +106,6 @@ public final class TestCompiler extends ErlangMojo {
 
       List<String> options = new ArrayList<String>();
       options.add("debug_info");
-      options.add("export_all");
       options.add("{d, 'TEST'}");
       if (this.testCompilerOptions != null && !this.testCompilerOptions.isEmpty()) {
         log.info("Using additinal test compiler options: " + this.testCompilerOptions);
