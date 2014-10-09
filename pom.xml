@@ -96,7 +96,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Plug-In Versions -->
-    <maven-project-info-reports-plugin.version>2.4</maven-project-info-reports-plugin.version>
+    <maven-project-info-reports-plugin.version>2.7</maven-project-info-reports-plugin.version>
     <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
     <maven-invoker-plugin.version>1.5</maven-invoker-plugin.version>
     <maven-plugin-plugin.version>2.7</maven-plugin-plugin.version>
@@ -210,7 +210,7 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-site-plugin</artifactId>
-              <version>3.0-beta-3</version>
+              <version>3.3</version>
             </plugin>
           </plugins>
         </pluginManagement>
