@@ -6,7 +6,7 @@
     <release version="2.3.0" date="TBA" description="Feature and bugfix release">
       <action dev="olle" type="update">
         Site lifecycle for erlang-rel projects now explicitly without pre- and
-        post-phase invocations - simple site only. 
+        post-phase invocations - simple site only.
       </action>
       <action dev="olle" type="add">
         Added support for `leex' generated sources.
@@ -28,7 +28,7 @@
         Made the application resource and upgrade files available during the
         test phase of application projects. This allows unit tests to call
         'application:start/1' or 'application:start/2' on the respective
-        application under test. 
+        application under test.
       </action>
       <action dev="olle-t" type="fix" issue="3502206" due-to="charpi">
         Removed `cover2.erl', now using normal coverage tool, solving issue
@@ -58,7 +58,7 @@
       <action dev="olle-t" type="update">
         Updated resolution of required Erlang/OTP version, now also allowing an
         "or" concept using pipe "|" separated version, for example
-        "R14B*|R15B*" - meaning any R14B or R15B version is valid. 
+        "R14B*|R15B*" - meaning any R14B or R15B version is valid.
       </action>
       <action dev="olle-t" type="fix">
         Setting proper ownership of Temporary directory, for unpacked dependency
@@ -69,7 +69,7 @@
         test modules with the suffix `_prof.erl' profile code. NOTE: this change
         requires user action for projects that upgrade the plug-in. Also see use
         of the `-Dtest' parameter as an alternative solution.
-      </action>    
+      </action>
       <action dev="olle-t" type="add">
         Added 'coverageExclude' to coverage reporting, allowing for optional
         exclusion of modules from the coverage report. Useful for generated or
@@ -78,7 +78,7 @@
     </release>
     <release version="2.1.0" date="2011-09-23" description="Feature and bugfix release">
       <action dev="olle-t" type="update">
-        For test execution, the parameter 'test' now also supports a comma 
+        For test execution, the parameter 'test' now also supports a comma
         separated list of test modules to execute (-Dtest=foo,bar,baz) and not
         only a single value.
       </action>
@@ -132,13 +132,13 @@
         able to define compile priority of project modules manually.
       </action>
       <action dev="olle-t" type="update">
-        Changed binding for site generation, pre-site now invokes 
+        Changed binding for site generation, pre-site now invokes
         'erlang:coverage' and 'erlang:profile' in order to be able to build
         reports.
       </action>
       <action dev="olle-t" type="update">
-        Changed coverage report, splitting it into an 'erlang:coverage' goal, 
-        that only produces coverage data TXT-file, and an 
+        Changed coverage report, splitting it into an 'erlang:coverage' goal,
+        that only produces coverage data TXT-file, and an
         'erlang:coverage-report' goal, that builds the HTML report.
       </action>
       <action dev="schlagert" type="fix">
@@ -147,7 +147,7 @@
       </action>
       <action dev="schlagert" type="add">
         Added support for the additional test source folder 'test' in erlang-std
-        projects. 
+        projects.
       </action>
       <action dev="schlagert" type="add">
         Added support for eunit tests embedded into a (main) source module.
@@ -189,19 +189,19 @@
       </action>
       <action dev="schlagert" type="add">
         Modules defining custom behaviours will now be compiled. This avoids
-        warnings emitted when behaviours can't be found. 
+        warnings emitted when behaviours can't be found.
       </action>
       <action dev="olle-t" type="add">
-        Added 'erlang:profile' and 'erlang:profiling-report' - eprof based 
+        Added 'erlang:profile' and 'erlang:profiling-report' - eprof based
         profiling and reporting, using the tests in an application project.
       </action>
       <action dev="schlagert" type="add">
         Added 'erlang:relup' to generate sensible release upgrade file
-        templates based on installed/deployed versions of a project. 
+        templates based on installed/deployed versions of a project.
       </action>
       <action dev="schlagert" type="add">
         Added 'erlang:appup' to generate sensible application upgrade file
-        templates based on installed/deployed versions of a project. 
+        templates based on installed/deployed versions of a project.
       </action>
       <action dev="schlagert, olle-t" type="fix" issue="3240436">
         Fixed packaging problems where the wrong version string was used to
@@ -213,7 +213,7 @@
         application dependencies will now be searched for in the code path of
         the current backend node.
       </action>
-    </release>    
+    </release>
     <release version="2.0.0" date="2011-03-18" description="First stable release">
       <action dev="ghaskins" type="add" issue="3167277">
         Added tool 'eapp2mvn' to deploy non-maven packaged erlang applications
@@ -228,16 +228,16 @@
       </action>
       <action dev="schlagert, olle-t" type="fix">
         Fixed dangling application project dependencies in 'target/lib' when
-        changing a dependency version and not 'cleaning' the next build. 
+        changing a dependency version and not 'cleaning' the next build.
       </action>
       <action dev="schlagert, olle-t" type="update">
         Made 'relup' and 'sys.config' files mandatory in erlang-rel projects.
         Added basic template generation for those in 'erlang:setup'.
       </action>
       <action dev="heyll" type="add">
-        Added the 'erlang:show-build-info' goal that outputs code paths and 
+        Added the 'erlang:show-build-info' goal that outputs code paths and
         include paths used to compile the erlang sources, so that other tools
-        (i.e. emacs) can compile erlang files of a mavenized erlang project. 
+        (i.e. emacs) can compile erlang files of a mavenized erlang project.
       </action>
       <action dev="ghaskins" type="add">
         Added UnArchiver support to erlang-rel artifacts. This allows other
@@ -276,7 +276,7 @@
         the form [ARTIFACTID].rel / [ARTIFACTID].relup. This allows usage of the
         maven-release-plugin that changes the effective project version in the
         pom while building. Though, generated release artifacts will retain the
-        version information in the filenames.  
+        version information in the filenames.
       </action>
       <action dev="schlagert" type="fix" issue="3166359" due-to="ghaskins">
         Added support to recognise both British and American spelling of the
@@ -355,20 +355,20 @@
     </release>
     <release version="1.0.0-beta" date="2010-12-17" description="Initial release">
       <action dev="olle-t" type="update">
-        Changed the use of the "test" property, a single specified test 
+        Changed the use of the "test" property, a single specified test
         (-Dtest=some_test) is always considered to have a .beam suffix, but
-        never assumes anything else about the test module name. 
+        never assumes anything else about the test module name.
       </action>
       <action dev="olle-t" type="add">
-        New mojo that copies test-resources, bound to the 
-        generate-test-resources phase. 
+        New mojo that copies test-resources, bound to the
+        generate-test-resources phase.
       </action>
       <action dev="heyll" type="fix">
         'TEST' was not set while compiling sources in testphase for coverage.
         Added setting of 'TEST' macro to the cover2:compile call.
       </action>
       <action dev="olle-t" type="add">
-        New parameter for the run goal, allowing optional command line 
+        New parameter for the run goal, allowing optional command line
         parameters to be passed to the starting Erlang node.
       </action>
       <action dev="olle-t" type="add">

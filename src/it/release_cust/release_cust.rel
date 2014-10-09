@@ -2,4 +2,4 @@
  {${ARTIFACT}, ${VERSION}},
  ${ERTS},
  [${APPLICATIONS},
-  ${APPMON}]}.
+  ${CRYPTO}]}.
