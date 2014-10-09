@@ -4,6 +4,11 @@
   </properties>
   <body>
     <release version="2.3.0" date="TBA" description="Feature and bugfix release">
+      <action dev="schlagert" type="update" due-to="Ilja Bobkevic" issue="#2">
+        The previously forced test compiler option 'export_all' is now removed
+        due to problems with third party projects, e.g. proper. The option must
+        now be specified explicitly in the testCompilerOptions configuration.
+      </action>
       <action dev="olle" type="update">
         Site lifecycle for erlang-rel projects now explicitly without pre- and
         post-phase invocations - simple site only.
